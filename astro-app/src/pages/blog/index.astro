@@ -1,0 +1,72 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getAllBlogPosts } from '@/lib/markdown';
+import { paginateItems } from '@/lib/pagination';
+import { getInlineIcon } from '@/lib/inline-icons';
+import { BLOG_CONSTANTS } from '@/constants';
+import BlogCard from '@/components/feature/content/blog-card.astro';
+import Pagination from '@/components/shared/pagination.astro';
+import {RememberBlogListPath} from '@/components/feature/content/remember-blog-list-path';
+import {RestoreScrollPosition} from '@/components/feature/content/restore-scroll-position';
+import { Icons } from '@/components/icons';
+
+const allPosts = await getAllBlogPosts();
+const totalPosts = allPosts.length;
+const {
+  items: paginatedPosts,
+  currentPage,
+  totalPages,
+} = paginateItems({
+  items: allPosts,
+  page: 1,
+  pageSize: BLOG_CONSTANTS.POSTS_PER_PAGE,
+});
+
+const postsWithIcons = paginatedPosts.map((blog) => {
+  const displayUrl = blog.metadata.icon_url || (blog.metadata.icon?.startsWith('https://') ? blog.metadata.icon : null);
+  const inlineSvg = displayUrl ? getInlineIcon(displayUrl) : undefined;
+  return { blog, inlineSvg };
+});
+---
+
+<BaseLayout title="Blog">
+  <section data-pagefind-ignore class="space-y-10">
+    <RememberBlogListPath client:load pathname={Astro.url.pathname} />
+    <RestoreScrollPosition client:load pathname={Astro.url.pathname} />
+    <div class="space-y-3 border-b border-border/60 pb-4">
+      <nav class="flex items-center gap-2 text-sm text-muted-foreground">
+        <a href="/" class="transition-colors hover:text-primary">
+          Home
+        </a>
+        <Icons.ChevronRight client:load className="size-4" />
+        <span class="text-foreground">Blog</span>
+      </nav>
+
+      <div class="flex flex-wrap items-end justify-between gap-3">
+        <h1 class="text-3xl font-bold tracking-tight md:text-4xl">
+          Blog
+        </h1>
+        <span class="text-sm font-mono text-muted-foreground">
+          Total {totalPosts} posts
+        </span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {postsWithIcons.map(({ blog, inlineSvg }, index) => (
+        <BlogCard data={blog} priority={index < 6} inlineSvg={inlineSvg} />
+      ))}
+    </div>
+
+    {totalPages > 1 && (
+      <div class="pt-6">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          basePath="/blog/page"
+          client:load
+        />
+      </div>
+    )}
+  </section>
+</BaseLayout>

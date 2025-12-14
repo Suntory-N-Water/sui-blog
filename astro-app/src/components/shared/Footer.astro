@@ -1,0 +1,56 @@
+---
+import { Icons, SocialIcons } from '@/components/icons';
+import { siteConfig } from '@/config/site';
+
+const twitterUrl = siteConfig.links.twitter;
+const githubUrl = siteConfig.links.github;
+const copyrightName = siteConfig.copyRight;
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="mt-20 border-t border-border/40 bg-background/80 backdrop-blur-lg">
+  <div class="container mx-auto flex flex-col items-center justify-between gap-6 px-6 py-8 sm:flex-row">
+    <!-- Copyright notice -->
+    <p class="text-sm font-medium text-muted-foreground">
+      © {currentYear} {copyrightName}. All Rights Reserved.
+    </p>
+
+    <!-- Social media links and RSS feed -->
+    <div class="flex items-center gap-3">
+      {twitterUrl && (
+        <a
+          href={twitterUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Twitter"
+          class="flex size-9 items-center justify-center rounded-full border border-border/50 bg-secondary/30 text-muted-foreground transition-all duration-300 hover:border-primary/50 hover:bg-primary/10 hover:text-primary hover:shadow-lg hover:shadow-primary/20"
+        >
+          <SocialIcons.twitter className="size-4" />
+          <span class="sr-only">Twitter</span>
+        </a>
+      )}
+      {githubUrl && (
+        <a
+          href={githubUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="GitHub"
+          class="flex size-9 items-center justify-center rounded-full border border-border/50 bg-secondary/30 text-muted-foreground transition-all duration-300 hover:border-primary/50 hover:bg-primary/10 hover:text-primary hover:shadow-lg hover:shadow-primary/20"
+        >
+          <SocialIcons.github className="size-4" />
+          <span class="sr-only">GitHub</span>
+        </a>
+      )}
+      <a
+        href="/rss.xml"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="RSS"
+        class="flex size-9 items-center justify-center rounded-full border border-border/50 bg-secondary/30 text-muted-foreground transition-all duration-300 hover:border-primary/50 hover:bg-primary/10 hover:text-primary hover:shadow-lg hover:shadow-primary/20"
+      >
+        <Icons.rss className="size-4" />
+        <span class="sr-only">RSS</span>
+      </a>
+    </div>
+  </div>
+</footer>

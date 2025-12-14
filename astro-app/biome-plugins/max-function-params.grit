@@ -1,0 +1,12 @@
+or {
+    `function $name($p1, $p2, $...) { $body }`,
+    `function $name($p1, $p2, $...): $ret { $body }`,
+    `export function $name($p1, $p2, $...) { $body }`,
+    `export function $name($p1, $p2, $...): $ret { $body }`
+} where {
+    register_diagnostic(
+        span = $name,
+        message = "関数の引数が２個以上です。可読性の観点から分割代入形式({ a, b }: { a: number; b: number })`で引数を設定してください",
+        severity = "error"
+    )
+}

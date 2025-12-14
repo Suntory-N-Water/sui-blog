@@ -1,0 +1,104 @@
+---
+import { Icons } from '@/components/icons';
+import { Badge } from '@/components/ui/badge';
+import type { BlogPost } from '@/lib/markdown';
+import { cn, formatDate } from '@/lib/utils';
+
+type Props = {
+  data: BlogPost;
+  priority?: boolean;
+  inlineSvg?: string;
+};
+
+const { data, priority, inlineSvg } = Astro.props;
+
+/**
+ * ブログ記事のカードを表示するコンポーネント
+ *
+ * このコンポーネントはブログ記事のメタデータを受け取り、カード形式で表示します。
+ * アイコン(絵文字または画像)、タイトル、説明文、日付、タグを含むカードをレンダリングし、
+ * クリックすると記事ページに遷移します。ホバー時にはカードが拡大し、視覚的なフィードバックを提供します。
+ */
+
+const { metadata, slug } = data;
+const dateISO = new Date(metadata.date).toISOString();
+const formattedDate = formatDate(metadata.date).replace(/\//g, '.');
+
+// icon_urlを優先、なければiconのURLを使用
+const displayUrl =
+  metadata.icon_url ||
+  (metadata.icon?.startsWith('https://') ? metadata.icon : null);
+---
+
+<a
+  href={`/blog/${slug}`}
+  class={cn(
+    'group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-sm transition-all duration-300',
+    'hover:-translate-y-1 hover:border-primary/50 hover:shadow-md',
+    'focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
+  )}
+>
+  <div class='relative aspect-video w-full bg-muted overflow-hidden'>
+    <div class='absolute inset-0 bg-gradient-to-br from-secondary to-background' />
+    <div class='absolute inset-0 flex items-center justify-center transition-transform duration-500 group-hover:scale-110'>
+      {inlineSvg ? (
+        <span
+          class='h-16 w-16 [&>svg]:h-full [&>svg]:w-full [&>svg]:object-contain [&>svg]:drop-shadow-md'
+          aria-hidden
+          set:html={inlineSvg}
+        />
+      ) : displayUrl ? (
+        <img
+          src={displayUrl}
+          alt={metadata.title}
+          width={64}
+          height={64}
+          loading={priority ? 'eager' : 'lazy'}
+          class='h-16 w-16 object-contain drop-shadow-md'
+        />
+      ) : (
+        <div class='flex h-16 w-16 items-center justify-center rounded-full bg-background/80 text-3xl'>
+          {metadata.icon || '📝'}
+        </div>
+      )}
+    </div>
+    <div class='absolute bottom-3 left-3 rounded bg-background/80 px-2 py-0.5 font-mono text-xs text-muted-foreground backdrop-blur'>
+      <time datetime={dateISO}>{formattedDate}</time>
+    </div>
+  </div>
+
+  <div class='flex flex-1 flex-col p-4 md:p-5'>
+    <div class='mb-3 flex flex-wrap gap-2'>
+      <div class='flex flex-wrap gap-2'>
+        {metadata.tags?.slice(0, 3).map((tag) => (
+          <Badge
+            variant='secondary'
+            className='border border-border px-2 py-0.5 text-[10px] font-medium'
+            client:load
+          >
+            {tag}
+          </Badge>
+        ))}
+      </div>
+    </div>
+
+    <h3 class='mb-3 text-lg font-bold transition-colors group-hover:text-primary leading-[1.5]'>
+      {metadata.title}
+    </h3>
+
+    {metadata.description && (
+      <p class='mb-4 flex-1 text-sm leading-relaxed text-muted-foreground line-clamp-4'>
+        {metadata.description}
+      </p>
+    )}
+
+    <div class='mt-auto flex items-center justify-between border-t border-border pt-4'>
+      <span class='text-xs font-bold text-muted-foreground transition-colors group-hover:text-foreground'>
+        記事を読む
+      </span>
+      <div class='flex h-7 w-7 items-center justify-center rounded-full bg-secondary/50 text-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground'>
+        <Icons.chevronRight className='h-3.5 w-3.5' client:load />
+      </div>
+    </div>
+  </div>
+</a>

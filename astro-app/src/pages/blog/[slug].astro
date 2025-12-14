@@ -1,0 +1,133 @@
+---
+import '@/styles/markdown.css';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getAllBlogPosts, getBlogPostBySlug } from '@/lib/markdown';
+import { getRelatedPosts } from '@/lib/recommend';
+import { extractTOC } from '@/lib/toc';
+import { getInlineIcon } from '@/lib/inline-icons';
+import { absoluteUrl, formatDate } from '@/lib/utils';
+import { siteConfig } from '@/config/site';
+import { getTagSlug } from '@/config/tag-slugs';
+import { BLOG_CONSTANTS } from '@/constants';
+import {CustomMarkdown} from '@/components/feature/content/custom-markdown';
+import GitHubEditButton from '@/components/feature/content/github-edit-button.astro';
+import {MarkdownCopyButton} from '@/components/feature/content/markdown-copy-button';
+import RelatedArticles from '@/components/feature/content/related-articles.astro';
+import {SelfAssessment} from '@/components/feature/content/self-assessment';
+import TableOfContents from '@/components/feature/content/table-of-contents.astro';
+import { Icons } from '@/components/icons';
+import { Badge } from '@/components/ui/badge';
+import { BlogBackButton } from '@/components/feature/content/blog-back-button';
+
+/**
+ * TODO: 型推論出来るらしい？
+ * 
+ * @see https://docs.astro.build/en/guides/typescript/#infer-getstaticpaths-types
+ */
+export async function getStaticPaths() {
+  const allPosts = await getAllBlogPosts();
+  return allPosts.map((post) => ({
+    params: { slug: post.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const post = await getBlogPostBySlug(slug);
+
+if (!post) {
+  return Astro.redirect('/404');
+}
+
+const allPosts = await getAllBlogPosts();
+const relatedPosts = getRelatedPosts({
+  currentSlug: slug,
+  allPosts,
+  count: BLOG_CONSTANTS.RELATED_POSTS_COUNT,
+});
+
+const tableOfContents = extractTOC(post.rawContent);
+const displayUrl = post.metadata.icon_url || (post.metadata.icon?.startsWith('https://') ? post.metadata.icon : null);
+const inlineSvg = displayUrl ? getInlineIcon(displayUrl) : undefined;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.metadata.title,
+  datePublished: post.metadata.date,
+  dateModified: post.metadata.date,
+  description: post.metadata.description,
+  image: absoluteUrl(`/blog/ogp/${post.slug}`),
+  author: { '@type': 'Person', name: siteConfig.name, url: siteConfig.url },
+  publisher: {
+    '@type': 'Person',
+    name: siteConfig.name,
+    image: { '@type': 'ImageObject', url: absoluteUrl('/opengraph-image.png?20251122') },
+  },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': absoluteUrl(`/blog/${post.slug}`) },
+};
+
+const canonicalUrl = absoluteUrl(`/blog/${post.slug}`);
+---
+
+<BaseLayout title={post.metadata.title} description={post.metadata.description} ogImage={absoluteUrl(`/blog/ogp/${post.slug}`)} canonicalUrl={canonicalUrl}>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <div>
+    <article class="min-h-[500px]">
+      <div class="mb-6 flex items-center justify-between">
+        <BlogBackButton client:load className="h-9 px-2" />
+      </div>
+      {(displayUrl || post.metadata.icon) && (
+        <div class="mb-6 flex justify-center">
+          {inlineSvg ? (
+            <span class="h-20 w-20 [&>svg]:h-full [&>svg]:w-full [&>svg]:object-contain" aria-hidden set:html={inlineSvg} />
+          ) : displayUrl ? (
+            <img src={displayUrl} alt={`Icon for ${post.metadata.title}`} width={80} height={80} loading="eager" />
+          ) : (
+            <div class="text-6xl">{post.metadata.icon}</div>
+          )}
+        </div>
+      )}
+      <div class="mb-6 flex flex-wrap items-center justify-between text-sm text-muted-foreground">
+        {post.metadata.date && (
+          <div class="inline-flex items-center gap-1">
+            <Icons.Calendar client:load className="size-4" />
+            <time datetime={new Date(post.metadata.date).toISOString()}>{formatDate(post.metadata.date)}</time>
+          </div>
+        )}
+        {post.metadata.tags && post.metadata.tags.length > 0 && (
+          <div class="inline-flex flex-wrap gap-2">
+            {post.metadata.tags.map((tag) => (
+              <a href={`/tags/${getTagSlug(tag)}`}>
+                <Badge client:load className="px-2 py-0.5 text-xs">{tag}</Badge>
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h1 class="text-2xl font-bold leading-snug tracking-normal">{post.metadata.title}</h1>
+        <div class="self-start sm:self-auto">
+          <MarkdownCopyButton client:idle content={post.rawContent} />
+        </div>
+      </div>
+      {post.metadata.description && (
+        <p class="mt-4 text-foreground/80">{post.metadata.description}</p>
+      )}
+      {tableOfContents.length > 0 && <TableOfContents items={tableOfContents} />}
+      <div class="mt-8">
+        <CustomMarkdown source={post.rawContent} />
+      </div>
+      {post.metadata.selfAssessment && <SelfAssessment client:load selfAssessment={post.metadata.selfAssessment} />}
+      <footer class="mt-10 flex flex-wrap items-center justify-between gap-4 border-t pt-8">
+        <div class="flex items-center space-x-2">
+          <a href={`/blog/${slug}.md`} class="inline-flex items-center gap-1.5 px-2 py-1 text-sm text-muted-foreground hover:text-primary">
+            <Icons.FileText client:load className="size-4" />
+            <span>Markdown ver</span>
+          </a>
+          <GitHubEditButton filePath={post.filePath} />
+        </div>
+      </footer>
+    </article>
+    <RelatedArticles relatedPosts={relatedPosts} />
+  </div>
+</BaseLayout>

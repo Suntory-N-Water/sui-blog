@@ -1,0 +1,263 @@
+@reference "./globals.css";
+
+[data-rehype-pretty-code-fragment] {
+  @apply relative;
+}
+
+[data-rehype-pretty-code-fragment] code {
+  @apply grid min-w-full break-words rounded-none border-0 bg-transparent p-0;
+  counter-reset: line;
+  box-decoration-break: clone;
+}
+
+[data-rehype-pretty-code-fragment] .line {
+  @apply inline-block min-h-[1.375rem] w-full px-4 py-0.5;
+}
+
+[data-rehype-pretty-code-fragment] [data-line-numbers] .line {
+  @apply px-2;
+  counter-increment: line;
+}
+
+[data-rehype-pretty-code-fragment] [data-line-numbers] .line::before {
+  @apply mr-3 inline-block w-4 text-right text-muted-foreground/40;
+  content: counter(line);
+}
+
+[data-rehype-pretty-code-title] {
+  @apply mt-4 rounded-t-lg border border-b-0 border-border/50 bg-muted/50 px-4 py-2 text-sm font-medium text-foreground;
+}
+
+[data-rehype-pretty-code-title] + pre {
+  @apply mt-0 rounded-t-none;
+}
+
+[data-rehype-pretty-code-title] + div > pre {
+  @apply mt-0 rounded-t-none;
+}
+
+[data-rehype-pretty-code-figure] [data-rehype-pretty-code-title] + div > pre {
+  @apply mt-0 rounded-t-none;
+}
+
+/* Inline code specific styles */
+:not(pre) > code {
+  font-feature-settings:
+    "calt" 1,
+    "tnum" 1,
+    "case" 1,
+    "ss01" 1,
+    "ss02" 1;
+}
+
+/* Optional: Add subtle transition */
+:not(pre) > code {
+  @apply transition-colors duration-200;
+}
+
+/* Optional: Add hover effect */
+:not(pre) > code:hover {
+  @apply bg-muted/70;
+}
+
+/* Dark mode adjustments */
+.dark :not(pre) > code {
+  @apply bg-muted/30 ring-border/20;
+}
+
+/* Markdown Content Styles */
+
+/* Code blocks - matching CodeBlock component */
+.markdown-content pre {
+  @apply my-6 overflow-x-auto rounded-lg border border-border/50 bg-muted p-4;
+  max-width: 100%;
+}
+
+.markdown-content pre code {
+  @apply block text-sm leading-relaxed;
+}
+
+/* Inline code - subtle background with emphasized border */
+.markdown-content :not(pre) > code {
+  @apply relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-medium;
+  @apply bg-muted/50 ring-1 ring-border/50 text-foreground;
+}
+
+.dark .markdown-content :not(pre) > code {
+  @apply bg-muted/20 ring-border/40;
+}
+
+.markdown-content h2 {
+  @apply mt-12 scroll-m-20 border-b-2 border-border/50 pb-2 text-2xl font-bold tracking-tight first:mt-0;
+}
+
+.markdown-content h2::before {
+  content: "## ";
+  @apply text-muted-foreground/60;
+}
+
+.markdown-content h3:not(.group h3) {
+  @apply mt-8 scroll-m-20 text-xl font-semibold tracking-tight;
+}
+
+.markdown-content h3:not(.group h3)::before {
+  content: "### ";
+  @apply text-muted-foreground/60;
+}
+
+.markdown-content h4 {
+  @apply mt-4 scroll-m-20 text-lg font-semibold tracking-tight;
+}
+
+.markdown-content a:not(.group) {
+  @apply font-medium text-primary decoration-primary/30 underline-offset-4 hover:text-primary/80 hover:underline hover:decoration-primary/50;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.markdown-content p:not(.group p) {
+  @apply leading-7 text-foreground/90 [&:not(:first-child)]:mt-4;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.markdown-content ul {
+  @apply my-6 ml-6 list-disc marker:text-muted-foreground;
+}
+
+.markdown-content ol {
+  @apply my-6 ml-6 list-decimal marker:text-muted-foreground;
+}
+
+.markdown-content li {
+  @apply mt-2 text-foreground/90;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.markdown-content blockquote {
+  @apply mt-6 border-l-2 border-primary pl-6 italic text-foreground/80;
+}
+
+.markdown-content img:not(.group img) {
+  @apply rounded-md border border-border/50 h-auto max-w-full max-h-[600px] object-contain mx-auto;
+}
+
+.markdown-content .mermaid {
+  @apply my-6 overflow-x-auto rounded-lg border border-border/50 bg-muted/40 p-4;
+}
+
+.markdown-content .mermaid svg {
+  @apply h-auto w-full;
+}
+
+/* Mermaid ダークモード対応: 文字色と矢印・線を白に上書き */
+.dark .markdown-content .mermaid svg text {
+  fill: white !important;
+}
+
+.dark .markdown-content .mermaid svg .edgePath path,
+.dark .markdown-content .mermaid svg .edgePath marker path,
+.dark .markdown-content .mermaid svg line[class*="messageLine"],
+.dark .markdown-content .mermaid svg path[class*="messageLine"] {
+  stroke: white !important;
+}
+
+.dark .markdown-content .mermaid svg marker path {
+  fill: white !important;
+}
+
+.markdown-content hr {
+  @apply my-8 border-border/50;
+}
+
+.markdown-content table {
+  @apply my-6 w-full border-collapse text-sm;
+}
+
+.markdown-content table tr {
+  @apply m-0 border-t border-border/50 p-0 transition-colors duration-150 hover:bg-muted/30;
+}
+
+.markdown-content table th {
+  @apply border border-border/50 bg-background px-4 py-3 text-left font-bold text-foreground/90;
+}
+
+.markdown-content table td {
+  @apply border border-border/50 px-4 py-3 text-left;
+}
+
+/* GFM Alerts - matching Callout component styles */
+.markdown-content .markdown-alert {
+  @apply my-6 rounded-lg border p-4 shadow-sm;
+}
+
+.markdown-content .markdown-alert > .markdown-alert-title {
+  @apply mb-2 flex items-center gap-2 font-semibold;
+}
+
+.markdown-content .markdown-alert > .markdown-alert-title svg {
+  @apply size-4 shrink-0;
+  fill: currentColor;
+}
+
+.markdown-content .markdown-alert-note {
+  @apply border-slate-200 bg-slate-50/50 dark:border-slate-800 dark:bg-slate-900/30;
+}
+
+.markdown-content .markdown-alert-note > .markdown-alert-title {
+  @apply text-slate-800 dark:text-slate-300;
+}
+
+.markdown-content .markdown-alert-tip {
+  @apply border-green-200 bg-green-50/50 dark:border-green-900 dark:bg-green-950/30;
+}
+
+.markdown-content .markdown-alert-tip > .markdown-alert-title {
+  @apply text-green-800 dark:text-green-300;
+}
+
+.markdown-content .markdown-alert-important {
+  @apply border-purple-200 bg-purple-50/50 dark:border-purple-900 dark:bg-purple-950/30;
+}
+
+.markdown-content .markdown-alert-important > .markdown-alert-title {
+  @apply text-purple-800 dark:text-purple-300;
+}
+
+.markdown-content .markdown-alert-warning {
+  @apply border-amber-200 bg-amber-50/50 dark:border-amber-900 dark:bg-amber-950/30;
+}
+
+.markdown-content .markdown-alert-warning > .markdown-alert-title {
+  @apply text-amber-800 dark:text-amber-300;
+}
+
+.markdown-content .markdown-alert-caution {
+  @apply border-red-200 bg-red-50/50 dark:border-red-900 dark:bg-red-950/30;
+}
+
+.markdown-content .markdown-alert-caution > .markdown-alert-title {
+  @apply text-red-800 dark:text-red-300;
+}
+
+/* remark-link-card styles */
+.markdown-content .rlc-container {
+  @apply my-6 overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-md;
+}
+
+.markdown-content .rlc-info {
+  @apply p-4;
+}
+
+.markdown-content .rlc-title {
+  @apply mb-2 font-semibold text-card-foreground;
+}
+
+.markdown-content .rlc-description {
+  @apply text-sm text-muted-foreground;
+}
+
+.markdown-content .rlc-url-container {
+  @apply mt-2 text-xs text-muted-foreground;
+}

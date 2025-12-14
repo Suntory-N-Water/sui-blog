@@ -1,0 +1,203 @@
+@import "tailwindcss";
+
+/* Tailwind CSS v4: カスタムトークン定義 */
+@theme {
+  /* カスタムカラー */
+  --color-twitter: #1DA1F2;
+
+  /* デザインシステムカラー（hsl形式） - ライトモード */
+  --color-border: hsl(0 0% 86%);
+  --color-input: hsl(0 0% 86%);
+  --color-ring: hsl(199 100% 78%);
+  --color-background: hsl(0 0% 98%);
+  --color-foreground: hsl(0 0% 20%);
+  --color-primary: hsl(214 100% 27%);
+  --color-primary-foreground: hsl(0 0% 100%);
+  --color-secondary: hsl(220 14% 96%);
+  --color-secondary-foreground: hsl(0 0% 20%);
+  --color-muted: hsl(220 14% 96%);
+  --color-muted-foreground: hsl(0 0% 45%);
+  --color-accent: hsl(199 100% 78%);
+  --color-accent-foreground: hsl(0 0% 20%);
+  --color-destructive: hsl(0 84% 60%);
+  --color-destructive-foreground: hsl(0 0% 98%);
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(0 0% 20%);
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(0 0% 20%);
+
+  /* フォントファミリー */
+  --font-sans: "noto-sans", sans-serif;
+  --font-mono: 'PlemolJP35Console', monospace;
+
+  /* コンテナ設定（v4ではCSS変数として定義） */
+  --container-center: true;
+  --container-padding: 2rem;
+  --container-max-width-2xl: 1400px;
+
+  /* ボーダーradius */
+  --radius: 0.5rem;
+  --radius-lg: 0.5rem;
+  --radius-md: calc(0.5rem - 2px);
+  --radius-sm: calc(0.5rem - 4px);
+}
+
+/* Tailwind CSS v4: ダークモード用カラーオーバーライド */
+@variant dark {
+  @theme {
+    --color-background: hsl(0 0% 12%);
+    --color-foreground: hsl(0 0% 95%);
+    --color-card: hsl(0 0% 15%);
+    --color-card-foreground: hsl(0 0% 95%);
+    --color-popover: hsl(0 0% 15%);
+    --color-popover-foreground: hsl(0 0% 95%);
+    --color-primary: hsl(199 100% 78%);
+    --color-primary-foreground: hsl(0 0% 12%);
+    --color-secondary: hsl(0 0% 20%);
+    --color-secondary-foreground: hsl(0 0% 95%);
+    --color-muted: hsl(0 0% 20%);
+    --color-muted-foreground: hsl(0 0% 65%);
+    --color-accent: hsl(199 100% 78%);
+    --color-accent-foreground: hsl(0 0% 12%);
+    --color-destructive: hsl(0 84% 60%);
+    --color-destructive-foreground: hsl(0 0% 98%);
+    --color-border: hsl(0 0% 28%);
+    --color-input: hsl(0 0% 28%);
+    --color-ring: hsl(199 100% 78%);
+  }
+}
+
+@layer base {
+  p,
+  li,
+  tr,
+  label {
+    line-height: 2;
+    letter-spacing: 0.16px;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+    font-family: var(--font-sans);
+  }
+  *:focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold tracking-tight;
+  }
+  h1 {
+    @apply text-3xl md:text-4xl;
+  }
+  h2 {
+    @apply mb-4 border-b text-2xl md:text-3xl;
+  }
+  p,
+  li {
+    @apply leading-relaxed text-foreground/90;
+  }
+}
+
+/* PagefindUIのスタイルをテーマに合わせてカスタマイズ
+ * @layer を使用せず、グローバルスコープで定義してPagefindUIの動的要素に確実に適用
+ */
+
+/* ライトモード用のスタイル */
+.pagefind-ui__result {
+  background-color: hsl(0 0% 100%) !important;
+}
+
+.pagefind-ui__result-title,
+.pagefind-ui__result-link,
+.pagefind-ui__result-link:hover {
+  color: hsl(0 0% 5%) !important;
+}
+
+.pagefind-ui__result-excerpt,
+.pagefind-ui__result-inner p,
+.pagefind-ui__result-inner span {
+  color: hsl(0 0% 20%) !important;
+}
+
+.pagefind-ui__message,
+.pagefind-ui__results-area {
+  color: hsl(0 0% 20%) !important;
+}
+
+.pagefind-ui__button {
+  margin-bottom: 1rem !important;
+}
+
+/* クリアボタン - ライトモード */
+.pagefind-ui__search-clear {
+  color: hsl(0 0% 40%) !important;
+}
+
+.pagefind-ui__result-nested {
+  color: hsl(0 0% 20%) !important;
+}
+
+/* ハイライト(mark要素)の色 - ライトモード */
+mark {
+  background-color: hsl(60 100% 70%) !important;
+  color: hsl(0 0% 0%) !important;
+}
+
+/* ダークモード用のスタイル */
+.dark .pagefind-ui__result {
+  background-color: hsl(0 0% 15%) !important;
+}
+
+.dark .pagefind-ui__result-title,
+.dark .pagefind-ui__result-link,
+.dark .pagefind-ui__result-link:hover {
+  color: hsl(0 0% 95%) !important;
+}
+
+.dark .pagefind-ui__result-excerpt,
+.dark .pagefind-ui__result-inner p,
+.dark .pagefind-ui__result-inner span {
+  color: hsl(0 0% 80%) !important;
+}
+
+.dark .pagefind-ui__message,
+.dark .pagefind-ui__results-area {
+  color: hsl(0 0% 80%) !important;
+}
+
+.dark .pagefind-ui__button {
+  margin-bottom: 1rem !important;
+}
+
+.dark .pagefind-ui__result-nested {
+  color: hsl(0 0% 80%) !important;
+}
+
+/* ハイライト(mark要素)の色 - ダークモード */
+.dark mark {
+  background-color: hsl(45 100% 40%) !important;
+  color: hsl(0 0% 100%) !important;
+}
+
+/* Custom font */
+@font-face {
+  font-family: 'PlemolJP35Console';
+  src: url('/fonts/PlemolJP35Console-Regular.woff2') format('woff2');
+  font-display: swap;
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  --font-plemol-jp-35-console: 'PlemolJP35Console', monospace;
+}

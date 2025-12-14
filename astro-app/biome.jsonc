@@ -1,0 +1,112 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.3.8/schema.json",
+  // 関数の引数が二個以上のとき、オブジェクト形式にする
+  "plugins": ["./biome-plugins/max-function-params.grit"],
+  "vcs": {
+    "enabled": false,
+    "clientKind": "git",
+    "useIgnoreFile": false
+  },
+  "files": {
+    "ignoreUnknown": false,
+    "includes": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "**/*.json",
+      "**/*.html",
+      "!node_modules",
+      "!!**/dist",
+      "!!**/.next"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": true,
+    "attributePosition": "auto",
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 80,
+    "includes": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "**/*.json",
+      "**/*.html",
+      "!node_modules",
+      "!!**/dist",
+      "!!**/.next"
+    ]
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
+      },
+      "suspicious": {
+        // any 関連
+        "noExplicitAny": "error",
+        "noImplicitAnyLet": "error",
+        "noEvolvingTypes": "error"
+      },
+      "style": {
+        // Interface じゃなくて type を使う
+        "useConsistentTypeDefinitions": {
+          "level": "warn",
+          "options": {
+            "style": "type"
+          }
+        },
+        "noParameterAssign": "error",
+        "useConsistentArrayType": "error",
+        "useArrayLiterals": "error",
+        // if 文でブロックを強制する
+        "useBlockStatements": "error"
+      },
+      "nursery": {
+        "noUnnecessaryConditions": "error"
+      }
+    },
+    "includes": ["src/**/*.{js,jsx,ts,tsx}"]
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "jsxQuoteStyle": "single",
+      "semicolons": "always",
+      "trailingCommas": "all"
+    },
+    "globals": ["Astro"]
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "html": {
+    "formatter": {
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2,
+      "lineWidth": 80
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["**/*.css"],
+      "formatter": {
+        "enabled": false
+      },
+      "linter": {
+        "enabled": false
+      }
+    },
+    {
+      "includes": ["**/route.ts", "**/route.tsx"],
+      "linter": {
+        "enabled": false
+      }
+    }
+  ]
+}

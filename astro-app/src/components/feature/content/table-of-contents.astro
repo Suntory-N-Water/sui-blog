@@ -1,0 +1,60 @@
+---
+import { cn } from '@/lib/utils';
+import type { TOCItem } from '@/types/toc';
+
+type Props = {
+  items: TOCItem[];
+  class?: string;
+};
+
+const { items, class: className } = Astro.props;
+
+/**
+ * 記事の目次を表示するコンポーネント
+ *
+ * このコンポーネントはh2要素から目次を生成し、記事の上部に表示します。
+ * 目次項目をクリックすると、通常のアンカータグを使用して該当セクションに直接ジャンプします。
+ * 目次が空の場合は何も表示されません。
+ */
+
+---
+
+{items.length > 0 && (
+  <div class={cn('mt-8 rounded-lg border p-4', className)}>
+    <h2 class='mb-3 text-lg font-medium'>目次</h2>
+    <nav>
+      <ol class='list-inside space-y-2 text-sm'>
+        {items.map((item, index) => (
+          <li>
+            <div class='flex items-start'>
+              <span class='mr-2 text-muted-foreground'>{index + 1}.</span>
+              <a href={`#${item.id}`} class='hover:text-primary hover:underline'>
+                {item.text}
+              </a>
+            </div>
+            {/* H3項目(子項目)がある場合はネスト表示 */}
+            {item.items && item.items.length > 0 && (
+              <ol class='ml-6 mt-1 list-inside space-y-1'>
+                {item.items.map((subItem, subIndex) => (
+                  <li>
+                    <div class='flex items-start'>
+                      <span class='mr-2 text-muted-foreground'>
+                        {subIndex + 1}.
+                      </span>
+                      <a
+                        href={`#${subItem.id}`}
+                        class='hover:text-primary hover:underline'
+                      >
+                        {subItem.text}
+                      </a>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  </div>
+)}

@@ -1,0 +1,30 @@
+---
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
+
+/**
+ * ページヘッダーコンポーネントのProps型定義
+ */
+type Props = {
+  /** ページの見出しテキスト */
+  heading: string;
+  /** 説明文(オプション) */
+  text?: string;
+  /** カスタムCSSクラス名(オプション) */
+  class?: string;
+};
+
+const { heading, text, class: className } = Astro.props;
+---
+
+<!--
+  ページヘッダーコンポーネント
+
+  ページのタイトルと説明文を表示し、下部にセパレーターを配置します。
+  ブログ一覧やタグページなどの各ページで使用されます。
+-->
+<div class={cn('space-y-4', className)}>
+  <h1 class='inline-block text-2xl'>{heading}</h1>
+  {text && <p class='text-muted-foreground'>{text}</p>}
+</div>
+<Separator className='my-4' client:load />

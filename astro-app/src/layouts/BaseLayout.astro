@@ -1,0 +1,97 @@
+---
+import '@/styles/globals.css';
+import '@/styles/markdown.css';
+import { siteConfig } from '@/config/site';
+import { absoluteUrl } from '@/lib/utils';
+import Header from '@/components/shared/header';
+import Footer from '@/components/shared/footer.astro';
+
+export type Props = {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  canonicalUrl?: string;
+};
+
+const {
+  title = siteConfig.name,
+  description = siteConfig.description,
+  ogImage = siteConfig.ogImage,
+  canonicalUrl,
+} = Astro.props;
+
+const pageTitle = title === siteConfig.name ? title : `${title} | ${siteConfig.name}`;
+const pathname = Astro.url.pathname;
+
+// WebSite構造化データの定義
+const jsonLdWebsite = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: siteConfig.name,
+  url: siteConfig.url,
+  publisher: {
+    '@type': 'Person',
+    name: siteConfig.name,
+    image: {
+      '@type': 'ImageObject',
+      url: absoluteUrl('/opengraph-image.png'),
+    },
+  },
+};
+---
+
+<!DOCTYPE html>
+<html lang="ja" class="font-[family-name:var(--font-plemol-jp-35-console)] overflow-x-hidden">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{pageTitle}</title>
+  <meta name="description" content={description} />
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content={pageTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:site_name" content={siteConfig.name} />
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={pageTitle} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImage} />
+  
+  <!-- Canonical -->
+  {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+  
+  <!-- JSON-LD -->
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLdWebsite)} />
+  
+  <!-- Favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.jpg" />
+  
+  <!-- Google Site Verification -->
+  <meta name="google-site-verification" content="pd5OEQeX8d8I7AOZbR5U3SPIyZyXYxd392aatHH48yk" />
+  
+  <!-- Theme Color -->
+  <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#1f1f1f" media="(prefers-color-scheme: dark)" />
+  
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VJECTY2TM6"></script>
+  <script is:inline>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VJECTY2TM6');
+  </script>
+</head>
+<body class="flex min-h-screen flex-col overflow-x-hidden">
+  <div aria-hidden class="pointer-events-none fixed inset-0 -z-10 opacity-20"></div>
+    <Header pathname={pathname} client:load />
+    <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-12 sm:px-6 md:px-8">
+      <slot />
+    </main>
+    <Footer />
+</body>
+</html>

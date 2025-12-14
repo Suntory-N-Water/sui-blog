@@ -1,0 +1,91 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getAllBlogPosts } from '@/lib/markdown';
+import { paginateItems } from '@/lib/pagination';
+import { getInlineIcon } from '@/lib/inline-icons';
+import { BLOG_CONSTANTS } from '@/constants';
+import { absoluteUrl } from '@/lib/utils';
+import BlogCard from '@/components/feature/content/blog-card.astro';
+import Pagination from '@/components/shared/pagination.astro';
+import { Icons } from '@/components/icons';
+import { RememberBlogListPath } from '@/components/feature/content/remember-blog-list-path';
+import { RestoreScrollPosition } from '@/components/feature/content/restore-scroll-position';
+
+export async function getStaticPaths() {
+  const allPosts = await getAllBlogPosts();
+  const totalPages = Math.ceil(allPosts.length / BLOG_CONSTANTS.POSTS_PER_PAGE);
+
+  return Array.from({ length: totalPages }, (_, i) => ({
+    params: { page: String(i + 1) },
+  }));
+}
+
+const { page } = Astro.params;
+const pageNum = Number.parseInt(page, 10);
+
+if (Number.isNaN(pageNum)) {
+  return Astro.redirect('/404');
+}
+
+const allPosts = await getAllBlogPosts();
+const totalPosts = allPosts.length;
+const {
+  items: paginatedPosts,
+  currentPage,
+  totalPages,
+} = paginateItems({
+  items: allPosts,
+  page: pageNum,
+  pageSize: BLOG_CONSTANTS.POSTS_PER_PAGE,
+});
+
+if (currentPage > totalPages) {
+  return Astro.redirect('/404');
+}
+
+const postsWithIcons = paginatedPosts.map((blog) => {
+  const displayUrl = blog.metadata.icon_url || (blog.metadata.icon?.startsWith('https://') ? blog.metadata.icon : null);
+  const inlineSvg = displayUrl ? getInlineIcon(displayUrl) : undefined;
+  return { blog, inlineSvg };
+});
+
+const canonicalUrl = absoluteUrl(`/blog/page/${page}`);
+---
+
+<BaseLayout title="Blog" canonicalUrl={canonicalUrl}>
+  <section data-pagefind-ignore class="space-y-10">
+    <RememberBlogListPath client:load pathname={Astro.url.pathname} />
+    <RestoreScrollPosition client:load pathname={Astro.url.pathname} />
+    <div class="space-y-3 border-b border-border/60 pb-4">
+      <nav class="flex items-center gap-2 text-sm text-muted-foreground">
+        <a href="/" class="transition-colors hover:text-primary">
+          Home
+        </a>
+        <Icons.ChevronRight client:load className="size-4" />
+        <span class="text-foreground">Blog</span>
+      </nav>
+
+      <div class="flex flex-wrap items-end justify-between gap-3">
+        <h1 class="text-3xl font-bold tracking-tight md:text-4xl">
+          Blog
+        </h1>
+        <span class="text-sm font-mono text-muted-foreground">
+          Total {totalPosts} posts
+        </span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {postsWithIcons.map(({ blog, inlineSvg }) => (
+        <BlogCard data={blog} inlineSvg={inlineSvg} />
+      ))}
+    </div>
+
+    <Pagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+      basePath="/blog/page"
+      client:load
+    />
+  </section>
+</BaseLayout>

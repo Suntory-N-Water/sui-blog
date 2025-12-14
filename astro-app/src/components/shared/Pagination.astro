@@ -1,0 +1,158 @@
+---
+import { Icons } from '@/components/icons';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+
+type PageItem =
+  | { type: 'page'; value: number }
+  | { type: 'ellipsis'; key: string };
+
+type Props = {
+  currentPage: number;
+  totalPages: number;
+  basePath: string;
+};
+
+const { currentPage, totalPages, basePath } = Astro.props;
+
+/**
+ * ページ番号リストを構築
+ *
+ * @param currentPage - 現在のページ番号
+ * @param totalPages - 総ページ数
+ * @returns ページアイテムの配列
+ */
+function buildPageList({
+  currentPage,
+  totalPages,
+}: {
+  currentPage: number;
+  totalPages: number;
+}): PageItem[] {
+  if (totalPages <= 5) {
+    return Array.from({ length: totalPages }, (_, i) => ({
+      type: 'page',
+      value: i + 1,
+    }));
+  }
+
+  if (currentPage <= 3) {
+    return [
+      { type: 'page', value: 1 },
+      { type: 'page', value: 2 },
+      { type: 'page', value: 3 },
+      { type: 'ellipsis', key: 'ellipsis-end' },
+      { type: 'page', value: totalPages },
+    ];
+  }
+
+  if (currentPage >= totalPages - 2) {
+    return [
+      { type: 'page', value: 1 },
+      { type: 'ellipsis', key: 'ellipsis-start' },
+      { type: 'page', value: totalPages - 3 },
+      { type: 'page', value: totalPages - 2 },
+      { type: 'page', value: totalPages - 1 },
+      { type: 'page', value: totalPages },
+    ];
+  }
+
+  return [
+    { type: 'page', value: 1 },
+    { type: 'ellipsis', key: 'ellipsis-start' },
+    { type: 'page', value: currentPage - 1 },
+    { type: 'page', value: currentPage },
+    { type: 'page', value: currentPage + 1 },
+    { type: 'ellipsis', key: 'ellipsis-end' },
+    { type: 'page', value: totalPages },
+  ];
+}
+
+const firstPagePath = basePath.split('/').slice(0, -1).join('/') || basePath;
+const prevPage = currentPage > 1 ? currentPage - 1 : null;
+const nextPage = currentPage < totalPages ? currentPage + 1 : null;
+const pages = buildPageList({ currentPage, totalPages });
+const prevHref =
+  prevPage === null
+    ? null
+    : prevPage === 1
+      ? firstPagePath
+      : `${basePath}/${prevPage}`;
+---
+
+<nav class="flex flex-col items-center gap-4 py-8" aria-label="ページネーション">
+  <div class="flex items-center gap-2">
+    {prevHref ? (
+      <a
+        href={prevHref}
+        class={cn(buttonVariants({ variant: 'outline' }), 'gap-1 pl-2.5')}
+      >
+        <Icons.chevronLeft className="size-4" />
+        <span class="sr-only">Previous</span>
+      </a>
+    ) : (
+      <div
+        class={cn(
+          buttonVariants({ variant: 'outline' }),
+          'pointer-events-none gap-1 pl-2.5 opacity-50'
+        )}
+      >
+        <Icons.chevronLeft className="size-4" />
+        <span class="sr-only">Previous</span>
+      </div>
+    )}
+
+    <div class="hidden items-center gap-2 md:flex">
+      {pages.map((item) =>
+        item.type === 'page' ? (
+          <a
+            href={
+              item.value === 1 ? firstPagePath : `${basePath}/${item.value}`
+            }
+            aria-current={item.value === currentPage ? 'page' : undefined}
+            class={cn(
+              'flex h-10 w-10 items-center justify-center rounded-full text-sm font-medium transition-all',
+              item.value === currentPage
+                ? 'bg-gradient-to-r from-primary to-blue-600 text-primary-foreground shadow-lg shadow-primary/20'
+                : 'bg-secondary/20 text-muted-foreground hover:border-primary/30 hover:bg-secondary/50 hover:text-primary'
+            )}
+          >
+            {item.value}
+          </a>
+        ) : (
+          <span
+            class="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground"
+          >
+            ...
+          </span>
+        )
+      )}
+    </div>
+
+    <div class="md:hidden">
+      <div class="flex h-10 items-center justify-center rounded-full border border-border bg-secondary/20 px-4 text-sm font-medium text-muted-foreground">
+        Page {currentPage} of {totalPages}
+      </div>
+    </div>
+
+    {nextPage ? (
+      <a
+        href={`${basePath}/${nextPage}`}
+        class={cn(buttonVariants({ variant: 'outline' }), 'gap-1 pr-2.5')}
+      >
+        <span class="sr-only">Next</span>
+        <Icons.chevronRight className="size-4" />
+      </a>
+    ) : (
+      <div
+        class={cn(
+          buttonVariants({ variant: 'outline' }),
+          'pointer-events-none gap-1 pr-2.5 opacity-50'
+        )}
+      >
+        <span class="sr-only">Next</span>
+        <Icons.chevronRight className="size-4" />
+      </div>
+    )}
+  </div>
+</nav>

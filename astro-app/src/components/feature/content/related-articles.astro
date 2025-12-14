@@ -1,0 +1,28 @@
+---
+import type { RelatedPost } from '@/lib/recommend';
+import BlogCard from './blog-card.astro';
+
+type Props = {
+  relatedPosts: RelatedPost[];
+};
+
+const { relatedPosts } = Astro.props;
+
+/**
+ * 関連記事を表示するコンポーネント
+ *
+ * TF-IDF + Cosine Similarityで計算された関連記事のリストを
+ * グリッドレイアウトで表示します。
+ */
+---
+
+{relatedPosts.length > 0 && (
+  <section class='mt-16 border-t pt-12'>
+    <h2 class='mb-8 text-2xl font-bold'>関連記事</h2>
+    <div class='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
+      {relatedPosts.map(({ post }) => (
+        <BlogCard data={post} />
+      ))}
+    </div>
+  </section>
+)}

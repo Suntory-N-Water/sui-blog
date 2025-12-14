@@ -1,0 +1,150 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { siteConfig } from '@/config/site';
+import { absoluteUrl } from '@/lib/utils';
+
+const aboutDescription = 'プロフィール、経歴、SNSや連絡先のリンクをまとめたページです。';
+const canonicalUrl = absoluteUrl('/about');
+
+const careerData = [
+  { id: '2021-03', date: '2021.03', description: '私立4年制大学を卒業。卒業研究ではPythonを活用し、コロナ禍における買い占め現象のデータ分析を行う。在学中に個人事業主として開業し、フリマアプリを活用した販売を行う。' },
+  { id: '2021-04', date: '2021.03 - 2022.02', description: '大学卒業後、個人事業主としての活動を本格的に開始。この期間にPythonを独学で勉強し、WebスクレイピングやPyAutoGUIを使った業務効率化ツールを開発。' },
+  { id: '2022-03', date: '2022.02 - 2022.10', description: '今後絶対に選ばないであろう異業種の経験を積むため、薬品の製造工場に就職。しかし同年7月に椎間板ヘルニアを発症し動けなくなってしまったため10月に退職。' },
+  { id: '2022-11', date: '2022.11 - 2023.03', description: '椎間板ヘルニアの回復後、友人の紹介で都内のSES企業に就職し、小売業界の会計システムプロジェクトに結合テストから参加。業界未経験ながらExcelとPythonを活用した業務効率化に取り組む。' },
+  { id: '2023-03', date: '2023.03 - 2025.03', description: '案件変更を経て、小売業界のクラウド移行プロジェクトに参画。大規模開発ながら要件定義からリリースまでを一貫して経験。' },
+  { id: '2025-04', date: '2025.04 - Present', description: '2年間勤めたSES企業を退職し、SaaSの自社開発企業へ転職予定。' },
+];
+---
+
+<BaseLayout title="About" description={aboutDescription} ogImage={siteConfig.ogImage} canonicalUrl={canonicalUrl}>
+  <div data-pagefind-ignore class="mx-auto max-w-4xl px-6 py-12 md:py-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <section class="mb-24 grid grid-cols-1 gap-12 md:grid-cols-[1fr_auto] md:items-center">
+      <div class="order-2 space-y-6 md:order-1">
+        <h1 class="text-4xl font-bold tracking-tight md:text-5xl">
+          <span class="bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent">Hello, I'm Sui.</span>
+        </h1>
+        <div class="space-y-4 text-lg leading-relaxed text-muted-foreground">
+          <p class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            東京都で活動するエンジニア
+          </p>
+          <p>名前の由来は、目の前にあった<span class="mx-1 border-b-2 border-primary/30 font-bold text-foreground">サントリーの天然水</span>から命名しています。</p>
+          <p><span class="font-semibold text-foreground">「健康第一」</span>をモットーにしており、三年以上ほぼ毎日朝活🌅を継続中です。</p>
+        </div>
+      </div>
+      <div class="order-1 flex justify-center md:order-2">
+        <div class="relative">
+          <div class="absolute inset-0 animate-pulse rounded-full bg-primary/20 blur-[50px]"></div>
+          <div class="relative h-40 w-40 overflow-hidden rounded-full border-4 border-background bg-muted shadow-xl md:h-48 md:w-48">
+            <img src="https://avatars.githubusercontent.com/u/116779921?v=4" alt="sui avatar" width="192" height="192" class="h-full w-full object-cover transition-transform duration-500 hover:scale-110" loading="eager" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-24">
+      <h2 class="mb-8 flex items-center gap-3 text-2xl font-bold">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        Likes
+      </h2>
+      <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+        <Card client:load className="group border-border/50 bg-secondary/20 transition-all hover:bg-secondary/40 hover:border-primary/30">
+          <CardContent client:load className="flex flex-col items-center justify-center gap-3 p-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground transition-transform duration-300 group-hover:scale-110 group-hover:text-primary"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" x2="6" y1="2" y2="4"/><line x1="10" x2="10" y1="2" y2="4"/><line x1="14" x2="14" y1="2" y2="4"/></svg>
+            <span class="text-sm font-medium">Coffee</span>
+          </CardContent>
+        </Card>
+        <Card client:load className="group border-border/50 bg-secondary/20 transition-all hover:bg-secondary/40 hover:border-primary/30">
+          <CardContent client:load className="flex flex-col items-center justify-center gap-3 p-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground transition-transform duration-300 group-hover:scale-110 group-hover:text-primary"><path d="M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07 1 2.24 1 3.44C21 17.9 16.97 21 12 21s-9-3-9-7.56c0-1.25.5-2.4 1-3.44 0 0-1.89-6.42-.5-7 1.39-.58 4.72.23 6.5 2.23A9.04 9.04 0 0 1 12 5Z"/><path d="M8 14v.5"/><path d="M16 14v.5"/><path d="M11.25 16.25h1.5L12 17l-.75-.75Z"/></svg>
+            <span class="text-sm font-medium">Cats</span>
+          </CardContent>
+        </Card>
+        <Card client:load className="group border-border/50 bg-secondary/20 transition-all hover:bg-secondary/40 hover:border-primary/30">
+          <CardContent client:load className="flex flex-col items-center justify-center gap-3 p-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground transition-transform duration-300 group-hover:scale-110 group-hover:text-primary"><rect width="16" height="16" x="4" y="3" rx="2"/><path d="M4 11h16"/><path d="M12 3v8"/><path d="m8 19-2 3"/><path d="m18 22-2-3"/><path d="M8 15h0"/><path d="M16 15h0"/></svg>
+            <span class="text-sm font-medium">Travel</span>
+          </CardContent>
+        </Card>
+        <Card client:load className="group border-border/50 bg-secondary/20 transition-all hover:bg-secondary/40 hover:border-primary/30">
+          <CardContent client:load className="flex flex-col items-center justify-center gap-3 p-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground transition-transform duration-300 group-hover:scale-110 group-hover:text-primary"><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
+            <span class="text-sm font-medium">Anime</span>
+          </CardContent>
+        </Card>
+        <Card client:load className="group border-border/50 bg-secondary/20 transition-all hover:bg-secondary/40 hover:border-primary/30">
+          <CardContent client:load className="flex flex-col items-center justify-center gap-3 p-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-pink-500 transition-transform duration-300 group-hover:scale-110"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            <span class="text-sm font-medium">Inori Minase</span>
+          </CardContent>
+        </Card>
+      </div>
+    </section>
+
+    <section class="mb-24">
+      <h2 class="mb-10 flex items-center gap-3 text-2xl font-bold">
+        <span class="relative flex h-3 w-3">
+          <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
+          <span class="relative inline-flex h-3 w-3 rounded-full bg-primary"></span>
+        </span>
+        Career History
+      </h2>
+      <div class="space-y-0">
+        {careerData.map((career, index) => (
+          <div class="relative pb-12 last:pb-0">
+            {index !== careerData.length - 1 && <div class="absolute left-[7px] top-2 h-full w-[2px] bg-border"></div>}
+            <div class="absolute left-0 top-2 h-4 w-4 rounded-full border-2 border-primary bg-background"></div>
+            <div class="pl-10 md:flex md:gap-6">
+              <div class="mb-2 shrink-0 font-mono text-sm font-bold text-primary md:mb-0 md:w-36 md:pt-1.5">{career.date}</div>
+              <Card client:load className="w-full transition-all hover:border-primary/40 hover:shadow-md">
+                <CardContent client:load className="p-4 text-sm leading-relaxed text-muted-foreground">{career.description}</CardContent>
+              </Card>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="grid gap-8 md:grid-cols-2">
+      <div class="space-y-4">
+        <h2 class="text-xl font-bold">Socials</h2>
+        <div class="grid gap-3">
+          <Button client:load variant="outline" className="flex h-auto w-full items-center justify-between p-4 hover:bg-secondary/50 hover:text-primary" asChild>
+            <a href={siteConfig.links.twitter} target="_blank" rel="noopener noreferrer">
+              <div class="flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+                <span class="font-semibold">X (Twitter)</span>
+              </div>
+              <div class="flex items-center gap-2 text-muted-foreground">
+                <span class="text-xs font-normal">Suntory_N_Water</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+              </div>
+            </a>
+          </Button>
+          <Button client:load variant="outline" className="flex h-auto w-full items-center justify-between p-4 hover:bg-secondary/50 hover:text-primary" asChild>
+            <a href={siteConfig.links.github} target="_blank" rel="noopener noreferrer">
+              <div class="flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+                <span class="font-semibold">GitHub</span>
+              </div>
+              <div class="flex items-center gap-2 text-muted-foreground">
+                <span class="text-xs font-normal">Suntory-N-Water</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+              </div>
+            </a>
+          </Button>
+        </div>
+      </div>
+      <div class="space-y-4">
+        <h2 class="text-xl font-bold">Contact</h2>
+        <Card client:load className="bg-card/50 backdrop-blur-sm">
+          <CardContent client:load className="flex h-full flex-col justify-center p-6">
+            <p class="text-muted-foreground">お問い合わせは<Button client:load variant="link" className="h-auto p-0 px-1 text-base font-semibold text-primary underline-offset-4" asChild><a href={siteConfig.links.twitter} target="_blank" rel="noopener noreferrer">X(Twitter)のDM</a></Button>までお願いします。</p>
+          </CardContent>
+        </Card>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
