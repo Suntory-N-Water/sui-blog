@@ -2,6 +2,7 @@ import type { ArticleSection } from '@/types/diagram';
 import { ActionSection } from './action-section';
 import { CoreMessageSection } from './core-message-section';
 import { FlowChartSection } from './flow-chart-section';
+import { GroupedContentSection } from './grouped-content-section';
 import { HeroSection } from './hero-section';
 import { ListStepsSection } from './list-steps-section';
 import { ProblemSection } from './problem-section';
@@ -37,6 +38,8 @@ export default function DynamicPageBuilder({ data }: DynamicPageBuilderProps) {
             return <ListStepsSection key={key} data={section} />;
           case 'flow_chart':
             return <FlowChartSection key={key} data={section} />;
+          case 'grouped_content':
+            return <GroupedContentSection key={key} data={section} />;
           default:
             return null;
         }

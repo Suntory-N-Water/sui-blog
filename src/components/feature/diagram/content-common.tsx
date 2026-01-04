@@ -1,38 +1,10 @@
-import {
-  AlertCircle,
-  ArrowDown,
-  ArrowRight,
-  CheckCircle,
-  Flag,
-  HelpCircle,
-  Lightbulb,
-  MessageCircle,
-  PenTool,
-  Search,
-  Target,
-  Users,
-  Zap,
-} from 'lucide-react';
+import { HelpCircle } from 'lucide-react';
 import React from 'react';
-import { COLORS, type ColorKey, type IconName } from '@/types/diagram';
+import { COLORS, type ColorKey } from '@/types/diagram';
+import { ICON_MAP, type IconName } from './icon-config';
 
-function getIconComponent(name: IconName): React.ElementType {
-  const icons: Record<string, React.ElementType> = {
-    alert: AlertCircle,
-    check: CheckCircle,
-    help: HelpCircle,
-    arrow: ArrowDown,
-    lightbulb: Lightbulb,
-    zap: Zap,
-    message: MessageCircle,
-    target: Target,
-    users: Users,
-    search: Search,
-    pen: PenTool,
-    flag: Flag,
-    arrowRight: ArrowRight,
-  };
-  return icons[name] || HelpCircle;
+function getIconComponent(name: IconName) {
+  return ICON_MAP[name] || HelpCircle;
 }
 
 type IconProps = {

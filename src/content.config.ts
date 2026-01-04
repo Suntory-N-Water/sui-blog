@@ -1,22 +1,9 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
+import { ICON_NAMES } from './components/feature/diagram/icon-config';
 
-// IconName型のZodスキーマ
-const IconNameSchema = z.enum([
-  'alert',
-  'check',
-  'help',
-  'arrow',
-  'lightbulb',
-  'zap',
-  'message',
-  'target',
-  'users',
-  'search',
-  'pen',
-  'flag',
-  'arrowRight',
-]);
+// IconName型のZodスキーマ（icon-config.tsのICON_NAMESから直接生成）
+const IconNameSchema = z.enum(ICON_NAMES);
 
 // ColorKey型のZodスキーマ
 const ColorKeySchema = z.enum(['GOLD', 'RED']);
@@ -41,6 +28,8 @@ export const ProblemCardSchema = z.object({
 
 export const ProblemSectionSchema = z.object({
   type: z.literal('problem'),
+  variant: z.enum(['highlight', 'simple']).default('simple').optional(),
+  icon: IconNameSchema.optional(),
   title: z.string(),
   introText: z.string(),
   cards: z.array(ProblemCardSchema),
@@ -58,14 +47,18 @@ export const ComparisonItemSchema = z.object({
 
 export const CoreMessageSectionSchema = z.object({
   type: z.literal('core_message'),
+  variant: z.enum(['highlight', 'simple']).default('highlight').optional(),
+  icon: IconNameSchema.optional(),
   title: z.string(),
   mainMessage: z.string(),
   comparisons: z.array(ComparisonItemSchema).optional(),
-  coreHighlight: z.object({
-    title: z.string(),
-    text: z.string(),
-    accentColor: ColorKeySchema.optional(),
-  }),
+  coreHighlight: z
+    .object({
+      title: z.string(),
+      text: z.string(),
+      accentColor: ColorKeySchema.optional(),
+    })
+    .optional(),
 });
 
 // 4. StepsSection
@@ -158,6 +151,35 @@ export const FlowChartSectionSchema = z.object({
   flows: z.array(FlowItemSchema),
 });
 
+// カード単体の定義
+export const GroupCardItemSchema = z.object({
+  title: z.string(),
+  text: z.string(), // 箇条書きの場合は改行コードで表現
+  isHighlight: z.boolean().optional(),
+  accentColor: ColorKeySchema.optional(),
+  bgColor: z.enum(['white', 'muted', 'gray']).default('white').optional(),
+});
+
+// グループ（サブセクション）の定義
+export const ContentGroupSchema = z.object({
+  title: z.string().optional(),
+  description: z.string().optional(),
+  cards: z.array(GroupCardItemSchema),
+  bgColor: z.enum(['white', 'muted']).default('white').optional(),
+  isHighlight: z.boolean().optional(),
+  footerText: z.string().optional(),
+});
+
+// 新しいセクション全体の定義
+export const GroupedContentSectionSchema = z.object({
+  type: z.literal('grouped_content'),
+  title: z.string(),
+  introText: z.string().optional(),
+  icon: IconNameSchema.optional(),
+  sectionBgColor: z.enum(['white', 'muted']).default('muted').optional(),
+  groups: z.array(ContentGroupSchema),
+});
+
 // Union型で全セクションをまとめる
 export const DiagramSectionSchema = z.discriminatedUnion('type', [
   HeroSectionSchema,
@@ -169,9 +191,8 @@ export const DiagramSectionSchema = z.discriminatedUnion('type', [
   ScoreComparisonSectionSchema,
   ListStepsSectionSchema,
   FlowChartSectionSchema,
+  GroupedContentSectionSchema,
 ]);
-
-// ===== Blog Collection =====
 
 const blog = defineCollection({
   loader: glob({

@@ -1,9 +1,9 @@
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
 import type { ListStepsSectionData } from '@/types/diagram';
 import { FormattedText, Icon } from './content-common';
 
 export function ListStepsSection({ data }: { data: ListStepsSectionData }) {
-  // TODO: バッジカラー対応 (現状は primary/text-primary で統一)
-
   return (
     <div className='bg-muted'>
       <div className='w-full sm:max-w-7xl mx-auto p-4 sm:p-8 lg:p-12'>
@@ -27,14 +27,14 @@ export function ListStepsSection({ data }: { data: ListStepsSectionData }) {
 
           <div className='flex flex-col justify-center items-center space-y-6 w-full sm:max-w-4xl mx-auto mb-8'>
             {data.steps.map((step, i) => (
-              <div
+              <Card
                 key={i}
-                className='w-full p-4 sm:p-6 bg-background rounded-lg border-2 border-primary'
+                className='w-full p-4 sm:p-6 bg-background border-2 border-primary shadow-none'
               >
                 <div className='flex items-start'>
-                  <div className='flex items-center justify-center w-10 h-10 rounded-full text-primary-foreground font-bold text-lg mr-4 shrink-0 bg-primary'>
+                  <Badge className='flex items-center justify-center w-10 h-10 rounded-full font-bold text-lg mr-4 shrink-0 px-0 py-0'>
                     {step.badge}
-                  </div>
+                  </Badge>
                   <div className='text-left w-full'>
                     <p className='text-sm sm:text-base font-bold mb-2 text-primary'>
                       {step.title}
@@ -51,12 +51,12 @@ export function ListStepsSection({ data }: { data: ListStepsSectionData }) {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
 
           {(data.summaryTitle || data.summaryText) && (
-            <div className='bg-background p-6 sm:p-8 rounded-sm border-2 border-primary'>
+            <Card className='bg-background p-6 sm:p-8 rounded-sm border-2 border-primary shadow-none'>
               {data.summaryTitle && (
                 <p className='text-lg sm:text-xl font-bold mb-4 text-primary'>
                   {data.summaryTitle}
@@ -67,7 +67,7 @@ export function ListStepsSection({ data }: { data: ListStepsSectionData }) {
                   <FormattedText text={data.summaryText} />
                 </p>
               )}
-            </div>
+            </Card>
           )}
         </div>
       </div>

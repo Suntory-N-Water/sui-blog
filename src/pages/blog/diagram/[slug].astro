@@ -57,9 +57,8 @@ const canonicalUrl = absoluteUrl(`/blog/diagram/${post.id}`);
 ---
 
 <BaseLayout
-  title={post.data.title}
-  description={post.data.description}
-  ogImage={ogImageUrl}
+  title=`${post.data.title} - 図解`
+  description=`ブログ [${post.data.title}] で解説した内容の図解`
   canonicalUrl={canonicalUrl}
   ogType='article'
   article={{

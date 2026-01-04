@@ -1,4 +1,5 @@
 import React from 'react';
+import { Card } from '@/components/ui/card';
 import type { FlowChartSectionData } from '@/types/diagram';
 import { Icon, resolveColor } from './content-common';
 
@@ -13,22 +14,21 @@ export function FlowChartSection({ data }: { data: FlowChartSectionData }) {
             </p>
           )}
 
-          <div className='flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8'>
+          <div className='flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-8'>
             {data.flows.map((item, i) => {
               const isLast = i === data.flows.length - 1;
               const color = resolveColor(item.accentColor);
 
               return (
                 <React.Fragment key={i}>
-                  <div
-                    className={`p-4 sm:p-6 rounded-lg w-full sm:w-auto ${
+                  <Card
+                    className={`p-4 sm:p-6 w-full lg:w-auto shadow-none ${
                       item.highlight
                         ? 'bg-primary border-primary'
                         : 'bg-background border-2'
                     }`}
                     style={{
-                      borderColor:
-                        color || (item.highlight ? undefined : undefined),
+                      borderColor: item.highlight ? undefined : color,
                     }}
                   >
                     <p
@@ -43,11 +43,15 @@ export function FlowChartSection({ data }: { data: FlowChartSectionData }) {
                         {item.subLabel}
                       </p>
                     )}
-                  </div>
+                  </Card>
 
                   {!isLast && (
-                    <div className='transform sm:rotate-0 rotate-90 text-primary'>
-                      <Icon name='arrowRight' size={32} />
+                    <div className='text-primary'>
+                      <Icon
+                        name='arrowRight'
+                        size={32}
+                        className='rotate-90 lg:rotate-0'
+                      />
                     </div>
                   )}
                 </React.Fragment>

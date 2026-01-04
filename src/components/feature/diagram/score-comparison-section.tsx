@@ -1,3 +1,4 @@
+import { Card } from '@/components/ui/card';
 import type { ScoreComparisonSectionData } from '@/types/diagram';
 import { Icon, resolveColor } from './content-common';
 
@@ -31,9 +32,9 @@ export function ScoreComparisonSection({
             {data.scores.map((item, i) => {
               const color = resolveColor(item.accentColor);
               return (
-                <div
+                <Card
                   key={i}
-                  className='bg-background p-6 rounded-lg border-2 border-border'
+                  className='bg-background p-6 border-2 border-border shadow-none'
                 >
                   <div className='flex items-center justify-center mb-4'>
                     <h3 className='font-bold text-lg text-muted-foreground'>
@@ -73,7 +74,7 @@ export function ScoreComparisonSection({
                       }}
                     ></div>
                   </div>
-                </div>
+                </Card>
               );
             })}
           </div>

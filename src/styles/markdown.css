@@ -247,3 +247,68 @@
 .markdown-content .rlc-url-container {
   @apply mt-2 text-xs text-muted-foreground;
 }
+
+/* Details/Summary (Collapsible) styles */
+.markdown-content details {
+  @apply my-6 overflow-hidden rounded-lg border border-border/50 bg-muted/30 shadow-sm transition-all duration-200;
+}
+
+.markdown-content details[open] {
+  @apply shadow-md;
+}
+
+.markdown-content details > summary {
+  @apply cursor-pointer select-none px-4 py-3 font-semibold text-foreground transition-colors duration-150 hover:bg-muted/50;
+  list-style: none;
+}
+
+/* Remove default marker */
+.markdown-content details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.markdown-content details > summary::marker {
+  display: none;
+}
+
+/* Custom arrow indicator */
+.markdown-content details > summary {
+  @apply relative pl-10;
+}
+
+.markdown-content details > summary::before {
+  content: "";
+  @apply absolute left-4 top-1/2 size-0 -translate-y-1/2 border-l-[6px] border-r-0 border-t-[5px] border-b-[5px] border-solid border-l-foreground/60 border-r-transparent border-t-transparent border-b-transparent transition-transform duration-200;
+}
+
+.markdown-content details[open] > summary::before {
+  @apply rotate-90;
+}
+
+/* Content area */
+.markdown-content details > summary ~ * {
+  @apply px-4 pb-4;
+}
+
+/* First element after summary should have top padding */
+.markdown-content details > summary + * {
+  @apply pt-4;
+}
+
+/* Nested elements inside details maintain normal markdown styles */
+.markdown-content details p {
+  @apply leading-7 text-foreground/90 [&:not(:first-child)]:mt-4;
+}
+
+.markdown-content details pre {
+  @apply my-4;
+}
+
+.markdown-content details code {
+  @apply break-words;
+}
+
+/* Dark mode hover enhancement */
+.dark .markdown-content details > summary:hover {
+  @apply bg-muted/30;
+}

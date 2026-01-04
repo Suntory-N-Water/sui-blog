@@ -1,4 +1,6 @@
 import React from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
 import type { StepsSectionData } from '@/types/diagram';
 import { FormattedText, Icon } from './content-common';
 
@@ -29,15 +31,15 @@ export function StepsSection({ data }: { data: StepsSectionData }) {
 
               return (
                 <React.Fragment key={i}>
-                  <div
-                    className={`w-full p-6 sm:p-8 rounded-lg ${isHighlight ? 'bg-primary' : 'bg-background border-2 border-primary'}`}
+                  <Card
+                    className={`w-full p-6 sm:p-8 shadow-none ${isHighlight ? 'bg-primary border-primary' : 'bg-background border-2 border-primary'}`}
                   >
                     <div className='flex items-center justify-center mb-4'>
-                      <div
-                        className={`w-10 h-10 shrink-0 rounded-full flex items-center justify-center font-bold mr-3 text-lg ${isHighlight ? 'bg-background text-primary' : 'bg-primary text-primary-foreground'}`}
+                      <Badge
+                        className={`w-10 h-10 shrink-0 rounded-full flex items-center justify-center font-bold mr-3 text-lg px-0 py-0 ${isHighlight ? 'bg-background text-primary' : 'bg-primary text-primary-foreground'}`}
                       >
                         {step.number}
-                      </div>
+                      </Badge>
                       <h3
                         className={`font-bold text-lg sm:text-xl ${isHighlight ? 'text-primary-foreground' : 'text-primary'}`}
                       >
@@ -89,7 +91,7 @@ export function StepsSection({ data }: { data: StepsSectionData }) {
                         )}
                       </div>
                     )}
-                  </div>
+                  </Card>
 
                   {!isLast && (
                     <div className='text-primary'>
