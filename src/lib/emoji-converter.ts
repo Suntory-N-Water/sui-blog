@@ -76,6 +76,24 @@ async function generateFluentEmojiUrl({
 }
 
 /**
+ * 絵文字を正規化する
+ *
+ * 異体字セレクタ（Variation Selector-16: U+FE0F）を削除して、
+ * ライブラリに登録されている形式に統一します。
+ *
+ * MacOSなどのOSでは絵文字に自動的にU+FE0Fが付加されることがありますが、
+ * unicode-emoji-jsonライブラリには基本形（U+FE0Fなし）で登録されているため、
+ * この正規化処理が必要です。
+ *
+ * @param emoji - 正規化する絵文字文字列
+ * @returns 正規化された絵文字文字列
+ */
+function normalizeEmoji(emoji: string): string {
+  // Variation Selector-16 (U+FE0F) を削除
+  return emoji.replace(/\uFE0F/g, '');
+}
+
+/**
  * 絵文字をFluentUI EmojiのURLに変換する
  *
  * この関数は絵文字文字列を受け取り、対応するFluentUI EmojiのURLを返します。
@@ -89,8 +107,11 @@ export async function convertEmojiToFluentUrl({
 }: {
   icon: string;
 }): Promise<string> {
+  // 絵文字を正規化（異体字セレクタを削除）
+  const normalizedIcon = normalizeEmoji(icon);
+
   // 絵文字データからメタデータを取得
-  const emojiInfo = emojiData[icon as keyof typeof emojiData];
+  const emojiInfo = emojiData[normalizedIcon as keyof typeof emojiData];
 
   // 絵文字データが見つからない場合は元の文字列を返す
   if (!emojiInfo) {

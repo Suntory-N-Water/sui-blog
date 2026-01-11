@@ -1,6 +1,5 @@
 ---
 trigger: always_on
-glob: 
 description: "MCPサーバー (Context7, Kiri) の使用方法と環境ごとのコマンド権限を定義します。"
 ---
 
@@ -20,16 +19,3 @@ description: "MCPサーバー (Context7, Kiri) の使用方法と環境ごとの
   - `mcp__kiri__context_pnpmdle`: 一般的なコンテキスト収集用 (`compact: true` を使用)。
   - `mcp__kiri__files_search`: 具体的なキーワード検索用。
   - `mcp__kiri__deps_closure`: 依存関係 (入/出) の分析用。
-
-## コマンド権限
-プロジェクトの安全性設定に基づきます：
-
-- **許可**:
-  - `ls`, `cat`, `grep`, `find` (読み取り操作)
-  - `git status`, `git log`, `git diff`
-  - `bun run format:check`, `bun run lint`
-  - `gh pr list`, `gh pr view`
-
-- **拒否**:
-  - `rm -rf` (細心の注意を払うか、ユーザーに確認する)
-  - `cat .env`, `cat .credentials` (機密ファイル)

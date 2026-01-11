@@ -27,74 +27,25 @@
 - OGP画像も静的生成し、キャッシュ最適化
 - Pagefindインデックスはpostbuildスクリプトで生成
 
-### Markdownパイプライン
+## ファイル構成
 ```
-remark (Markdown AST)
-  → rehype (HTML AST)
-  → カスタムプラグイン (コピーボタン、Mermaid、リンクカード)
-  → HTML生成
-```
-
-## MCP使い分けガイド
-
-### Context7 MCP - ライブラリドキュメント取得
-**最新のライブラリドキュメント取得に使用 (有効化されていない場合あり)**
-
-```typescript
-// ライブラリIDを解決
-mcp__context7__resolve-library-id
-library_name: 'rehype-pretty-code'
-
-// ドキュメント取得
-mcp__context7__get-library-docs
-library_id: 'resolved-library-id'
+src/
+├── components/   # Reactコンポーネント
+├── config/       # 設定ファイル (site.ts, tag-slugs.ts等)
+├── constants/    # 定数定義
+├── layouts/      # Astroレイアウト
+├── lib/          # ユーティリティ関数
+├── pages/        # Astroページ
+├── styles/       # グローバルスタイル
+└── types/        # 型定義
 ```
 
-### Kiri MCP - コードのRead
+## 記事管理
 
-**1-1. コンテキスト自動取得（推奨）**
-```
-mcp__kiri__context_pnpmdle
-goal: 'user authentication, login flow, JWT validation'
-limit: 10
-compact: true
-```
-- タスクに関連するコードスニペットを自動でランク付けして取得
-- `goal`には具体的なキーワードを使用（抽象的な動詞は避ける）
-- `compact: true`でトークン消費を95%削減
+- 記事ファイル: `contents/blog/*.md`
+- フロントマター形式
+- タグ定義: `src/config/tag-slugs.ts` の `TAG_SLUG_MAP`
 
-**1-2. 具体的なキーワード検索**
-```
-mcp__kiri__files_search
-query: 'validateToken'
-lang: 'typescript'
-path_prefix: 'src/auth/'
-```
-- 関数名、クラス名、エラーメッセージなど具体的な識別子で検索
-- 広範な調査には`context_pnpmdle`を使用
-
-**1-3. 依存関係の調査**
-```
-mcp__kiri__deps_closure
-path: 'src/auth/login.ts'
-direction: 'inbound'
-max_depth: 3
-```
-- 影響範囲分析（inbound）や依存チェーン（outbound）を取得
-- リファクタリング時の影響調査に最適
-
-**1-4. コードの詳細取得**
-```
-mcp__kiri__snippets_get
-path: 'src/auth/login.ts'
-```
-- ファイルパスがわかっている場合に使用
-- シンボル境界を認識して適切なセクションを抽出
-
-## gh コマンドの使用
-GitHub にある情報を取得する場合は `gh` コマンドを使用する
-
-### ユースケース例
-
-- Issue, ソースコード, コメントの取得
-- PR の発行、Issue の作成
+## 図解の指示
+- ユーザーに何かを説明する際は、簡単な図解を用いてわかりやすく説明すること
+- ASCII アートやテキストベースの図を活用して視覚的に理解を助けること

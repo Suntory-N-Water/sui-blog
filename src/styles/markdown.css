@@ -5,7 +5,7 @@
 }
 
 [data-rehype-pretty-code-fragment] code {
-  @apply grid min-w-full break-words rounded-none border-0 bg-transparent p-0;
+  @apply grid min-w-full wrap-break-word rounded-none border-0 bg-transparent p-0;
   counter-reset: line;
   box-decoration-break: clone;
 }
@@ -114,7 +114,7 @@
 }
 
 .markdown-content p:not(.group p) {
-  @apply leading-7 text-foreground/90 [&:not(:first-child)]:mt-4;
+  @apply leading-7 text-foreground/90 not-first:mt-4;
 }
 
 .markdown-content ul {
@@ -291,7 +291,7 @@
 
 /* Nested elements inside details maintain normal markdown styles */
 .markdown-content details p {
-  @apply leading-7 text-foreground/90 [&:not(:first-child)]:mt-4;
+  @apply leading-7 text-foreground/90 not-first:mt-4;
 }
 
 .markdown-content details pre {
@@ -299,10 +299,43 @@
 }
 
 .markdown-content details code {
-  @apply break-words;
+  @apply wrap-break-word;
 }
 
 /* Dark mode hover enhancement */
 .dark .markdown-content details > summary:hover {
   @apply bg-muted/30;
+}
+
+/* Footnotes section */
+.markdown-content [data-footnotes] {
+  @apply mt-4 border-t border-border/50 pt-4;
+}
+
+.markdown-content [data-footnotes] ol {
+  @apply my-4 ml-0 list-none;
+  counter-reset: footnote-counter;
+}
+
+.markdown-content [data-footnotes] li {
+  @apply relative mt-2 pl-6 text-sm text-foreground/70;
+  counter-increment: footnote-counter;
+}
+
+.markdown-content [data-footnotes] li::before {
+  content: counter(footnote-counter) ".";
+  @apply absolute left-0 text-muted-foreground;
+}
+
+.markdown-content [data-footnotes] li p {
+  @apply inline text-sm leading-relaxed;
+}
+
+.markdown-content [data-footnote-backref] {
+  @apply ml-2 text-primary no-underline hover:underline;
+}
+
+/* Footnote references in text */
+.markdown-content sup a[data-footnote-ref] {
+  @apply text-primary no-underline hover:underline;
 }

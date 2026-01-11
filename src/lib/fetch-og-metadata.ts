@@ -178,23 +178,28 @@ async function fetchOGDataDirect(url: string): Promise<Partial<OGData>> {
     const html = await response.text();
 
     const getMetaContent = (property: string): string | undefined => {
-      const regex1 = new RegExp(
-        `<meta[^>]+(?:property|name)="${property}"[^>]+content="([^"]+)"`,
+      // metaタグ全体を抽出してから、その中でcontentを探す
+      // 引用符あり・なし両方に対応
+      const metaTagRegex = new RegExp(
+        `<meta[^>]*(?:property|name)\\s*=\\s*(?:["'])?${property}(?:["'])?[^>]*>`,
         'i',
       );
-      const match1 = regex1.exec(html)?.[1];
-      if (match1) {
-        return match1;
+      const metaTag = metaTagRegex.exec(html)?.[0];
+
+      if (metaTag) {
+        // content属性も引用符あり・なし両方に対応
+        const contentRegex = /content\s*=\s*(?:["']([^"']+)["']|([^\s>]+))/i;
+        const contentMatch = contentRegex.exec(metaTag);
+        if (contentMatch) {
+          return contentMatch[1] || contentMatch[2];
+        }
       }
 
-      const regex2 = new RegExp(
-        `<meta[^>]+content="([^"]+)"[^>]+(?:property|name)="${property}"`,
-        'i',
-      );
-      return regex2.exec(html)?.[1];
+      return undefined;
     };
 
-    const titleMatch = /<title>(.*?)<\/title>/i.exec(html);
+    const titleMatch =
+      /<title[^>]*>(.*?)<\/title>/i.exec(html) || /<title[^>]*\/>/i.exec(html);
 
     return {
       title: getMetaContent('og:title') || titleMatch?.[1] || '',
