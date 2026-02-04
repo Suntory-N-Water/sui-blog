@@ -67,6 +67,10 @@
           {
             "type": "command",
             "command": "bun run --silent -i ~/.claude/scripts/typescript/multi-command-check.ts -c format,lint:ai,type-check:ai"
+          },
+          {
+            "type": "command",
+            "command": "bun run --silent -i ~/.claude/scripts/typescript/fix-brackets.ts"
           }
         ]
       }
@@ -92,9 +96,10 @@
       }
     ]
   },
-  "statusLine": {
-    "type": "command",
-    "command": "node ~/.claude/scripts/statusline.js"
+  "enabledPlugins": {
+    "dig@kuu-marketplace": true,
+    "frontend-design@claude-plugins-official": true,
+    "claude-mem@thedotmack": true
   },
   "plansDirectory": ".claude/plans"
 }

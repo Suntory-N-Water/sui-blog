@@ -205,17 +205,20 @@ https://github.com/nrwl/nx/security/advisories/GHSA-cxm3-wv7p-598c
 
 ### Renovate の基本設定
 
-Renovate の基本設定を示します。クールダウン期間とメジャーバージョンの除外を含みます。
+週1回の定期実行で、3日以上経過したパッケージだけを更新する設定です。
 
 ```json .github/renovate.json
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "minimumReleaseAge": "3 days",
+  "dependencyDashboard": true,
+  "dependencyDashboardApproval": false,
   "packageRules": [
     {
-      "description": "Patch, Minor は自動マージ",
-      "matchUpdateTypes": ["patch", "minor"],
+      "description": "週1回すべてのPatch/Minor/Pin/Digestを1つのPRにまとめる",
+      "groupName": "all non-major dependencies",
+      "matchUpdateTypes": ["patch", "minor", "pin", "digest"],
+      "schedule": ["before 5am on monday"],
       "automerge": true,
       "labels": ["automerge", "dependencies"]
     },
@@ -235,8 +238,9 @@ Renovate の基本設定を示します。クールダウン期間とメジャ�
 }
 ```
 
-この設定により、パッケージが公開されてから 3 日間は自動更新されず、その期間にコミュニティが検証を実施します。
-また、破壊的変更を含むメジャーバージョンは自動更新の対象外となるため、判断が必要なものは人間が対応し、それ以外は機械的に処理されます。
+パッケージの更新は週1回、月曜に実行します。木曜以前のパッケージなら3日経過済みですので、実質的にクールダウン期間を確保できます。金・土・日リリースは次週まで待ちます。ここで注意するところは `minimumReleaseAge: "3 days"` をグローバルにグループ化すると、新パッケージが追加されるたびに待機期間がリセットされるからです。
+
+月曜に lucide-react、水曜に @biomejs/biome が更新された場合、lucide-react も巻き込まれて再度待機することになります。毎日更新があると、3日待機が完了しません。
 
 ### 自動マージの設定
 

@@ -7,12 +7,12 @@
     ":enablePreCommit",
     "helpers:pinGitHubActionDigests"
   ],
-  "description": "Patch/Minorは3日待機後CI成功で自動マージ。脆弱性は即時対応。",
+  "description": "週1回(月曜)にPatch/Minorをまとめて自動マージ。脆弱性は即時対応。",
 
   "dependencyDashboard": true,
   "dependencyDashboardTitle": "Dependency Dashboard 🤖",
+  "dependencyDashboardApproval": false,
 
-  "minimumReleaseAge": "3 days",
   "internalChecksFilter": "strict",
 
   "prHourlyLimit": 5,
@@ -20,10 +20,11 @@
 
   "packageRules": [
     {
-      "description": "すべてのPatch, Minor, Pin, Digestを1つのPRにまとめる",
+      "description": "週1回すべてのPatch/Minor/Pin/Digestを1つのPRにまとめる",
       "groupName": "all non-major dependencies",
       "matchPackageNames": ["*"],
       "matchUpdateTypes": ["patch", "minor", "pin", "digest"],
+      "schedule": ["before 5am on monday"],
       "automerge": true,
       "platformAutomerge": true,
       "rebaseWhen": "auto",
@@ -33,7 +34,6 @@
       "description": "Major は自動マージしない",
       "matchUpdateTypes": ["major"],
       "automerge": false,
-      "minimumReleaseAge": "0 days",
       "labels": ["dependencies"]
     }
   ],
