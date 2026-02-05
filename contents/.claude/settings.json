@@ -18,5 +18,8 @@
     "type": "command",
     "command": "node ~/.claude/scripts/statusline.js"
   },
+  "enabledPlugins": {
+    "claude-mem@thedotmack": true
+  },
   "disabledMcpjsonServers": ["serena"]
 }

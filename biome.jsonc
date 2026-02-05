@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.8/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.14/schema.json",
   // 関数の引数が二個以上のとき、オブジェクト形式にする
   "plugins": ["./biome-plugins/max-function-params.grit"],
   "vcs": {
