@@ -9,7 +9,7 @@ Astro 5.xを使用した静的ブログ構築における公式推奨のベス�
 
 ## 概要
 
-このスキルは、Astro 5.xでSSG（Static Site Generation）ブログを構築する際の最新ベストプラクティスを提供する。特に以下の点に焦点を当てる：
+このスキルは、Astro 5.xでSSG(Static Site Generation)ブログを構築する際の最新ベストプラクティスを提供する。特に以下の点に焦点を当てる：
 
 - **Islands Architecture**: 最小限のJavaScriptで高速なページロード
 - **Content Layer API**: Astro 5.0の新しいコンテンツ管理システム
@@ -58,10 +58,10 @@ import ShareButtons from '../components/ShareButtons';
 ```
 
 **クライアントディレクティブの選択**:
-- `client:load` - すぐに必要（ヘッダーメニュー、モーダル）
-- `client:visible` - スクロール先にある（シェアボタン、コメント）
-- `client:idle` - 優先度低い（チャットウィジェット、分析）
-- `client:media` - 特定画面サイズ（モバイル専用メニュー）
+- `client:load` - すぐに必要(ヘッダーメニュー、モーダル)
+- `client:visible` - スクロール先にある(シェアボタン、コメント)
+- `client:idle` - 優先度低い(チャットウィジェット、分析)
+- `client:media` - 特定画面サイズ(モバイル専用メニュー)
 
 詳細は [islands-architecture.md](references/islands-architecture.md) を参照。
 
@@ -208,9 +208,9 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 
 export default defineConfig({
   markdown: {
-    // Remarkプラグイン（Markdown AST処理）
+    // Remarkプラグイン(Markdown AST処理)
     remarkPlugins: [remarkGfm],
-    // Rehypeプラグイン（HTML AST処理）
+    // Rehypeプラグイン(HTML AST処理)
     rehypePlugins: [
       rehypeSlug,
       [rehypeAutolinkHeadings, { behavior: 'append' }]
@@ -230,8 +230,8 @@ export default defineConfig({
 ## パフォーマンスチェックリスト
 
 ### Islands Architecture
-- [ ] デフォルトは静的（ディレクティブなし）
-- [ ] `client:load`は最小限（重要なUIのみ）
+- [ ] デフォルトは静的(ディレクティブなし)
+- [ ] `client:load`は最小限(重要なUIのみ)
 - [ ] `client:visible`で遅延読み込み活用
 - [ ] `client:idle`で優先度低いコンポーネント
 
@@ -256,7 +256,7 @@ export default defineConfig({
 ### SEO
 - [ ] RSSフィードを提供
 - [ ] サイトマップを生成
-- [ ] 構造化データ（JSON-LD）を実装
+- [ ] 構造化データ(JSON-LD)を実装
 - [ ] メタタグを適切に設定
 
 ## よくあるアンチパターン
@@ -332,7 +332,7 @@ const [posts, authors] = await Promise.all([
 
 ## Astro 5.xでの重要な変更点
 
-### Content Layer API（新機能）
+### Content Layer API(新機能)
 
 Astro 5.0で導入された新しいコンテンツ管理システム。従来のContent Collectionsから移行する場合：
 

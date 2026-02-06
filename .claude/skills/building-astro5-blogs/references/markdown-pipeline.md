@@ -2,8 +2,8 @@
 
 ## 目次
 - [Markdownパイプラインの仕組み](#markdownパイプラインの仕組み)
-- [Remarkプラグイン（Markdown AST処理）](#remarkプラグインmarkdown-ast処理)
-- [Rehypeプラグイン（HTML AST処理）](#rehypeプラグインhtml-ast処理)
+- [Remarkプラグイン(Markdown AST処理)](#remarkプラグインmarkdown-ast処理)
+- [Rehypeプラグイン(HTML AST処理)](#rehypeプラグインhtml-ast処理)
 - [カスタムRemarkプラグインの作成](#カスタムremarkプラグインの作成)
 - [カスタムRehypeプラグインの作成](#カスタムrehypeプラグインの作成)
 - [プラグインの組み合わせ](#プラグインの組み合わせ)
@@ -22,7 +22,7 @@ rehype (HTML AST処理)
 HTML生成
 ```
 
-## Remarkプラグイン（Markdown AST処理）
+## Remarkプラグイン(Markdown AST処理)
 
 Remarkプラグインは、Markdown ASTを処理してMarkdown構文を拡張する。
 
@@ -116,7 +116,7 @@ export default defineConfig({
 });
 ```
 
-## Rehypeプラグイン（HTML AST処理）
+## Rehypeプラグイン(HTML AST処理)
 
 RehypeプラグインはHTML ASTを処理してHTML出力をカスタマイズする。
 
@@ -362,13 +362,13 @@ import { rehypeExternalLinks } from './rehype-external-links.mjs';
 
 export default defineConfig({
   markdown: {
-    // Remarkプラグイン（実行順序重要）
+    // Remarkプラグイン(実行順序重要)
     remarkPlugins: [
       remarkGfm,
       remarkToc,
       remarkReadingTime,
     ],
-    // Rehypeプラグイン（実行順序重要）
+    // Rehypeプラグイン(実行順序重要)
     rehypePlugins: [
       rehypeSlug,
       [rehypeAutolinkHeadings, { behavior: 'append' }],
@@ -387,9 +387,9 @@ export default defineConfig({
 1. ✅ remarkプラグインでMarkdown構文を拡張
 2. ✅ rehypeプラグインでHTML出力をカスタマイズ
 3. ✅ カスタムプラグインで独自の処理を追加
-4. ✅ プラグインは関数としてインポート（文字列ではない）
+4. ✅ プラグインは関数としてインポート(文字列ではない)
 5. ✅ プラグインの実行順序に注意
-6. ✅ 必要なプラグインのみ追加（パフォーマンス）
+6. ✅ 必要なプラグインのみ追加(パフォーマンス)
 7. ✅ カスタムプラグインは別ファイルに分離
 
 ## アンチパターン

@@ -109,7 +109,7 @@ const canonicalUrl = absoluteUrl(`/blog/${post.id}`);
 const dateStr = post.data.date.toISOString().split('T')[0]; // YYYY-MM-DD
 const githubFilePath = `contents/blog/${dateStr}_${post.id}.md`;
 
-// Content Collectionsでコンパイル（Astroが最適化）
+// Content Collectionsでコンパイル(Astroが最適化)
 const compiledHtml = await compileMarkdown({ source: post.body });
 ---
 

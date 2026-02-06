@@ -92,7 +92,7 @@ async function saveToCache({
  * 画像をR2にアップロードしてキーを取得
  *
  * @param imageUrl - アップロードする画像のURL
- * @returns R2にアップロードされた画像のキー（例: "abc123.png"）、失敗時はnull
+ * @returns R2にアップロードされた画像のキー(例: "abc123.png")、失敗時はnull
  */
 async function uploadImageToR2(imageUrl: string): Promise<string | null> {
   // 本番ビルド時のみアップロード
@@ -119,7 +119,7 @@ async function uploadImageToR2(imageUrl: string): Promise<string | null> {
     const contentType =
       imageResponse.headers.get('Content-Type') || 'image/png';
 
-    // 2. ファイル名を生成（URLのハッシュ）
+    // 2. ファイル名を生成(URLのハッシュ)
     const encoder = new TextEncoder();
     const data = encoder.encode(imageUrl);
     const hashBuffer = await crypto.subtle.digest('SHA-256', data);
@@ -128,7 +128,7 @@ async function uploadImageToR2(imageUrl: string): Promise<string | null> {
       .map((b) => b.toString(16).padStart(2, '0'))
       .join('');
 
-    // 拡張子を取得（デフォルトは .png）
+    // 拡張子を取得(デフォルトは .png)
     const ext = imageUrl.match(/\.(png|jpg|jpeg|gif|webp)$/i)?.[1] || 'png';
     const filename = `${hashHex}.${ext}`;
 
@@ -162,7 +162,7 @@ async function uploadImageToR2(imageUrl: string): Promise<string | null> {
 }
 
 /**
- * 外部URLから直接OGデータを取得（従来のロジック）
+ * 外部URLから直接OGデータを取得(従来のロジック)
  *
  * @param url - OGPデータを取得するURL
  * @returns OGPデータの部分的なオブジェクト(title、description、image、url)

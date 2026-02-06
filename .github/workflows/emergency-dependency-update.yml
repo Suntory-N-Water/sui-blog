@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       package_name:
-        description: "特定のパッケージ名（空欄で全て更新）"
+        description: "特定のパッケージ名(空欄で全て更新)"
         required: false
         type: string
 

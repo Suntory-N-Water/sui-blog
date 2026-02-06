@@ -230,11 +230,11 @@ For detailed information on specific topics, see:
 #!/bin/bash
 
 # 設定部分 - これらの配列を変更するだけで除外設定が可能
-# 除外するディレクトリの配列（パターンマッチ用）
+# 除外するディレクトリの配列(パターンマッチ用)
 EXCLUDED_DIRS=("node_modules" ".next" ".git" ".wrangler" "dist")
-# 除外するファイルの配列（パターンマッチ用）
+# 除外するファイルの配列(パターンマッチ用)
 EXCLUDED_FILES=(".env*" "*.lock" "pnpm-lock.yaml" ".dev.vars" "package-lock.json")
-# 最大ファイルサイズ（バイト単位）
+# 最大ファイルサイズ(バイト単位)
 MAX_FILE_SIZE=10240
 
 # バイナリファイルかどうかを判定する関数

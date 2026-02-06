@@ -10,7 +10,7 @@
 
 ### 概念
 
-Astroが先駆的に採用した**Islands Architecture**は、ページの大部分を高速な静的HTMLとしてレンダリングし、必要な箇所だけにJavaScriptの「アイランド（島）」を配置する設計パターンです。
+Astroが先駆的に採用した**Islands Architecture**は、ページの大部分を高速な静的HTMLとしてレンダリングし、必要な箇所だけにJavaScriptの「アイランド(島)」を配置する設計パターンです。
 
 **主な特徴**:
 - ページの大部分はサーバーレンダリングされた静的HTML
@@ -45,10 +45,10 @@ import { Greeting } from '../components/Greeting';
 ```
 
 **クライアントディレクティブの種類**:
-- `client:load` - ページロード直後にハイドレーション（重要なコンポーネント用）
-- `client:idle` - ブラウザがアイドル時にハイドレーション（優先度低）
-- `client:visible` - ビューポートに入ったらハイドレーション（遅延ロード）
-- `client:media` - メディアクエリマッチ時にハイドレーション（レスポンシブ）
+- `client:load` - ページロード直後にハイドレーション(重要なコンポーネント用)
+- `client:idle` - ブラウザがアイドル時にハイドレーション(優先度低)
+- `client:visible` - ビューポートに入ったらハイドレーション(遅延ロード)
+- `client:media` - メディアクエリマッチ時にハイドレーション(レスポンシブ)
 - `client:only` - SSRをスキップし、クライアントサイドのみ
 
 #### サーバーアイランド
@@ -91,13 +91,13 @@ import RelatedPosts from '../components/RelatedPosts.astro';
   <div set:html={post.body} />
 </article>
 
-<!-- アイランド1: コメントフォーム（ページロード時に必要） -->
+<!-- アイランド1: コメントフォーム(ページロード時に必要) -->
 <CommentForm client:load postId={post.id} />
 
-<!-- アイランド2: シェアボタン（ビューポートに入ったら） -->
+<!-- アイランド2: シェアボタン(ビューポートに入ったら) -->
 <ShareButtons client:visible url={post.url} title={post.data.title} />
 
-<!-- サーバーアイランド: 関連記事（遅延取得） -->
+<!-- サーバーアイランド: 関連記事(遅延取得) -->
 <RelatedPosts server:defer postId={post.id}>
   <div slot="fallback">Loading related posts...</div>
 </RelatedPosts>
@@ -171,9 +171,9 @@ export default defineConfig({
 ```
 
 **重要な注意点**:
-- ⚠️ **デフォルト値（1）を変更すべきではない**ケースがほとんど
+- ⚠️ **デフォルト値(1)を変更すべきではない**ケースがほとんど
 - メモリ不足や単一スレッドの制約により、高い値は逆効果になる可能性
-- 他の最適化手段（キャッシング、バッチ処理）を優先
+- 他の最適化手段(キャッシング、バッチ処理)を優先
 
 ### ストリーミングによる最適化
 
@@ -187,7 +187,7 @@ const factData = await fetch('https://catfact.ninja/fact').then(r => r.json());
 ---
 
 ---
-// ✅ 良い例: 並列処理（Promise直接埋め込み）
+// ✅ 良い例: 並列処理(Promise直接埋め込み)
 const personPromise = fetch('https://randomuser.me/api/').then(r => r.json());
 const factPromise = fetch('https://catfact.ninja/fact').then(r => r.json());
 ---
@@ -227,7 +227,7 @@ import mdx from '@astrojs/mdx';
 export default defineConfig({
   integrations: [
     mdx({
-      // MDXの最適化を有効化（ビルド時間とレンダリング速度を改善）
+      // MDXの最適化を有効化(ビルド時間とレンダリング速度を改善)
       optimize: true,
     }),
   ],
@@ -244,8 +244,8 @@ export default defineConfig({
 1. ✅ Content Collectionsを使用してキャッシングを活用
 2. ✅ ビルド間でキャッシュディレクトリを保持
 3. ✅ データ取得を並列化
-4. ✅ 長時間実行されるタスク（fetch、データアクセス）をキャッシュ
-5. ✅ MDX最適化を検討（テスト後）
+4. ✅ 長時間実行されるタスク(fetch、データアクセス)をキャッシュ
+5. ✅ MDX最適化を検討(テスト後)
 6. ❌ `build.concurrency`を安易に変更しない
 
 ---
@@ -265,7 +265,7 @@ import myImage from '../assets/my_image.png'; // 1600x900
 <!-- 基本的な使用 -->
 <Image src={myImage} alt="A description of my image." />
 
-<!-- 優先読み込み（above-the-fold画像用） -->
+<!-- 優先読み込み(above-the-fold画像用) -->
 <Image src={myImage} alt="Hero image" priority />
 
 <!-- レスポンシブ画像 -->
@@ -293,7 +293,7 @@ import myImage from '../assets/my_image.png'; // 1600x900
 - WebPやAVIFなどの最適化フォーマットへの変換
 - `loading="lazy"` による遅延読み込み
 - `decoding="async"` による非同期デコード
-- ファイル名のハッシュ化（長期キャッシュ可能）
+- ファイル名のハッシュ化(長期キャッシュ可能)
 - レスポンシブ画像用の `srcset` と `sizes` 自動生成
 
 ### `<Picture />`コンポーネント
@@ -346,9 +346,9 @@ export default defineConfig({
 ```
 
 **`layout`オプション**:
-- `constrained` - コンテナに合わせてリサイズ（デフォルト）
+- `constrained` - コンテナに合わせてリサイズ(デフォルト)
 - `full-width` - 幅100%でリサイズ
-- `fixed` - 固定サイズ（レスポンシブではない）
+- `fixed` - 固定サイズ(レスポンシブではない)
 
 #### コンポーネントごとの設定
 
@@ -451,12 +451,12 @@ const desktopImg = await getImage({
 
 ### ブログでの画像最適化ベストプラクティス
 
-1. ✅ `<Image />`コンポーネントを使用（HTML `<img>`タグは避ける）
+1. ✅ `<Image />`コンポーネントを使用(HTML `<img>`タグは避ける)
 2. ✅ ヒーロー画像には`priority`属性を付与
-3. ✅ レスポンシブ画像を設定（モバイル対応）
-4. ✅ `alt`属性は必須（アクセシビリティ）
+3. ✅ レスポンシブ画像を設定(モバイル対応)
+4. ✅ `alt`属性は必須(アクセシビリティ)
 5. ✅ ローカル画像は`src/assets/`に配置
-6. ✅ 静的画像（最適化不要）のみ`public/`に配置
+6. ✅ 静的画像(最適化不要)のみ`public/`に配置
 7. ✅ 複数フォーマット対応には`<Picture />`を使用
 
 ---
@@ -730,7 +730,7 @@ const { tag } = Astro.params;
 
 ### パフォーマンス
 
-1. ✅ SSG（Static Site Generation）をデフォルトとして使用
+1. ✅ SSG(Static Site Generation)をデフォルトとして使用
 2. ✅ Content Collectionsでコンテンツを管理
 3. ✅ `<Image />`コンポーネントで画像を最適化
 4. ✅ アイランドアーキテクチャで最小限のJavaScript

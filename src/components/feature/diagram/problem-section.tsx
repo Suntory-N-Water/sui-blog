@@ -6,7 +6,7 @@ export function ProblemSection({ data }: { data: ProblemSectionData }) {
   const variant = data.variant ?? 'simple';
   const isHighlight = variant === 'highlight';
 
-  // 2枚→2列、3枚→3列、4枚→2列（2x2）、5枚以上→3列
+  // 2枚→2列、3枚→3列、4枚→2列(2x2)、5枚以上→3列
   const gridCols =
     data.cards.length === 2 || data.cards.length === 4
       ? 'md:grid-cols-2'

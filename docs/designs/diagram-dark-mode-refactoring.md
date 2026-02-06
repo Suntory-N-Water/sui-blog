@@ -8,7 +8,7 @@
 
 ### 現状の問題点
 
-1. **React Context API（useContext）を使用**
+1. **React Context API(useContext)を使用**
    - `ThemeContext`と`useTheme()`でテーマ管理
    - すべてのコンポーネントがReactのランタイムを必要とする
    - `client:load`が必須となり、不要なJavaScriptを送信
@@ -27,7 +27,7 @@
      },
    };
    ```
-   - ブログの既存テーマ（`globals.css`）と一貫性がない
+   - ブログの既存テーマ(`globals.css`)と一貫性がない
 
 3. **ダークモード非対応**
    - CSS変数を使用していない
@@ -44,9 +44,9 @@
 **決定**: React Contextを削除し、CSS変数を使用する
 
 **理由**:
-- Astro 5.xのベストプラクティスに従う（Islands Architecture）
+- Astro 5.xのベストプラクティスに従う(Islands Architecture)
 - ダークモード対応がCSSレベルで自動化される
-- 不要なJavaScriptを削減（ページロード高速化）
+- 不要なJavaScriptを削減(ページロード高速化)
 - ブログの既存テーマとの一貫性
 
 **影響範囲**:
@@ -58,11 +58,11 @@
 
 **決定**: 既存の図解カラーをブログのCSS変数にマッピングする
 
-| 図解の色（旧） | ブログのCSS変数（新） | 用途 |
+| 図解の色(旧) | ブログのCSS変数(新) | 用途 |
 |---|---|---|
 | `navy` (#0E2A47) | `--primary` | 見出し、強調色 |
-| `gold` (#D99834) | `--accent` | アクセント（ボーダー、ハイライト） |
-| `grayBg` (#F4F6F8) | `--muted` | 背景色（セクション） |
+| `gold` (#D99834) | `--accent` | アクセント(ボーダー、ハイライト) |
+| `grayBg` (#F4F6F8) | `--muted` | 背景色(セクション) |
 | `white` (#FFFFFF) | `--background` | カード背景 |
 | `textMain` (#374151) | `--foreground` | 本文テキスト |
 | `textLight` (#6B7280) | `--muted-foreground` | 補足テキスト |
@@ -70,20 +70,20 @@
 **理由**:
 - ブログ全体で統一されたカラーパレット
 - ダークモードで自動的に色が切り替わる
-- 保守性の向上（色の変更が`globals.css`で一元管理）
+- 保守性の向上(色の変更が`globals.css`で一元管理)
 
 ### 3. スタイルの実装方法
 
 **決定**: Tailwind CSSクラスを優先し、必要に応じてインラインCSS変数を使用
 
-**パターン1: Tailwind CSSクラス（推奨）**
+**パターン1: Tailwind CSSクラス(推奨)**
 ```tsx
 <h1 className='text-primary font-bold'>
   {data.title}
 </h1>
 ```
 
-**パターン2: インラインCSS変数（複雑なスタイル）**
+**パターン2: インラインCSS変数(複雑なスタイル)**
 ```tsx
 <div
   className='border-l-4'
@@ -110,7 +110,7 @@
 
 **変更後**:
 ```astro
-<!-- 静的HTML（JavaScriptなし） -->
+<!-- 静的HTML(JavaScriptなし) -->
 <DynamicPageBuilder data={ARTICLE_DEMO_DATA} />
 ```
 
@@ -125,7 +125,7 @@
 
 1. `content-common.tsx`の修正
    - `ThemeContext`、`useTheme()`、`DEFAULT_THEME`を削除
-   - `Icon`、`FormattedText`コンポーネントは保持（ユーティリティとして有用）
+   - `Icon`、`FormattedText`コンポーネントは保持(ユーティリティとして有用)
 
 ### Phase 2: 各セクションコンポーネントの修正
 
@@ -147,12 +147,12 @@
 ### Phase 3: DynamicPageBuilderの簡素化
 
 - `ThemeContext.Provider`の削除
-- `theme`プロパティの削除（不要になる）
+- `theme`プロパティの削除(不要になる)
 
 ### Phase 4: 型定義の更新
 
 `src/types/diagram.ts`:
-- `ArticleTheme`型の削除（不要になる）
+- `ArticleTheme`型の削除(不要になる)
 
 ## トレードオフ
 
@@ -199,7 +199,7 @@
 
 - [x] ライトモードで正しく表示される
 - [x] ダークモードで正しく表示される
-- [x] JavaScriptなしで動作する（`client:load`不要）
+- [x] JavaScriptなしで動作する(`client:load`不要)
 - [x] ブログの既存テーマと統一感がある
 
 ## 実装完了
@@ -211,7 +211,7 @@
 - 型定義更新: `types/diagram.ts`から`ArticleTheme`型を削除
 - 静的化: `client:load`を削除し、静的HTMLとしてレンダリング可能に
 
-型チェック結果: エラーなし（`bunx astro check`で確認済み）
+型チェック結果: エラーなし(`bunx astro check`で確認済み)
 
 ## 参考
 

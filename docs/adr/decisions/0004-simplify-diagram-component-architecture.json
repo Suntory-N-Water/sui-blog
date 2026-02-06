@@ -20,7 +20,7 @@
   },
   "decision": {
     "summary": "過度な抽象化を排除し、Tailwindの標準的なユーティリティクラスとdiv要素による直接的な実装に移行。Zodスキーマベースの型定義から、TypeScriptの直接的な型定義へ移行し、使用していないセクションタイプを削除。",
-    "details": "以下の主要な変更を実施:\n\n1. **UIコンポーネントの簡素化**: Card/Badgeコンポーネントからプレーンなdivへ置き換え、Tailwindクラスを直接適用\n2. **カラーシステムの統一**: COLORS定数とresolveColor関数を削除し、Tailwindのテーマカラー（primary, muted等）に統一\n3. **アイコンシステムの簡素化**: icon-config.ts（165行）を削除し、content-common.tsx内に12個の必要なアイコンのみを直接マッピング\n4. **型定義の直接化**: diagram-schemas.ts（197行のZodスキーマ）を削除し、diagram.tsでTypeScriptの型を直接定義\n5. **データ構造の改善**: ArticleSection[]からArticleData型（meta + content構造）へ変更、各セクションにidプロパティを追加してReactのkey問題を解決\n6. **未使用セクションの削除**: FlowChartSection、GroupedContentSection、ListStepsSection、ScoreComparisonSectionを削除\n7. **バリアント機能の削除**: CoreMessageSectionとProblemSectionのvariantプロパティを削除し、スタイルを単一化",
+    "details": "以下の主要な変更を実施:\n\n1. **UIコンポーネントの簡素化**: Card/Badgeコンポーネントからプレーンなdivへ置き換え、Tailwindクラスを直接適用\n2. **カラーシステムの統一**: COLORS定数とresolveColor関数を削除し、Tailwindのテーマカラー(primary, muted等)に統一\n3. **アイコンシステムの簡素化**: icon-config.ts(165行)を削除し、content-common.tsx内に12個の必要なアイコンのみを直接マッピング\n4. **型定義の直接化**: diagram-schemas.ts(197行のZodスキーマ)を削除し、diagram.tsでTypeScriptの型を直接定義\n5. **データ構造の改善**: ArticleSection[]からArticleData型(meta + content構造)へ変更、各セクションにidプロパティを追加してReactのkey問題を解決\n6. **未使用セクションの削除**: FlowChartSection、GroupedContentSection、ListStepsSection、ScoreComparisonSectionを削除\n7. **バリアント機能の削除**: CoreMessageSectionとProblemSectionのvariantプロパティを削除し、スタイルを単一化",
     "alternatives": [
       {
         "option": "既存の抽象化レイヤーを維持し、段階的にリファクタリング",
@@ -58,7 +58,7 @@
           "Content Collectionsとの統合が容易"
         ],
         "cons": [
-          "型定義の重複（ZodスキーマとTypeScript型の両方）",
+          "型定義の重複(ZodスキーマとTypeScript型の両方)",
           "197行のスキーマファイルの保守コスト",
           "実際にはランタイムバリデーションが不要"
         ],
@@ -66,13 +66,13 @@
         "reason": "Diagram機能では外部データソースからの入力を扱わないため、ビルド時の型チェックで十分"
       }
     ],
-    "rationale": "以下の理由により、抽象化の削減と直接的な実装への移行を選択:\n\n1. **YAGNI原則の適用**: 将来使うかもしれない機能（40個以上のアイコン、複数のバリアント、未使用のセクションタイプ）は実際には使われていなかった\n2. **保守性の向上**: 抽象化レイヤーを減らすことで、コードの追跡が容易になり、変更の影響範囲が明確になる\n3. **デザインシステムの一貫性**: Tailwindのテーマカラーに統一することで、ダークモード対応やカラースキーム変更が容易になる\n4. **パフォーマンス**: 不要なコンポーネントラッピングとスタイル計算を削減し、生成されるHTMLがよりシンプルになる\n5. **型安全性の維持**: Zodスキーマを削除してもTypeScriptの型定義により、コンパイル時の型安全性は完全に維持される\n6. **コードの明確性**: `<Card>`より`<div className='...'>`の方が、実際のDOM構造とスタイリングが直接的に理解できる",
+    "rationale": "以下の理由により、抽象化の削減と直接的な実装への移行を選択:\n\n1. **YAGNI原則の適用**: 将来使うかもしれない機能(40個以上のアイコン、複数のバリアント、未使用のセクションタイプ)は実際には使われていなかった\n2. **保守性の向上**: 抽象化レイヤーを減らすことで、コードの追跡が容易になり、変更の影響範囲が明確になる\n3. **デザインシステムの一貫性**: Tailwindのテーマカラーに統一することで、ダークモード対応やカラースキーム変更が容易になる\n4. **パフォーマンス**: 不要なコンポーネントラッピングとスタイル計算を削減し、生成されるHTMLがよりシンプルになる\n5. **型安全性の維持**: Zodスキーマを削除してもTypeScriptの型定義により、コンパイル時の型安全性は完全に維持される\n6. **コードの明確性**: `<Card>`より`<div className='...'>`の方が、実際のDOM構造とスタイリングが直接的に理解できる",
     "consequences": [
       "コード量が3,738行削減され、保守負担が大幅に軽減",
-      "新しいアイコン追加時はcontent-common.tsxの1箇所のみ修正すればよい（従来は3箇所必要だった）",
+      "新しいアイコン追加時はcontent-common.tsxの1箇所のみ修正すればよい(従来は3箇所必要だった)",
       "デザイン変更時にTailwindのテーマ設定のみで全体に反映可能",
       "各セクションにidプロパティが必須となり、Reactのkey warningが解消",
-      "未使用のセクションタイプが削除されたため、将来的に必要になった場合は再実装が必要（ただし、過去6ヶ月間使用実績なし）",
+      "未使用のセクションタイプが削除されたため、将来的に必要になった場合は再実装が必要(ただし、過去6ヶ月間使用実績なし)",
       "Zodによるランタイムバリデーションが失われたが、TypeScriptのコンパイル時チェックで十分",
       "ArticleSection[]からArticleData型への変更により、メタ情報とコンテンツの分離が明確になった"
     ]
@@ -113,7 +113,7 @@
       "アイコンマッピングのインライン定義: const icons: Record<string, React.ElementType> = { alert: AlertCircle, ... }",
       "TypeScript直接型定義: export type ProblemSectionData = BaseSection & { type: 'problem'; ... }",
       "データ構造: { meta: { id, title }, content: ArticleSection[] }",
-      "セクションkey生成: key={section.id} （従来: key={`${section.type}-${index}`}）"
+      "セクションkey生成: key={section.id} (従来: key={`${section.type}-${index}`})"
     ],
     "examples": [
       {
@@ -126,7 +126,7 @@
         "file": "src/components/feature/diagram/content-common.tsx",
         "line_start": 21,
         "line_end": 36,
-        "description": "icon-config.ts（165行）を削除し、12個の必要なアイコンのみをインラインでマッピング。"
+        "description": "icon-config.ts(165行)を削除し、12個の必要なアイコンのみをインラインでマッピング。"
       },
       {
         "file": "src/types/diagram.ts",

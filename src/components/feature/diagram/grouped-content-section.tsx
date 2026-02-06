@@ -37,7 +37,7 @@ export function GroupedContentSection({
               const groupBgClass =
                 group.bgColor === 'muted' ? 'bg-muted' : 'bg-background';
 
-              // グループの枠線（ハイライト指定があればprimaryカラー）
+              // グループの枠線(ハイライト指定があればprimaryカラー)
               const borderClass = group.isHighlight
                 ? 'border-primary'
                 : 'border-primary'; // HTMLのデザインに合わせて基本はprimary、必要に応じて調整

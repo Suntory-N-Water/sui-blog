@@ -1,27 +1,27 @@
 # Astro & Cloudflare Workers 最適化・分析リサーチレポート
 
-このレポートは、Astroで構築されCloudflare Workers（Static Assets）で配信されているブログの最適化と、Cloudflareを活用した分析・設定についての調査結果です。
+このレポートは、Astroで構築されCloudflare Workers(Static Assets)で配信されているブログの最適化と、Cloudflareを活用した分析・設定についての調査結果です。
 
-## 1. Cloudflareでの分析（Analytics）
+## 1. Cloudflareでの分析(Analytics)
 
 「長期的なアナリティクス」を実現するためのCloudflareのオプションは主に以下の3つです。
 
-### A. Cloudflare Web Analytics（推奨）
-**概要**: クライアントサイドの軽量なJavaScriptビーコンを使用した分析（Google Analyticsに似ていますが、プライバシー重視でCookieレス）。
-- **メリット**: 無料。設定が簡単。Web Vitals（LCP, CLS等）の計測が可能。
+### A. Cloudflare Web Analytics(推奨)
+**概要**: クライアントサイドの軽量なJavaScriptビーコンを使用した分析(Google Analyticsに似ていますが、プライバシー重視でCookieレス)。
+- **メリット**: 無料。設定が簡単。Web Vitals(LCP, CLS等)の計測が可能。
 - **実装方法**:
   1. Cloudflare Dashboard > Web Analytics でサイトを追加。
-  2. 発行されるJSスニペットを `src/layouts/Layout.astro` 等に追加（または「Automatic Setup」を利用）。
+  2. 発行されるJSスニペットを `src/layouts/Layout.astro` 等に追加(または「Automatic Setup」を利用)。
   3. すでに `partytown` が導入されているため、Partytown経由で読み込むことでメインスレッドのブロックを防げます。
 - **データ保持期間**: 無料プランでも一定期間見れますが、数年単位の「長期保存」は集計データのみです。
 
-### B. Workers Analytics Engine（上級者向け）
+### B. Workers Analytics Engine(上級者向け)
 **概要**: Server-sideからカスタムデータポイントを記録する機能。
 - **メリット**: 自由度が高い。SQLライクなクエリが可能。
-- **デメリット**: 実装が必要。Static Assetsモード（`assets` バインディング）のみではサーバーサイドロジックが動かないため、リクエストをインターセプトするWorkerの記述が必要です。
-- **コスト**: 無料枠あり（1日10万データポイント）。
+- **デメリット**: 実装が必要。Static Assetsモード(`assets` バインディング)のみではサーバーサイドロジックが動かないため、リクエストをインターセプトするWorkerの記述が必要です。
+- **コスト**: 無料枠あり(1日10万データポイント)。
 
-### C. Logpush（有料プラン向け）
+### C. Logpush(有料プラン向け)
 **概要**: ログを生データとしてS3やR2バケットに送信・保存。
 - **メリット**: 完全な長期保存が可能。
 - **コスト**: EnterpriseまたはPro + Logpush購入が必要。個人ブログとしてはオーバーキルな可能性があります。
@@ -34,7 +34,7 @@ Cloudflare Dashboardで設定可能な、Astroサイト向けの最適化項目�
 
 | 機能 | 設定・推奨 | 理由 |
 |---|---|---|
-| **Auto Minify** | **HTML & CSS: ON** <br> **JS: 注意** | Astroはビルド時にすでに圧縮を行いますが、Cloudflare側での追加圧縮も有効です。ただし、ハイドレーション（React等）に影響が出ないか確認が必要です。実運用ではHTML/CSSのみONが無難です。 |
+| **Auto Minify** | **HTML & CSS: ON** <br> **JS: 注意** | Astroはビルド時にすでに圧縮を行いますが、Cloudflare側での追加圧縮も有効です。ただし、ハイドレーション(React等)に影響が出ないか確認が必要です。実運用ではHTML/CSSのみONが無難です。 |
 | **Early Hints** | **ON** | サーバーがレスポンス準備中に、ブラウザにリソースのプリロードを指示します。表示速度向上に寄与します。 |
 | **HTTP/3 (QUIC)** | **ON** | デフォルトでONのはずですが、確認してください。通信の高速化に不可欠です。 |
 | **0-RTT Connection Resumption** | **ON** | 再訪ユーザーの接続確立を高速化します。 |
@@ -63,7 +63,7 @@ Astro 5ではPrefetchが強化されています。
 
 ### D. キャッシュ制御 (_headers)
 `public/_headers` ファイルを作成することで、Cloudflareのレスポンスヘッダーを制御できます。
-Astroのビルド生成物（`_astro/` 以下のハッシュ付きファイル）は自動的に長くキャッシュされますが、HTMLファイル自体のキャッシュポリシーを明示的に指定することも可能です。
+Astroのビルド生成物(`_astro/` 以下のハッシュ付きファイル)は自動的に長くキャッシュされますが、HTMLファイル自体のキャッシュポリシーを明示的に指定することも可能です。
 
 ```text
 # public/_headers の例

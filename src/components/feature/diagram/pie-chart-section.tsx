@@ -27,7 +27,7 @@ export function PieChartSection({ data }: { data: PieChartSectionData }) {
 
     const path = `M ${center} ${center} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`;
 
-    // ラベル位置（セグメント中央）
+    // ラベル位置(セグメント中央)
     const midAngle = ((startAngle + endAngle) / 2) * (Math.PI / 180);
     const labelRadius = radius * 0.6;
     const labelX = center + labelRadius * Math.cos(midAngle);

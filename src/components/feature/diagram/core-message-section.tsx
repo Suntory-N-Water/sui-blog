@@ -52,7 +52,7 @@ export function CoreMessageSection({ data }: { data: CoreMessageSectionData }) {
             <FormattedText text={data.mainMessage} />
           </p>
 
-          {/* 比較カード（オプション） */}
+          {/* 比較カード(オプション) */}
           {data.comparisons && (
             <div className='grid md:grid-cols-2 gap-6 mb-8'>
               {data.comparisons.map((item, i) => (
@@ -82,7 +82,7 @@ export function CoreMessageSection({ data }: { data: CoreMessageSectionData }) {
             </div>
           )}
 
-          {/* コアハイライト（オプション） */}
+          {/* コアハイライト(オプション) */}
           {data.coreHighlight && (
             <Card
               className={
