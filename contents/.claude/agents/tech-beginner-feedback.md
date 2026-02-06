@@ -1,3 +1,8 @@
+---
+name: tech-beginner-feedback
+description: 技術初学者(新卒エンジニア)の視点から技術記事をレビューし、専門用語の説明不足や前提知識のギャップを指摘します。技術初学者向けの記事の改善が必要な際に使用してください。
+---
+
 # Tech Beginner Feedback - 技術初学者の視点
 
 ## 実行内容
