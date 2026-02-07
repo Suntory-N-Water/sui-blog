@@ -39,7 +39,7 @@
 - **Markdown処理**: remark, rehype
 
 ### インフラ・ツール
-- **ホスティング**: Cloudflare Pages
+- **ホスティング**: Cloudflare Workers
 - **検索**: Pagefind
 - **OGP画像生成**: Satori
 - **コード品質**: Biome, Prettier, TypeScript
@@ -88,7 +88,7 @@ Astroの[Islands Architecture](https://docs.astro.build/en/concepts/islands/)を
 
 ### 前提条件
 - [Bun](https://bun.sh/) 最新版
-- Node.js 18.x以上（推奨）
+- Node.js 22以上（推奨）
 
 ### インストール
 
@@ -155,10 +155,10 @@ bun run build
 bun run preview
 ```
 
-### Cloudflare Pagesへのデプロイ
+### Cloudflare Workersへのデプロイ
 
 ```bash
-# Cloudflare Pagesへデプロイ
+# Cloudflare Workersへデプロイ
 bun run deploy
 
 # ローカルでCloudflare環境をシミュレート
@@ -171,8 +171,7 @@ bun run dev:cf
 sui-blog/
 ├── contents/              # コンテンツファイル
 │   ├── blog/             # ブログ記事（Markdown）
-│   ├── shorts/           # 短編記事
-│   └── templates/        # 記事テンプレート
+│   └── shorts/           # 短編記事
 ├── public/               # 静的アセット
 ├── scripts/              # ビルド・ユーティリティスクリプト
 ├── src/
@@ -185,9 +184,8 @@ sui-blog/
 │   ├── styles/           # グローバルスタイル
 │   └── types/            # 型定義
 ├── astro.config.ts       # Astro設定
-├── tailwind.config.js    # Tailwind CSS設定
 ├── biome.jsonc           # Biome設定
-└── wrangler.jsonc        # Cloudflare Pages設定
+└── wrangler.jsonc        # Cloudflare Workers設定
 ```
 
 ## 📝 記事管理
@@ -200,10 +198,16 @@ sui-blog/
 
 ```markdown
 ---
-title: "記事のタイトル"
-description: "記事の説明"
-pubDate: 2025-01-01
-tags: ["tag1", "tag2"]
+title: 記事のタイトル
+slug: article-slug
+date: 2025-01-01
+modified_time: 2025-01-01
+description: 記事の説明
+icon: 🎓
+icon_url: /icons/icon_flat.svg
+tags:
+  - tag1
+  - tag2
 ---
 
 記事本文...
