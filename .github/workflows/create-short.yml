@@ -10,7 +10,7 @@ on:
         required: true
         type: number
       issue_title:
-        description: "Issueタイトル（[Short] を除いた本文）"
+        description: "Issueタイトル([Short] を除いた本文)"
         required: true
         type: string
       issue_body:
@@ -98,7 +98,7 @@ jobs:
           # タイトルはIssueタイトルから"[Short] "を除去
           TITLE="${ISSUE_TITLE#\[Short\] }"
 
-          # 本文を抽出（### 本文 セクション以降、確認事項の前まで）
+          # 本文を抽出(### 本文 セクション以降、確認事項の前まで)
           # 最初と最後の空行のみ削除、それ以外はそのまま保持
           CONTENT=$(echo "$ISSUE_BODY" | awk '/^### 本文$/,/^### 確認事項$/ {
             if ($0 !~ /^### 本文$/ && $0 !~ /^### 確認事項$/) print

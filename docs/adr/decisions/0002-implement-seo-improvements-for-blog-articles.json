@@ -6,15 +6,15 @@
   "context": {
     "problem": "ブログのSEO実装がGoogle推奨仕様と差分があり、SNSリッチプレビュー、Google Discover露出、検索結果での最終更新日表示などの機会を逃していた。",
     "constraints": [
-      "既存のフロントマター構造（modified_time）を維持",
+      "既存のフロントマター構造(modified_time)を維持",
       "Open Graph ProtocolとSchema.org公式仕様への準拠",
       "Astro 5.x SSG機能との統合",
       "ビルドパフォーマンスへの影響を最小化"
     ],
     "requirements": [
-      "article:published_timeメタタグの追加（Open Graph Protocol準拠）",
+      "article:published_timeメタタグの追加(Open Graph Protocol準拠)",
       "article:modified_timeメタタグの条件分岐実装",
-      "WebSite構造化データのpublisher統一（BlogPostingとの一貫性）",
+      "WebSite構造化データのpublisher統一(BlogPostingとの一貫性)",
       "既存のコンテンツマイグレーション不要"
     ]
   },
@@ -33,7 +33,7 @@
         "reason": "既存のmodified_timeフィールドで十分に要件を満たせるため、破壊的変更を避けた"
       },
       {
-        "option": "dateModifiedを常に出力（datePublishedと同じ値）",
+        "option": "dateModifiedを常に出力(datePublishedと同じ値)",
         "pros": ["実装がシンプル", "すべての記事で一貫性がある"],
         "cons": ["Googleに誤った情報を伝える", "SEO評価の機会損失"],
         "rejected": true,
@@ -51,10 +51,10 @@
     "consequences": [
       "SNSシェア時のリッチプレビューに公開日・更新日が表示される",
       "Google Discoverでの記事露出が向上する可能性",
-      "検索結果に最終更新日が表示される（modified_timeがある記事のみ）",
+      "検索結果に最終更新日が表示される(modified_timeがある記事のみ)",
       "Google Knowledge Graphでの表示が改善される",
       "構造化データテストツールでの警告が解消される",
-      "ビルド時間への影響は最小限（メタタグ追加のみ）"
+      "ビルド時間への影響は最小限(メタタグ追加のみ)"
     ]
   },
   "implementation": {
@@ -73,13 +73,13 @@
         "file": "src/layouts/BaseLayout.astro",
         "line_start": 17,
         "line_end": 24,
-        "description": "article型プロパティの追加（publishedTime, modifiedTime, author, section, tags）"
+        "description": "article型プロパティの追加(publishedTime, modifiedTime, author, section, tags)"
       },
       {
         "file": "src/layouts/BaseLayout.astro",
         "line_start": 78,
         "line_end": 104,
-        "description": "article:*メタタグの条件付き出力（og:type='article'の場合のみ）"
+        "description": "article:*メタタグの条件付き出力(og:type='article'の場合のみ)"
       },
       {
         "file": "src/layouts/BaseLayout.astro",

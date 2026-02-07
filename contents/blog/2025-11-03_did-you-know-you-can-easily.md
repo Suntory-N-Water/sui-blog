@@ -89,11 +89,11 @@ diagram:
         isHighlight: true
         cards:
           - title: "権限は最小限に"
-            text: "読み取り専用（readonly）など、必要最低限のスコープを設定します。"
+            text: "読み取り専用(readonly)など、必要最低限のスコープを設定します。"
             isHighlight: false
             bgColor: muted
           - title: "公開範囲の確認"
-            text: "「全員（ANYONE）」ではなく必ず「ドメイン内」を選択します。"
+            text: "「全員(ANYONE)」ではなく必ず「ドメイン内」を選択します。"
             isHighlight: true
             accentColor: RED
             bgColor: white

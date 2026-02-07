@@ -10,7 +10,7 @@
 
 ## 概念
 
-Astroが先駆的に採用した**Islands Architecture**は、ページの大部分を高速な静的HTMLとしてレンダリングし、必要な箇所だけにJavaScriptの「アイランド（島）」を配置する設計パターン。
+Astroが先駆的に採用した**Islands Architecture**は、ページの大部分を高速な静的HTMLとしてレンダリングし、必要な箇所だけにJavaScriptの「アイランド(島)」を配置する設計パターン。
 
 **主な特徴**:
 - ページの大部分はサーバーレンダリングされた静的HTML
@@ -53,7 +53,7 @@ import { Greeting } from '../components/Greeting';
 - モーダルダイアログのトリガー
 - コメントフォーム
 
-**パフォーマンス影響**: 高（すぐにJavaScriptをロード・実行）
+**パフォーマンス影響**: 高(すぐにJavaScriptをロード・実行)
 
 #### `client:idle` - ブラウザアイドル時
 **用途**: 優先度の低いインタラクティブコンポーネント
@@ -62,7 +62,7 @@ import { Greeting } from '../components/Greeting';
 - ソーシャルメディア埋め込み
 - 分析スクリプト
 
-**パフォーマンス影響**: 低（メインスレッドが空いてから実行）
+**パフォーマンス影響**: 低(メインスレッドが空いてから実行)
 
 #### `client:visible` - ビューポート表示時
 **用途**: 画面下部にあるコンポーネント
@@ -72,7 +72,7 @@ import { Greeting } from '../components/Greeting';
 - 画像カルーセル
 - インタラクティブグラフ
 
-**パフォーマンス影響**: 低（スクロールして表示されるまで遅延）
+**パフォーマンス影響**: 低(スクロールして表示されるまで遅延)
 
 #### `client:media` - メディアクエリ
 **用途**: レスポンシブデザイン、特定の画面サイズでのみ必要
@@ -80,7 +80,7 @@ import { Greeting } from '../components/Greeting';
 - モバイル専用メニュー
 - タブレット専用UI
 
-**パフォーマンス影響**: 低（条件マッチ時のみ）
+**パフォーマンス影響**: 低(条件マッチ時のみ)
 
 #### `client:only` - クライアントサイドのみ
 **用途**: SSRで問題が発生するコンポーネント
@@ -89,7 +89,7 @@ import { Greeting } from '../components/Greeting';
 - ローカルストレージアクセス
 - ブラウザAPIに依存
 
-**パフォーマンス影響**: 中（SSRスキップ、クライアントのみで実行）
+**パフォーマンス影響**: 中(SSRスキップ、クライアントのみで実行)
 
 ### サーバーアイランド
 
@@ -131,13 +131,13 @@ import RelatedPosts from '../components/RelatedPosts.astro';
   <div set:html={post.body} />
 </article>
 
-<!-- アイランド1: コメントフォーム（ページロード時に必要） -->
+<!-- アイランド1: コメントフォーム(ページロード時に必要) -->
 <CommentForm client:load postId={post.id} />
 
-<!-- アイランド2: シェアボタン（ビューポートに入ったら） -->
+<!-- アイランド2: シェアボタン(ビューポートに入ったら) -->
 <ShareButtons client:visible url={post.url} title={post.data.title} />
 
-<!-- サーバーアイランド: 関連記事（遅延取得） -->
+<!-- サーバーアイランド: 関連記事(遅延取得) -->
 <RelatedPosts server:defer postId={post.id}>
   <div slot="fallback">Loading related posts...</div>
 </RelatedPosts>

@@ -33,7 +33,7 @@
   --font-sans: "noto-sans", sans-serif;
   --font-mono: 'PlemolJP35Console', monospace;
 
-  /* コンテナ設定（v4ではCSS変数として定義） */
+  /* コンテナ設定(v4ではCSS変数として定義) */
   --container-center: true;
   --container-padding: 2rem;
   --container-max-width-2xl: 1400px;
@@ -46,7 +46,7 @@
 }
 
 @layer base {
-  /* ライトモード（デフォルト） */
+  /* ライトモード(デフォルト) */
   :root {
     --border: hsl(0 0% 86%);
     --input: hsl(0 0% 86%);

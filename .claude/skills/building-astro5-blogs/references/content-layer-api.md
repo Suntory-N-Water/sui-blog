@@ -54,9 +54,9 @@ export const collections = { blog };
 ```
 
 **ポイント**:
-- `glob`ローダーは`pattern`で対象ファイルを指定（`[^_]`で`_`始まりのファイルを除外）
+- `glob`ローダーは`pattern`で対象ファイルを指定(`[^_]`で`_`始まりのファイルを除外)
 - `schema`でfrontmatterの型定義を行い、バリデーションと型安全性を確保
-- 複数のコレクションを定義可能（blog, docs, productsなど）
+- 複数のコレクションを定義可能(blog, docs, productsなど)
 
 ### 2. Markdownファイルの作成
 
@@ -84,7 +84,7 @@ Welcome to my _new blog_ about learning Astro!
 - スキーマで定義したすべてのフィールドを含める
 - 日付は`YYYY-MM-DD`形式で記述
 - 配列は`["tag1", "tag2"]`形式で記述
-- ネストしたオブジェクト（imageなど）は適切にインデント
+- ネストしたオブジェクト(imageなど)は適切にインデント
 
 ### 3. ブログ記事一覧ページの作成
 
@@ -117,7 +117,7 @@ const posts = await getCollection('blog');
 **ポイント**:
 - `getCollection('blog')`でコレクション内のすべての記事を取得
 - `post.data`でfrontmatterにアクセス
-- `post.id`でファイル名（拡張子なし）にアクセス
+- `post.id`でファイル名(拡張子なし)にアクセス
 
 ### 4. 個別記事ページの作成
 
@@ -240,7 +240,7 @@ Astro 2.x-4.xからAstro 5.xに移行する場合：
 3. 既存のスキーマ定義はそのまま使用可能
 4. `getCollection()`などのAPIは互換性あり
 
-**移行前（Astro 4.x）**:
+**移行前(Astro 4.x)**:
 ```typescript
 const blog = defineCollection({
   schema: z.object({
@@ -250,7 +250,7 @@ const blog = defineCollection({
 });
 ```
 
-**移行後（Astro 5.x）**:
+**移行後(Astro 5.x)**:
 ```typescript
 const blog = defineCollection({
   loader: glob({ pattern: '**/[^_]*.md', base: './src/blog' }),

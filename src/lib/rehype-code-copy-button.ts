@@ -22,7 +22,7 @@ export function rehypeCodeCopyButton() {
           },
           children: [
             node,
-            // コピーボタンラッパー（ビルド時に静的生成）
+            // コピーボタンラッパー(ビルド時に静的生成)
             {
               type: 'element',
               tagName: 'div',

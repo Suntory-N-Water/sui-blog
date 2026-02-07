@@ -77,7 +77,7 @@ async function main() {
 
     if (!result.success) {
       console.warn(`⚠️  Schema validation issues in ${filePath}`);
-      // スキーマエラーからもアイコンを抽出（invalid_enum_valueエラーのreceived値）
+      // スキーマエラーからもアイコンを抽出(invalid_enum_valueエラーのreceived値)
       for (const issue of result.error.issues) {
         if (
           issue.code === 'invalid_enum_value' &&

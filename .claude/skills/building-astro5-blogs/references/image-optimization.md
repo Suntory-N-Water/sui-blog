@@ -31,7 +31,7 @@ import myImage from '../assets/my_image.png'; // 1600x900
 <!-- 基本的な使用 -->
 <Image src={myImage} alt="A description of my image." />
 
-<!-- 優先読み込み（above-the-fold画像用） -->
+<!-- 優先読み込み(above-the-fold画像用) -->
 <Image src={myImage} alt="Hero image" priority />
 
 <!-- レスポンシブ画像 -->
@@ -61,12 +61,12 @@ import myImage from '../assets/my_image.png'; // 1600x900
 - WebPやAVIFなどの最適化フォーマットへの変換
 - `loading="lazy"` による遅延読み込み
 - `decoding="async"` による非同期デコード
-- ファイル名のハッシュ化（長期キャッシュ可能）
+- ファイル名のハッシュ化(長期キャッシュ可能)
 - レスポンシブ画像用の `srcset` と `sizes` 自動生成
 
 ### `priority`属性
 
-Above-the-fold（初期表示領域）の画像には`priority`を指定：
+Above-the-fold(初期表示領域)の画像には`priority`を指定：
 
 ```astro
 <Image src={heroImage} alt="Hero" priority />
@@ -75,7 +75,7 @@ Above-the-fold（初期表示領域）の画像には`priority`を指定：
 **効果**:
 - `loading="lazy"`が削除される
 - 優先的にロード
-- LCP（Largest Contentful Paint）の改善
+- LCP(Largest Contentful Paint)の改善
 
 ## `<Picture />`コンポーネント
 
@@ -114,8 +114,8 @@ import myImage from '../assets/my_image.png';
 ```
 
 **`<Picture />`を使うべき場合**:
-- 複数のフォーマット（AVIF、WebP、PNG）を提供したい
-- アートディレクション（画面サイズごとに異なる画像）が必要
+- 複数のフォーマット(AVIF、WebP、PNG)を提供したい
+- アートディレクション(画面サイズごとに異なる画像)が必要
 - ブラウザ互換性を最大限に確保したい
 
 ## レスポンシブ画像
@@ -135,9 +135,9 @@ export default defineConfig({
 ```
 
 **`layout`オプション**:
-- `constrained` - コンテナに合わせてリサイズ（デフォルト）
+- `constrained` - コンテナに合わせてリサイズ(デフォルト)
 - `full-width` - 幅100%でリサイズ
-- `fixed` - 固定サイズ（レスポンシブではない）
+- `fixed` - 固定サイズ(レスポンシブではない)
 
 ### コンポーネントごとの設定
 
@@ -187,9 +187,9 @@ import heroImage from '../assets/hero.png';
 ```
 
 **解説**:
-- モバイル（768px以下）：ビューポート幅の100%
-- タブレット（768px〜1200px）：ビューポート幅の50%
-- デスクトップ（1200px以上）：800px固定
+- モバイル(768px以下)：ビューポート幅の100%
+- タブレット(768px〜1200px)：ビューポート幅の50%
+- デスクトップ(1200px以上)：800px固定
 
 ## Markdownでの画像最適化
 
@@ -208,7 +208,7 @@ import heroImage from '../assets/hero.png';
 
 **重要**:
 - `src/assets/`配下の画像は自動最適化
-- `public/`配下の画像は最適化されない（そのまま配信）
+- `public/`配下の画像は最適化されない(そのまま配信)
 - リモート画像は`image.domains`で承認が必要
 
 ### リモート画像の承認
@@ -338,7 +338,7 @@ const desktopImg = await getImage({
 **理由**:
 - AVIFに対応したブラウザには最小サイズを配信
 - WebPにフォールバック
-- 元のフォーマット（JPEG/PNG）に最終フォールバック
+- 元のフォーマット(JPEG/PNG)に最終フォールバック
 
 ## ブログでの画像最適化ベストプラクティス
 
@@ -404,12 +404,12 @@ public/
 
 ## パフォーマンス指標への影響
 
-### LCP（Largest Contentful Paint）
+### LCP(Largest Contentful Paint)
 - ヒーロー画像に`priority`を使用
 - レスポンシブ画像で適切なサイズを配信
 - AVIF/WebPで転送サイズを削減
 
-### CLS（Cumulative Layout Shift）
+### CLS(Cumulative Layout Shift)
 - 幅と高さを明示的に指定
 - レイアウトシフトを防ぐ
 
@@ -418,6 +418,6 @@ public/
 <Image src={image} alt="..." width={800} height={600} />
 ```
 
-### FID（First Input Delay）
+### FID(First Input Delay)
 - `loading="lazy"`で below-the-fold 画像を遅延読み込み
 - JavaScriptバンドルサイズを削減

@@ -57,7 +57,7 @@ export function FormattedText({ text }: FormattedTextProps) {
  * カラーキーをカラーコードに解決するヘルパー関数
  *
  * @param key - カラーキー ('GOLD' | 'RED')
- * @returns カラーコード文字列、またはundefined（デフォルトテーマカラーを使用）
+ * @returns カラーコード文字列、またはundefined(デフォルトテーマカラーを使用)
  */
 export function resolveColor(key?: ColorKey): string | undefined {
   return key ? COLORS[key] : undefined;

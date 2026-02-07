@@ -91,9 +91,9 @@ export default defineConfig({
 ```
 
 **重要な注意点**:
-- ⚠️ **デフォルト値（1）を変更すべきではない**ケースがほとんど
+- ⚠️ **デフォルト値(1)を変更すべきではない**ケースがほとんど
 - メモリ不足や単一スレッドの制約により、高い値は逆効果になる可能性
-- 他の最適化手段（キャッシング、バッチ処理）を優先
+- 他の最適化手段(キャッシング、バッチ処理)を優先
 
 ## ストリーミングによる最適化
 
@@ -126,7 +126,7 @@ const factData = await fetch('https://catfact.ninja/fact').then(r => r.json());
 
 ```astro
 ---
-// ✅ 良い例: 並列処理（Promise直接埋め込み）
+// ✅ 良い例: 並列処理(Promise直接埋め込み)
 const personPromise = fetch('https://randomuser.me/api/').then(r => r.json());
 const factPromise = fetch('https://catfact.ninja/fact').then(r => r.json());
 ---
@@ -145,7 +145,7 @@ const factPromise = fetch('https://catfact.ninja/fact').then(r => r.json());
 - 両方のfetchが並列実行される
 - 合計待機時間 = max(取得1, 取得2)
 
-### パターン2：コンポーネント分離（推奨）
+### パターン2：コンポーネント分離(推奨)
 
 ```astro
 ---
@@ -229,7 +229,7 @@ import mdx from '@astrojs/mdx';
 export default defineConfig({
   integrations: [
     mdx({
-      // MDXの最適化を有効化（ビルド時間とレンダリング速度を改善）
+      // MDXの最適化を有効化(ビルド時間とレンダリング速度を改善)
       optimize: true,
     }),
   ],
@@ -343,8 +343,8 @@ Astroは自動的にCSSを最適化：
 1. ✅ Content Collectionsを使用してキャッシングを活用
 2. ✅ ビルド間でキャッシュディレクトリを保持
 3. ✅ データ取得を並列化
-4. ✅ 長時間実行されるタスク（fetch、データアクセス）をキャッシュ
-5. ✅ MDX最適化を検討（テスト後）
+4. ✅ 長時間実行されるタスク(fetch、データアクセス)をキャッシュ
+5. ✅ MDX最適化を検討(テスト後)
 6. ✅ コンポーネント分離でストリーミング活用
 7. ✅ 不要な依存関係を削除
 8. ✅ Tree Shakingを活用
@@ -359,7 +359,7 @@ Astroは自動的にCSSを最適化：
 
 ## 実践例：ブログビルドの最適化
 
-### Before（最適化前）
+### Before(最適化前)
 
 ```astro
 ---
@@ -381,7 +381,7 @@ for (const post of allPosts) {
 - 順次処理でループ
 - ビルド時間: 30秒
 
-### After（最適化後）
+### After(最適化後)
 
 ```astro
 ---
@@ -411,7 +411,7 @@ const postsWithAuthors = publishedPosts.map(post => ({
 - 並列取得でデータ取得時間を短縮
 - Mapで検索を高速化
 - 必要なデータのみ処理
-- ビルド時間: 10秒（66%削減）
+- ビルド時間: 10秒(66%削減)
 
 ## 監視とチューニング
 

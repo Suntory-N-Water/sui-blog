@@ -63,11 +63,11 @@ Cloudflare Workers は Node.js の完全な互換性はありませんが、`nod
 
 ### 2. ビルド時のNode.js標準モジュール使用
 
-本プロジェクトでは、**ビルド時にのみ** Node.js標準モジュールを使用しています。Cloudflare Workers へ移行しても、SSGビルドはローカルまたはCI環境（Node.js環境）で実行されるため、**影響はありません**。
+本プロジェクトでは、**ビルド時にのみ** Node.js標準モジュールを使用しています。Cloudflare Workers へ移行しても、SSGビルドはローカルまたはCI環境(Node.js環境)で実行されるため、**影響はありません**。
 
 #### ビルド時に使用しているNode.js標準モジュール
 
-以下のファイルはビルド時（`astro build`実行時）にのみ実行され、ランタイムでは実行されません。
+以下のファイルはビルド時(`astro build`実行時)にのみ実行され、ランタイムでは実行されません。
 
 | ファイル | 使用モジュール | 用途 | 影響 |
 |---------|--------------|------|------|
@@ -77,7 +77,7 @@ Cloudflare Workers は Node.js の完全な互換性はありませんが、`nod
 | `src/lib/rehype-*.ts` | なし | Markdownパイプライン | ✅ 影響なし |
 | `astro.config.ts` | `node:url` | 設定ファイル | ✅ 影響なし (ビルド時のみ) |
 
-#### スクリプトファイル（ビルド時ツール）
+#### スクリプトファイル(ビルド時ツール)
 
 以下のファイルは開発時のスクリプトであり、デプロイには含まれません。
 
@@ -98,7 +98,7 @@ Cloudflare Workers は Node.js の完全な互換性はありませんが、`nod
 
 - すべてのページは `astro build` 時に静的HTMLとして生成
 - ランタイムでのサーバーサイド処理は **存在しない**
-- `astro.config.ts` にアダプター設定なし（完全静的サイト）
+- `astro.config.ts` にアダプター設定なし(完全静的サイト)
 
 **影響レベル**: ✅ 影響なし
 
@@ -122,7 +122,7 @@ const response = await fetch(url, {
 
 **Cloudflare Workers での動作**:
 - ビルド時の `fetch` は問題なく動作
-- `process.env.NODE_ENV` は使用可能（ビルド時）
+- `process.env.NODE_ENV` は使用可能(ビルド時)
 - Cloudflare Workers KV への保存API呼び出しは、認証情報さえあれば問題なし
 
 **影響レベル**: ✅ 影響なし
@@ -148,9 +148,9 @@ const response = await fetch(url, {
 
 ## 移行手順
 
-### 1. Wrangler 設定ファイルの作成（型安全）
+### 1. Wrangler 設定ファイルの作成(型安全)
 
-プロジェクトルートに `wrangler.jsonc` を作成します（最新のベストプラクティス）。
+プロジェクトルートに `wrangler.jsonc` を作成します(最新のベストプラクティス)。
 
 ```jsonc
 {
@@ -174,9 +174,9 @@ const response = await fetch(url, {
 
 **重要な設定項目**:
 - `$schema` - IDEのオートコンプリートとバリデーションを有効化
-- `vars` - 環境変数（`process.env` などに対応）
+- `vars` - 環境変数(`process.env` などに対応)
 - `compatibility_flags` - Node.js互換性を有効化
-- `env.preview` - プレビュー環境の設定（別名のWorkerとしてデプロイ）
+- `env.preview` - プレビュー環境の設定(別名のWorkerとしてデプロイ)
 
 **注**: TOML形式 (`wrangler.toml`) も利用可能ですが、JSONCの方がTypeScriptプロジェクトとの親和性が高く、IDEのサポートも充実しています。
 
@@ -208,7 +208,7 @@ const response = await fetch(url, {
 **コマンド説明**:
 - `deploy` - 本番環境へデプロイ
 - `dev:cf` - ローカルでCloudflare Workers環境をエミュレート
-- `dev:cf:remote` - 実際のCloudflare環境でリモート開発（KV/R2などのバインディングが必要な場合）
+- `dev:cf:remote` - 実際のCloudflare環境でリモート開発(KV/R2などのバインディングが必要な場合)
 - `cf-typegen` - TypeScript型定義を生成
 
 #### 依存関係のインストール
@@ -225,7 +225,7 @@ bun run cf-typegen
 
 これにより `worker-configuration.d.ts` がプロジェクトルートに生成されます。
 
-**重要**: このファイルは **Gitにコミットすることが推奨**されています（公式ドキュメントより）。
+**重要**: このファイルは **Gitにコミットすることが推奨**されています(公式ドキュメントより)。
 
 #### tsconfig.json の更新
 
@@ -252,7 +252,7 @@ Wranglerの一時ファイルを除外します。
 .wrangler/
 ```
 
-**注**: `worker-configuration.d.ts` は**Gitにコミット推奨**です（公式ドキュメントより）。CI環境でも使用できるようにするためです。
+**注**: `worker-configuration.d.ts` は**Gitにコミット推奨**です(公式ドキュメントより)。CI環境でも使用できるようにするためです。
 
 ---
 
@@ -260,7 +260,7 @@ Wranglerの一時ファイルを除外します。
 
 `.github/workflows/deploy.yml` を更新します。
 
-#### プレビュー環境（Pull Request）
+#### プレビュー環境(Pull Request)
 
 ```yaml
 - name: Build Project Artifacts
@@ -273,7 +273,7 @@ Wranglerの一時ファイルを除外します。
     CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 ```
 
-#### 本番環境（main ブランチ）
+#### 本番環境(main ブランチ)
 
 ```yaml
 - name: Build Project Artifacts
@@ -287,8 +287,8 @@ Wranglerの一時ファイルを除外します。
 ```
 
 **重要な変更点**:
-- Playwright のインストールとキャッシュは **必須**（rehype-mermaid がビルド時に使用）
-- `bun run build` で自動的に `postbuild`（Pagefind）が実行される
+- Playwright のインストールとキャッシュは **必須**(rehype-mermaid がビルド時に使用)
+- `bun run build` で自動的に `postbuild`(Pagefind)が実行される
 - プレビュー環境は `--env preview` で別名の Worker にデプロイ
 - 本番環境は環境指定なしでデフォルト設定を使用
 
@@ -316,9 +316,9 @@ GitHub リポジトリの Settings > Secrets and variables > Actions で以下�
 
 ```bash
 # ローカルビルド
-bun run build      # Astro SSG ビルド + Pagefind インデックス生成（postbuild）
+bun run build      # Astro SSG ビルド + Pagefind インデックス生成(postbuild)
 
-# ローカル開発（Cloudflare Workers 環境）
+# ローカル開発(Cloudflare Workers 環境)
 bun run dev:cf     # ローカルエミュレーション
 
 # デプロイ
@@ -332,7 +332,7 @@ bunx wrangler deploy --env preview  # プレビュー環境へデプロイ
 
 移行後、以下の項目を検証してください。
 
-- [ ] 静的ファイル（HTML, CSS, JS）が正しく配信される
+- [ ] 静的ファイル(HTML, CSS, JS)が正しく配信される
 - [ ] 画像が正しく表示される
 - [ ] OGP画像が正しく生成される
 - [ ] Pagefind 検索が動作する
@@ -363,7 +363,7 @@ bunx wrangler deploy --env preview  # プレビュー環境へデプロイ
 
 **移行難易度**: 🟢 低い
 
-本プロジェクトは完全なSSG（Static Site Generation）であり、ランタイムでNode.js標準モジュールを使用していないため、**Cloudflare Workersへの移行は比較的容易**です。
+本プロジェクトは完全なSSG(Static Site Generation)であり、ランタイムでNode.js標準モジュールを使用していないため、**Cloudflare Workersへの移行は比較的容易**です。
 
 主な作業は以下の3点のみ:
 1. `wrangler.jsonc` の作成
@@ -386,4 +386,4 @@ bunx wrangler deploy --env preview  # プレビュー環境へデプロイ
 
 - `nodejs_compat` フラグにより、Node.js APIの一部が利用可能
 - `compatibility_date` を `2024-09-23` 以降に設定すると、自動的に `nodejs_compat_v2` が有効化され、追加のポリフィルが提供される
-- `node:fs` は `2025-09-01` 以降で利用可能（ただし仮想ファイルシステム）
+- `node:fs` は `2025-09-01` 以降で利用可能(ただし仮想ファイルシステム)

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { ICON_NAMES } from '../components/feature/diagram/icon-config';
 
-// IconName型のZodスキーマ（icon-config.tsのICON_NAMESから直接生成）
+// IconName型のZodスキーマ(icon-config.tsのICON_NAMESから直接生成)
 const IconNameSchema = z.enum(ICON_NAMES);
 
 // ColorKey型のZodスキーマ
@@ -159,7 +159,7 @@ export const GroupCardItemSchema = z.object({
   bgColor: z.enum(['white', 'muted', 'gray']).default('white').optional(),
 });
 
-// グループ（サブセクション）の定義
+// グループ(サブセクション)の定義
 export const ContentGroupSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),

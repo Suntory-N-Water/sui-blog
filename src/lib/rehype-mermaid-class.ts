@@ -14,7 +14,7 @@ export function rehypeAddMermaidClass() {
       // AstroはdataLanguage属性を使う
       const dataLanguage = node.properties?.dataLanguage;
 
-      // codeタグのclassNameもチェック（フォールバック）
+      // codeタグのclassNameもチェック(フォールバック)
       const firstChild = node.children[0] as Element | undefined;
       const codeClassName = firstChild?.properties?.className;
       const codeClassList = Array.isArray(codeClassName)

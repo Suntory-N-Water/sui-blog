@@ -7,7 +7,7 @@ Shortsのタイトルを日本語から英語に翻訳してスラグ化する�
 
 ## 要件
 
-- **入力**: 日本語文字列（Shortsのタイトル、短文）
+- **入力**: 日本語文字列(Shortsのタイトル、短文)
 - **出力**: 英語翻訳 → スラグ化
 - **制約**: 日本語→英語のみ、配列・長文対応不要
 
@@ -81,12 +81,12 @@ console.log(await translateToSlug(title));
   run: bunx --bun playwright install-deps chromium
 ```
 
-**参考**: `.github/workflows/deploy.yml`の実装パターン（49-55行目）
+**参考**: `.github/workflows/deploy.yml`の実装パターン(49-55行目)
 
 ### ローカル開発
 
 ```bash
-# Chromiumブラウザのインストール（初回のみ）
+# Chromiumブラウザのインストール(初回のみ)
 bunx playwright install chromium
 
 # テスト実行
@@ -102,8 +102,8 @@ bun run scripts/translate-title-to-slug.ts "テストタイトル"
 ## 実装手順
 
 1. `scripts/translate-title-to-slug.ts`書き換え
-2. `package.json`から`api-translator`, `puppeteer`削除（`playwright`は既存）
+2. `package.json`から`api-translator`, `puppeteer`削除(`playwright`は既存)
 3. `.github/workflows/create-short.yml`のPuppeteerキャッシュ→Playwrightに変更
-4. ローカルテスト（`bunx playwright install chromium`してから）
+4. ローカルテスト(`bunx playwright install chromium`してから)
 5. CIテスト
 6. コミット履歴をsquash

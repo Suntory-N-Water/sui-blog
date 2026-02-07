@@ -8,19 +8,19 @@
     "constraints": [
       "Astro 5.x Islands Architecture",
       "Tailwind CSS v4",
-      "ブログの既存テーマ（globals.css）との互換性",
+      "ブログの既存テーマ(globals.css)との互換性",
       "静的HTML生成によるSSGの利点を最大化"
     ],
     "requirements": [
       "ダークモード自動対応",
       "ブログ全体で統一されたデザイン",
       "不要なJavaScriptの削減",
-      "図解コンテンツは静的HTML（インタラクティブ性不要）"
+      "図解コンテンツは静的HTML(インタラクティブ性不要)"
     ]
   },
   "decision": {
-    "summary": "React Context APIを削除し、ブログの既存CSS変数（globals.css）を使用した静的HTMLレンダリングに移行",
-    "details": "ThemeContext、useTheme()、DEFAULT_THEMEを削除し、すべてのインラインスタイルをTailwind CSSクラスに変更。ブログのglobals.cssで定義されたCSS変数（--primary、--accent、--muted、--foreground等）を使用することで、ダークモード対応を自動化し、client:loadを削除して静的HTML生成を実現。",
+    "summary": "React Context APIを削除し、ブログの既存CSS変数(globals.css)を使用した静的HTMLレンダリングに移行",
+    "details": "ThemeContext、useTheme()、DEFAULT_THEMEを削除し、すべてのインラインスタイルをTailwind CSSクラスに変更。ブログのglobals.cssで定義されたCSS変数(--primary、--accent、--muted、--foreground等)を使用することで、ダークモード対応を自動化し、client:loadを削除して静的HTML生成を実現。",
     "alternatives": [
       {
         "option": "React Contextを保持し、client:loadで動的テーマ切り替え機能を提供",
@@ -38,7 +38,7 @@
         "option": "CSS Modulesやstyled-componentsを使用",
         "pros": ["コンポーネント単位でスタイル管理", "CSS-in-JSの柔軟性"],
         "cons": [
-          "ブログの既存テーマ（Tailwind CSS）と統合が困難",
+          "ブログの既存テーマ(Tailwind CSS)と統合が困難",
           "ランタイムコストが発生",
           "ダークモード対応に追加実装が必要"
         ],
@@ -46,13 +46,13 @@
         "reason": "ブログ全体で使用しているTailwind CSSとの一貫性を保つため、CSS変数 + Tailwindの組み合わせを選択。"
       }
     ],
-    "rationale": "Astro 5.x Islands Architectureのベストプラクティス「デフォルトは静的」に従い、図解コンテンツはインタラクティブ性が不要であることから、JavaScriptなしの静的HTML生成を選択。ブログの既存テーマ（globals.css）のCSS変数を活用することで、ダークモード対応が自動化され、保守性が向上する。",
+    "rationale": "Astro 5.x Islands Architectureのベストプラクティス「デフォルトは静的」に従い、図解コンテンツはインタラクティブ性が不要であることから、JavaScriptなしの静的HTML生成を選択。ブログの既存テーマ(globals.css)のCSS変数を活用することで、ダークモード対応が自動化され、保守性が向上する。",
     "consequences": [
-      "JavaScriptバンドルサイズの削減（React Context関連のコード削除）",
-      "ページロード速度の向上（静的HTML）",
-      "ダークモードがCSSレベルで自動対応（.darkクラスの切り替えで動作）",
+      "JavaScriptバンドルサイズの削減(React Context関連のコード削除)",
+      "ページロード速度の向上(静的HTML)",
+      "ダークモードがCSSレベルで自動対応(.darkクラスの切り替えで動作)",
       "カラーパレットがglobals.cssで一元管理され、保守性向上",
-      "動的なテーマ変更機能は実装不可（将来的に必要な場合は再設計）"
+      "動的なテーマ変更機能は実装不可(将来的に必要な場合は再設計)"
     ]
   },
   "implementation": {

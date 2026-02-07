@@ -35,7 +35,7 @@ async function translateToSlug(japaneseTitle: string): Promise<string> {
     // スラグ化処理
     const slug = translated
       .toLowerCase()
-      // 記号を削除（ハイフン、アンダースコア以外）
+      // 記号を削除(ハイフン、アンダースコア以外)
       .replace(/[^\w\s-]/g, '')
       // 連続する空白をハイフンに変換
       .replace(/\s+/g, '-')
@@ -71,7 +71,7 @@ async function main() {
   console.error(`[入力] ${title}`);
 
   const slug = await translateToSlug(title);
-  console.log(slug); // 標準出力にスラグのみ出力（GitHub Actionsで使用）
+  console.log(slug); // 標準出力にスラグのみ出力(GitHub Actionsで使用)
 }
 
 main();

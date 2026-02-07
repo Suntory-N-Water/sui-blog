@@ -349,7 +349,7 @@ export function hasTypeScriptEdits(transcriptPath: string): boolean {
 import type { ToolSchema } from 'cc-hooks-ts';
 
 /**
- * transcript JSONLファイル内の1行（1つのメッセージエントリ）を表す型
+ * transcript JSONLファイル内の1行(1つのメッセージエントリ)を表す型
  */
 export type TranscriptEntry = UserEntry | AssistantEntry | SystemEntry;
 
@@ -365,7 +365,7 @@ type UserEntry = {
   message: {
     /** メッセージの役割 */
     role: 'user';
-    /** ユーザーの入力内容（文字列） */
+    /** ユーザーの入力内容(文字列) */
     content: string;
   };
 };
@@ -380,7 +380,7 @@ type AssistantEntry = {
   timestamp: string;
   /** アシスタントメッセージの内容 */
   message: {
-    /** メッセージ内のコンテンツ要素配列（テキスト、ツール使用など） */
+    /** メッセージ内のコンテンツ要素配列(テキスト、ツール使用など) */
     content: ContentElement[];
   };
 };
@@ -401,7 +401,7 @@ type SystemEntry = {
 };
 
 /**
- * メッセージ内の個別コンテンツ要素（テキストやツール使用）を表す型
+ * メッセージ内の個別コンテンツ要素(テキストやツール使用)を表す型
  */
 type ContentElement = {
   /** コンテンツタイプ ('tool_use': ツール使用, 'text': テキスト, その他) */

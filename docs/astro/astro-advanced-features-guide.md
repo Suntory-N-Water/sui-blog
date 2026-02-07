@@ -43,7 +43,7 @@ export default defineConfig({
 npx astro build && wrangler pages deploy ./dist
 pnpm astro build && wrangler pages deploy ./dist
 
-# ローカルプレビュー（Cloudflare Pages環境をシミュレート）
+# ローカルプレビュー(Cloudflare Pages環境をシミュレート)
 npx astro build && wrangler pages dev ./dist
 pnpm astro build && wrangler pages dev ./dist
 ```
@@ -92,7 +92,7 @@ export default defineConfig({
   adapter: cloudflare({
     routes: {
       extend: {
-        // 静的生成されたPagefind検索を除外（サーバー関数を経由しない）
+        // 静的生成されたPagefind検索を除外(サーバー関数を経由しない)
         exclude: [{ pattern: '/pagefind/*' }],
         // 事前レンダリングされたページをサーバー関数経由でオンデマンドレンダリング
         include: [{ pattern: '/static' }],
@@ -144,8 +144,8 @@ export function rehypeCloudflareImages() {
 ```
 
 **最適化内容**:
-- 自動フォーマット変換（WebP、AVIF）
-- レスポンシブ画像（srcset生成）
+- 自動フォーマット変換(WebP、AVIF)
+- レスポンシブ画像(srcset生成)
 - 遅延読み込み
 - Cloudflare CDN配信
 
@@ -188,7 +188,7 @@ bun add -D pagefind
 
 ### Astro統合
 
-#### Pagefind除外設定（Cloudflare）
+#### Pagefind除外設定(Cloudflare)
 
 ```javascript
 // astro.config.mjs
@@ -405,7 +405,7 @@ navigate('/about', { history: 'push' });
 // 履歴を置き換え
 navigate('/about', { history: 'replace' });
 
-// 自動（デフォルト）
+// 自動(デフォルト)
 navigate('/about', { history: 'auto' });
 
 // POSTリクエスト
@@ -486,7 +486,7 @@ export default defineConfig({
 
 ### 基本的な使用方法
 
-#### 静的レンダリング（デフォルト）
+#### 静的レンダリング(デフォルト)
 
 ```astro
 ---
@@ -688,9 +688,9 @@ import ThemeToggle from '@/components/ui/theme-toggle';
 
 ### ベストプラクティス
 
-1. ✅ デフォルトは静的レンダリング（JavaScriptなし）
+1. ✅ デフォルトは静的レンダリング(JavaScriptなし)
 2. ✅ 必要な場合のみクライアントディレクティブを使用
-3. ✅ `client:load`は最小限に（重要なUIのみ）
+3. ✅ `client:load`は最小限に(重要なUIのみ)
 4. ✅ `client:visible`で遅延読み込み
 5. ✅ `client:idle`で優先度の低いコンポーネント
 6. ✅ 複数フレームワークは`include`で明示的に分離
@@ -702,7 +702,7 @@ import ThemeToggle from '@/components/ui/theme-toggle';
 ### Cloudflare
 
 1. ✅ `wrangler.jsonc`で環境変数を管理
-2. ✅ 静的アセット（Pagefindなど）をルート除外
+2. ✅ 静的アセット(Pagefindなど)をルート除外
 3. ✅ ローカルで`wrangler pages dev`でテスト
 4. ✅ Cloudflare Imagesで画像最適化
 5. ✅ R2統合でアセット配信
@@ -725,7 +725,7 @@ import ThemeToggle from '@/components/ui/theme-toggle';
 ### React統合
 
 1. ✅ デフォルトは静的レンダリング
-2. ✅ `client:load`は最小限（重要なUIのみ）
+2. ✅ `client:load`は最小限(重要なUIのみ)
 3. ✅ `client:visible`で遅延読み込み
 4. ✅ `client:idle`で優先度の低いコンポーネント
 5. ✅ 複数フレームワークは明示的に分離

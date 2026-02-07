@@ -73,7 +73,7 @@ import {
 } from 'lucide-react';
 
 /**
- * 使用可能なアイコン名の配列（真実の源）
+ * 使用可能なアイコン名の配列(真実の源)
  * Zodスキーマ生成で直接使用可能なタプル型
  */
 export const ICON_NAMES = [
@@ -148,7 +148,7 @@ export const ICON_NAMES = [
 ] as const;
 
 /**
- * アイコン名の型定義（ICON_NAMESから派生）
+ * アイコン名の型定義(ICON_NAMESから派生)
  */
 export type IconName = (typeof ICON_NAMES)[number];
 

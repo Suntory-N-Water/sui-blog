@@ -227,7 +227,7 @@ flowchart TD
     %% マッチング判定
     Match{キーワード一致}
 
-    %% コンテキスト注入（具体的なキーワードを含める）
+    %% コンテキスト注入(具体的なキーワードを含める)
     Injection[プロンプト注入]
 
     %% 実行フェーズ
@@ -463,7 +463,7 @@ async function loadSkillsConfig(cwd: string): Promise<SkillsConfig | null> {
 }
 
 /**
- * 文字列を正規化（小文字化）する
+ * 文字列を正規化(小文字化)する
  */
 function normalize(text: string): string {
   return text.toLowerCase();

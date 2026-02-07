@@ -17,8 +17,8 @@
 ```
 shorts/
 ├── shorts-card.astro          # 共通カードコンポーネント
-├── shorts-grid.astro          # グリッドレイアウト（一覧ページ）
-└── shorts-carousel.astro      # カルーセルレイアウト（トップページ）
+├── shorts-grid.astro          # グリッドレイアウト(一覧ページ)
+└── shorts-carousel.astro      # カルーセルレイアウト(トップページ)
 ```
 
 ### ページ構成
@@ -26,9 +26,9 @@ shorts/
 ```
 pages/
 ├── shorts/
-│   ├── index.astro           # 一覧ページ（グリッド表示）
-│   └── [...slug].astro       # 詳細ページ（ビューアー）
-└── index.astro               # トップページ（カルーセル表示）
+│   ├── index.astro           # 一覧ページ(グリッド表示)
+│   └── [...slug].astro       # 詳細ページ(ビューアー)
+└── index.astro               # トップページ(カルーセル表示)
 ```
 
 ## カードコンポーネント設計
@@ -41,12 +41,12 @@ pages/
 
 - **Props**: `short: CollectionEntry<'shorts'> & { body?: string }`
 - **高さ固定**: `h-[480px]`で統一
-- **ホバー効果**: ブログカードと同様の上方向移動（`hover:-translate-y-1`）
+- **ホバー効果**: ブログカードと同様の上方向移動(`hover:-translate-y-1`)
 - **枠線**: `border border-border`、ホバー時に`border-primary/50`
 
 ### レイアウト別の使い方
 
-#### グリッド（一覧ページ）
+#### グリッド(一覧ページ)
 
 ```astro
 <div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-1'>
@@ -57,7 +57,7 @@ pages/
 - CSS Gridで自動的に幅が揃う
 - レスポンシブ: 1列 → 2列 → 3列
 
-#### カルーセル（トップページ）
+#### カルーセル(トップページ)
 
 ```astro
 <div class='flex gap-6 overflow-x-auto pb-8 pt-1 scrollbar-hide snap-x snap-mandatory'>
@@ -70,7 +70,7 @@ pages/
 ```
 
 - Flexboxで横スクロール
-- **幅固定**: `w-[280px]`で統一（Flexboxではコンテンツ量で幅が変わるため）
+- **幅固定**: `w-[280px]`で統一(Flexboxではコンテンツ量で幅が変わるため)
 - `shrink-0`で縮小防止
 - スナップスクロール対応
 
@@ -88,12 +88,12 @@ Instagram/TikTok風の縦型フルスクリーンビューアー。
 
 ```
 ┌─────────────────────┐
-│ [←] タイトル        │ ← ヘッダー（固定、半透明）
+│ [←] タイトル        │ ← ヘッダー(固定、半透明)
 │ ━━━━━━━━━━━━━━━━━   │ ← プログレスバー
 ├─────────────────────┤
 │                     │
 │   コンテンツ        │ ← スクロール可能
-│   （Markdown）      │
+│   (Markdown)      │
 │                     │
 │                     │
 ├─────────────────────┤
@@ -103,10 +103,10 @@ Instagram/TikTok風の縦型フルスクリーンビューアー。
 
 ### ヘッダー
 
-- **配置**: 上部固定（`absolute top-0`）
+- **配置**: 上部固定(`absolute top-0`)
 - **背景**: `bg-background/98`で濃い半透明 + `backdrop-blur-md`
 - **境界線**: `border-b border-border/50`で視覚的な区切り
-- **構成**: 戻るボタン（左） + タイトル（中央）
+- **構成**: 戻るボタン(左) + タイトル(中央)
 
 #### タイトル
 
@@ -117,7 +117,7 @@ Instagram/TikTok風の縦型フルスクリーンビューアー。
 ### プログレスバー
 
 - **配置**: ヘッダー内下部
-- **太さ**: `h-1`（当初0.5pxで見えにくかった）
+- **太さ**: `h-1`(当初0.5pxで見えにくかった)
 - **間隔**: `gap-2`
 - **背景**: `bg-muted/50`
 - **アクティブ**: `bg-primary`で100%幅
@@ -126,13 +126,13 @@ Instagram/TikTok風の縦型フルスクリーンビューアー。
 
 - **パディング**: `pt-32`でヘッダーと重ならないように
 - **スクロール**: `overflow-y-auto`
-- **ページ送り**: 横スクロール（`overflow-x-hidden`）でページを切り替え
+- **ページ送り**: 横スクロール(`overflow-x-hidden`)でページを切り替え
 
 ### 次へボタン
 
-- **配置**: 下部中央（`bottom-6 right-1/2 translate-x-1/2`）
-- **デザイン**: 円形ボタン（`h-12 w-12`）
-- **アイコン**: 下向き矢印（`ArrowRight`を`rotate-90`で回転）
+- **配置**: 下部中央(`bottom-6 right-1/2 translate-x-1/2`)
+- **デザイン**: 円形ボタン(`h-12 w-12`)
+- **アイコン**: 下向き矢印(`ArrowRight`を`rotate-90`で回転)
 - **背景**: `bg-primary`で目立たせる
 - **境界線**: `border-2 border-background`で縁取り
 
@@ -149,7 +149,7 @@ Instagram/TikTok風の縦型フルスクリーンビューアー。
 
 - **左半分クリック**: 前ページ
 - **右半分クリック**: 次ページ
-- **リンク/ボタン**: ページ送りを無視（イベント伝播を防ぐ）
+- **リンク/ボタン**: ページ送りを無視(イベント伝播を防ぐ)
 
 #### スワイプ
 
@@ -195,7 +195,7 @@ React化すると:
 - バンドルサイズ増加
 - 静的生成のメリットを失う
 
-動的な部分（ページ送り、プログレスバー）のみJavaScriptで制御するのが最適。
+動的な部分(ページ送り、プログレスバー)のみJavaScriptで制御するのが最適。
 
 ## データフロー
 
@@ -211,7 +211,7 @@ const sortedShorts = allShorts.sort(
 ### Markdown処理
 
 ```typescript
-// ページ分割（--- 区切り）
+// ページ分割(--- 区切り)
 const pages = splitMarkdownPages(short.body ?? '');
 
 // 各ページをコンパイル
@@ -220,7 +220,7 @@ const compiledPages = await Promise.all(
 );
 ```
 
-### 一覧表示用（先頭ページのみ）
+### 一覧表示用(先頭ページのみ)
 
 ```typescript
 // トップページ、一覧ページ
@@ -232,7 +232,7 @@ const compiledHtml = await compileMarkdown({ source: firstPageMarkdown });
 
 ### ブログカードとの統一
 
-- ホバー効果: 上方向移動（`hover:-translate-y-1`）
+- ホバー効果: 上方向移動(`hover:-translate-y-1`)
 - 枠線: `border border-border` → `hover:border-primary/50`
 - シャドウ: `shadow-sm` → `hover:shadow-md`
 
@@ -264,14 +264,14 @@ const compiledHtml = await compileMarkdown({ source: firstPageMarkdown });
 
 ### 次へボタンの配置
 
-- **当初**: 右側中央（Instagram風）
+- **当初**: 右側中央(Instagram風)
 - **問題**: コンテンツと重なって読めない
-- **解決**: 下部中央（YouTube Shorts風）
+- **解決**: 下部中央(YouTube Shorts風)
 - **トレードオフ**: 操作感は変わるが、読みやすさを優先
 
 ## 今後の拡張可能性
 
-- 前へボタンの追加（現在は左クリック/スワイプのみ）
+- 前へボタンの追加(現在は左クリック/スワイプのみ)
 - お気に入り機能
 - シェア機能
 - カテゴリ別フィルタリング

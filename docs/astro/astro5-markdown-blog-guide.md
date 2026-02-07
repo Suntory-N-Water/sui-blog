@@ -4,7 +4,7 @@
 
 このドキュメントはAstro 5.xにおけるMarkdownファイルを使ったブログコンテンツ作成のベストプラクティスをまとめたものです。
 
-## Content Layer API（Astro 5.0の新機能）
+## Content Layer API(Astro 5.0の新機能)
 
 Astro 5.0では、Content Layer APIが導入され、パフォーマンスと拡張性が大幅に向上しました。
 
@@ -49,9 +49,9 @@ export const collections = { blog };
 ```
 
 **ポイント**:
-- `glob`ローダーは`pattern`で対象ファイルを指定（`[^_]`で`_`始まりのファイルを除外）
+- `glob`ローダーは`pattern`で対象ファイルを指定(`[^_]`で`_`始まりのファイルを除外)
 - `schema`でfrontmatterの型定義を行い、バリデーションと型安全性を確保
-- 複数のコレクションを定義可能（blog, docs, productsなど）
+- 複数のコレクションを定義可能(blog, docs, productsなど)
 
 ### 2. Markdownファイルの作成
 
@@ -89,7 +89,7 @@ I will finish the Astro tutorial, and then keep adding more posts. Watch this sp
 - スキーマで定義したすべてのフィールドを含める
 - 日付は`YYYY-MM-DD`形式で記述
 - 配列は`["tag1", "tag2"]`形式で記述
-- ネストしたオブジェクト（imageなど）は適切にインデント
+- ネストしたオブジェクト(imageなど)は適切にインデント
 
 ### 3. ブログ記事一覧ページの作成
 
@@ -122,7 +122,7 @@ const posts = await getCollection('blog');
 **ポイント**:
 - `getCollection('blog')`でコレクション内のすべての記事を取得
 - `post.data`でfrontmatterにアクセス
-- `post.id`でファイル名（拡張子なし）にアクセス
+- `post.id`でファイル名(拡張子なし)にアクセス
 
 ### 4. 個別記事ページの作成
 
@@ -158,7 +158,7 @@ const { Content } = await render(post);
 
 ## Markdownパイプラインのカスタマイズ
 
-### Remarkプラグイン（Markdown AST処理）
+### Remarkプラグイン(Markdown AST処理)
 
 `astro.config.mjs`でRemarkプラグインを設定します。
 
@@ -181,7 +181,7 @@ export default defineConfig({
 - `remark-math`: 数式サポート
 - `remark-emoji`: 絵文字変換
 
-### Rehypeプラグイン（HTML AST処理）
+### Rehypeプラグイン(HTML AST処理)
 
 ```javascript
 import { defineConfig } from 'astro/config';
@@ -278,7 +278,7 @@ Content Collectionsはビルド時に最適化されます:
 - ✅ remarkプラグインでMarkdown構文を拡張
 - ✅ rehypeプラグインでHTML出力をカスタマイズ
 - ✅ カスタムプラグインで独自の処理を追加
-- ✅ プラグインは関数としてインポート（文字列ではない）
+- ✅ プラグインは関数としてインポート(文字列ではない)
 
 ### パフォーマンス
 

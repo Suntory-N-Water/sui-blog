@@ -111,7 +111,7 @@ export function LikeButton({ slug, iconSvg }: LikeButtonProps) {
           isClicked && 'scale-110',
           isLoading && 'opacity-50 cursor-not-allowed',
         )}
-        aria-label={`この記事にいいねする（現在${allCount}いいね）`}
+        aria-label={`この記事にいいねする(現在${allCount}いいね)`}
       >
         <span
           className='h-24 w-24 [&>svg]:h-full [&>svg]:w-full [&>svg]:object-contain'

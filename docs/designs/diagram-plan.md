@@ -6,8 +6,8 @@
 
 ## ユーザー要件
 
-- **diagram フィールド**: オプショナル（既存記事への影響なし）
-- **セクション ID**: 自動生成（ユーザーの記述負担を軽減）
+- **diagram フィールド**: オプショナル(既存記事への影響なし)
+- **セクション ID**: 自動生成(ユーザーの記述負担を軽減)
 - **ルーティング**: `/blog/diagram/[slug]/`
 
 ## 実装の段階
@@ -32,7 +32,7 @@
    ```
 
 **重要なポイント**:
-- **`id` フィールドはスキーマに含めない**（ビルド時に自動生成）
+- **`id` フィールドはスキーマに含めない**(ビルド時に自動生成)
 - 既存の `selfAssessment` のネストパターンを踏襲
 - `.optional()` で既存記事への影響を回避
 
@@ -50,13 +50,13 @@
 1. `content.config.ts` からスキーマをimport
 2. `z.infer<typeof DiagramSectionSchema>` で型を生成
 3. `Extract<Union, { type: 'xxx' }>` で個別のセクション型を抽出
-4. 既存の型名（`HeroSectionData` など）を維持
+4. 既存の型名(`HeroSectionData` など)を維持
 5. `BaseSection` 型で `id` フィールドを追加
 
 **重要なポイント**:
 - **既存のコンポーネントへの影響を最小限に**
 - 型名を変更しないことで後方互換性を確保
-- Zodスキーマが単一の真実の源（SSOT）
+- Zodスキーマが単一の真実の源(SSOT)
 
 **期待される成果物**:
 - `DynamicPageBuilder` や各セクションコンポーネントは変更不要
@@ -91,7 +91,7 @@
 
 **重要なポイント**:
 - `diagram` フィールドがない記事は通常のブログページとして表示
-- ID生成は連番方式（`section-1`, `section-2`, ...）
+- ID生成は連番方式(`section-1`, `section-2`, ...)
 - 既存の `/blog/[slug].astro` のメタデータパターンを踏襲
 
 **期待される成果物**:
@@ -145,13 +145,13 @@
 
 ---
 
-## 実装の順序（推奨）
+## 実装の順序(推奨)
 
-1. **Step 1**: `src/content.config.ts` にZodスキーマ追加（30分）
-2. **Step 2**: `src/types/diagram.ts` で型エイリアス更新（20分）
-3. **Step 3**: `src/pages/blog/diagram/[slug].astro` 作成（30分）
-4. **Step 4**: サンプルデータでテスト（20分）
-5. **Step 5**: ビルドと最終検証（10分）
+1. **Step 1**: `src/content.config.ts` にZodスキーマ追加(30分)
+2. **Step 2**: `src/types/diagram.ts` で型エイリアス更新(20分)
+3. **Step 3**: `src/pages/blog/diagram/[slug].astro` 作成(30分)
+4. **Step 4**: サンプルデータでテスト(20分)
+5. **Step 5**: ビルドと最終検証(10分)
 
 **合計所要時間**: 約2時間
 
@@ -174,7 +174,7 @@
    - セクションIDを自動生成
    - メタデータ設定
 
-### 参考ファイル（変更不要）
+### 参考ファイル(変更不要)
 
 - `src/pages/blog/diagram/index.astro` - 完全なサンプルデータ
 - `src/components/feature/diagram/dynamic-page-builder.tsx` - 既存のコンポーネント
@@ -184,7 +184,7 @@
 
 ## 技術的な設計判断
 
-### 1. Zodスキーマが単一の真実の源（SSOT）
+### 1. Zodスキーマが単一の真実の源(SSOT)
 - フロントマター検証と TypeScript 型が完全一致
 - デュアルメンテナンスの問題を回避
 
@@ -207,11 +207,11 @@
 ## 潜在的な問題と対処法
 
 ### 問題1: Zodスキーマのexport
-- **解決策**: `content.config.ts` から直接export可能（Astro 5.x対応）
+- **解決策**: `content.config.ts` から直接export可能(Astro 5.x対応)
 - **代替案**: 動作しない場合は `src/schemas/diagram.ts` に切り出し
 
 ### 問題2: 型の循環参照
-- **解決策**: 一方向の依存のみ（`types/diagram.ts` → `content.config.ts`）
+- **解決策**: 一方向の依存のみ(`types/diagram.ts` → `content.config.ts`)
 
 ### 問題3: 既存デモページとの整合性
 - **解決策**: デモページは `/blog/diagram/` で維持、動的ページは `/blog/diagram/[slug]/` で衝突なし
@@ -259,7 +259,7 @@ diagram:
 1. Zodスキーマでフロントマターを検証
 2. セクションに `id: "section-1"`, `id: "section-2"` を自動付与
 3. DynamicPageBuilder でコンポーネントをレンダリング
-4. 静的HTML生成（JavaScriptなし）
+4. 静的HTML生成(JavaScriptなし)
 
 ---
 
@@ -268,16 +268,16 @@ diagram:
 この実装により、以下が達成されます:
 
 ✅ フロントマターに YAML を書くだけで図解ページを生成
-✅ 型安全なスキーマ検証（ビルド時にエラー検出）
-✅ セクションIDの自動生成（ユーザーの記述負担を軽減）
-✅ 既存記事への影響なし（`.optional()` で段階的移行）
-✅ 静的HTML生成（高速配信、SEO最適化）
+✅ 型安全なスキーマ検証(ビルド時にエラー検出)
+✅ セクションIDの自動生成(ユーザーの記述負担を軽減)
+✅ 既存記事への影響なし(`.optional()` で段階的移行)
+✅ 静的HTML生成(高速配信、SEO最適化)
 
-変更ファイル数: 3ファイル（1新規、2変更）
+変更ファイル数: 3ファイル(1新規、2変更)
 
 ---
 
-## 実装状況（2026-01-02）
+## 実装状況(2026-01-02)
 
 ### ✅ 完了した作業
 
@@ -287,7 +287,7 @@ diagram:
 - ✅ `diagram: z.array(DiagramSectionSchema).optional()` を追加
 - ✅ スキーマをexport: `export const DiagramSectionSchema = ...`
 
-#### Phase 2: 型エイリアス更新（初回試行） (`src/types/diagram.ts`)
+#### Phase 2: 型エイリアス更新(初回試行) (`src/types/diagram.ts`)
 - ✅ `z.infer<typeof DiagramSectionSchema>` で型を生成
 - ✅ `Extract<Union, { type: 'xxx' }>` パターンで個別型を抽出
 - ⚠️ **問題発覚**: `WithId<T>` ヘルパーを追加したが、型推論がうまく動作せず
@@ -296,7 +296,7 @@ diagram:
 - ✅ `getStaticPaths()` で図解記事をフィルタリング実装
 - ✅ セクションIDの自動生成ロジック実装
 - ✅ OGP画像、JSON-LD、canonical URLの設定完了
-- ⚠️ **問題発覚**: `as ArticleData['content']` で型アサーションを使用（危険）
+- ⚠️ **問題発覚**: `as ArticleData['content']` で型アサーションを使用(危険)
 
 #### Phase 4: サンプルデータ追加
 - ✅ `contents/blog/2025-12-30_claude-code-dynamic-skill-loading.md` に3セクション追加
@@ -306,11 +306,11 @@ diagram:
 #### Phase 5: ビルド検証
 - ✅ `bun run build` 成功
 - ✅ 静的ファイル生成確認: `dist/blog/diagram/claude-code-dynamic-skill-loading/index.html` (29,763 bytes)
-- ❌ **型チェック失敗**: 61個の型エラー（すべて `never` 型関連）
+- ❌ **型チェック失敗**: 61個の型エラー(すべて `never` 型関連)
 
 ### 🔴 未解決の問題
 
-#### 問題1: 型推論の失敗（最重要）
+#### 問題1: 型推論の失敗(最重要)
 
 **症状**:
 - `sectionsWithId` が `never[]` 型と推論される
@@ -322,7 +322,7 @@ diagram:
 - `Extract<DiagramSectionWithoutId, { type: 'xxx' }>` が正しく機能していない
 - `WithId<T>` ヘルパーでの型合成がうまく動作していない
 
-**危険なコード（現状）**:
+**危険なコード(現状)**:
 ```typescript
 // src/pages/blog/diagram/[slug].astro
 const sectionsWithId = post.data.diagram!.map((section, index) => ({
@@ -340,15 +340,15 @@ const sectionsWithId = post.data.diagram!.map((section, index) => ({
 
 **症状**:
 - `DynamicPageBuilder` 内の `section.id` や `section.type` が `never` 型
-- 各セクションコンポーネント（HeroSection, ProblemSection など）の `data` プロパティが `never` 型
+- 各セクションコンポーネント(HeroSection, ProblemSection など)の `data` プロパティが `never` 型
 
 **原因**:
 - Zodから生成された型が、既存のハードコードされた型定義と構造が異なる
 - `BaseSection` との交差型がうまく機能していない
 
-### 📋 次のステップ（作業停止により未実施）
+### 📋 次のステップ(作業停止により未実施)
 
-#### Option 1: 型定義を完全に書き直す（推奨）
+#### Option 1: 型定義を完全に書き直す(推奨)
 1. `src/types/diagram.ts` で既存の型定義を削除
 2. Zodスキーマから直接 `z.infer` で型を生成
 3. `ArticleSection` 型を以下のように定義:
@@ -375,7 +375,7 @@ const sectionsWithId = post.data.diagram!.map((section, index) => ({
 
 2. **Zodスキーマと型定義の一致が必須**
    - `z.infer` で生成される型と手動で定義した型が一致しないと、型推論が破綻する
-   - どちらか一方を真実の源（SSOT）とすべき
+   - どちらか一方を真実の源(SSOT)とすべき
 
 3. **段階的な検証が重要**
    - 各Phaseで型チェックを実行すべきだった
@@ -383,10 +383,10 @@ const sectionsWithId = post.data.diagram!.map((section, index) => ({
 
 ### 📁 変更されたファイル
 
-1. **`src/content.config.ts`** - Zodスキーマ追加（完了）
-2. **`src/types/diagram.ts`** - 型エイリアス更新（問題あり）
-3. **`src/pages/blog/diagram/[slug].astro`** - 新規作成（型アサーション使用中）
-4. **`contents/blog/2025-12-30_claude-code-dynamic-skill-loading.md`** - サンプルデータ追加（完了）
+1. **`src/content.config.ts`** - Zodスキーマ追加(完了)
+2. **`src/types/diagram.ts`** - 型エイリアス更新(問題あり)
+3. **`src/pages/blog/diagram/[slug].astro`** - 新規作成(型アサーション使用中)
+4. **`contents/blog/2025-12-30_claude-code-dynamic-skill-loading.md`** - サンプルデータ追加(完了)
 
 ### 🛑 作業停止理由
 
