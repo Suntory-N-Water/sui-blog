@@ -1,0 +1,29 @@
+name: Playwright Setup
+description: Install and cache Playwright browsers
+
+runs:
+  using: composite
+  steps:
+    - name: Get Playwright version
+      id: playwright-version
+      run: echo "version=$(node -p "require('./package.json').devDependencies.playwright || require('./package.json').dependencies.playwright" | tr -d '^~')" >> "$GITHUB_OUTPUT"
+      shell: bash
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+      id: playwright-cache
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+        restore-keys: |
+          playwright-${{ runner.os }}-
+
+    - name: Install Playwright browsers
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: bunx --bun playwright install --with-deps chromium
+      shell: bash
+
+    - name: Install Playwright system dependencies
+      if: steps.playwright-cache.outputs.cache-hit == 'true'
+      run: bunx --bun playwright install-deps chromium
+      shell: bash
