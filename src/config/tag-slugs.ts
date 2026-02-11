@@ -126,6 +126,7 @@ export const TAG_SLUG_MAP: Record<string, string> = {
   ポートフォリオ: 'portfolio',
   絵文字: 'emoji',
   雑記: 'miscellaneous',
+  旅行: 'travel',
 } as const;
 
 /**
