@@ -225,11 +225,11 @@ playwright-cli resize <w> <h>           # resize the browser window
 ❯ Playwright CLI を使用して https://www.yahoo.co.jp/から最新のニュースを１件取得し、ニュースの詳細画面へ遷移して内容を取得してください。
 ```
 
-![image](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/a122905462523b3f4231a3d08f8a3b38.png)
+![Playwright CLIでYahoo! JAPANを開きスナップショットを取得する操作例](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/a122905462523b3f4231a3d08f8a3b38.png)
 
-![image](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/6e3108bc6e0069c5d1d214866dd7c421.png)
+![Playwright CLIでスナップショットからニュースリンクをGrep検索する操作例](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/6e3108bc6e0069c5d1d214866dd7c421.png)
 
-![image](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/7ba96f6d3f2b116b04fe140d911d0bd4.png)
+![Playwright CLIでニュース記事をクリックし本文を取得する操作例](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/7ba96f6d3f2b116b04fe140d911d0bd4.png)
 
 ここで特徴的な点は、ページにアクセスすると、その時点でのスナップショットが `.playwright-cli/page-xxx.yml` にファイルとして保存されることです。エージェントへの返却はそのパスが提供されるというしくみです。
 ```bash

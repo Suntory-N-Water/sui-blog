@@ -178,6 +178,10 @@ const compiledHtml = await compileMarkdown({ source: post.body });
         class='mb-6 flex flex-wrap items-center justify-between text-sm text-muted-foreground'
       >
         <div class='inline-flex flex-wrap items-center gap-3'>
+          <span class='inline-flex items-center gap-1'>
+            <Icons.User client:load className='size-4' />
+            <span>{siteConfig.name}</span>
+          </span>
           {
             post.data.date && (
               <div

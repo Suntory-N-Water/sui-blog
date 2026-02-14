@@ -7,7 +7,7 @@ import { absoluteUrl, cn } from '@/lib/utils';
 import { Image } from 'astro:assets';
 
 const aboutDescription =
-  'プロフィール、経歴、SNSや連絡先のリンクをまとめたページです。';
+  'sui(スイ)のプロフィール、エンジニア経歴、SNSや連絡先リンクをまとめた自己紹介ページです。';
 const canonicalUrl = absoluteUrl('/about');
 
 const careerData = [
@@ -50,7 +50,7 @@ const careerData = [
 ---
 
 <BaseLayout
-  title='About'
+  title='About - プロフィール&経歴'
   description={aboutDescription}
   ogImage={siteConfig.ogImage}
   canonicalUrl={canonicalUrl}

@@ -14,11 +14,19 @@ const currentYear = new Date().getFullYear();
   <div
     class='container mx-auto flex flex-col items-center justify-between gap-6 px-6 py-8 sm:flex-row'
   >
-    <!-- Copyright notice -->
-    <p class='text-sm font-medium text-muted-foreground'>
-      © {currentYear}
-      {copyrightName}. All Rights Reserved.
-    </p>
+    <!-- Copyright notice and links -->
+    <div class='flex flex-col items-center gap-2 sm:items-start'>
+      <p class='text-sm font-medium text-muted-foreground'>
+        © {currentYear}
+        {copyrightName}. All Rights Reserved.
+      </p>
+      <a
+        href='/privacy'
+        class='text-xs text-muted-foreground/70 transition-colors hover:text-primary'
+      >
+        プライバシーポリシー
+      </a>
+    </div>
 
     <!-- Social media links and RSS feed -->
     <div class='flex items-center gap-3'>

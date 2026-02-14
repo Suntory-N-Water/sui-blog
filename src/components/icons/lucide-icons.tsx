@@ -21,6 +21,7 @@ import {
   Rss,
   Sun,
   Tag,
+  User,
   XCircle,
   Zap,
 } from 'lucide-react';
@@ -48,6 +49,7 @@ export const Icons = {
   Rss,
   Sun,
   Tag,
+  User,
   XCircle,
   Zap,
   // キャメルケースのエイリアスも保持

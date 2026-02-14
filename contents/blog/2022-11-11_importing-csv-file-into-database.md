@@ -132,5 +132,5 @@ Records: 300  Deleted: 0  Skipped: 0  Warnings: 0
 
 - [MySQL ユーザを作成して権限を設定・削除する](https://qiita.com/miriwo/items/899c06fdc91beb2f6d62)
 - [【MySQL】csvファイルをDBにインポートする方法](https://qiita.com/oden141/items/239a7ce3cfe3197a3ba7)
-- [MySQL – CSVファイルのインポートでエラー](http://taustation.com/mysql-csv-file-import-error/)
+- [MySQL – CSVファイルのインポートでエラー](https://taustation.com/mysql-csv-file-import-error/)
 

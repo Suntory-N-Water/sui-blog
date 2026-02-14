@@ -53,9 +53,9 @@ export type NotionDataSourceQueryResult = Awaited<
 従来のデータベース ID の取得方法は、`290779d04d0280548d2be29e12530de6` の部分を設定すればよかったのですが、新しくデータソース ID という概念が登場しました。
 実際にデータベースを開いて、データベース設定 → "データベースを管理する" → "⋯" → "データソース ID をコピー"で取得できます。
 
-![image](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/719339eae57cb53383f11e88c947047c.png)
+![Notionのデータベース設定から「データベースを管理する」を開いたメニュー画面](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/719339eae57cb53383f11e88c947047c.png)
 
-![image](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/d2db2155007d6497fb0b6f6f124aa9c5.png)
+![データソースIDをコピーする操作画面](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/d2db2155007d6497fb0b6f6f124aa9c5.png)
 
 データソース ID は `290779d0-4d02-808a-a37f-000b48c16318` のようなハイフン付きの ID が取得可能です。
 以下のようなコードで取得したデータソースへアクセスが可能です。

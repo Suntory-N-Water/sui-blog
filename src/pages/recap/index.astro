@@ -4,12 +4,18 @@ import '@/styles/globals.css';
 
 import RecapLayout from '@/layouts/recap-layout.astro';
 
-const title = 'Recap | sui Tech Blog';
-const description = 'Gateway to the past.';
+const title = 'Recap - 年間アーカイブ';
+const description =
+  '年ごとの技術ブログ振り返りアーカイブです。1年間のアウトプットや技術トレンドを振り返ります。';
 const canonicalUrl = absoluteUrl('/recap');
 ---
 
-<RecapLayout title={title} description={description} url={canonicalUrl}>
+<RecapLayout
+  title={title}
+  description={description}
+  url={canonicalUrl}
+  ogImage={`${import.meta.env.SITE || 'https://suntory-n-water.com'}/opengraph-image.png`}
+>
   <style slot='head'>
     .glitch-wrapper {
       position: relative;
@@ -114,6 +120,7 @@ const canonicalUrl = absoluteUrl('/recap');
     <div class='glow'></div>
 
     <div class='text-center space-y-2 z-10 w-full max-w-md'>
+      <h1 class='sr-only'>Recap - アーカイブ</h1>
       <p class='text-sm tracking-[0.5em] text-gray-500 uppercase'>Archive</p>
 
       <a
