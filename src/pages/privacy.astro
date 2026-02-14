@@ -1,0 +1,75 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { siteConfig } from '@/config/site';
+import { absoluteUrl } from '@/lib/utils';
+import { Icons } from '@/components/icons';
+
+const canonicalUrl = absoluteUrl('/privacy');
+---
+
+<BaseLayout
+  title='プライバシーポリシー'
+  description='sui Tech Blogのプライバシーポリシーです。個人情報の取り扱い、アクセス解析ツールの使用について説明しています。'
+  canonicalUrl={canonicalUrl}
+>
+  <div data-pagefind-ignore class='mx-auto max-w-3xl py-12'>
+    <nav class='mb-8 flex items-center gap-2 text-sm text-muted-foreground'>
+      <a href='/' class='transition-colors hover:text-primary'>Home</a>
+      <Icons.ChevronRight client:load className='size-4' />
+      <span class='text-foreground'>Privacy Policy</span>
+    </nav>
+
+    <h1 class='mb-8 text-3xl font-bold tracking-tight'>プライバシーポリシー</h1>
+
+    <div class='prose dark:prose-invert prose-zinc max-w-none space-y-8'>
+      <section>
+        <h2>当サイトについて</h2>
+        <p>
+          当サイト({
+            siteConfig.name
+          })は個人が運営する技術ブログです。お問い合わせフォームや会員登録の機能はなく、メールアドレスやお名前などの個人情報を収集することはありません。
+        </p>
+      </section>
+
+      <section>
+        <h2>アクセス解析について</h2>
+        <p>
+          当サイトでは、アクセス状況の把握を目的として Google Analytics
+          を使用しています。Google Analytics は Cookie
+          を使用してデータを収集しますが、個人を特定する情報は含まれません。
+        </p>
+        <p>
+          Cookie はブラウザの設定から無効にできます。詳細は <a
+            href='https://marketingplatform.google.com/about/analytics/terms/jp/'
+            target='_blank'
+            rel='noopener noreferrer'>Google Analytics 利用規約</a
+          > および <a
+            href='https://policies.google.com/technologies/partner-sites?hl=ja'
+            target='_blank'
+            rel='noopener noreferrer'
+            >Google のサービスを使用するサイトやアプリから収集した情報の Google
+            による使用</a
+          > をご確認ください。
+        </p>
+      </section>
+
+      <section>
+        <h2>免責事項</h2>
+        <p>
+          当サイトに掲載された情報は、正確性を心がけていますが、内容が古くなっている場合や誤りが含まれる場合があります。当サイトの情報を利用して生じた損害について、一切の責任を負いません。
+        </p>
+      </section>
+
+      <section>
+        <h2>お問い合わせ</h2>
+        <p>
+          プライバシーポリシーに関するお問い合わせは、<a
+            href={siteConfig.links.twitter}
+            target='_blank'
+            rel='noopener noreferrer'>X(Twitter)のDM</a
+          >までお願いします。
+        </p>
+      </section>
+    </div>
+  </div>
+</BaseLayout>

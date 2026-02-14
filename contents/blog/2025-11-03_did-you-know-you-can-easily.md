@@ -636,7 +636,7 @@ GAS エディタ(https://script.google.com/)を開き、デプロイボタンか
 - 実行ユーザー: 自分
 - アクセスできるユーザー: 自分のみ(開発時)、またはドメイン内全員(本番時)
 
-![image](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/a0450fe7c181739fb12f9b60e182bfce.png)
+![GASウェブアプリのデプロイ設定画面](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/a0450fe7c181739fb12f9b60e182bfce.png)
 ### OAuth認証
 
 デプロイ後、初回アクセス時に OAuth 認証画面が表示されます。
@@ -664,9 +664,9 @@ GAS エディタ(https://script.google.com/)を開き、デプロイボタンか
 検索フォームにキーワード(例:「報告書」)を入力して「検索」ボタンをクリックすると、Google Drive 内のファイルが検索されます。
 検索結果は、ファイル名と最終更新日時がテーブル形式で表示されます。該当するファイルがない場合は、「該当するファイルがありません」というメッセージが表示されます。
 実際に Google Drive に仮ファイルを作成して「clasp-gas-webapp-demo」と検索したところ、無事検索ができ画面へ表示されました。
-![image](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/41b3542cb3dc49e30b4666c5bce51eb7.png)
+![Drive検索ビューアでキーワード検索を実行した画面](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/41b3542cb3dc49e30b4666c5bce51eb7.png)
 
-![image](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/1b71e182e10648cb05faf1cbd02dc884.png)
+![Drive検索ビューアの検索結果一覧表示](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/1b71e182e10648cb05faf1cbd02dc884.png)
 
 
 ## 社内公開に向けて:実践的な考慮事項

@@ -65,7 +65,7 @@ export function LinkCard({
                   {hostname && (
                     <img
                       src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`}
-                      alt=''
+                      alt={`${hostname} のアイコン`}
                       className='object-cover'
                       loading='lazy'
                       width='16'

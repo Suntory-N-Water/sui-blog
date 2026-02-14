@@ -239,12 +239,12 @@ function sanitizeSVG(svg: string): string {
 実際に両方の実装を比較してみましょう。
 
 まず、従来通り URL で画像を指定した方式です。初回起動時や `Command + Shift + R` などでスーパーリロードした時には、カンマ数秒程度ではありますが、ちらつきが発生します。2 回目以降、同じ URL の絵文字を表示する際にはちらつきませんが、初回のこの挙動は依然として気になります。
-![image](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/0161e1ae5986ee182717fd16cd97ce49.gif)
+![URL指定方式での初回アクセス時にSVGアイコンがちらつく様子](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/0161e1ae5986ee182717fd16cd97ce49.gif)
 
 一方、SVG をビルドに直接埋め込む方式ではどうでしょうか。ローカル環境ではなく、Vercel 上にデプロイされた環境で検証しましたが、確認できる限りちらつきは発生していません。実際のソースコードを確認すると、該当の SVG 部分には SVG コードが直接埋め込まれていることが分かります。
-![image](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/a9aae199d9c561675794de04489fb049.gif)
+![SVGインライン化方式でちらつきが発生しない様子](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/a9aae199d9c561675794de04489fb049.gif)
 
-![image](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/60fe7125be9c5a4825f6acce699d68d2.png)
+![ソースコードにSVGが直接埋め込まれていることを確認した画面](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/60fe7125be9c5a4825f6acce699d68d2.png)
 
 ## まとめ
 

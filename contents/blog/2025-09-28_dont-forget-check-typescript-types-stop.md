@@ -309,7 +309,7 @@ type ContentElement = {
 ## 内容を検知する仕組み
 たとえば Claude Code にこのような内容でチャットをしてみます。
 
-![image](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/0c0cc5fe0ded068f678c49924d5b0901.png)
+![Claude Codeへのチャット入力例](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/0c0cc5fe0ded068f678c49924d5b0901.png)
 
 
 その後 Claude Code との会話を確認すると、以下のような `jsonl` 形式のファイルに出力されていることが確認できます。
@@ -459,7 +459,7 @@ if (
 > Claude Code の内部実装が変わると誤検知の可能性がある点に注意してください。
 
 実際に型チェックが成功するとこのようにエディタ上で怒ってくれます✌️
-![image](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/fbea084e7204ab74b15a200f8453655e.png)
+![Stop Hooksによる型チェックエラーのエディタ表示](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/fbea084e7204ab74b15a200f8453655e.png)
 
 ## まとめ
 

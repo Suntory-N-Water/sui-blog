@@ -50,7 +50,7 @@ https://nextjs.org/docs/app/api-reference/file-conventions/public-folder
 ここにインデックスファイルや `pagefind.js` を出力することで、ブラウザ(クライアントサイド)から `/pagefind/pagefind.js` として直接アクセスが可能になり、スムーズに検索スクリプトをロードできます。
 
 実際にこのブログで検索したときのデモです。見ての通り爆速で記事検索ができていることが確認できます。
-![image](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/b88b12b125263c0895529d4a4c487cec.gif)
+![Pagefindによるブログ検索のデモ](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/b88b12b125263c0895529d4a4c487cec.gif)
 
 ## 実装時の注意点
 
@@ -61,7 +61,7 @@ https://www.petemillspaugh.com/nextjs-search-with-pagefind
 
 また、Pagefind は `.next` ディレクトリ内の成果物をスキャンするため、検索結果の URL が `/server/app/blog/post-1.html` のような内部パスで返却されます。
 実際に開発者ツールを確認して、`/blog/github-actions-security-basics-minimum-measures` の URL を見てみると、`server/app/blog/github-actions-security-basics-minimum-measures.html` と想定とは異なるファイルパスが設定されていることが確認できます。
-![image](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/c70a42ae51a45bae56abc80dbff9c5fa.png)
+![開発者ツールで確認したPagefind検索結果の内部パス](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/c70a42ae51a45bae56abc80dbff9c5fa.png)
 このパスになっていると、実際に画面遷移した際にページが見つからず、404 エラーとなってしまうので、以下のようなコードで `/server/app/` と `.html` 拡張子も削除します。
 
 ```ts
@@ -100,10 +100,10 @@ https://pagefind.app/docs/indexing/
 実際に設定してみると、設定前ではトップページの内容が検索にヒットしてしまいますが、設定後は自己紹介文に含まれる単語を検索しても、検索対象外になっていることが確認できます。
 
 ### 設定前
-![image](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/8f4949975dc063aab43f629ef639761d.png)
+![data-pagefind-ignore設定前のトップページが検索にヒットしている様子](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/8f4949975dc063aab43f629ef639761d.png)
 
 ### 設定後
-![image](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/5dc0f66cc24dff699d786a2c948d4039.png)
+![data-pagefind-ignore設定後にトップページが検索対象外になった様子](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/5dc0f66cc24dff699d786a2c948d4039.png)
 
 ## まとめ
 - Pagefind はビルド時に静的インデックスを作成し、クライアントサイドで検索を実行する検索機能ライブラリ
