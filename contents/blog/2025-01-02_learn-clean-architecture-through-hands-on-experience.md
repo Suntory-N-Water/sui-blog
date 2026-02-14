@@ -25,7 +25,7 @@ tags:
 中心にいくにつれてそのシステム特有のビジネスルールがあり、外側に技術的な関心(UI、データベースなど)が配置されています。
 
 以下では、この図の各層について、外側から内側に向かって順に説明していきます。
-![](https://storage.googleapis.com/zenn-user-upload/8ad12e7d4584-20250102.jpg)
+![クリーンアーキテクチャの同心円図で各層の責務が示されている](https://storage.googleapis.com/zenn-user-upload/8ad12e7d4584-20250102.jpg)
 
 
 ## Frameworks & Drivers(フレームワークとドライバ)
@@ -76,7 +76,7 @@ tags:
 
 これは実際にクリーンアーキテクチャのクラス図を表現しています。
 
-![](https://storage.googleapis.com/zenn-user-upload/36f4251e3543-20250102.png)
+![クリーンアーキテクチャのクラス図でインターフェースと実装の依存関係が示されている](https://storage.googleapis.com/zenn-user-upload/36f4251e3543-20250102.png)
 
 
 この 2 つの図は、[Clean Architecture 達人に学ぶソフトウェアの構造と設計](https://www.amazon.co.jp/dp/4048930656)の著者 Robert C. Martin 氏がクリーンアーキテクチャを説明する際に用いている図です。

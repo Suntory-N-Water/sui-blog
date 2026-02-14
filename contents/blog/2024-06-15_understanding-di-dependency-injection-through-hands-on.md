@@ -351,7 +351,7 @@ JSON Placeholder の公式ドキュメントを見たところ、id は勝手に
 
 叩いたところ、無事に登録されてレスポンスが返却されることが分かります。
 
-![](https://storage.googleapis.com/zenn-user-upload/baf6a2494f81-20240615.png)
+![Postmanで新規投稿作成APIのレスポンスが表示されている画面](https://storage.googleapis.com/zenn-user-upload/baf6a2494f81-20240615.png)
 
 
 初めての DI ということでなんとなくイメージが掴めたところで、今回は終了しようと思います。

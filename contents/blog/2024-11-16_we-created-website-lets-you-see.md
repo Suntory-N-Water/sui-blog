@@ -21,7 +21,7 @@ https://population-trend-graph.pages.dev/
 
 引っ越しやお住まいの地域で人口の変化を気にしている方は、ぜひ試してみてください！😄
 
-![](https://storage.googleapis.com/zenn-user-upload/8ef470b1fff9-20241113.png)
+![人口動態グラフサイトのトップページで都道府県と市区町村の選択UIが表示されている](https://storage.googleapis.com/zenn-user-upload/8ef470b1fff9-20241113.png)
 
 
 ## 技術的なこと
@@ -103,7 +103,7 @@ push or マージ時に `pnpm next-on-pages` が走ってデプロイまで自�
 ```
 
 画像は東京都千代田区と中央区を比較した結果です。
-![](https://storage.googleapis.com/zenn-user-upload/acb92fc484ff-20241113.png)
+![Rechartsで東京都千代田区と中央区の人口動態を比較した折れ線グラフ](https://storage.googleapis.com/zenn-user-upload/acb92fc484ff-20241113.png)
 
 ## DBを使用しない
 

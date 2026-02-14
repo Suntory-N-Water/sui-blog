@@ -41,10 +41,10 @@ header::after {
 ```
 
 ## 実装イメージ
-![](https://storage.googleapis.com/zenn-user-upload/ffcff39855a8-20250207.png)
+![Marpスライドのヘッダーに企業ロゴと文字列が表示されている例](https://storage.googleapis.com/zenn-user-upload/ffcff39855a8-20250207.png)
 *ヘッダーに文字列あり*
 
-![](https://storage.googleapis.com/zenn-user-upload/8afd3ae147cc-20250207.png)
+![Marpスライドのヘッダーにロゴのみが表示されている例](https://storage.googleapis.com/zenn-user-upload/8afd3ae147cc-20250207.png)
 *ヘッダーを' 'にすることでロゴだけ表示できます*
 
 

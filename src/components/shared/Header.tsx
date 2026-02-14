@@ -118,7 +118,6 @@ export default function Header({ pathname }: HeaderProps) {
             type='button'
             onClick={() => setSearchOpen(true)}
             className='hidden h-9 items-center justify-start gap-2 overflow-hidden rounded-lg border border-border/50 bg-secondary/20 px-3 text-sm font-medium text-muted-foreground transition-all hover:border-border/80 hover:bg-secondary/60 hover:text-foreground w-48 lg:w-64 md:inline-flex'
-            aria-label='検索を開く'
           >
             <Search className='h-4 w-4 transition-transform group-hover:scale-110' />
             <span>Search...</span>
@@ -131,7 +130,7 @@ export default function Header({ pathname }: HeaderProps) {
             type='button'
             onClick={() => setSearchOpen(true)}
             className='inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border/50 bg-secondary/20 text-muted-foreground transition-all hover:bg-secondary/60 hover:text-foreground md:hidden'
-            aria-label='検索を開く'
+            aria-label='Search'
           >
             <Search className='h-4 w-4' />
           </button>

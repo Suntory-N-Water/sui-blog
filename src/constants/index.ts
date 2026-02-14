@@ -25,6 +25,8 @@ export const SITE_CONSTANTS = {
   URL: url,
   /** OGP画像URL */
   OG_IMAGE: `${url}/opengraph-image.png`,
+  /** 著者名 */
+  AUTHOR_NAME: 'sui',
   /** 著作権表記 */
   COPYRIGHT: 'Suntory-N-Water',
 } as const;
@@ -35,6 +37,8 @@ export const SITE_CONSTANTS = {
 export const SOCIAL_CONSTANTS = {
   /** Twitter/X アカウントURL */
   TWITTER: 'https://x.com/Suntory_N_Water',
+  /** Twitter/X ハンドル名 */
+  TWITTER_HANDLE: '@Suntory_N_Water',
   /** GitHub アカウントURL */
   GITHUB: 'https://github.com/Suntory-N-Water',
 } as const;

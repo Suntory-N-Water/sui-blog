@@ -169,7 +169,7 @@ export function createPostId(id: number): PostId {
 
 先にレポジトリから修正したので、Branded Type になっていない `this.postRepository.findPost(id);` の部分がコンパイルエラーになっていることが確認できます。
 
-![](https://storage.googleapis.com/zenn-user-upload/ea294c6c13cb-20241231.png)
+![PostServiceのfindPost呼び出しでTypeScriptコンパイルエラーが発生している画面](https://storage.googleapis.com/zenn-user-upload/ea294c6c13cb-20241231.png)
 
 
 レポジトリと同様に修正し、引数と返却値を Branded Type 対応にします。

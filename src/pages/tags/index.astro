@@ -7,9 +7,9 @@ import { getTagSlug } from '@/config/tag-slugs';
 import { getAllTags } from '@/lib/markdown';
 import { absoluteUrl, cn } from '@/lib/utils';
 
-const PAGE_TITLE = 'すべてのタグ';
+const PAGE_TITLE = 'すべてのタグ - 技術カテゴリ一覧';
 const PAGE_DESCRIPTION =
-  'ブログ記事で使われているすべてのタグ一覧です。興味のあるタグをクリックして関連記事を探せます。';
+  'sui Tech Blogで使用しているすべてのタグ一覧です。Astro、TypeScript、Cloudflare、Pythonなど、Web開発に関連する技術カテゴリから興味のある記事を探せます。';
 
 const tags = await getAllTags();
 const sortedTags = tags.sort((a, b) => a.localeCompare(b, 'ja'));

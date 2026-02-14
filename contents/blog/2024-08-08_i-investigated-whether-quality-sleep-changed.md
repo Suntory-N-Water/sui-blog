@@ -45,7 +45,7 @@ iPhone のヘルスケアデータを解析するにあたって、どのよう�
 ヘルスケアのデータはヘルスケアアプリを開いた後、画面右上のアイコンを選択します。
 
 画面下部に「すべてのヘルスケアデータを書き出す」ボタンがあるので選択して、ご自身の PC やアップロードしてください(ファイルが重たいので時間かかります)
-![](https://storage.googleapis.com/zenn-user-upload/c82ae47776cc-20240808.jpeg)
+![iPhoneヘルスケアアプリのデータ書き出しボタンの画面](https://storage.googleapis.com/zenn-user-upload/c82ae47776cc-20240808.jpeg)
 
 ## エクスポートしたファイルの確認
 
@@ -179,7 +179,7 @@ if __name__ == "__main__":
 ```bash
 睡眠時間と歩数の相関関係: -0.11459083041585821
 ```
-![](https://storage.googleapis.com/zenn-user-upload/ecc812496c20-20240808.png)
+![睡眠時間と歩数の相関関係を示す散布図で相関がほぼないことが可視化されている](https://storage.googleapis.com/zenn-user-upload/ecc812496c20-20240808.png)
 
 
 ## 考察
