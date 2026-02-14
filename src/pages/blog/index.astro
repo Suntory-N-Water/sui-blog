@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getAllBlogPosts } from '@/lib/markdown';
+import { getAllBlogPosts, calculateReadingTime } from '@/lib/markdown';
 import { paginateItems } from '@/lib/pagination';
 import { getInlineIcon } from '@/lib/inline-icons';
 import { BLOG_CONSTANTS } from '@/constants';
@@ -26,7 +26,8 @@ const postsWithIcons = paginatedPosts.map((blog) => {
     blog.data.icon_url ||
     (blog.data.icon?.startsWith('https://') ? blog.data.icon : null);
   const inlineSvg = displayUrl ? getInlineIcon(displayUrl) : undefined;
-  return { blog, inlineSvg };
+  const readingTime = calculateReadingTime(blog.body);
+  return { blog, inlineSvg, readingTime };
 });
 
 const canonicalUrl = absoluteUrl('/blog');
@@ -55,8 +56,13 @@ const canonicalUrl = absoluteUrl('/blog');
 
     <div class='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
       {
-        postsWithIcons.map(({ blog, inlineSvg }, index) => (
-          <BlogCard data={blog} priority={index < 6} inlineSvg={inlineSvg} />
+        postsWithIcons.map(({ blog, inlineSvg, readingTime }, index) => (
+          <BlogCard
+            data={blog}
+            priority={index < 6}
+            inlineSvg={inlineSvg}
+            readingTime={readingTime}
+          />
         ))
       }
     </div>

@@ -87,7 +87,7 @@ export function rehypeCodeCopyButton() {
                       'bg-background',
                       'hover:bg-accent',
                       'hover:text-accent-foreground',
-                      'size-8',
+                      'size-10',
                       'opacity-70',
                       'hover:bg-muted/30',
                       'hover:opacity-100',

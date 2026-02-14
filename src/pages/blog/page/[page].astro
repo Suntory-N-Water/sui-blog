@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getAllBlogPosts } from '@/lib/markdown';
+import { getAllBlogPosts, calculateReadingTime } from '@/lib/markdown';
 import { paginateItems } from '@/lib/pagination';
 import { getInlineIcon } from '@/lib/inline-icons';
 import { BLOG_CONSTANTS } from '@/constants';
@@ -22,7 +22,7 @@ const { page } = Astro.params;
 const pageNum = Number.parseInt(page, 10);
 
 if (Number.isNaN(pageNum)) {
-  return Astro.redirect('/404');
+  return Astro.redirect('/404/');
 }
 
 const allPosts = await getAllBlogPosts();
@@ -38,7 +38,7 @@ const {
 });
 
 if (currentPage > totalPages) {
-  return Astro.redirect('/404');
+  return Astro.redirect('/404/');
 }
 
 const postsWithIcons = paginatedPosts.map((blog) => {
@@ -46,7 +46,8 @@ const postsWithIcons = paginatedPosts.map((blog) => {
     blog.data.icon_url ||
     (blog.data.icon?.startsWith('https://') ? blog.data.icon : null);
   const inlineSvg = displayUrl ? getInlineIcon(displayUrl) : undefined;
-  return { blog, inlineSvg };
+  const readingTime = calculateReadingTime(blog.body);
+  return { blog, inlineSvg, readingTime };
 });
 
 const canonicalUrl = absoluteUrl(`/blog/page/${page}`);
@@ -71,8 +72,12 @@ const canonicalUrl = absoluteUrl(`/blog/page/${page}`);
 
     <div class='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
       {
-        postsWithIcons.map(({ blog, inlineSvg }) => (
-          <BlogCard data={blog} inlineSvg={inlineSvg} />
+        postsWithIcons.map(({ blog, inlineSvg, readingTime }) => (
+          <BlogCard
+            data={blog}
+            inlineSvg={inlineSvg}
+            readingTime={readingTime}
+          />
         ))
       }
     </div>

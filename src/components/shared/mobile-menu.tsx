@@ -29,7 +29,7 @@ export default function HamburgerMenu({ params }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className='p-1 md:hidden'
+        className='flex h-11 w-11 items-center justify-center rounded-lg md:hidden'
         aria-label='メニューを開く'
       >
         <Menu className='size-7' aria-hidden='true' />

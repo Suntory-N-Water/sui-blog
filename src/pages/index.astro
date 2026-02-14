@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getAllBlogPosts } from '@/lib/markdown';
+import { getAllBlogPosts, calculateReadingTime } from '@/lib/markdown';
 import { paginateItems } from '@/lib/pagination';
 import { getInlineIcon } from '@/lib/inline-icons';
 import { BLOG_CONSTANTS } from '@/constants';
@@ -43,7 +43,8 @@ const postsWithIcons = paginatedPosts.map((blog) => {
     blog.data.icon_url ||
     (blog.data.icon?.startsWith('https://') ? blog.data.icon : null);
   const inlineSvg = displayUrl ? getInlineIcon(displayUrl) : undefined;
-  return { blog, inlineSvg };
+  const readingTime = calculateReadingTime(blog.body);
+  return { blog, inlineSvg, readingTime };
 });
 
 const canonicalUrl = absoluteUrl('/');
@@ -81,7 +82,7 @@ const canonicalUrl = absoluteUrl('/');
       >
         <Button client:load asChild className='h-11 rounded-full px-8'>
           <a
-            href='/blog'
+            href='/blog/'
             class='group inline-flex items-center gap-2 text-sm font-bold'
           >
             ブログを読む
@@ -97,7 +98,7 @@ const canonicalUrl = absoluteUrl('/');
           asChild
           className='h-11 rounded-full px-8'
         >
-          <a href='/about' class='text-sm font-bold'> About me </a>
+          <a href='/about/' class='text-sm font-bold'> About me </a>
         </Button>
       </div>
     </div>
@@ -109,7 +110,7 @@ const canonicalUrl = absoluteUrl('/');
           最新記事
         </h2>
         <a
-          href='/blog'
+          href='/blog/'
           class='hidden items-center gap-1 text-sm font-bold text-primary transition-colors hover:underline md:flex'
         >
           すべての記事を見る
@@ -122,15 +123,20 @@ const canonicalUrl = absoluteUrl('/');
 
       <div class='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
         {
-          postsWithIcons.map(({ blog, inlineSvg }, index) => (
-            <BlogCard data={blog} priority={index < 6} inlineSvg={inlineSvg} />
+          postsWithIcons.map(({ blog, inlineSvg, readingTime }, index) => (
+            <BlogCard
+              data={blog}
+              priority={index < 6}
+              inlineSvg={inlineSvg}
+              readingTime={readingTime}
+            />
           ))
         }
       </div>
 
       <div class='text-center md:hidden'>
         <a
-          href='/blog'
+          href='/blog/'
           class='inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-6 py-3 text-sm font-bold text-secondary-foreground transition-colors hover:bg-accent hover:text-accent-foreground'
         >
           すべての記事を見る

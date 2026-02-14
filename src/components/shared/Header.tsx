@@ -15,22 +15,22 @@ type MenuItemLinkProps = {
 
 const NAVIGATION_LINKS: MenuItemLinkProps[] = [
   {
-    href: '/blog',
+    href: '/blog/',
     title: 'Blog',
     icon: <Book className='size-5' />,
   },
   {
-    href: '/about',
+    href: '/about/',
     title: 'About',
     icon: <User className='size-5' />,
   },
   {
-    href: '/tags',
+    href: '/tags/',
     title: 'Tags',
     icon: <Icons.tag className='size-5' />,
   },
   {
-    href: '/recap',
+    href: '/recap/',
     title: 'Recap',
     icon: <History className='size-5' />,
   },
@@ -73,7 +73,7 @@ export default function Header({ pathname }: HeaderProps) {
   return (
     <header className='sticky top-0 z-30 h-16 w-full border-b border-border/40 bg-background/80 backdrop-blur-sm transition-all duration-300'>
       {/* Maintain container and alignment */}
-      <div className='container relative mx-auto flex h-full max-w-5xl items-center justify-between px-4'>
+      <div className='container relative mx-auto flex h-full max-w-6xl items-center justify-between px-4'>
         {/* Logo */}
         <a
           href='/'
@@ -129,13 +129,13 @@ export default function Header({ pathname }: HeaderProps) {
           <button
             type='button'
             onClick={() => setSearchOpen(true)}
-            className='inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border/50 bg-secondary/20 text-muted-foreground transition-all hover:bg-secondary/60 hover:text-foreground md:hidden'
+            className='inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border/50 bg-secondary/20 text-muted-foreground transition-all hover:bg-secondary/60 hover:text-foreground md:hidden'
             aria-label='Search'
           >
             <Search className='h-4 w-4' />
           </button>
 
-          <div className='inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg border border-border/50 bg-secondary/20 text-muted-foreground transition-all hover:border-border/80 hover:bg-secondary/60'>
+          <div className='inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg border border-border/50 bg-secondary/20 text-muted-foreground transition-all hover:border-border/80 hover:bg-secondary/60'>
             <ModeToggle />
           </div>
 

@@ -67,6 +67,7 @@
     --card-foreground: hsl(0 0% 20%);
     --popover: hsl(0 0% 100%);
     --popover-foreground: hsl(0 0% 20%);
+    --code-block-bg: #111A1F;
   }
 
   /* ダークモード */
@@ -90,6 +91,7 @@
     --card-foreground: hsl(0 0% 95%);
     --popover: hsl(0 0% 15%);
     --popover-foreground: hsl(0 0% 95%);
+    --code-block-bg: #151A1E;
   }
 
   p,

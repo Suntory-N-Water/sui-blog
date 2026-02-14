@@ -49,7 +49,7 @@ const { short, nextShort, compiledPages } = Astro.props;
         >
           <div class='flex items-start gap-3 px-4 py-4'>
             <a
-              href='/shorts'
+              href='/shorts/'
               class='flex items-center justify-center transition-opacity hover:opacity-70 shrink-0 mt-1'
               aria-label='戻る'
             >
@@ -96,7 +96,7 @@ const { short, nextShort, compiledPages } = Astro.props;
         </div>
 
         <a
-          href={`/shorts/${nextShort.id}`}
+          href={`/shorts/${nextShort.id}/`}
           class='absolute bottom-6 right-1/2 translate-x-1/2 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xl transition-all duration-200 hover:scale-110 active:scale-95 border-2 border-background'
           aria-label='次のShort'
         >
