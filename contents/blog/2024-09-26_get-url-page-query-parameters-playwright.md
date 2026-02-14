@@ -27,10 +27,10 @@ tags:
 ## 確認方法
 `response.url` の内容は Chrome DevTools のリクエスト URL を見れば確認できます。
 
-![](https://storage.googleapis.com/zenn-user-upload/d221c61acde1-20240926.png)
+![Chrome DevToolsネットワークタブでHTTPリクエスト一覧が表示されている画面](https://storage.googleapis.com/zenn-user-upload/d221c61acde1-20240926.png)
 *Chrome DevTools ネットワークタブの内容*
 
-![](https://storage.googleapis.com/zenn-user-upload/61089d54f0be-20240926.png)
+![Chrome DevToolsでリクエストURLの位置を示している画面](https://storage.googleapis.com/zenn-user-upload/61089d54f0be-20240926.png)
 *リクエストURLの位置*
 
 使用例としてはこんな感じで、特定のページ URL(この場合 `inori-track.vercel.app/venue`)の通信だけをフィルタリングし、そこに紐づくクエリパラメータを `searchParams.getAll('hoge');` で取得します。

@@ -1,43 +1,27 @@
 {
   "permissions": {
     "allow": [
-      "mcp__serena",
-      "mcp__playwright",
-      "mcp__context7",
-      "mcp__deepwiki",
-      "mcp__chrome-devtools",
-      "mcp__kiri",
-      "Bash(gh pr view:*)",
-      "Bash(gh pr checks:*)",
-      "Bash(gh run view:*)",
-      "Bash(git log:*)",
-      "Bash(gh run list:*)",
-      "Bash(gh repo view:*)",
-      "Bash(gh search issues:*)",
-      "Bash(gh issue view:*)",
+      "Read",
+      "Edit",
+      "Write",
+      "Grep",
+      "Glob",
+      "Bash(mkdir:*)",
+      "Bash(touch:*)",
+      "Bash(ls:*)",
       "Bash(cat:*)",
-      "Bash(chmod:*)",
-      "Bash(bash:*)",
-      "Bash(pnpm run format:check:*)",
-      "Bash(pnpm run lint:*)",
-      "Bash(pnpm run check:*)",
-      "Bash(pnpm run check:fix:*)",
-      "Bash(pnpm run ai-check:*)",
-      "Bash(pnpm run ci:*)",
+      "Bash(echo:*)",
+      "Bash(grep:*)",
       "Bash(find:*)",
-      "Bash(pnpm add:*)",
-      "Bash(pnpm run check:tags:*)",
-      "Bash(bun:*)",
-      "Bash(gh api:*)",
-      "Bash(gh label list:*)",
-      "Bash({} ;)",
-      "Bash(gh issue list:*)",
-      "Bash(for:*)",
-      "Bash(sed:*)",
-      "Bash(gh issue comment:*)",
-      "WebFetch",
-      "WebSearch",
-      "Bash(bunx biome:*)"
+      "Bash(gh:*)",
+      "Bash(jq:*)",
+      "Bash(pinact run:*)",
+      "Bash(actionlint:*)",
+      "Bash(ghalint run:*)",
+      "Bash(zizmor:*)",
+      "Bash(agent-browser:*)",
+      "Skill(managing-git-github-workflow)",
+      "Skill(agent-browser)"
     ],
     "deny": [
       "Bash(rm -rf:*)",
@@ -57,6 +41,10 @@
       "Bash(git switch:*)",
       "Bash(bun add:*)",
       "Bash(bun remove:*)",
+      "WebFetch",
+      "WebSearch",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
       "Bash(rm:*)"
     ]
   },
@@ -95,10 +83,6 @@
         ]
       }
     ]
-  },
-  "enabledPlugins": {
-    "dig@kuu-marketplace": true,
-    "frontend-design@claude-plugins-official": true
   },
   "plansDirectory": ".claude/plans"
 }

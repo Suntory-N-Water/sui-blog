@@ -11,14 +11,13 @@ import { siteConfig } from './src/config/site.js';
 // https://astro.build/config
 export default defineConfig({
   site: siteConfig.url,
+  trailingSlash: 'always',
   cacheDir: './node_modules/.astro',
   prefetch: true,
   integrations: [
     sitemap({
       serialize(item) {
-        // ブログ記事の場合、最終更新日を設定するなどのカスタマイズが可能
-        // 現在はデフォルトの挙動(ビルド日時またはGitの最終コミット)に任せていますが、
-        // 必要に応じてここで item.lastmod を上書きできます。
+        item.lastmod = new Date().toISOString();
         return item;
       },
     }),

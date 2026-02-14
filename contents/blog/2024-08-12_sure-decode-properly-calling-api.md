@@ -16,7 +16,7 @@ tags:
 ## 概要
 Hono + LINE Messaging API を使ってコンビニスイーツをランダムに提供する LINE BOT を動かしていたら、あるときローソンの新商品が取得できない事象が発生しました。
 
-![](https://storage.googleapis.com/zenn-user-upload/eb0903156c29-20240812.png)
+![LINEチャットでローソン新商品を問い合わせたが返信がない画面](https://storage.googleapis.com/zenn-user-upload/eb0903156c29-20240812.png)
 *ローソンの新商品と入力すれば、新商品が返信されるのに返信されない*
 
 LINE Messaging API のエラーレスポンスを見ると下記メッセージが送信されており、リクエストボディの内容が不正だったことが分かります。
@@ -119,7 +119,7 @@ parseName(text: string): string {
 ```
 
 再度「ローソンの新商品」を送信したところ、正常にデコードできていることが確認できました🎉
-![](https://storage.googleapis.com/zenn-user-upload/346f54dc7acb-20240812.png)
+![デコード修正後にローソン新商品情報が正常に返信されている画面](https://storage.googleapis.com/zenn-user-upload/346f54dc7acb-20240812.png)
 
 ## 学び
 

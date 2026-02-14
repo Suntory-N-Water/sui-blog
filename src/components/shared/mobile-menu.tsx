@@ -28,8 +28,11 @@ type Props = {
 export default function HamburgerMenu({ params }: Props) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className='p-1 md:hidden'>
-        <Menu className='size-7' aria-label='モバイルメニュー' />
+      <DropdownMenuTrigger
+        className='p-1 md:hidden'
+        aria-label='メニューを開く'
+      >
+        <Menu className='size-7' aria-hidden='true' />
       </DropdownMenuTrigger>
       <DropdownMenuContent className='mr-4 w-[200px] py-1.5'>
         {params.map((param) => (

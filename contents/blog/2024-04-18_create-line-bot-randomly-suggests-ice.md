@@ -24,7 +24,7 @@ tags:
 ## できたもの
 
 ### デモ
-![](https://storage.googleapis.com/zenn-user-upload/7b84bafc78ef-20240418.gif)
+![LINEボットにメッセージを送るとアイスクリーム情報が返信されるデモ動画](https://storage.googleapis.com/zenn-user-upload/7b84bafc78ef-20240418.gif)
 
 
 ### QR
@@ -190,7 +190,7 @@ https://qiita.com/TellMin/items/62893ec24f8e90a18dec
 - 認証周りの内容
 - 参考記事を追加
 
-![](https://storage.googleapis.com/zenn-user-upload/5c15f8224586-20240420.png)
+![今日のアイスクリーム以外の入力に対する自動応答メッセージの表示例](https://storage.googleapis.com/zenn-user-upload/5c15f8224586-20240420.png)
 *今日のアイスクリーム以外の応答メッセージ*
-![](https://storage.googleapis.com/zenn-user-upload/1e0b2366b806-20240420.png)
+![LINEボットのリッチメニューUI表示例](https://storage.googleapis.com/zenn-user-upload/1e0b2366b806-20240420.png)
 *リッチメニュー*

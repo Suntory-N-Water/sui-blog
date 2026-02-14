@@ -207,7 +207,7 @@ export async function GET(request: NextRequest) {
 ```
 
 実際にエンドポイント(/api/hoge/og?count=10)リクエストを送ると「◯曲でした！」の部分に `10` が入ってる。
-![](https://storage.googleapis.com/zenn-user-upload/75720ac1bcfe-20240921.png)
+![Next.jsで生成された動的OGP画像のブラウザ表示結果](https://storage.googleapis.com/zenn-user-upload/75720ac1bcfe-20240921.png)
 
 ただこのやり方だと og:image の content に apiurl を直接埋め込んでいるので、意地悪操作が簡単にできてしまう。
 なので上記のソースコードでは最低限のバリデーションは実装した

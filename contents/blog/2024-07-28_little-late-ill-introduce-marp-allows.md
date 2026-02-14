@@ -192,7 +192,7 @@ pnpm run build
 生成された PowerPoint ファイルを開いて、スライドを確認します。
 確認すると問題なく生成できていることが確認できます。
 
-![](https://storage.googleapis.com/zenn-user-upload/fae5ea8403ce-20240728.png)
+![Marpで生成されたPowerPointスライドの表示確認画面](https://storage.googleapis.com/zenn-user-upload/fae5ea8403ce-20240728.png)
 
 
 
@@ -286,7 +286,7 @@ section > * {
 `pnpm run build` すると、pptx ファイルが作成されます。
 
 作成後開いてみると css を設定した Power Point ができていることが確認できます。
-![](https://storage.googleapis.com/zenn-user-upload/d2e5ab67b77d-20240728.png)
+![CSSが適用されたMarp PowerPointスライドの表示結果](https://storage.googleapis.com/zenn-user-upload/d2e5ab67b77d-20240728.png)
 
 
 ## おわりに

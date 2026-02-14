@@ -7,7 +7,7 @@ import { absoluteUrl, cn } from '@/lib/utils';
 import { Image } from 'astro:assets';
 
 const aboutDescription =
-  'sui(スイ)のプロフィール、エンジニア経歴、SNSや連絡先リンクをまとめた自己紹介ページです。';
+  'sui(スイ)のプロフィール・エンジニア経歴・技術スタックを紹介する自己紹介ページです。東京都で活動するWebエンジニアのキャリアやSNS・連絡先リンクをまとめています。';
 const canonicalUrl = absoluteUrl('/about');
 
 const careerData = [
@@ -416,7 +416,7 @@ const careerData = [
         </div>
       </div>
       <div class='space-y-4'>
-        <h2 class='text-xl font-bold'>Contact</h2>
+        <h2 id='contact' class='text-xl font-bold'>Contact</h2>
         <Card client:load className='bg-card/50 backdrop-blur-sm'>
           <CardContent
             client:load

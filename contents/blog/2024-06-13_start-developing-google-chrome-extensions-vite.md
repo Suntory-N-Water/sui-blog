@@ -67,10 +67,10 @@ const getProductData = (element: Element, count: number): ProductData => {
 
 上記のソースコードを JavaScript で書いてしまうとほとんど any 型となってしまい、弱弱エンジニアの私はぶっ倒れてしまいます。
 
-![](https://storage.googleapis.com/zenn-user-upload/f0ba7ffbb938-20240613.png)
+![VS Codeでコード補完が反応しない状態のエディタ画面](https://storage.googleapis.com/zenn-user-upload/f0ba7ffbb938-20240613.png)
 
 
-![](https://storage.googleapis.com/zenn-user-upload/f6226cc48111-20240613.png)
+![VS Codeでコード補完によりメソッド候補が表示されている画面](https://storage.googleapis.com/zenn-user-upload/f6226cc48111-20240613.png)
 
 
 ## リアルタイムで変更が反映されないこと
@@ -229,7 +229,7 @@ pnpm run dev
 フォルダは先程プロジェクトの dist(manifest.json があるフォルダ)を選択します。
 
 ブラウザの右上に表示される拡張機能のアイコンをクリックすると、`index.html` が表示されます。
-![](https://storage.googleapis.com/zenn-user-upload/6f6bc2e1178d-20240613.png)
+![Chrome拡張機能のポップアップUIが表示されている画面](https://storage.googleapis.com/zenn-user-upload/6f6bc2e1178d-20240613.png)
 
 
 
@@ -429,7 +429,7 @@ if (typeof chrome !== 'undefined' && chrome.runtime) {
 
 これらを記載したあとに画面右上の拡張機能を押すと `popup.ts` から `content.ts` に取得メッセージが送信され、記事情報を取得できていることが確認できます。
 
-![](https://storage.googleapis.com/zenn-user-upload/8297a31e24eb-20240613.png)
+![ブラウザコンソールにZenn記事情報がJSON形式で出力されている画面](https://storage.googleapis.com/zenn-user-upload/8297a31e24eb-20240613.png)
 
 
 記事情報を取得できたので、あとは `popup.ts` で取得したデータを `index.html` に反映させていきましょう。
@@ -613,7 +613,7 @@ dist/assets/index.html-_Dl5P9dK.js                                 1.29 kB │ g
 
 作成されたのを確認後、再度拡張機能が実行できるか確認します。
 
-![](https://storage.googleapis.com/zenn-user-upload/c1e5370b4dc5-20240613.png)
+![ビルド後のChrome拡張機能でZenn記事がMarkdown形式に変換されている画面](https://storage.googleapis.com/zenn-user-upload/c1e5370b4dc5-20240613.png)
 
 
 無事実行できていますね！

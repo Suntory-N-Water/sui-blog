@@ -328,7 +328,7 @@ API はベータ版ですが提供していました。
 
 登録後、`Client ID` と `Client Secret` を確認します。
 
-![](https://storage.googleapis.com/zenn-user-upload/af246c1fbb13-20241117.png)
+![MyAnimeList APIダッシュボードでClient IDとClient Secretが表示されている画面](https://storage.googleapis.com/zenn-user-upload/af246c1fbb13-20241117.png)
 
 ## 認証情報を取得する
 
@@ -389,7 +389,7 @@ client_id=YOUR_CLIENT_ID
 実際にリクエストボディはこんな感じになると思います。
 `code` は `Step 5: MyAnimeList redirects back to the client` でリダイレクトされた `code` の値を使用し、`code_verifier` は `Step 2: Client requests OAuth 2.0 authentication` で設定した `code_challenge` の値を設定します。
 
-![](https://storage.googleapis.com/zenn-user-upload/3dbd8040786f-20241117.png)
+![PostmanでMyAnimeList OAuth 2.0トークン発行リクエストを設定している画面](https://storage.googleapis.com/zenn-user-upload/3dbd8040786f-20241117.png)
 
 うまくいけばアクセストークンを取得できます。
 

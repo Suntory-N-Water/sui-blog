@@ -290,7 +290,7 @@ GASエディタでは困難だったClaude CodeなどのAIエージェントを�
 
 ### Discussion
 
-![](https://static.zenn.studio/images/drawing/discussion.png)
+![Zennのディスカッション機能の表示イメージ](https://static.zenn.studio/images/drawing/discussion.png)
 
 [![スイ](https://storage.googleapis.com/zenn-user-upload/avatar/c80d51cd90.jpeg)](https://zenn.dev/sui_water/articles/502a6ef30b79e1/sui%5Fwater)
 

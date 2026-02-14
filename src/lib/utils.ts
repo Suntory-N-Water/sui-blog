@@ -32,5 +32,8 @@ export function absoluteUrl(path: string) {
     import.meta.env.PUBLIC_APP_URL ??
     import.meta.env.SITE ??
     'http://localhost:4321';
-  return `${baseUrl}${path}`;
+  // 拡張子がないパスには末尾スラッシュを付与
+  const normalizedPath =
+    path === '/' || /\.\w+$/.test(path) ? path : path.replace(/\/?$/, '/');
+  return `${baseUrl}${normalizedPath}`;
 }
