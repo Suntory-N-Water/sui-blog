@@ -21,7 +21,9 @@
       "Bash(zizmor:*)",
       "Bash(agent-browser:*)",
       "Skill(managing-git-github-workflow)",
-      "Skill(agent-browser)"
+      "Skill(agent-browser)",
+      "Bash(pnpm list:*)",
+      "Bash(python3:*)"
     ],
     "deny": [
       "Bash(rm -rf:*)",

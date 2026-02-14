@@ -40,7 +40,7 @@ export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
         ref={preRef}
         className={cn(
           'my-6 overflow-x-auto rounded-lg border border-border/50 p-4',
-          'bg-[#111A1F] dark:bg-[#151A1E]',
+          'bg-[var(--code-block-bg)]',
           'scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted',
           'pr-12', // コピーボタン用の余白
           className,
@@ -61,7 +61,7 @@ export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
         <Button
           variant='outline'
           size='icon'
-          className='z-10 size-8 rounded-md opacity-70 transition-opacity hover:bg-muted/30 hover:opacity-100'
+          className='z-10 size-10 rounded-md opacity-70 transition-opacity hover:bg-muted/30 hover:opacity-100'
           onClick={copyToClipboard}
           aria-label='コードをコピー'
         >

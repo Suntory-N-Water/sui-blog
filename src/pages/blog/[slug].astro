@@ -1,7 +1,11 @@
 ---
 import '@/styles/markdown.css';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getAllBlogPosts, getBlogPostBySlug } from '@/lib/markdown';
+import {
+  getAllBlogPosts,
+  getBlogPostBySlug,
+  calculateReadingTime,
+} from '@/lib/markdown';
 import { getRelatedPosts } from '@/lib/recommend';
 import { extractTOC } from '@/lib/toc';
 import { getInlineIcon } from '@/lib/inline-icons';
@@ -38,7 +42,7 @@ const { allPosts } = Astro.props; // props経由で受け取る
 const post = await getBlogPostBySlug(slug);
 
 if (!post) {
-  return Astro.redirect('/404');
+  return Astro.redirect('/404/');
 }
 
 const relatedPosts = getRelatedPosts({
@@ -53,28 +57,7 @@ const displayUrl =
   (post.data.icon?.startsWith('https://') ? post.data.icon : null);
 const inlineSvg = displayUrl ? getInlineIcon(displayUrl) : undefined;
 
-// 読了時間の推定計算
-// より正確な読了時間のために、散文以外のコンテンツを除外
-const CHARS_PER_MINUTE_JA = 650;
-const readableText = (post.body ?? '')
-  // コードブロックを除去
-  .replace(/```[\s\S]*?```/g, '')
-  // インラインコードを除去
-  .replace(/`[^`]+`/g, '')
-  // Markdownリンクをテキストのみに変換: [text](url) → text
-  .replace(/\[([^\]]*)\]\([^)]+\)/g, '$1')
-  // HTML/MDXタグを除去
-  .replace(/<[^>]+>/g, '')
-  // 脚注参照を除去 [^1]
-  .replace(/\[\^[^\]]+\]/g, '')
-  // 脚注定義を除去 [^1]: ...
-  .replace(/^\[\^[^\]]+\]:.*$/gm, '')
-  // 見出しマーカーを除去
-  .replace(/^#+\s*/gm, '')
-  // 複数の改行を1つに
-  .replace(/\n{2,}/g, '\n');
-const charCount = readableText.trim().length;
-const readingTime = Math.max(1, Math.round(charCount / CHARS_PER_MINUTE_JA));
+const readingTime = calculateReadingTime(post.body);
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -165,7 +148,7 @@ const compiledHtml = await compileMarkdown({ source: post.body });
     <article class='min-h-125'>
       <div class='mb-6 flex items-center justify-between'>
         <a
-          href='/blog'
+          href='/blog/'
           class={buttonVariants({ variant: 'ghost', size: 'sm' })}
         >
           <span class='group inline-flex items-center'>
@@ -209,7 +192,7 @@ const compiledHtml = await compileMarkdown({ source: post.body });
         <div class='inline-flex flex-wrap items-center gap-3'>
           <address class='inline-flex items-center gap-1 not-italic'>
             <Icons.User client:load className='size-4' />
-            <a rel='author' href='/about' class='hover:text-primary'
+            <a rel='author' href='/about/' class='hover:text-primary'
               >{siteConfig.name}</a
             >
           </address>
@@ -238,7 +221,7 @@ const compiledHtml = await compileMarkdown({ source: post.body });
           post.data.tags && post.data.tags.length > 0 && (
             <div class='inline-flex flex-wrap gap-2'>
               {post.data.tags.map((tag) => (
-                <a href={`/tags/${getTagSlug(tag)}`}>
+                <a href={`/tags/${getTagSlug(tag)}/`}>
                   <Badge client:load className='px-2 py-0.5 text-xs'>
                     {tag}
                   </Badge>
@@ -270,7 +253,7 @@ const compiledHtml = await compileMarkdown({ source: post.body });
         post.data.diagram && (
           <div class='mt-4'>
             <a
-              href={`/blog/diagram/${post.id}`}
+              href={`/blog/diagram/${post.id}/`}
               class={buttonVariants({ variant: 'outline', size: 'sm' })}
             >
               <span class='inline-flex items-center gap-1.5'>
@@ -302,7 +285,7 @@ const compiledHtml = await compileMarkdown({ source: post.body });
       >
         <div class='flex items-center space-x-2'>
           <a
-            href={`/blog/${slug}.md`}
+            href={`/blog/${slug}.md/`}
             class='inline-flex items-center gap-1.5 px-2 py-1 text-sm text-muted-foreground hover:text-primary'
           >
             <Icons.FileText client:load className='size-4' />

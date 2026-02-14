@@ -20,7 +20,7 @@
 }
 
 [data-rehype-pretty-code-fragment] [data-line-numbers] .line::before {
-  @apply mr-3 inline-block w-4 text-right text-muted-foreground/40;
+  @apply mr-3 inline-block w-4 text-right text-muted-foreground/60;
   content: counter(line);
 }
 

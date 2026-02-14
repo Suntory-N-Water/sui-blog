@@ -1,10 +1,10 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import PageHeader from '@/components/shared/page-header.astro';
+import { Icons } from '@/components/icons';
 import { Card, CardContent } from '@/components/ui/card';
 import { siteConfig } from '@/config/site';
 import { getTagSlug } from '@/config/tag-slugs';
-import { getAllTags } from '@/lib/markdown';
+import { getAllBlogPosts, getAllTags } from '@/lib/markdown';
 import { absoluteUrl, cn } from '@/lib/utils';
 
 const PAGE_TITLE = 'すべてのタグ - 技術カテゴリ一覧';
@@ -13,6 +13,14 @@ const PAGE_DESCRIPTION =
 
 const tags = await getAllTags();
 const sortedTags = tags.sort((a, b) => a.localeCompare(b, 'ja'));
+
+const allPosts = await getAllBlogPosts();
+const tagCounts = new Map<string, number>();
+for (const post of allPosts) {
+  for (const tag of post.data.tags ?? []) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+}
 
 const canonicalUrl = absoluteUrl('/tags');
 ---
@@ -23,14 +31,30 @@ const canonicalUrl = absoluteUrl('/tags');
   ogImage={siteConfig.ogImage}
   canonicalUrl={canonicalUrl}
 >
-  <section class='container mx-auto px-4 py-8' data-pagefind-ignore>
-    <PageHeader heading={PAGE_TITLE} text={PAGE_DESCRIPTION} />
+  <section data-pagefind-ignore class='space-y-10'>
+    <div class='space-y-3 border-b border-border/60 pb-4'>
+      <nav class='flex items-center gap-2 text-sm text-muted-foreground'>
+        <a href='/' class='transition-colors hover:text-primary'>Home</a>
+        <Icons.ChevronRight client:load className='size-4' />
+        <span class='text-foreground'>Tags</span>
+      </nav>
+
+      <div class='flex flex-wrap items-end justify-between gap-3'>
+        <h1 class='text-3xl font-bold tracking-tight md:text-4xl'>
+          すべてのタグ
+        </h1>
+        <span class='text-sm font-mono text-muted-foreground'>
+          Total {sortedTags.length} tags
+        </span>
+      </div>
+      <p class='text-muted-foreground'>{PAGE_DESCRIPTION}</p>
+    </div>
 
     {
       sortedTags.length > 0 ? (
         <div class='grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-4 pt-4'>
           {sortedTags.map((tag) => (
-            <a href={`/tags/${getTagSlug(tag)}`} class='no-underline'>
+            <a href={`/tags/${getTagSlug(tag)}/`} class='group no-underline'>
               <Card
                 client:load
                 className={cn(
@@ -40,8 +64,11 @@ const canonicalUrl = absoluteUrl('/tags');
                 )}
               >
                 <CardContent client:load className='p-0'>
-                  <span class='font-medium text-foreground group-hover:text-primary'>
+                  <span class='block font-medium text-foreground group-hover:text-primary'>
                     # {tag}
+                  </span>
+                  <span class='mt-1 block text-xs text-muted-foreground'>
+                    {tagCounts.get(tag) ?? 0} posts
                   </span>
                 </CardContent>
               </Card>

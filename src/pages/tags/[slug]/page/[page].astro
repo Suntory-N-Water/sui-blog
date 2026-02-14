@@ -1,0 +1,124 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import BlogCard from '@/components/feature/content/blog-card.astro';
+import Pagination from '@/components/shared/pagination-item.astro';
+import { Icons } from '@/components/icons';
+import { siteConfig } from '@/config/site';
+import { getTagNameFromSlug } from '@/config/tag-slugs';
+import {
+  getAllTagSlugs,
+  getBlogPostsByTagSlug,
+  calculateReadingTime,
+} from '@/lib/markdown';
+import { paginateItems } from '@/lib/pagination';
+import { BLOG_CONSTANTS } from '@/constants';
+import { getInlineIcon } from '@/lib/inline-icons';
+import { absoluteUrl } from '@/lib/utils';
+
+export async function getStaticPaths() {
+  const allTagSlugs = await getAllTagSlugs();
+  const paths = [];
+
+  for (const slug of allTagSlugs) {
+    const posts = await getBlogPostsByTagSlug(slug);
+    const totalPages = Math.ceil(posts.length / BLOG_CONSTANTS.POSTS_PER_PAGE);
+
+    for (let i = 1; i <= totalPages; i++) {
+      paths.push({
+        params: { slug, page: String(i) },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { slug, page } = Astro.params;
+const pageNum = Number.parseInt(page, 10);
+const tagName = getTagNameFromSlug(slug);
+
+if (!tagName || Number.isNaN(pageNum)) {
+  return Astro.redirect('/404/');
+}
+
+const allPosts = await getBlogPostsByTagSlug(slug);
+const {
+  items: paginatedPosts,
+  currentPage,
+  totalPages,
+} = paginateItems({
+  items: allPosts,
+  page: pageNum,
+  pageSize: BLOG_CONSTANTS.POSTS_PER_PAGE,
+});
+
+if (currentPage > totalPages) {
+  return Astro.redirect('/404/');
+}
+
+const postsWithIcons = paginatedPosts.map((blog) => {
+  const displayUrl =
+    blog.data.icon_url ||
+    (blog.data.icon?.startsWith('https://') ? blog.data.icon : null);
+  const inlineSvg = displayUrl ? getInlineIcon(displayUrl) : undefined;
+  const readingTime = calculateReadingTime(blog.body);
+  return { blog, inlineSvg, readingTime };
+});
+
+const title = `「${tagName}」タグの記事一覧`;
+const description = `「${tagName}」タグの記事一覧を表示しています。`;
+const canonicalUrl = absoluteUrl(`/tags/${slug}/page/${page}`);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage={siteConfig.ogImage}
+  canonicalUrl={canonicalUrl}
+>
+  <section data-pagefind-ignore class='space-y-10'>
+    <div class='space-y-3 border-b border-border/60 pb-4'>
+      <nav class='flex items-center gap-2 text-sm text-muted-foreground'>
+        <a href='/' class='transition-colors hover:text-primary'>Home</a>
+        <Icons.ChevronRight client:load className='size-4' />
+        <a href='/tags/' class='transition-colors hover:text-primary'>Tags</a>
+        <Icons.ChevronRight client:load className='size-4' />
+        <span class='text-foreground'>{tagName}</span>
+      </nav>
+
+      <div class='flex flex-wrap items-end justify-between gap-3'>
+        <h1 class='text-3xl font-bold tracking-tight md:text-4xl'>{tagName}</h1>
+        <span class='text-sm font-mono text-muted-foreground'
+          >Total {allPosts.length} posts</span
+        >
+      </div>
+    </div>
+
+    <div class='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
+      {
+        postsWithIcons.map(({ blog, inlineSvg, readingTime }) => (
+          <BlogCard
+            data={blog}
+            inlineSvg={inlineSvg}
+            readingTime={readingTime}
+          />
+        ))
+      }
+    </div>
+
+    <Pagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+      basePath={`/tags/${slug}/page`}
+    />
+
+    <div class='flex justify-center pt-8'>
+      <a
+        href='/tags/'
+        class='inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-6 py-3 text-sm font-bold text-secondary-foreground transition-colors hover:bg-accent hover:text-accent-foreground'
+      >
+        全てのタグを見る
+      </a>
+    </div>
+  </section>
+</BaseLayout>

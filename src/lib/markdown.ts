@@ -61,3 +61,24 @@ export async function getAllTagSlugs(): Promise<string[]> {
 export async function getBlogPostBySlug(slug: string) {
   return await getEntry('blog', slug);
 }
+
+/**
+ * Markdown本文から読了時間(分)を計算する
+ *
+ * 散文以外のコンテンツ(コードブロック、インラインコード、HTMLタグ等)を除外し、
+ * 日本語の平均読書速度(1分あたり650文字)で計算する。
+ */
+export function calculateReadingTime(body: string | undefined): number {
+  const CHARS_PER_MINUTE_JA = 650;
+  const readableText = (body ?? '')
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/`[^`]+`/g, '')
+    .replace(/\[([^\]]*)\]\([^)]+\)/g, '$1')
+    .replace(/<[^>]+>/g, '')
+    .replace(/\[\^[^\]]+\]/g, '')
+    .replace(/^\[\^[^\]]+\]:.*$/gm, '')
+    .replace(/^#+\s*/gm, '')
+    .replace(/\n{2,}/g, '\n');
+  const charCount = readableText.trim().length;
+  return Math.max(1, Math.round(charCount / CHARS_PER_MINUTE_JA));
+}

@@ -1,10 +1,17 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import BlogCard from '@/components/feature/content/blog-card.astro';
+import Pagination from '@/components/shared/pagination-item.astro';
 import { Icons } from '@/components/icons';
 import { siteConfig } from '@/config/site';
 import { getTagNameFromSlug } from '@/config/tag-slugs';
-import { getAllTagSlugs, getBlogPostsByTagSlug } from '@/lib/markdown';
+import {
+  getAllTagSlugs,
+  getBlogPostsByTagSlug,
+  calculateReadingTime,
+} from '@/lib/markdown';
+import { paginateItems } from '@/lib/pagination';
+import { BLOG_CONSTANTS } from '@/constants';
 import { getInlineIcon } from '@/lib/inline-icons';
 import { absoluteUrl } from '@/lib/utils';
 
@@ -17,17 +24,27 @@ const { slug } = Astro.params;
 const tagName = getTagNameFromSlug(slug);
 
 if (!tagName) {
-  return Astro.redirect('/404');
+  return Astro.redirect('/404/');
 }
 
-const posts = await getBlogPostsByTagSlug(slug);
+const allPosts = await getBlogPostsByTagSlug(slug);
+const {
+  items: paginatedPosts,
+  currentPage,
+  totalPages,
+} = paginateItems({
+  items: allPosts,
+  page: 1,
+  pageSize: BLOG_CONSTANTS.POSTS_PER_PAGE,
+});
 
-const postsWithIcons = posts.map((blog) => {
+const postsWithIcons = paginatedPosts.map((blog) => {
   const displayUrl =
     blog.data.icon_url ||
     (blog.data.icon?.startsWith('https://') ? blog.data.icon : null);
   const inlineSvg = displayUrl ? getInlineIcon(displayUrl) : undefined;
-  return { blog, inlineSvg };
+  const readingTime = calculateReadingTime(blog.body);
+  return { blog, inlineSvg, readingTime };
 });
 
 const title = `「${tagName}」タグの記事一覧`;
@@ -46,7 +63,7 @@ const canonicalUrl = absoluteUrl(`/tags/${slug}`);
       <nav class='flex items-center gap-2 text-sm text-muted-foreground'>
         <a href='/' class='transition-colors hover:text-primary'>Home</a>
         <Icons.ChevronRight client:load className='size-4' />
-        <a href='/tags' class='transition-colors hover:text-primary'>Tags</a>
+        <a href='/tags/' class='transition-colors hover:text-primary'>Tags</a>
         <Icons.ChevronRight client:load className='size-4' />
         <span class='text-foreground'>{tagName}</span>
       </nav>
@@ -54,17 +71,42 @@ const canonicalUrl = absoluteUrl(`/tags/${slug}`);
       <div class='flex flex-wrap items-end justify-between gap-3'>
         <h1 class='text-3xl font-bold tracking-tight md:text-4xl'>{tagName}</h1>
         <span class='text-sm font-mono text-muted-foreground'
-          >Total {posts.length} posts</span
+          >Total {allPosts.length} posts</span
         >
       </div>
     </div>
 
     <div class='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
       {
-        postsWithIcons.map(({ blog, inlineSvg }) => (
-          <BlogCard data={blog} inlineSvg={inlineSvg} />
+        postsWithIcons.map(({ blog, inlineSvg, readingTime }) => (
+          <BlogCard
+            data={blog}
+            inlineSvg={inlineSvg}
+            readingTime={readingTime}
+          />
         ))
       }
+    </div>
+
+    {
+      totalPages > 1 && (
+        <div class='pt-6'>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            basePath={`/tags/${slug}/page`}
+          />
+        </div>
+      )
+    }
+
+    <div class='flex justify-center pt-8'>
+      <a
+        href='/tags/'
+        class='inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-6 py-3 text-sm font-bold text-secondary-foreground transition-colors hover:bg-accent hover:text-accent-foreground'
+      >
+        全てのタグを見る
+      </a>
     </div>
   </section>
 </BaseLayout>

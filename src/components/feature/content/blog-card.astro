@@ -9,9 +9,10 @@ type Props = {
   data: BlogPost;
   priority?: boolean;
   inlineSvg?: string;
+  readingTime?: number;
 };
 
-const { data, priority, inlineSvg } = Astro.props;
+const { data, priority, inlineSvg, readingTime } = Astro.props;
 
 /**
  * ブログ記事のカードを表示するコンポーネント
@@ -33,7 +34,7 @@ const displayUrl =
 ---
 
 <a
-  href={`/blog/${slug}`}
+  href={`/blog/${slug}/`}
   class={cn(
     'group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-sm transition-all duration-300',
     'hover:-translate-y-1 hover:border-primary/50 hover:shadow-md',
@@ -71,10 +72,11 @@ const displayUrl =
       }
     </div>
     <div
-      class='absolute bottom-3 left-3 rounded bg-background/80 px-2 py-0.5 font-mono text-xs text-muted-foreground backdrop-blur'
+      class='absolute bottom-3 left-3 flex items-center gap-2 rounded bg-background/90 px-2 py-0.5 font-mono text-xs text-muted-foreground backdrop-blur'
       transition:name={`blog-date-${slug}`}
     >
       <time datetime={dateISO}>{formattedDate}</time>
+      {readingTime && <span>{readingTime}分</span>}
     </div>
   </div>
 
@@ -85,7 +87,7 @@ const displayUrl =
           metadata.tags?.slice(0, 3).map((tag) => (
             <Badge
               variant='secondary'
-              className='border border-border px-2 py-0.5 text-[10px] font-medium'
+              className='border border-border px-2 py-0.5 text-xs font-medium'
               client:load
             >
               {tag}
@@ -104,7 +106,7 @@ const displayUrl =
 
     {
       metadata.description && (
-        <p class='mb-4 flex-1 text-sm leading-relaxed text-muted-foreground line-clamp-4'>
+        <p class='mb-4 flex-1 text-sm leading-relaxed text-muted-foreground line-clamp-2 md:line-clamp-3'>
           {metadata.description}
         </p>
       )
