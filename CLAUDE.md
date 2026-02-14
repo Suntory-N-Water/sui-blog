@@ -28,13 +28,6 @@ contents/blog/*.md  →  Astro Content Collections (glob loader)  →  静的ペ
 - ブログ記事: `contents/blog/YYYY-MM-DD_slug-name.md`
 - 短編記事: `contents/shorts/*.md`
 
-## コーディング規約
-
-- `useConsistentTypeDefinitions`: `type` を使用 (`interface` ではなく)
-- `useBlockStatements`: if 文のブロック `{}` 強制
-- `noParameterAssign`: パラメータ再代入禁止
-- 関数の引数はオブジェクトでまとめる
-
 ## CI/CD
 
 - **CI** (`ci.yml`): lint, type-check, svg-security (push 時)
@@ -43,3 +36,7 @@ contents/blog/*.md  →  Astro Content Collections (glob loader)  →  静的ペ
 ## textlint
 
 `contents/` は独立した package.json を持つサブパッケージ。textlint の依存は `contents/package.json` で管理。
+
+## ルール
+
+コーディング規約・セキュリティ規約は `.claude/rules/` にパススコープ付きで配置済み。編集中のファイルに応じて自動ロードされる。
