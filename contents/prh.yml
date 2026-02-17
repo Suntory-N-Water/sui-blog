@@ -17,6 +17,7 @@ imports:
       - expected: 始め
       - expected: Web
       - expected: webpack
+      - expected: 一つ
       - expected: もう一つ
       - expected: 一つは
       - expected: $いてる
