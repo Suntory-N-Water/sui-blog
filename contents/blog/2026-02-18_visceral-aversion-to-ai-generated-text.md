@@ -1,8 +1,8 @@
 ---
 title: AIを使い倒す人間ほど、AI文章に萎える
 slug: visceral-aversion-to-ai-generated-text
-date: 2026-02-17
-modified_time: 2026-02-17
+date: 2026-02-18
+modified_time: 2026-02-18
 description: 24時間365日AIを使い倒している私が、技術記事のAI生成文章に感じる「ゾワッ」とする感覚を言語化しました。Markdown記法の残留、不自然なコロン、ビルドがコケるTypeScriptのコード。「またAIね」と萎える瞬間に潜む3つの感情と、使い手だからこそ分かる「AI臭さ」の正体、そしてAI時代に求める技術記事の姿を考えます。
 icon: 🫠
 icon_url: /icons/melting_face_flat.svg
@@ -55,7 +55,7 @@ selfAssessment:
           explanation: null
 diagram:
   - type: hero
-    date: "2026-02-17"
+    date: "2026-02-18"
     title: "AIを使い倒す人間ほど、AI文章に萎える"
     subtitle: "24時間365日AIを使い倒す筆者が、技術記事のAI生成文章に感じる「ゾワッ」の正体を3つの感情に分解し、人間がやるべきことを考える"
   - type: transition
