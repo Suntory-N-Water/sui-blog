@@ -79,6 +79,3 @@ pnpm-debug.log*
 
 # lighthouse ci reports
 .lighthouseci/
-
-*/CLAUDE.md
-**/*/CLAUDE.md
