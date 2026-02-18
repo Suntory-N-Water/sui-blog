@@ -9,6 +9,127 @@ tags:
   - AI
   - ClaudeCode
   - Astro
+selfAssessment:
+  quizzes:
+    - question: "このサイトでは、CHANGELOGの各変更項目をどのような形式で解説していますか？"
+      answers:
+        - text: "変更内容の日本語訳のみ"
+          correct: false
+          explanation: "日本語訳だけでなく、変更前後の状況と恩恵まで推論して表示するのがこのサイトの特徴です。"
+        - text: "変更の重要度をS/A/B/Cでランク付け"
+          correct: false
+          explanation: null
+        - text: "変更前 / 変更後 / 恩恵の3点セット"
+          correct: true
+          explanation: "記事では「変更前はどうだったか」「変更後にどうなったか」「ユーザーにとっての恩恵は何か」の3点セットで表示すると説明されています。"
+        - text: "変更内容と関連する公式ドキュメントへのリンク一覧"
+          correct: false
+          explanation: null
+    - question: "関連する公式ドキュメントが見つからない変更項目に対して、このサイトはどのように対応していますか？"
+      answers:
+        - text: "AI推論は行わず、日本語訳だけを表示する"
+          correct: true
+          explanation: "ハルシネーション抑制のため、関連ドキュメントがない場合は推論を行わず日本語訳のみを表示すると記事で説明されています。"
+        - text: "AIが独自に推論して「変更前/変更後/恩恵」を生成する"
+          correct: false
+          explanation: "関連ドキュメントなしでの推論はハルシネーションのリスクがあるため、あえて行わない設計です。"
+        - text: "該当の変更項目をスキップして表示しない"
+          correct: false
+          explanation: null
+        - text: "Web検索で関連情報を取得してから推論する"
+          correct: false
+          explanation: null
+    - question: "Gemini APIの無料枠のレート制限に対して、どのような対策を行っていますか？"
+      answers:
+        - text: "フォールバック先のモデルを複数用意し、429エラー時に切り替える"
+          correct: true
+          explanation: "メインのモデルがレート制限に達したら次のモデルに切り替え、それもダメならさらに次へという構成にしています。加えてthinkingの無効化でトークン消費も抑えています。"
+        - text: "リクエストを一定間隔で送信するレートリミッターを実装する"
+          correct: false
+          explanation: null
+        - text: "有料枠にアップグレードして制限を回避する"
+          correct: false
+          explanation: null
+        - text: "変更項目をキャッシュして同じリクエストを送らないようにする"
+          correct: false
+          explanation: null
+diagram:
+  - type: hero
+    date: "2026/02/19"
+    title: "Claude Code Changelog Viewer"
+    subtitle: "更新頻度が高すぎるClaude Codeの変更履歴を、AIが「自分への恩恵」として翻訳・要約するサイトを作りました。"
+  - type: problem
+    variant: highlight
+    icon: alertCircle
+    title: "更新頻度が高すぎて追いきれない"
+    introText: "2026年1月だけで23回のリリース。毎回英語のCHANGELOGを読んで「自分に関係あるか」判断するのは重労働です。"
+    cards:
+      - icon: activity
+        title: "圧倒的な更新頻度"
+        subtitle: "月間20回以上のリリース"
+        description: "日々追加される機能や修正。全てに目を通すのは時間がかかりすぎる。"
+      - icon: languages
+        title: "英語と専門用語の壁"
+        subtitle: "直感的に理解しづらい"
+        description: "1行の英語記述だけでは、具体的な変更内容や影響範囲がイメージしにくい。"
+        isHighlight: true
+        accentColor: RED
+      - icon: frown
+        title: "費用対効果の悪さ"
+        subtitle: "徒労に終わる確認作業"
+        description: "苦労して読んでも、自分には関係のないマイナーな修正だった時の徒労感。"
+  - type: transition
+  - type: core_message
+    variant: highlight
+    icon: sparkles
+    title: "「自分への恩恵」を3点セットで"
+    mainMessage: "AIが公式情報を解析し、「変更前」「変更後」「恩恵」の3項目で解説。自分に関係あるアップデートか一瞬で判断できます。"
+    comparisons:
+      - icon: fileText
+        title: "従来のCHANGELOG"
+        text: "「機能Xを追加しました」という事実のみの記述。文脈が不明。"
+        isGood: false
+      - icon: zap
+        title: "本ツールの解説"
+        text: "「作業がどう楽になるか」という恩恵までAIが推論して提示。"
+        isGood: true
+    coreHighlight:
+      title: "関連ドキュメントも自動検索"
+      text: "ハルシネーション抑制のため、公式ドキュメントを検索・参照した上で推論を実行。"
+      accentColor: GOLD
+  - type: transition
+  - type: timeline_process
+    title: "完全自動化されたパイプライン"
+    introText: "GitHub ActionsとGemini APIを組み合わせ、毎時自動で最新情報を取得・配信します。"
+    icon: bot
+    events:
+      - time: "Phase 1"
+        title: "更新検知と解析"
+        description: "GitHub APIでCHANGELOGを取得し、新バージョンを検知。ハッシュ比較で冪等性を担保。"
+      - time: "Phase 2"
+        title: "ドキュメント検索"
+        description: "変更内容に関連する公式ドキュメントをローカル検索し、AIへのコンテキストとして付与。"
+      - time: "Phase 3"
+        title: "AI推論・翻訳"
+        description: "Gemini APIが「変更前/後/恩恵」を推論。Thinking無効化などでコストと制限を管理。"
+        isHighlight: true
+        accentColor: GOLD
+      - time: "Phase 4"
+        title: "デプロイ"
+        description: "解析結果を静的サイトとしてビルドし、Cloudflare Workersへ自動デプロイ。"
+  - type: action
+    title: "最新情報をスマートに追跡"
+    mainText: "もう英語のCHANGELOGと格闘する必要はありません。必要な情報だけを効率的にキャッチアップしましょう。"
+    actionStepsTitle: "Check it out"
+    actionSteps:
+      - title: "Webサイトを見る"
+        description: "最新のClaude Codeアップデート情報を日本語でチェック。"
+      - title: "GitHubを見る"
+        description: "自動化の仕組みやソースコードを確認し、スターを押す。"
+    pointText: "開発者の「知りたい」に直結する情報を、完全自動でお届けします。"
+    footerText: "技術の進化を、もっと楽に追いかけよう"
+    subFooterText: "sui Tech Blog"
+    accentColor: GOLD
 ---
 
 私は毎日のようにClaude Codeを使っています。使い倒しているからこそ、アップデートの内容は気になります。新機能が追加されれば自分が開発しているサービスで効率よく実装するためにも取り入れたいですし、気になるバグ修正があれば「あの挙動、直ったのかな？」と確認したくなります。
