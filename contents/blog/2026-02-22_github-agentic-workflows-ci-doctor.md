@@ -11,6 +11,175 @@ tags:
   - GitHub
   - GitHubActions
   - GitHubAgenticWorkflows
+selfAssessment:
+  quizzes:
+    - question: "GitHub Agentic Workflows のセキュリティ設計において、エージェント(agent ジョブ)が Issue や PR を作成する際のしくみとして正しいものはどれですか？"
+      answers:
+        - text: "エージェントが write 権限を持ち、直接 Issue や PR を作成する"
+          correct: false
+          explanation: "エージェントには read 権限しか付与されていません。write 操作は別ジョブ(safe_outputs)が担当します。"
+        - text: "エージェントは作成リクエストを記録するだけで、実際の作成は別ジョブ(safe_outputs)が write 権限で行う"
+          correct: true
+          explanation: "権限分離の設計により、エージェントは「申請」のみ、実際の操作は safe_outputs ジョブが行います。"
+        - text: "エージェントが GitHub API を直接呼び出し、トークンの権限で制御する"
+          correct: false
+          explanation: null
+        - text: "エージェントの出力を人間が承認してから、手動で Issue や PR を作成する"
+          correct: false
+          explanation: null
+    - question: "GitHub Agentic Workflows において、.md ファイルと .lock.yml ファイルの関係として正しいものはどれですか？"
+      answers:
+        - text: ".lock.yml が人間が編集するソースで、.md はそのドキュメント"
+          correct: false
+          explanation: null
+        - text: ".md と .lock.yml は独立したファイルで、それぞれ手動で編集する"
+          correct: false
+          explanation: null
+        - text: ".md がソースで、gh aw compile により .lock.yml が自動生成される。.lock.yml の約8割はセキュリティ基盤のコード"
+          correct: true
+          explanation: "188行の .md から約1,365行の .lock.yml が生成され、その8割はコンパイラが自動挿入したセキュリティ基盤です。"
+        - text: ".md がソースで、GitHub Actions の実行時に自動的に .lock.yml に変換される"
+          correct: false
+          explanation: "変換はリアルタイムではなく、事前に gh aw compile コマンドで行います。"
+diagram:
+  - type: hero
+    date: "2026-02-22"
+    title: "自然言語で自動化ワークフローを作成できるGitHub Agentic Workflowsを試してみた"
+    subtitle: "CIの失敗を自動診断・修正するAIエージェントの構築とセキュリティ設計を解説"
+  - type: transition
+  - type: problem
+    variant: simple
+    icon: alertCircle
+    title: "従来のCI運用が抱える課題"
+    introText: "GitHub Actionsは強力ですが、失敗時の対応には依然として人間の判断と手作業が必要です。"
+    cards:
+      - icon: fileJson
+        title: "決められた手順のみ実行"
+        subtitle: "柔軟な対応が困難"
+        description: "YAMLで定義された決定論的なステップしか実行できず想定外のエラーに弱い"
+      - icon: search
+        title: "手作業でのログ解析"
+        subtitle: "原因特定に時間がかかる"
+        description: "膨大なログを人間が読んで外部API障害やGit競合などの原因を推論している"
+        isHighlight: true
+        accentColor: RED
+      - icon: gitPullRequest
+        title: "手動での修正とPR作成"
+        subtitle: "作業の負担が大きい"
+        description: "原因特定後にコードを修正しPRを作成するまでのトリアージ作業が毎回発生する"
+  - type: core_message
+    variant: highlight
+    icon: cpu
+    title: "Continuous AIという新しいアプローチ"
+    mainMessage: "GitHub Agentic Workflowsは自然言語の指示をもとにAIエージェントが自律的に判断しタスクを実行します。"
+    comparisons:
+      - icon: fileCode
+        title: "従来のActions"
+        text: "YAMLで固定の手順を定義しスクリプトがそのまま実行する"
+        isGood: false
+      - icon: bot
+        title: "Agentic Workflows"
+        text: "Markdownで意図を記述しAIが判断しながら柔軟に解決する"
+        isGood: true
+    coreHighlight:
+      title: "問題を調べて対応する作業を自動化"
+      text: "CIがものを作る作業を自動化するように問題解決の推論と判断をAIに委譲します"
+      accentColor: GOLD
+  - type: transition
+  - type: grouped_content
+    title: "ファイル構成とコンパイルの仕組み"
+    introText: "人間が書く指示書と実際に実行されるワークフローは分離されています。"
+    icon: folderTree
+    groups:
+      - title: "人間が記述するソース"
+        description: "自然言語でエージェントへの指示と権限の範囲を記述します"
+        cards:
+          - title: ".mdファイル"
+            text: "トリガー条件やMarkdownでのプロンプトを記述する"
+          - title: "権限の最小化"
+            text: "この段階では読み取り権限のみをAIに付与する"
+      - title: "コンパイル済み成果物"
+        description: "CLIツールを使って自動生成されるセキュリティ基盤です"
+        cards:
+          - title: ".lock.ymlファイル"
+            text: "GitHub Actionsが実際に実行する長大なYAMLファイル"
+            isHighlight: true
+            accentColor: GOLD
+          - title: "自動生成される防御"
+            text: "約8割がセキュリティ用のコードで安全な実行環境を構築する"
+  - type: timeline_process
+    title: "自動診断ワークフローの実行フロー"
+    introText: "CI失敗から約4分でログ解析から修正パッチ作成までを完遂します。"
+    icon: clock
+    events:
+      - time: "00:00"
+        title: "対象ワークフローの失敗"
+        description: "ドキュメント取得などの既存CIがエラーで終了しトリガーとなる"
+      - time: "00:18"
+        title: "CI Doctorの起動"
+        description: "チームメンバーシップの確認やプロンプトの生成を行う"
+      - time: "01:02"
+        title: "エージェントによる解析"
+        description: "ログを取得して根本原因を特定し修正パッチを生成する"
+        isHighlight: true
+        accentColor: GOLD
+      - time: "03:31"
+        title: "出力の安全性検証"
+        description: "別のAIがエージェントの出力に脅威がないかをチェックする"
+      - time: "03:56"
+        title: "IssueとPRの作成"
+        description: "検証を通過した出力をもとに安全なジョブが書き込みを行う"
+  - type: list_steps
+    title: "セットアップの4ステップ"
+    introText: "CLI拡張の導入からコンパイルまでの基本的な手順です。"
+    steps:
+      - badge: "1"
+        title: "CLI拡張のインストール"
+        description: "GitHub CLIにgh-aw拡張機能を追加して環境を準備する"
+      - badge: "2"
+        title: "ラベルの事前作成"
+        description: "自動診断用のIssueやPRに付与するラベルを用意しておく"
+      - badge: "3"
+        title: "ワークフローのコンパイル"
+        description: "Markdownファイルをコンパイルしてlock.ymlを自動生成する"
+      - badge: "4"
+        title: "シークレットの設定"
+        description: "Copilot API呼び出し用のアクセストークンをリポジトリに登録する"
+  - type: grouped_content
+    title: "11層の防御を持つセキュリティ設計"
+    introText: "AIにリポジトリを触らせるリスクはプラットフォーム側で強固に保護されています。"
+    icon: shieldCheck
+    groups:
+      - title: "権限の分離と特権分割"
+        description: "エージェントには直接的な書き込み権限を与えません"
+        cards:
+          - title: "agentジョブ"
+            text: "読み取り専用で動作し変更の申請だけを行う"
+          - title: "safe_outputsジョブ"
+            text: "承認された操作だけを書き込み権限で実行する"
+      - title: "多層的な保護メカニズム"
+        description: "ネットワークやプロンプトへの攻撃を防ぐ堅牢な仕組みです"
+        cards:
+          - title: "ネットワーク制限"
+            text: "Squidプロキシで許可リスト以外の通信を遮断する"
+          - title: "AIによる相互監視"
+            text: "エージェントの出力を別のAIが検査し脅威を検出する"
+            isHighlight: true
+            accentColor: GOLD
+  - type: transition
+  - type: action
+    title: "AIエージェントを活用しよう"
+    mainText: "GitHub Agentic Workflowsでトリアージ作業を自動化し開発に集中できる環境を作りましょう。"
+    actionStepsTitle: "まずは小さく始めてみる"
+    actionSteps:
+      - title: "公式ドキュメントを確認"
+        description: "テクニカルプレビューの最新仕様や要件をチェックする"
+      - title: "単純なワークフローで試す"
+        description: "まずはIssue作成のみを行う簡単なエージェントを構築する"
+    pointText: "権限分離やネットワーク保護の仕組みを理解することで安全にAIを運用できます。"
+    footerText: "開発の本来の楽しさを取り戻そう"
+    subFooterText: "sui Tech Blog"
+    accentColor: GOLD
 ---
 
 GitHub Actions は 2018 年に発表されて以来、ビルド・テスト・デプロイの自動化を担ってきました。YAML で決定論的[^deterministic]なステップを定義するしくみは強力ですが、「ログを解析して原因を推論し、判断して対処する」というタスクは苦手です。この領域に対し、GitHub は 2026 年 2 月、AI エージェントをワークフローとして動作させる GitHub Agentic Workflows (テクニカルプレビュー) を発表しました。
