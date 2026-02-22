@@ -11,7 +11,7 @@ description: 技術ブログ記事を筆者特有の「わたしっぽい」文�
 
 AI生成文章特有の「臭さ」を排除し、筆者の個性と価値観が宿る人間味のある文章を実現する。
 
-詳細なガイドラインは以下のリファレンスを参照：
+詳細なガイドラインは以下のリファレンスを参照
 - **[voice-and-tone.md](references/voice-and-tone.md)**: 文体とトーン(話し言葉、一人称、問いかけ、避けるべき表現)
 - **[writing-guidelines.md](references/writing-guidelines.md)**: 構造と表現(見出し、導入部、結論部、対比、メタファー)
 - **[ai-police-checklist.md](references/ai-police-checklist.md)**: AI臭さ排除の詳細チェック項目
@@ -20,7 +20,7 @@ AI生成文章特有の「臭さ」を排除し、筆者の個性と価値観が
 
 ### 1. 記事構成の決定
 
-すべての記事は以下の4段階構成に従う：
+すべての記事は以下の4段階構成に従う
 
 ```
 1. 導入(背景説明)
@@ -35,7 +35,7 @@ AI生成文章特有の「臭さ」を排除し、筆者の個性と価値観が
 
 ### 2. 導入部の執筆
 
-以下のいずれかのパターンで導入する：
+「## はじめに」のような導入専用の見出しは使わない。冒頭は見出しなしの本文から始める。以下のいずれかのパターンで導入する
 
 **パターンA: 自分の経験から始まる**
 
@@ -53,7 +53,7 @@ Playwrightを使う際、動いていたテストコードをコピーして、�
 
 ### 3. 本文の執筆
 
-以下の技法を適用：
+以下の技法を適用
 
 **段階的な説明**
 
@@ -102,7 +102,7 @@ await page.waitForURL('**/next-page');
 
 ### 5. 参考資料の追加
 
-すべての記事の最後に「参考」セクションを設置：
+すべての記事の最後に「参考」セクションを設置
 
 ```markdown
 ## 参考
@@ -114,7 +114,7 @@ https://playwright.dev/docs/locators
 
 ### 6. AI臭さ排除チェック
 
-最終チェックリストを実行(詳細は [ai-police-checklist.md](references/ai-police-checklist.md) を参照)：
+最終チェックリストを実行(詳細は [ai-police-checklist.md](references/ai-police-checklist.md) を参照)
 
 - [ ] Markdown記法の残留なし
 - [ ] 日本語文末の「:」(コロン)なし
@@ -126,7 +126,7 @@ https://playwright.dev/docs/locators
 
 ### 7. 検証と修正
 
-チェックリストで問題が見つかった場合：
+チェックリストで問題が見つかった場合
 
 1. 該当箇所を特定
 2. voice-and-tone.mdまたはai-police-checklist.mdを参照
