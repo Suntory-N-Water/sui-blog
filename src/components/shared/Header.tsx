@@ -1,6 +1,5 @@
 import { Book, History, Search, User } from 'lucide-react';
-import { type ReactElement, useState } from 'react';
-import { SearchDialog } from '@/components/feature/search/search-dialog';
+import type { ReactElement } from 'react';
 import { Icons } from '@/components/icons';
 import HamburgerMenu from '@/components/shared/mobile-menu';
 import { Button } from '@/components/ui/button';
@@ -40,6 +39,10 @@ type HeaderProps = {
   pathname: string;
 };
 
+function openSearch() {
+  document.dispatchEvent(new CustomEvent('open-search'));
+}
+
 /**
  * アプリケーション全体のヘッダーコンポーネント
  *
@@ -51,8 +54,6 @@ type HeaderProps = {
  * @returns ヘッダーコンポーネント
  */
 export default function Header({ pathname }: HeaderProps) {
-  const [searchOpen, setSearchOpen] = useState(false);
-
   /**
    * 指定されたリンクが現在のページでアクティブかどうかを判定
    *
@@ -116,7 +117,7 @@ export default function Header({ pathname }: HeaderProps) {
           {/* Search Buttons */}
           <button
             type='button'
-            onClick={() => setSearchOpen(true)}
+            onClick={openSearch}
             className='hidden h-9 items-center justify-start gap-2 overflow-hidden rounded-lg border border-border/50 bg-secondary/20 px-3 text-sm font-medium text-muted-foreground transition-all hover:border-border/80 hover:bg-secondary/60 hover:text-foreground w-48 lg:w-64 md:inline-flex'
           >
             <Search className='h-4 w-4 transition-transform group-hover:scale-110' />
@@ -128,7 +129,7 @@ export default function Header({ pathname }: HeaderProps) {
 
           <button
             type='button'
-            onClick={() => setSearchOpen(true)}
+            onClick={openSearch}
             className='inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border/50 bg-secondary/20 text-muted-foreground transition-all hover:bg-secondary/60 hover:text-foreground md:hidden'
             aria-label='Search'
           >
@@ -145,13 +146,6 @@ export default function Header({ pathname }: HeaderProps) {
           </div>
         </div>
       </div>
-
-      {/* Search Dialog */}
-      <SearchDialog
-        pathname={pathname}
-        open={searchOpen}
-        onOpenChange={setSearchOpen}
-      />
     </header>
   );
 }
