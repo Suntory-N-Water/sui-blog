@@ -13,7 +13,7 @@ tags:
   - GitHubAgenticWorkflows
 ---
 
-GitHub Actions は 2018 年に公開されて以来、ビルド・テスト・デプロイの自動化を担ってきました。YAML で決定論的[^deterministic]なステップを定義するしくみは強力ですが、「ログを解析して原因を推論し、判断して対処する」というタスクは苦手です。この領域に対し、GitHub は 2026 年 2 月、AI エージェントをワークフローとして動作させる GitHub Agentic Workflows (テクニカルプレビュー) を発表しました。
+GitHub Actions は 2018 年に発表されて以来、ビルド・テスト・デプロイの自動化を担ってきました。YAML で決定論的[^deterministic]なステップを定義するしくみは強力ですが、「ログを解析して原因を推論し、判断して対処する」というタスクは苦手です。この領域に対し、GitHub は 2026 年 2 月、AI エージェントをワークフローとして動作させる GitHub Agentic Workflows (テクニカルプレビュー) を発表しました。
 
 従来、CI 失敗への対応は人間が担ってきました。失敗の原因は外部 API の障害・Git の競合・設定ミスと多岐にわたり、ログを読んで原因を推定する作業は単純ではありません。GitHub はこうした「判断が必要な自動化」を「Continuous AI」と呼び、CI/CD を置き換えるのではなく拡張する位置付けとしています。
 
@@ -258,7 +258,7 @@ Issue または PR の本文には以下を含める:
 
 `safe-outputs` がエージェントの「できること」を定義しています。Issue は 1 回の実行で最大 1 件、コメントは最大 3 件、PR も最大 1 件。`max` で暴走を防止しています。`close-older-issues: true` を設定すると、同じ接頭辞の古い Issue を自動でクローズしてくれるので、Issue がたまりません。
 
-`engine` は `copilot` を選択しました。Copilot サブスクリプション[^copilot-subscription]のプレミアムリクエスト内で動作するため、追加の API 費用が不要です。`claude` や `codex` も選択できますが、それぞれ Anthropic / OpenAI のアカウントと API キーが別途必要で、各社の従量課金が発生します。GitHub のプレミアムリクエストとは別の課金体系です。
+`engine` は `copilot` を選択しました。Copilot サブスクリプション[^copilot-subscription]のプレミアムリクエスト内で動作するため、追加の API 費用が不要です。`claude`、`codex`、`gemini` も選択できますが、それぞれ Anthropic / OpenAI / Google のアカウントと API キーが別途必要で、各社の従量課金が発生します。GitHub のプレミアムリクエストとは別の課金体系です。
 
 普段 Claude Code の `CLAUDE.md`[^claude-md] を書いている感覚と同じです。エージェントに「あなたはこのリポジトリの CI 失敗を診断するエキスパートです」と伝え、プロジェクトの構造や規約を教え、何をどの順番でやるかを指示します。
 
