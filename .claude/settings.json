@@ -86,5 +86,8 @@
       }
     ]
   },
-  "plansDirectory": ".claude/plans"
+  "plansDirectory": ".claude/plans",
+  "enabledPlugins": {
+    "managing-git-github-workflow@suntory-n-water-marketplace": true
+  }
 }

@@ -1,4 +1,4 @@
-import { Book, History, Search, User } from 'lucide-react';
+import { Book, Briefcase, History, Search, User } from 'lucide-react';
 import type { ReactElement } from 'react';
 import { Icons } from '@/components/icons';
 import HamburgerMenu from '@/components/shared/mobile-menu';
@@ -17,6 +17,11 @@ const NAVIGATION_LINKS: MenuItemLinkProps[] = [
     href: '/blog/',
     title: 'Blog',
     icon: <Book className='size-5' />,
+  },
+  {
+    href: '/works/',
+    title: 'Works',
+    icon: <Briefcase className='size-5' />,
   },
   {
     href: '/about/',
