@@ -47,6 +47,7 @@ export const TAG_SLUG_MAP: Record<string, string> = {
   GitHub: 'github',
   GitHubCopilot: 'github-copilot',
   GitHubActions: 'github-actions',
+  GitHubAgenticWorkflows: 'github-agentic-workflows',
   GoogleAppScript: 'google-app-script',
   GoogleCloud: 'google-cloud',
   GoogleMapsAPI: 'google-maps-api',

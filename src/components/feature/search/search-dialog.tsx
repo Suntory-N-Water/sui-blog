@@ -1,4 +1,3 @@
-import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -9,25 +8,18 @@ import { SEARCH_CONSTANTS } from '@/constants';
  *
  * PagefindUIを使用したブログ記事の検索機能を提供します。
  * Cmd+K (Mac) / Ctrl+K (Windows) でダイアログを開くことができます。
+ * Header からは `open-search` カスタムイベント経由で開かれます。
  *
  * 公式の推奨アプローチに基づき、dynamic importとwebpackIgnoreを使用して実装しています。
  * これにより、開発環境でのエラーハンドリングとビルド後の正しいパス解決を実現しています。
  *
- * @param open - ダイアログの開閉状態
- * @param onOpenChange - ダイアログの開閉状態を変更する関数
+ * @param pathname - 現在のページパス
  * @see https://pagefind.app/docs/ui/
  * @see https://www.petemillspaugh.com/using-pagefind-with-nextjs
  */
-export function SearchDialog({
-  pathname,
-  open,
-  onOpenChange,
-}: {
-  pathname: string;
-  open: boolean;
-  onOpenChange: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
+export function SearchDialog({ pathname }: { pathname: string }) {
   const [mounted, setMounted] = useState(false);
+  const [open, setOpen] = useState(false);
   const [pagefindLoaded, setPagefindLoaded] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
@@ -39,11 +31,18 @@ export function SearchDialog({
   }, []);
 
   /**
+   * Header の検索ボタンから dispatch される `open-search` カスタムイベントを受け取る
+   */
+  useEffect(() => {
+    const handleOpenSearch = () => setOpen(true);
+    document.addEventListener('open-search', handleOpenSearch);
+    return () => document.removeEventListener('open-search', handleOpenSearch);
+  }, []);
+
+  /**
    * Cmd+K / Ctrl+K でダイアログを開く
    *
    * 外部システム(ブラウザのキーボードイベント)との同期のため、useEffectを使用。
-   * onOpenChangeに関数形式を使うことで、openを依存配列から除外し、
-   * openが変わるたびにイベントリスナーが再登録されるのを防ぐ。
    */
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -52,13 +51,13 @@ export function SearchDialog({
         (e.metaKey || e.ctrlKey)
       ) {
         e.preventDefault();
-        onOpenChange((prev: boolean) => !prev);
+        setOpen((prev) => !prev);
       }
     };
 
     document.addEventListener('keydown', down);
     return () => document.removeEventListener('keydown', down);
-  }, [onOpenChange]);
+  }, []);
 
   /**
    * Escapeキーでダイアログを閉じる
@@ -73,13 +72,13 @@ export function SearchDialog({
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.preventDefault();
-        onOpenChange(false);
+        setOpen(false);
       }
     };
 
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
-  }, [open, onOpenChange]);
+  }, [open]);
 
   /**
    * PagefindUIのロードと初期化
@@ -184,7 +183,7 @@ export function SearchDialog({
   /**
    * 検索結果クリック時のナビゲーションを制御
    *
-   * PagefindUIが生成する結果リンクをNext.jsのクライアントナビゲーションに乗せ替え、
+   * PagefindUIが生成する結果リンクのクリックを捕捉し、
    * 画面遷移が完了するまでダイアログを開いたままにします。
    */
   useEffect(() => {
@@ -231,10 +230,10 @@ export function SearchDialog({
       previousPathnameRef.current = pathname;
       setIsNavigating(false);
       if (open) {
-        onOpenChange(false);
+        setOpen(false);
       }
     }
-  }, [pathname, open, onOpenChange]);
+  }, [pathname, open]);
 
   // サーバー側では document が無いため、マウント前は何も描画しない
   if (!mounted) {
@@ -249,7 +248,7 @@ export function SearchDialog({
       <button
         type='button'
         className='fixed inset-0 z-40 bg-black/80 backdrop-blur-sm'
-        onClick={() => onOpenChange(false)}
+        onClick={() => setOpen(false)}
         aria-label='検索ダイアログを閉じる'
         tabIndex={-1}
       />

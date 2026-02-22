@@ -66,7 +66,6 @@ export default defineConfig({
             'react-vendor': ['react', 'react-dom'],
             'radix-ui': [
               '@radix-ui/react-dialog',
-              '@radix-ui/react-dropdown-menu',
               '@radix-ui/react-select',
               '@radix-ui/react-separator',
               '@radix-ui/react-slot',
