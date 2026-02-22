@@ -1,0 +1,42 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { Icons } from '@/components/icons';
+import { absoluteUrl } from '@/lib/utils';
+import WorksCard from '@/components/feature/works/works-card.astro';
+
+const allWorks = await getCollection('works');
+const sortedWorks = allWorks.sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+const totalWorks = sortedWorks.length;
+const canonicalUrl = absoluteUrl('/works');
+---
+
+<BaseLayout
+  title='Works - 制作物'
+  description='個人で開発したWebサービスやアプリケーションの一覧です。'
+  canonicalUrl={canonicalUrl}
+>
+  <section data-pagefind-ignore class='space-y-10'>
+    <div class='space-y-3 border-b border-border/60 pb-4'>
+      <nav class='flex items-center gap-2 text-sm text-muted-foreground'>
+        <a href='/' class='transition-colors hover:text-primary'> Home </a>
+        <Icons.ChevronRight client:load className='size-4' />
+        <span class='text-foreground'>Works</span>
+      </nav>
+
+      <div class='flex flex-wrap items-end justify-between gap-3'>
+        <h1 class='text-3xl font-bold tracking-tight md:text-4xl'>Works</h1>
+        <span class='text-sm font-mono text-muted-foreground'>
+          Total {totalWorks} projects
+        </span>
+      </div>
+    </div>
+
+    <div class='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
+      {sortedWorks.map((work) => <WorksCard work={work} />)}
+    </div>
+  </section>
+</BaseLayout>

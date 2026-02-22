@@ -47,4 +47,20 @@ const shorts = defineCollection({
   }),
 });
 
-export const collections = { blog, shorts };
+const works = defineCollection({
+  loader: glob({
+    pattern: '**/*.md',
+    base: './contents/works',
+  }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.coerce.date(),
+    tags: z.array(z.string()).default([]),
+    thumbnail: z.string(),
+    siteUrl: z.string().url(),
+    githubUrl: z.string().url(),
+  }),
+});
+
+export const collections = { blog, shorts, works };
