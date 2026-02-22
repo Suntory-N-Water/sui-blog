@@ -126,7 +126,7 @@ timeout-minutes: 15
 
 ### Markdown 指示の部分
 
-frontmatter の下の Markdown 部分がエージェントへのプロンプトです。実際には以下を記載しました。
+frontmatter 下の Markdown 部分がエージェントへのプロンプトです。実際には以下を記載しました。
 
 - プロジェクト構造 (pnpm モノレポ[^monorepo]、各アプリケーションの役割)
 - 規約 (日本語記載、`pnpm run ai-check` の実行、自動生成ファイルの編集禁止)
@@ -135,7 +135,7 @@ frontmatter の下の Markdown 部分がエージェントへのプロンプト�
 - 原因カテゴリ別の対応方針 (コードバグなら PR、API 障害なら Issue のみ)
 - Issue/PR 本文のテンプレート
 
-普段 Claude Code のカスタムインストラクション[^custom-instructions]を書いている感覚と同じです。エージェントに「あなたはこのリポジトリの CI 失敗を診断するエキスパートです」と伝え、プロジェクトの構造や規約を教え、何をどの順番でやるかを指示します。
+普段 Claude Code の `CLAUDE.md`[^claude-md] を書いている感覚と同じです。エージェントに「あなたはこのリポジトリの CI 失敗を診断するエキスパートです」と伝え、プロジェクトの構造や規約を教え、何をどの順番でやるかを指示します。
 
 ## セットアップの手順
 
@@ -377,4 +377,4 @@ https://github.blog/jp/2026-02-16-automate-repository-tasks-with-github-agentic-
 [^copilot-subscription]: GitHub Copilot の有料プラン。AI によるコード補完・チャット機能が利用できる。プレミアムリクエストは月ごとの利用枠が設定されており、枠内の利用であれば追加料金は発生しない。
 [^package-lock]: npm が自動生成するファイルで、パッケージの正確なバージョンを固定する。`package.json` が「方針」、`package-lock.json` が「実際の状態記録」。
 [^technical-preview]: 製品として一般公開する前の試験的な提供段階。仕様が変わる可能性があり、本番利用は推奨されない。
-[^custom-instructions]: Claude Code に対してあらかじめ設定しておく指示のこと。プロジェクトの規約やコーディングスタイルを事前に教えておくことで、毎回指示しなくても一貫した動作を得られる。
+[^claude-md]: Claude Code がプロジェクト内で自動的に読み取る指示ファイル。プロジェクト固有のコーディング規約や手順を記述しておくことで、Claude Code が毎回一貫した動作をするようになる。
