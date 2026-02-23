@@ -388,3 +388,54 @@
 .markdown-content sup a[data-footnote-ref] {
   @apply text-primary no-underline hover:underline;
 }
+
+/* Rich Embed: YouTube */
+.markdown-content .embed-youtube {
+  @apply my-6 overflow-hidden rounded-lg border border-border/50;
+}
+.markdown-content .embed-youtube iframe {
+  @apply aspect-video w-full;
+}
+
+/* Rich Embed: Twitter */
+.markdown-content .embed-twitter {
+  @apply my-6 flex justify-center;
+}
+
+/* Rich Embed: GitHub Code Snippet */
+.markdown-content .embed-github {
+  @apply my-6;
+}
+.markdown-content .embed-github-header {
+  @apply flex items-center gap-2 rounded-t-lg border border-b-0 border-border/50
+         bg-muted/50 px-4 py-2 text-sm font-medium text-muted-foreground;
+}
+.markdown-content .embed-github-header a {
+  @apply text-muted-foreground no-underline hover:text-primary hover:underline;
+}
+.markdown-content .embed-github-header svg {
+  @apply size-4 shrink-0;
+}
+.markdown-content .embed-github > figure pre {
+  @apply mt-0 rounded-t-none;
+}
+.markdown-content .embed-github > figure {
+  @apply mt-0;
+}
+/* GitHub embed line numbers */
+.markdown-content .embed-github [data-line-numbers] [data-line] {
+  @apply px-2;
+  counter-increment: line;
+}
+.markdown-content .embed-github [data-line-numbers] [data-line]::before {
+  @apply mr-3 inline-block w-6 text-right text-muted-foreground/60;
+  content: counter(line);
+}
+
+/* Rich Embed: Speakerdeck */
+.markdown-content .embed-speakerdeck {
+  @apply my-6 overflow-hidden rounded-lg border border-border/50;
+}
+.markdown-content .embed-speakerdeck iframe {
+  @apply w-full;
+}

@@ -13,6 +13,7 @@ import { rehypeCodeCopyButton } from '@/lib/rehype-code-copy-button';
 import { rehypeLinkCard } from '@/lib/rehype-link-card';
 import { rehypeAddMermaidClass } from '@/lib/rehype-mermaid-class';
 import { rehypeR2ImageUrl } from '@/lib/rehype-r2-image-url';
+import { rehypeRichEmbed } from '@/lib/rehype-rich-embed';
 
 const rehypePrettyCodeOptions: Options = {
   theme: 'slack-dark',
@@ -56,6 +57,7 @@ const processor = remark()
   .use(rehypeSlug)
   .use(rehypeR2ImageUrl)
   .use(rehypeCloudflareImages)
+  .use(rehypeRichEmbed)
   .use(rehypeLinkCard)
   .use(rehypeAddMermaidClass)
   .use(rehypeMermaid, {
