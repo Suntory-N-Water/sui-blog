@@ -1,16 +1,13 @@
 /*
-  # HSTS: HTTPSを強制 (1年間有効, サブドメイン含む, プリロード登録対応)
-  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
-  
   # CSP: 他サイトへの埋め込みを禁止 (X-Frame-Optionsの現代版 / 自身のドメインのみ許可)
   Content-Security-Policy: frame-ancestors 'self'
-  
+
   # クリックジャッキング対策 (CSP非対応ブラウザ向けフォールバック / 自身のドメインのみ許可)
   X-Frame-Options: SAMEORIGIN
-  
+
   # MIMEタイプスニッフィング防止
   X-Content-Type-Options: nosniff
-  
+
   # リファラ制御: 他サイトへはドメインのみ送信 (プライバシー保護)
   Referrer-Policy: strict-origin-when-cross-origin
 
