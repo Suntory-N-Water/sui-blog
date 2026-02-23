@@ -104,12 +104,23 @@ jobs:
         continue-on-error: true
         run: |
           SCRIPT_NAME="sui-tech-blog"
-          API_BASE="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/$SCRIPT_NAME"
+          API_BASE="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers"
 
-          # Get the current active deployment's version IDs
-          ACTIVE_VERSIONS=$(curl -sf "$API_BASE/deployments" \
+          # Beta API で worker_id を動的に取得
+          WORKER_ID=$(curl -sf "$API_BASE/workers" \
             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-            | jq -r '[.result.versions[]?.version_id // empty] | join(" ")')
+            | jq -r --arg name "$SCRIPT_NAME" '.result[] | select(.name == $name) | .id')
+
+          if [ -z "$WORKER_ID" ]; then
+            echo "::warning::Could not find worker_id for $SCRIPT_NAME. Skipping cleanup."
+            exit 0
+          fi
+          echo "Worker ID: $WORKER_ID"
+
+          # アクティブバージョンを取得
+          ACTIVE_VERSIONS=$(curl -sf "$API_BASE/scripts/$SCRIPT_NAME/deployments" \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            | jq -r '[.result.deployments[0].versions[].version_id] | join(" ")')
 
           if [ -z "$ACTIVE_VERSIONS" ]; then
             echo "::warning::Could not retrieve active deployment versions. Skipping cleanup."
@@ -117,17 +128,17 @@ jobs:
           fi
           echo "Active versions: $ACTIVE_VERSIONS"
 
-          # List all versions (API returns most recent, paginated)
-          ALL_VERSIONS=$(curl -sf "$API_BASE/versions" \
+          # List all versions via Beta API
+          ALL_VERSIONS=$(curl -sf "$API_BASE/workers/$WORKER_ID/versions?per_page=100" \
             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-            | jq -r '.result[]?.id // empty')
+            | jq -r '.result[].id')
 
           if [ -z "$ALL_VERSIONS" ]; then
             echo "No versions found to clean up."
             exit 0
           fi
 
-          # Delete non-active versions
+          # Delete non-active versions via Beta API
           DELETED=0
           FAILED=0
           for VERSION_ID in $ALL_VERSIONS; do
@@ -138,7 +149,7 @@ jobs:
 
             echo "Deleting version: $VERSION_ID"
             HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE \
-              "$API_BASE/versions/$VERSION_ID" \
+              "$API_BASE/workers/$WORKER_ID/versions/$VERSION_ID" \
               -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN")
 
             if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
