@@ -1,6 +1,7 @@
 ---
 import { CodeCopyButtons } from './code-copy-buttons';
 import { ImageZoom } from './image-zoom';
+import { TwitterWidgets } from './twitter-widgets';
 
 type Props = {
   html: string;
@@ -13,3 +14,4 @@ const { html } = Astro.props;
 
 <CodeCopyButtons client:idle />
 <ImageZoom client:idle />
+<TwitterWidgets client:idle />
