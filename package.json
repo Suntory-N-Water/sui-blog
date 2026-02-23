@@ -68,7 +68,7 @@
     "remark-rehype": "^11.1.2",
     "tailwind-merge": "^3.4.0",
     "unist-util-visit": "^5.1.0",
-    "zod": "3.25.76"
+    "zod": "4.3.6"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",
