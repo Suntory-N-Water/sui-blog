@@ -54,9 +54,8 @@ export function ImageZoom() {
       img.addEventListener(
         'click',
         () => {
-          // srcset がある場合は最も大きい画像を使用、なければ src
-          const largeSrc = getLargestSrcFromSrcset(img.srcset) || img.src;
-          zoomedImg.src = largeSrc;
+          // currentSrc はブラウザが srcset/src から実際に選択した完全な URL
+          zoomedImg.src = img.currentSrc || img.src;
           zoomedImg.alt = img.alt;
           dialog.showModal();
         },
@@ -72,34 +71,4 @@ export function ImageZoom() {
   }, []);
 
   return null;
-}
-
-/**
- * srcset から最大幅の画像 URL を取得する
- */
-function getLargestSrcFromSrcset(srcset: string): string | null {
-  if (!srcset) {
-    return null;
-  }
-
-  let maxWidth = 0;
-  let maxSrc = '';
-
-  for (const entry of srcset.split(',')) {
-    const parts = entry.trim().split(/\s+/);
-    if (parts.length < 2) {
-      continue;
-    }
-
-    const widthMatch = parts[1].match(/^(\d+)w$/);
-    if (widthMatch) {
-      const width = Number.parseInt(widthMatch[1], 10);
-      if (width > maxWidth) {
-        maxWidth = width;
-        maxSrc = parts[0];
-      }
-    }
-  }
-
-  return maxSrc || null;
 }
