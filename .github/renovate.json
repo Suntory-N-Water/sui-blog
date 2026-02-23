@@ -31,10 +31,9 @@
       "labels": ["automerge", "dependencies"]
     },
     {
-      "description": "Major は自動マージしない",
+      "description": "Major は更新対象外",
       "matchUpdateTypes": ["major"],
-      "automerge": false,
-      "labels": ["dependencies"]
+      "enabled": false
     }
   ],
 
