@@ -1,27 +1,18 @@
 import type { z } from 'zod';
 import type {
   ActionSectionSchema,
-  ActionStepSchema,
-  ComparisonItemSchema,
   CoreMessageSectionSchema,
   DiagramSectionSchema,
   FlowChartSectionSchema,
-  FlowItemSchema,
   GroupedContentSectionSchema,
   HeroSectionSchema,
-  ListStepItemSchema,
   ListStepsSectionSchema,
   MetricsImpactSectionSchema,
   PieChartSectionSchema,
-  ProblemCardSchema,
   ProblemSectionSchema,
   ScoreComparisonSectionSchema,
-  ScoreItemSchema,
-  StepItemSchema,
   StepsSectionSchema,
-  TimelineEventSchema,
   TimelineProcessSectionSchema,
-  TransitionSectionSchema,
 } from './diagram-schemas';
 
 // 各セクション型を個別スキーマから直接生成
@@ -30,24 +21,15 @@ export type ProblemSectionData = z.infer<typeof ProblemSectionSchema>;
 export type CoreMessageSectionData = z.infer<typeof CoreMessageSectionSchema>;
 export type StepsSectionData = z.infer<typeof StepsSectionSchema>;
 export type ActionSectionData = z.infer<typeof ActionSectionSchema>;
-export type TransitionSectionData = z.infer<typeof TransitionSectionSchema>;
 export type ScoreComparisonSectionData = z.infer<
   typeof ScoreComparisonSectionSchema
 >;
 export type ListStepsSectionData = z.infer<typeof ListStepsSectionSchema>;
 export type FlowChartSectionData = z.infer<typeof FlowChartSectionSchema>;
 
-export type ProblemCard = z.infer<typeof ProblemCardSchema>;
-export type ComparisonItem = z.infer<typeof ComparisonItemSchema>;
-export type StepItem = z.infer<typeof StepItemSchema>;
-export type ActionStep = z.infer<typeof ActionStepSchema>;
-export type ScoreItem = z.infer<typeof ScoreItemSchema>;
-export type ListStepItem = z.infer<typeof ListStepItemSchema>;
-export type FlowItem = z.infer<typeof FlowItemSchema>;
 export type GroupedContentSectionData = z.infer<
   typeof GroupedContentSectionSchema
 >;
-export type TimelineEvent = z.infer<typeof TimelineEventSchema>;
 export type TimelineProcessSectionData = z.infer<
   typeof TimelineProcessSectionSchema
 >;

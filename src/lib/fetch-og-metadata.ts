@@ -226,7 +226,7 @@ async function fetchOGDataDirect(url: string): Promise<Partial<OGData>> {
  * @param url - OGPデータを取得するURL
  * @returns OGPデータの部分的なオブジェクト(title、description、image、url)
  */
-export async function getOGDataImpl(url: string): Promise<Partial<OGData>> {
+async function getOGDataImpl(url: string): Promise<Partial<OGData>> {
   // 本番ビルド時はキャッシュを使用
   if (process.env.NODE_ENV === 'production') {
     // 1. キャッシュ確認

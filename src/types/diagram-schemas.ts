@@ -151,7 +151,7 @@ export const FlowChartSectionSchema = z.object({
 });
 
 // カード単体の定義
-export const GroupCardItemSchema = z.object({
+const GroupCardItemSchema = z.object({
   title: z.string(),
   text: z.string(), // 箇条書きの場合は改行コードで表現
   isHighlight: z.boolean().optional(),
@@ -160,7 +160,7 @@ export const GroupCardItemSchema = z.object({
 });
 
 // グループ(サブセクション)の定義
-export const ContentGroupSchema = z.object({
+const ContentGroupSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
   cards: z.array(GroupCardItemSchema),

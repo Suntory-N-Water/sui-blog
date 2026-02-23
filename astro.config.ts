@@ -1,7 +1,6 @@
 // @ts-check
 
 import { fileURLToPath } from 'node:url';
-import partytown from '@astrojs/partytown';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
@@ -22,11 +21,6 @@ export default defineConfig({
       },
     }),
     react(),
-    partytown({
-      config: {
-        forward: ['dataLayer.push'],
-      },
-    }),
   ],
   build: {
     inlineStylesheets: 'auto',
@@ -64,12 +58,7 @@ export default defineConfig({
         output: {
           manualChunks: {
             'react-vendor': ['react', 'react-dom'],
-            'radix-ui': [
-              '@radix-ui/react-dialog',
-              '@radix-ui/react-select',
-              '@radix-ui/react-separator',
-              '@radix-ui/react-slot',
-            ],
+            'radix-ui': ['@radix-ui/react-separator', '@radix-ui/react-slot'],
           },
         },
       },
