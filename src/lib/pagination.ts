@@ -3,7 +3,7 @@
  *
  * @template T - ページネーション対象のアイテムの型
  */
-export type PaginationResult<T> = {
+type PaginationResult<T> = {
   /** ページ内のアイテム配列 */
   items: T[];
   /** 現在のページ番号(1始まり) */

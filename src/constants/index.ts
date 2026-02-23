@@ -87,13 +87,3 @@ export const SEARCH_CONSTANTS = {
     metaKey: true, // Cmd(Mac) / Ctrl(Windows)
   },
 } as const;
-
-/**
- * ブログナビゲーション関連の設定
- */
-export const BLOG_NAVIGATION_CONSTANTS = {
-  /** 最終閲覧したブログ一覧パスを保存する sessionStorage キー */
-  LIST_PATH_STORAGE_KEY: 'last-blog-list-path',
-  /** ブログ一覧のスクロール位置を保存する sessionStorage キー */
-  SCROLL_POSITION_KEY: 'blog-list-scroll-position',
-} as const;
