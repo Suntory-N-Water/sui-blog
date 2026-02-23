@@ -12,9 +12,9 @@ tags:
   - セキュリティ
 ---
 
-Cloudflare は従来の Pages ではなく Workers を推奨する方針を打ち出しています。Workers では `wrangler versions upload` でプレビューバージョン[^preview-version]をアップロードでき、PR ごとにプレビュー URL で動作確認が可能です。
+Cloudflare は従来の Pages ではなく [Workers を推奨する方針](https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/)を打ち出しています。Workers では `wrangler versions upload` でプレビューバージョン[^preview-version]をアップロードでき、PR ごとにプレビュー URL で動作確認が可能です。
 
-しかし、Workers のプレビューバージョンには構造的な課題があります。PR をマージしてブランチを削除しても、プレビューバージョンは自動削除されません。そのため、URL さえ知っていればアクセスできる状態が残り続けます。Pages にはデプロイの削除 API が公開されていますが、Workers の Standard API にはバージョンの DELETE エンドポイントが存在しません。
+しかし、Workers のプレビューバージョンには構造的な課題があります。PR をマージしてブランチを削除しても、プレビューバージョンは自動削除されません。そのため、URL さえ知っていればアクセスできる状態が残り続けます。Pages には[デプロイの削除 API](https://developers.cloudflare.com/api/resources/pages/subresources/projects/subresources/deployments/methods/delete/) が公開されていますが、Workers の Standard API にはバージョンの DELETE エンドポイントが存在しません。
 
 このブログも Cloudflare Workers でホスティングしており、同じ課題に直面しました。Vercel であれば[プレビューデプロイに認証をかけられます](https://vercel.com/docs/deployment-protection)が、Workers のプレビューバージョンにはそのような認証機能がありません。個人ブログなので実害はないかもしれませんが、昨今のセキュリティ事情を考えると、放置するのも気持ちが悪いです。「まぁ試しにやってみるか」くらいの気持ちで調べ始め、調査の結果 Beta API に DELETE エンドポイントがあることが分かり、GitHub Actions で自動クリーンアップするしくみを実装しました。
 
@@ -26,11 +26,13 @@ https://zenn.dev/aeon_mall/articles/wrangler_actions
 
 しかし、Cloudflare に勤めていて Hono(軽量な Web フレームワーク)の作者でもある Yusuke Wada 氏は、X で以下のように説明しています。
 
+<!-- textlint-disable ja-technical-writing/no-mix-dearu-desumasu -->
 > これからは理由がない限りCloudflare PagesではなくCloudflare Workersを使ってください。
 >
-> - Pagesと同じくアセットへのアクセスは無料
-> - Pagesではできない機能が使える(Durable Objects/Workers Logs etc.)
-> - フロントエンドフレームワークが動く
+> * Pagesと同じくアセットへのアクセスは無料です
+> * Pagesではできない機能が使えます > Durable Objects/Workers Logs etc.
+> * フロントエンドフレームワークが動きます
+<!-- textlint-enable ja-technical-writing/no-mix-dearu-desumasu -->
 
 https://x.com/yusukebe/status/1917869496267915641
 
@@ -53,7 +55,7 @@ GET  /accounts/{account_id}/workers/scripts/{script_name}/versions/{version_id}
 POST /accounts/{account_id}/workers/scripts/{script_name}/versions
 ```
 
-バージョンの一覧取得・詳細取得・アップロードのみです。DELETE メソッドは存在しません。試しにこのパスに DELETE リクエストを送ると `405 Method Not Allowed` が返ります。これは権限の問題ではなく、エンドポイント自体が存在しないためです。
+バージョンの一覧取得・詳細取得・アップロードのみです。DELETE メソッドは存在しません。試しにこのパスに DELETE リクエストを送ったところ、`405 Method Not Allowed` が返りました。これは権限の問題ではなく、エンドポイント自体が存在しないためです。
 
 ### Beta API
 
