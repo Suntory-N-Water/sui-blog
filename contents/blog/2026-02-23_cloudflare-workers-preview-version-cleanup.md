@@ -1,9 +1,9 @@
 ---
-title: Cloudflare Workers のプレビューバージョンを自動で掃除する
+title: Cloudflare Workers のプレビュー URL を自動で無効化する
 slug: cloudflare-workers-preview-version-cleanup
 date: 2026-02-23
 modified_time: 2026-02-23
-description: Cloudflare Workers のプレビューバージョンは、PR をマージしても自動で削除されません。そのため、URL を知っていれば誰でもアクセスできてしまう状態が残り続けます。Standard API には DELETE がないため、Beta API を使って GitHub Actions で自動クリーンアップする方法を調査・実装しました。
+description: Cloudflare Workers のプレビュー URL は、PR をマージしても自動で無効化されません。バージョンの削除ではアクセスを止められないため、Subdomain API の previews_enabled を GitHub Actions で自動制御する方法を実装しました。
 icon: 🧹
 icon_url: /icons/broom_flat.svg
 tags:
@@ -12,144 +12,140 @@ tags:
   - セキュリティ
 selfAssessment:
   quizzes:
-    - question: "Cloudflare Workers のプレビューバージョンを削除するには、どの API を使う必要があるか？"
+    - question: "Cloudflare Workers のプレビュー URL を無効化するために、この記事で採用した方法はどれですか？"
       answers:
-        - text: "Standard API の DELETE エンドポイント"
+        - text: "Beta API でバージョンを DELETE する"
           correct: false
-          explanation: "Standard API にはバージョンの DELETE エンドポイントが存在しません。DELETE リクエストを送ると 405 Method Not Allowed が返ります。"
-        - text: "Beta API の DELETE エンドポイント"
+          explanation: "Beta API の DELETE は HTTP/200 が返るが、プレビュー URL のルーティングは無効化されない"
+        - text: "Subdomain API の previews_enabled を false にする"
           correct: true
-          explanation: "Standard API には DELETE がないため、Beta API(/workers/{worker_id}/versions/{version_id})経由でのみ削除が可能です。"
-        - text: "wrangler versions delete コマンド"
+          explanation: "previews_enabled を false にすると全プレビュー URL が HTTP/404 を返すようになり、本番 URL には影響しない"
+        - text: "Worker を丸ごと削除して再作成する"
           correct: false
-          explanation: null
-        - text: "Cloudflare ダッシュボードからのみ削除可能"
+          explanation: "Worker を削除すると本番 URL も消えてしまう"
+        - text: "wrangler versions delete コマンドを実行する"
           correct: false
-          explanation: null
-    - question: "GitHub Actions でのクリーンアップ処理で、アクティブバージョンの取得に失敗した場合の挙動はどれか？"
+          explanation: "wrangler には versions delete コマンドは存在しない"
+    - question: "Subdomain API の previews_enabled を false に設定した場合、本番 URL({script_name}.workers.dev)はどうなりますか？"
       answers:
-        - text: "全バージョンを削除する"
+        - text: "本番 URL も HTTP/404 になる"
           correct: false
-          explanation: "どれがアクティブか分からない状態で削除するのは危険なため、この挙動にはなりません。"
-        - text: "ワークフロー全体を失敗させる"
-          correct: false
-          explanation: null
-        - text: "最新バージョンだけ残して他を削除する"
-          correct: false
-          explanation: null
-        - text: "クリーンアップ全体をスキップする"
+          explanation: "enabled と previews_enabled は独立した設定値であり、previews_enabled の変更は本番 URL に影響しない"
+        - text: "本番 URL は HTTP/200 のまま影響を受けない"
           correct: true
-          explanation: "アクティブバージョンが不明な状態で削除するのは危険なため、安全側に倒してクリーンアップ全体をスキップします。"
+          explanation: "enabled と previews_enabled は独立した設定値なので、previews_enabled を false にしても本番 URL は HTTP/200 のまま"
+        - text: "本番 URL は HTTP/301 でリダイレクトされる"
+          correct: false
+          explanation: null
+        - text: "本番 URL は HTTP/503 になる"
+          correct: false
+          explanation: null
 diagram:
   - type: hero
-    date: "2026/02/23"
-    title: "Cloudflare Workers のプレビューバージョンを自動で掃除する"
-    subtitle: "Standard APIにはない機能。Beta APIとGitHub Actionsで不要なバージョンを安全に削除する方法"
+    date: "2026-02-23"
+    title: "Cloudflare Workers のプレビュー URL を自動で無効化する"
+    subtitle: "バージョン削除では消えないプレビュー環境をSubdomain APIで安全に管理する方法"
   - type: problem
-    variant: simple
-    icon: alertCircle
-    title: "プレビューバージョンが抱える課題"
-    introText: "PRマージ後もプレビュー環境が残り続けることで管理上やセキュリティ上の懸念が発生"
+    icon: alertTriangle
+    title: "プレビューURLが残るセキュリティリスク"
+    introText: "PRマージ後もプレビュー環境が自動で削除されず誰でもアクセス可能な状態が続いてしまいます"
     cards:
-      - icon: shieldAlert
-        title: "環境が残り続ける"
-        subtitle: "誰でもアクセス可能"
-        description: "PRマージしてブランチを削除してもプレビュー環境のURLは有効なまま放置される"
-      - icon: slash
-        title: "削除APIがない"
-        subtitle: "Standard APIの制限"
-        description: "Pagesと異なりWorkersのStandard APIにはバージョンを削除するDELETEメソッドが存在しない"
+      - icon: globe
+        title: "放置されるURL"
+        subtitle: "PR終了後もアクセス可能"
+        description: "認証機能がないためURLを知っていれば誰でも閲覧できてしまう"
+      - icon: trash2
+        title: "API削除の罠"
+        subtitle: "バージョン削除は無意味"
+        description: "Beta APIでバージョンを消してもルーティングは残りアクセス可能"
+        isHighlight: true
+        accentColor: RED
   - type: transition
   - type: core_message
     variant: highlight
     icon: target
-    title: "Beta APIを利用した解決策"
-    mainMessage: "Standard APIでは削除できないため削除メソッドが提供されているBeta APIを利用してクリーンアップを実行"
+    title: "プレビューURL無効化の正解"
+    mainMessage: "Workersのバージョンは不変かつ追記のみの設計。削除ではなくSubdomain APIでルーティングを制御するのが正しいアプローチです"
     comparisons:
       - icon: xCircle
-        title: "Standard API"
-        text: "DELETEメソッドが存在せずリクエストすると405エラーが返る"
+        title: "Beta APIでの削除"
+        text: "メタデータが消えるだけでプレビューURLへのアクセスは遮断されない"
         isGood: false
       - icon: checkCircle
-        title: "Beta API"
-        text: "DELETEメソッドが存在しバージョンIDを指定して削除可能"
+        title: "Subdomain APIの利用"
+        text: "previews_enabledをfalseにして全プレビューを確実にHTTP/404にする"
         isGood: true
     coreHighlight:
-      title: "内部IDの取得が必須"
-      text: "Beta APIを使うにはスクリプト名ではなく固有のworker_idを取得する必要がある"
+      title: "本番環境への影響はゼロ"
+      text: "enabledとpreviews_enabledは独立しているため本番URLはHTTP/200のまま維持される"
       accentColor: GOLD
-  - type: transition
-  - type: flow_chart
-    title: "自動クリーンアップの実行フロー"
-    introText: "GitHub Actions上でデプロイ後に実行する安全なクリーンアップ手順"
-    flows:
-      - label: "ID取得"
-        subLabel: "worker_idの取得"
-      - label: "本番特定"
-        subLabel: "アクティブの除外"
-        highlight: true
-        accentColor: GOLD
-      - label: "一覧取得"
-        subLabel: "全バージョンの取得"
-      - label: "削除実行"
-        subLabel: "Beta APIでDELETE"
   - type: grouped_content
-    title: "安全に実行するための設計ポイント"
-    introText: "本番環境に影響を与えず安全にクリーンアップを組み込むための工夫"
-    icon: lightbulb
+    title: "2つのAPI設定と対象URLの違い"
+    introText: "Subdomain APIで制御できる2つのフラグとその影響範囲を整理します"
+    icon: settings
     sectionBgColor: muted
     groups:
-      - title: "安全側のフォールバック処理"
-        description: "本番環境を誤って削除しないための防波堤となる設計"
+      - title: "enabledフラグ"
+        description: "本番環境のworkers.dev URLを制御"
         bgColor: white
         cards:
-          - title: "アクティブ版の除外"
-            text: "デプロイAPIからアクティブなバージョンIDを取得し削除対象から必ず除外する"
+          - title: "対象URL"
+            text: "{script_name}.workers.dev"
+          - title: "設定変更の影響"
+            text: "falseにすると本番環境が停止する"
+      - title: "previews_enabled"
+        description: "プレビュー用のURLを制御"
+        bgColor: white
+        isHighlight: true
+        cards:
+          - title: "対象URL"
+            text: "{version}-...workers.dev"
+          - title: "設定変更の影響"
+            text: "falseにするとプレビューのみHTTP/404になる"
             isHighlight: true
             accentColor: GOLD
-            bgColor: white
-          - title: "スキップ判定"
-            text: "アクティブバージョンの取得に失敗した場合は危険と判断し処理全体をスキップする"
-            bgColor: white
-      - title: "CI/CDへの組み込み"
-        description: "デプロイフローを止めないためのエラーハンドリング"
-        bgColor: white
-        cards:
-          - title: "エラーの許容"
-            text: "continue-on-errorを有効にしクリーンアップが失敗しても本番デプロイを成功扱いにする"
-            bgColor: white
-          - title: "Beta APIへの対応"
-            text: "将来APIが変更されてもメインのデプロイには影響が出ないよう分離して実行する"
-            bgColor: white
   - type: transition
+  - type: steps
+    title: "GitHub Actionsでの自動化フロー"
+    introText: "PRデプロイ時と本番デプロイ時にAPIを叩いてプレビュー状態を自動制御します"
+    steps:
+      - number: 1
+        title: "デプロイ前"
+        text: "previews_enabledをtrueにしてプレビューURLを有効化する"
+      - number: 2
+        title: "動作確認"
+        text: "発行されたプレビューURLでPRの変更内容をテストする"
+      - number: 3
+        title: "本番デプロイ後"
+        text: "previews_enabledをfalseにしてプレビューURLを無効化する"
   - type: action
-    title: "プレビュー環境をクリーンに保とう"
-    mainText: "Beta APIを活用することで放置されがちなプレビュー環境を自動で掃除可能"
+    title: "安全なプレビュー運用を始めよう"
+    mainText: "不要なプレビュー環境を適切に閉じてセキュリティリスクを最小限に抑えましょう"
     actionStepsTitle: "導入のステップ"
     actionSteps:
-      - title: "APIトークンの確認"
-        description: "Workersの編集権限を持つCloudflare APIトークンを準備"
-      - title: "Actionsワークフローの追加"
-        description: "本番デプロイのステップの後にクリーンアップ処理を追記"
-    pointText: "アクティブバージョンの取得に失敗した時はスキップするなど安全第一の設計を心がけること"
-    footerText: "不要な環境を削除し安全な運用を！"
+      - title: "APIトークンの取得"
+        description: "Cloudflareダッシュボードで必要な権限を持つトークンを発行"
+      - title: "CI/CDの改修"
+        description: "GitHub ActionsのワークフローにAPIリクエストを追加"
+    pointText: "複数PRのプレビューを同時使用する場合はCloudflare Accessの利用も検討してください"
+    footerText: "安全な開発体験を構築していこう"
     subFooterText: "sui Tech Blog"
     accentColor: GOLD
 ---
 
-Cloudflare は従来の Pages ではなく [Workers を推奨する方針](https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/)を打ち出しています。Workers では `wrangler versions upload` でプレビューバージョン[^preview-version]をアップロードでき、PR ごとにプレビュー URL で動作確認が可能です。
+Cloudflare Pages は 2020 年にリリースされた静的サイトホスティングサービスですが、2024 年に Workers が静的アセット配信に対応したことで状況が変わりました。Cloudflare は[Workers への移行を推奨する方針](https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/)を打ち出し、Workers では `wrangler versions upload` でプレビューバージョン[^preview-version]をアップロードでき、PR ごとにプレビュー URL で動作確認が可能です。
 
-しかし、Workers のプレビューバージョンには構造的な課題があります。PR をマージしてブランチを削除しても、プレビューバージョンは自動削除されません。そのため、URL さえ知っていればアクセスできる状態が残り続けます。Pages には[デプロイの削除 API](https://developers.cloudflare.com/api/resources/pages/subresources/projects/subresources/deployments/methods/delete/) が公開されていますが、Workers の Standard API にはバージョンの DELETE エンドポイントが存在しません。
+しかし、Workers のプレビューバージョンには構造的な課題があります。PR をマージしてブランチを削除しても、プレビューバージョンは自動削除されず、URL を知っていれば誰でもアクセスできてしまいます。Pages には[デプロイの削除 API](https://developers.cloudflare.com/api/resources/pages/subresources/projects/subresources/deployments/methods/delete/) が公開されていますが、Workers の Standard API にバージョンの DELETE エンドポイントはありません。この問題は 2025年8月ころ [Cloudflare Community](https://community.cloudflare.com/t/potential-security-concerns-with-workers-pages/826236) でも報告されています。
 
-このブログも Cloudflare Workers でホスティングしており、同じ課題に直面しました。Vercel であれば[プレビューデプロイに認証をかけられます](https://vercel.com/docs/deployment-protection)が、Workers のプレビューバージョンにはそのような認証機能がありません。個人ブログなので実害はないかもしれませんが、昨今のセキュリティ事情を考えると、放置するのも気持ちが悪いです。「まぁ試しにやってみるか」くらいの気持ちで調べ始めたところ、Beta API に DELETE エンドポイントがあることが分かり、GitHub Actions で自動削除するしくみを実装しました。
+このブログも Cloudflare Workers でホスティングしており、同じ問題が発生しました。Vercel であれば[プレビューデプロイに認証をかけられます](https://vercel.com/docs/deployment-protection)が、Workers のプレビューバージョンにはそのような認証機能がありません。個人ブログなので実害はないかもしれませんが、昨今のセキュリティ事情を考えると、放置するのも気持ちが悪いです。「まぁ試しにやってみるか」くらいの気持ちで調べ始めたところ、[Subdomain API](https://developers.cloudflare.com/api/resources/workers/subresources/scripts/subresources/subdomain/) の `previews_enabled` でプレビュー URL を一括無効化できることが分かり、GitHub Actions で本番デプロイ後に自動で無効化するしくみを実装しました。
 
 ## なぜ Pages ではなく Workers なのか
 
-「プレビューの掃除が面倒なら Pages を使えばよいのでは？」と思うかもしれません。Zenn にも GitHub Actions で Pages のプレビューデプロイを削除する記事があり、Pages であれば削除は簡単です。
+「プレビューの管理が面倒なら Pages を使えばよいのでは？」と思うかもしれません。実際、Pages であればプレビューデプロイの削除は簡単で、GitHub Actions で自動化する方法も Zenn で紹介されています。
 
 https://zenn.dev/aeon_mall/articles/wrangler_actions
 
-しかし、Cloudflare に勤めていて Hono(軽量な Web フレームワーク)の作者でもある Yusuke Wada 氏は、X で以下のように説明しています。
+ただ、Cloudflare に勤めていて Hono(軽量な Web フレームワーク)の作者でもある Yusuke Wada 氏は、X で以下のように説明しています。
 
 <!-- textlint-disable ja-technical-writing/no-mix-dearu-desumasu -->
 > これからは理由がない限りCloudflare PagesではなくCloudflare Workersを使ってください。
@@ -161,173 +157,174 @@ https://zenn.dev/aeon_mall/articles/wrangler_actions
 
 https://x.com/yusukebe/status/1917869496267915641
 
-これを見て Workers を選択したわけですが、いざプレビューバージョンを削除しようとしたら「削除する API がない」ということに気付きました。Pages には DELETE API があるのに、Workers にはない。正確には、Standard API には DELETE エンドポイントが存在しません。
+これを見てこのブログは Workers を選択しましたが、プレビュー URL の管理でハマりました。
 
-## API を調査して分かったこと
+## プレビュー URL のしくみ
 
 <!-- textlint-disable preset-ja-technical-writing/no-unmatched-pair -->
 > [!WARNING]
 > 本記事の内容は 2026 年 2 月時点の API 仕様に基づいています。
 <!-- textlint-enable preset-ja-technical-writing/no-unmatched-pair -->
 
-Cloudflare API には Workers のバージョンを操作するエンドポイントが 2 つ存在します。
+Workers のプレビュー URL は、バージョンごとに `{version_id}-{script_name}.{subdomain}.workers.dev` の形式で発行されます。このルーティングはバージョンの存在そのものではなく、[Subdomain API](https://developers.cloudflare.com/api/resources/workers/subresources/scripts/subresources/subdomain/) の `previews_enabled` という設定で制御されています。
 
-Standard API にはバージョンの一覧取得・詳細取得・アップロードのみです。DELETE メソッドは存在しません。試しにこのパスに DELETE リクエストを送ったところ、`405 Method Not Allowed` が返りました。これは権限の問題ではなく、エンドポイント自体が存在しないためです。
+```bash
+GET  /accounts/{account_id}/workers/scripts/{script_name}/subdomain
+POST /accounts/{account_id}/workers/scripts/{script_name}/subdomain
+```
+
+```json
+{
+  "enabled": true,
+  "previews_enabled": true
+}
+```
+
+| 設定値             | 対象                                                                 |
+| ------------------ | -------------------------------------------------------------------- |
+| `enabled`          | 本番の workers.dev URL(`{script_name}.{subdomain}.workers.dev`)      |
+| `previews_enabled` | プレビュー URL(`{version_id}-{script_name}.{subdomain}.workers.dev`) |
+
+この 2 つは独立した設定値です。`previews_enabled` を `false` にしても本番 URL には影響しません。[公式ドキュメント](https://developers.cloudflare.com/workers/configuration/previews/)にも以下の記載があります。
+
+> Disabling Preview URLs will disable routing to both versioned and aliased preview URLs.
+
+実際に `previews_enabled: false` に変更してみたところ、プレビュー URL は HTTP/404 を返すようになり、本番 URL は HTTP/200 のままでした。
+
+| URL                                   | 変更前   | 変更後       |
+| ------------------------------------- | -------- | ------------ |
+| プレビュー URL                        | HTTP/200 | **HTTP/404** |
+| 本番 URL(`{script_name}.workers.dev`) | HTTP/200 | HTTP/200     |
+
+## バージョン削除ではプレビュー URL は消えない
+
+最初に試したのはバージョンの削除です。
+
+Workers の API を調べると、Standard API にはバージョンの DELETE エンドポイントが存在しません。試しに DELETE リクエストを送ると `405 Method Not Allowed` が返ります。
 
 ```bash
 GET  /accounts/{account_id}/workers/scripts/{script_name}/versions
-GET  /accounts/{account_id}/workers/scripts/{script_name}/versions/{version_id}
 POST /accounts/{account_id}/workers/scripts/{script_name}/versions
 ```
 
-Beta API には DELETE メソッドがあります。バージョンの削除は Beta API 経由でのみ可能です。
+調べを進めると、[Beta API](https://developers.cloudflare.com/api/resources/workers/subresources/beta/subresources/workers/subresources/versions/) には DELETE エンドポイントがあることが分かりました。
 
 ```bash
 GET    /accounts/{account_id}/workers/workers/{worker_id}/versions
-GET    /accounts/{account_id}/workers/workers/{worker_id}/versions/{version_id}
 POST   /accounts/{account_id}/workers/workers/{worker_id}/versions
 DELETE /accounts/{account_id}/workers/workers/{worker_id}/versions/{version_id}
 ```
 
-Beta API を使うには `worker_id` が必要です。これは `script_name` とは異なる内部 ID で、以下のエンドポイントから取得します。
+試しに Beta API でバージョンを削除してみると、HTTP/200 が返るので削除できたように見えます。ところが、削除後もプレビュー URL にはアクセスできてしまいます。
 
-| 項目                          | Standard API                | Beta API             |
-| ----------------------------- | --------------------------- | -------------------- |
-| パスのキー                    | `script_name`(スクリプト名) | `worker_id`(内部 ID) |
-| バージョン一覧の jq[^jq] パス | `.result.items[].id`        | `.result[].id`       |
-| DELETE                        | なし(405)                   | あり(200 OK)         |
+[公式ドキュメント](https://developers.cloudflare.com/workers/platform/infrastructure-as-code/)を読むと、バージョンは不変かつ追記のみの設計で、もともと「削除する」想定になっていないそうです。wrangler にも `versions delete` コマンドは存在しません(`upload` / `deploy` / `list` / `view` / `rollback` / `secret` のみ)。Beta API の DELETE は後付けのエンドポイントで、プレビュー URL のルーティングとは無関係です。
 
-レスポンスの `.result[]` から `name` が対象の Worker と一致するものの `id` が `worker_id` です。
+> Worker versions are immutable at the API level, meaning they cannot be updated after creation, only re-created with any desired changes. [...] versions are both **immutable and append-only**.
 
-```bash
-GET /accounts/{account_id}/workers/workers
-```
+バージョンを消すのではなく、ルーティングを制御する `previews_enabled` を使うのが正解でした。
 
-## アクティブバージョンの特定
+## previews_enabled を切り替える
 
-削除する前に「今本番で使っているバージョンはどれか」を特定しなければなりません。うっかりアクティブバージョンを消してしまったらたいへんです。
+解決策として、[Cloudflare Access](https://developers.cloudflare.com/cloudflare-one/policies/access/)[^cloudflare-access] でプレビュー URL に認証をかける方法と、`previews_enabled` を CI で切り替える方法があります。
 
-これにはデプロイ API を使います。
+Cloudflare Access は Zero Trust の認証基盤で、プレビュー URL へのアクセスに認証を要求できます。プレビュー URL 自体は有効なまま残りますが、認証を通過しないとアクセスできません。チーム開発ならこちらを使うべきです。
 
-```bash
-GET /accounts/{account_id}/workers/scripts/{script_name}/deployments
-```
+`previews_enabled` の切り替えは、PR デプロイ前に `true`、本番デプロイ後に `false` にするだけのシンプルな方法です。
 
-レスポンスの `.result.deployments[0].versions[].version_id` が現在アクティブなバージョンの ID です。配列の先頭が最新のデプロイですので、ここからバージョン ID を取得してスキップリストに入れます。
+<!-- textlint-disable preset-ja-technical-writing/no-unmatched-pair -->
+> [!WARNING]
+> `previews_enabled` は Worker 全体の設定です。`false` にすると**すべてのプレビュー URL が無効化**されます。複数人で開発していて他の PR のプレビューも同時に使いたい場合は、[Cloudflare Access](https://developers.cloudflare.com/cloudflare-one/policies/access/) を検討してください。
+<!-- textlint-enable preset-ja-technical-writing/no-unmatched-pair -->
+
+このブログは私一人で開発しているので、シンプルに切り替え方式を選びました。本番デプロイが走るタイミングでプレビュー URL を無効化すれば、他の PR を壊す心配はありません。
 
 ## GitHub Actions での実装
 
-> [!WARNING]
-> この処理は他に開発者がいない前提で実装しています。そのため、他にもPRが発行されている場合、意図せずプレビューバージョンを削除してしまう可能性があります。
-
-1. Beta API で `worker_id` を動的に取得する
-2. デプロイ API でアクティブバージョン ID を取得する
-3. Beta API で全バージョン一覧を取得する
-4. アクティブバージョン以外を Beta API の DELETE で削除する
-
-本番デプロイの後に、このクリーンアップステップを追加しました。
+PR デプロイ時(`deploy-preview` ジョブ)で `wrangler versions upload` の前に `previews_enabled` を `true` にし、本番デプロイ後に `false` に戻します。
 
 ```yaml
-- name: Cleanup old preview versions
-  continue-on-error: true
+- name: Enable preview URLs
   run: |
     SCRIPT_NAME="sui-tech-blog"
     API_BASE="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers"
 
-    # Beta API で worker_id を動的に取得
-    WORKER_ID=$(curl -sf "$API_BASE/workers" \
+    curl -sf -X POST \
+      "$API_BASE/scripts/$SCRIPT_NAME/subdomain" \
       -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-      | jq -r --arg name "$SCRIPT_NAME" '.result[] | select(.name == $name) | .id')
+      -H "Content-Type: application/json" \
+      -d '{"enabled": true, "previews_enabled": true}'
 
-    if [ -z "$WORKER_ID" ]; then
-      echo "::warning::Could not find worker_id for $SCRIPT_NAME. Skipping cleanup."
-      exit 0
-    fi
-    echo "Worker ID: $WORKER_ID"
-
-    # アクティブバージョンを取得
-    ACTIVE_VERSIONS=$(curl -sf "$API_BASE/scripts/$SCRIPT_NAME/deployments" \
-      -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-      | jq -r '[.result.deployments[0].versions[].version_id] | join(" ")')
-
-    if [ -z "$ACTIVE_VERSIONS" ]; then
-      echo "::warning::Could not retrieve active deployment versions. Skipping cleanup."
-      exit 0
-    fi
-    echo "Active versions: $ACTIVE_VERSIONS"
-
-    # Beta API で全バージョン一覧を取得
-    ALL_VERSIONS=$(curl -sf "$API_BASE/workers/$WORKER_ID/versions?per_page=100" \
-      -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-      | jq -r '.result[].id')
-
-    if [ -z "$ALL_VERSIONS" ]; then
-      echo "No versions found to clean up."
-      exit 0
-    fi
-
-    # アクティブでないバージョンを Beta API で削除
-    DELETED=0
-    FAILED=0
-    for VERSION_ID in $ALL_VERSIONS; do
-      if echo "$ACTIVE_VERSIONS" | grep -q "$VERSION_ID"; then
-        echo "Skipping active version: $VERSION_ID"
-        continue
-      fi
-
-      echo "Deleting version: $VERSION_ID"
-      HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE \
-        "$API_BASE/workers/$WORKER_ID/versions/$VERSION_ID" \
-        -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN")
-
-      if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
-        echo "  -> Deleted (HTTP $HTTP_CODE)"
-        DELETED=$((DELETED + 1))
-      else
-        echo "  -> Failed (HTTP $HTTP_CODE)"
-        FAILED=$((FAILED + 1))
-      fi
-    done
-
-    echo "Cleanup complete: $DELETED deleted, $FAILED failed"
+    echo "Preview URLs enabled"
   env:
     CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
     CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 ```
 
-`continue-on-error: true` を設定しているので、クリーンアップが失敗しても本番デプロイ自体は成功として扱われます。あくまで「おまけ」の処理ですので、これが原因でデプロイが止まるのは避けたいところです。
+本番デプロイ後(`deploy-production` ジョブ)では、プレビュー URL を無効化します。
 
-`per_page=100` で 1 回のリクエストにつき最大 100 件のバージョンを取得しています。100 件を超える場合、1 回のクリーンアップではすべて削除しきれません。ただし、本番デプロイのたびに実行されるので、数回のデプロイですべて削除されます。
+```yaml
+- name: Disable preview URLs
+  continue-on-error: true
+  run: |
+    SCRIPT_NAME="sui-tech-blog"
+    API_BASE="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers"
 
-アクティブバージョンの取得に失敗した場合は、クリーンアップ全体をスキップします。「どれがアクティブか分からない状態で削除する」のは危険ですので、安全側に倒しています。
+    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+      "$API_BASE/scripts/$SCRIPT_NAME/subdomain" \
+      -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+      -H "Content-Type: application/json" \
+      -d '{"enabled": true, "previews_enabled": false}')
 
-## Beta API を使うことへの懸念
+    if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+      echo "Preview URLs disabled (HTTP $HTTP_CODE)"
+    else
+      echo "::warning::Failed to disable preview URLs (HTTP $HTTP_CODE)"
+    fi
+  env:
+    CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+```
 
-Beta API はその名の通りベータ版のエンドポイントです。将来的に Standard API に DELETE が統合されるかもしれませんし、パスが変更される可能性もあります。
-
-しかし、`continue-on-error: true` を設定しているため、API の変更があってもクリーンアップが失敗するだけで本番デプロイへの影響はありません。壊れたら直せばよいだけです。「ベータだから使わない」という判断もありますが、現時点で他に手段がない以上、使えるものは使うというスタンスです。
+`continue-on-error: true` を設定しているので、無効化が失敗しても本番デプロイ自体は成功として扱われます。おまけの処理ですので、これが原因でデプロイが止まるのは避けたいところです。
 
 ## まとめ
 
-- Cloudflare Workers のプレビューバージョンは PR をマージしても自動削除されず、URL を知っていれば誰でもアクセスできる状態が残る
-- Standard API にはバージョンの DELETE エンドポイントが存在しない。削除は Beta API(`/workers/{worker_id}/versions/{version_id}`)経由でのみ可能
-- Beta API を使うには `worker_id` が必要で、`/workers/workers` エンドポイントから動的に取得する
-- アクティブバージョンを誤って削除しないよう、デプロイ API で本番バージョンを特定してからクリーンアップを実行する
-- `continue-on-error: true` により、クリーンアップの失敗が本番デプロイに影響しない設計にする
+- Cloudflare Workers のプレビュー URL は PR をマージしても自動で無効化されず、URL を知っていれば誰でもアクセスできる状態が残る
+- Beta API にバージョンの DELETE エンドポイントはあるが、HTTP/200 が返るだけでプレビュー URL のルーティングは無効化されない
+- Subdomain API の `previews_enabled: false` で全プレビュー URL を無効化でき、本番 URL には影響しない
+- GitHub Actions で PR デプロイ前に `true`、本番デプロイ後に `false` に切り替えることで、PR 中のみプレビューを公開できる
 
 [^preview-version]: 本番デプロイ前に動作確認するための一時的なバージョン。固有の URL が発行され、PR 単位で確認用の環境として利用する。
-[^jq]: コマンドラインで JSON データを整形・抽出するツール。API レスポンスから必要な値を取り出すのに使う。
+[^cloudflare-access]: Cloudflare Zero Trust の一部で、Web アプリケーションに認証・認可ポリシーを適用するサービス。プレビュー URL へのアクセスを特定のユーザーやグループに限定できる。
 
 ## 参考
 
-https://developers.cloudflare.com/api/resources/workers/subresources/scripts/subresources/versions/
+https://developers.cloudflare.com/workers/configuration/previews/
+
+https://developers.cloudflare.com/workers/configuration/routing/workers-dev/
+
+https://developers.cloudflare.com/api/resources/workers/subresources/scripts/subresources/subdomain/
 
 https://developers.cloudflare.com/api/resources/workers/subresources/beta/subresources/workers/subresources/versions/
 
-https://developers.cloudflare.com/api/resources/workers/subresources/scripts/subresources/deployments/
+https://developers.cloudflare.com/workers/platform/infrastructure-as-code/
 
-https://developers.cloudflare.com/api/resources/workers/subresources/beta/subresources/workers/
+https://community.cloudflare.com/t/potential-security-concerns-with-workers-pages/826236
+
+https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/
 
 https://zenn.dev/aeon_mall/articles/wrangler_actions
 
-https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/
+## おまけ Workers の DELETE 系エンドポイント一覧
+
+プレビュー URL だけを無効化できる DELETE エンドポイントは存在しません。
+
+| エンドポイント                                                         | 効果                                                             | プレビュー URL への影響 |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------- | ----------------------- |
+| `DELETE /workers/workers/{worker_id}/versions/{version_id}` (Beta API) | バージョンのメタデータ削除                                       | 消えない                |
+| `DELETE /workers/workers/{worker_id}`                                  | Worker 丸ごと削除                                                | 本番も消える            |
+| `DELETE /workers/scripts/{script_name}/subdomain`                      | workers.dev 全無効化(`enabled` も `previews_enabled` も `false`) | 本番も消える            |
+| `DELETE /workers/scripts/{script_name}/deployments/{deployment_id}`    | デプロイ履歴の削除(最新は削除不可)                               | 消えない                |
+| `DELETE /zones/{zone_id}/workers/routes/{route_id}`                    | カスタムドメインのルート削除                                     | 無関係                  |
+
+正直「わかりづらいな…」と思います。今後の API 設計では、プレビュー URL を個別に管理できるようなエンドポイントが追加されるとうれしいですね！
