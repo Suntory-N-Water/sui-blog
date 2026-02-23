@@ -43,6 +43,19 @@ jobs:
       - uses: ./.github/actions/setup
       - run: bun run type-check
 
+  knip:
+    name: knip
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - run: bun knip
+
   svg-security:
     name: svg-security
     timeout-minutes: 5

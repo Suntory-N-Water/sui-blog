@@ -2,5 +2,19 @@
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "entry": ["src/pages/**/*.{astro,ts}", "scripts/*.ts"],
   "project": ["src/**/*.{ts,tsx,astro}", "scripts/**/*.ts"],
-  "ignoreDependencies": ["tw-animate-css", "tailwindcss", "@types/dompurify"]
+  "ignoreDependencies": [
+    "tw-animate-css",
+    "tailwindcss",
+    "@types/dompurify",
+    "react",
+    "react-dom",
+    "remark-gfm",
+    "github-slugger"
+  ],
+  "ignoreExportsUsedInFile": true,
+  "ignoreIssues": {
+    "src/types/diagram-schemas.ts": ["exports"],
+    "src/types/self-assessment.ts": ["exports", "types"],
+    "src/layouts/BaseLayout.astro": ["types"]
+  }
 }
