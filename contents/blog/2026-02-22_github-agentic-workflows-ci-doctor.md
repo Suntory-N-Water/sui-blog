@@ -2,7 +2,7 @@
 title: 自然言語で自動化ワークフローを作成できるGitHub Agentic Workflowsを試してみた
 slug: github-agentic-workflows-ci-doctor
 date: 2026-02-22
-modified_time: 2026-02-22
+modified_time: 2026-02-24
 description: GitHub Agentic Workflowsを使って、CIの失敗を自動で診断・修正するワークフローを作りました。Markdownに自然言語で指示を書くだけで、AIエージェントがログを解析し、原因を特定し、修正パッチまで生成します。セットアップから検証結果、セキュリティ設計まで実体験をもとに解説します。
 icon: 🩺
 icon_url: /icons/stethoscope_flat.svg
@@ -246,6 +246,7 @@ on:
       - completed
     branches:
       - main
+  skip-if-match: 'is:pr is:open label:ci-doctor'
   status-comment: true
 
 if: ${{ github.event.workflow_run.conclusion == 'failure' }}
@@ -274,10 +275,12 @@ safe-outputs:
     title-prefix: "[CI Fix] "
     labels: [bug, automated, ci-doctor]
     max: 1
+    github-token: ${{ secrets.GH_AW_GITHUB_TOKEN }}
 
 tools:
   github:
     toolsets: [issues, pull_requests, actions]
+  cache-memory: true
 
 engine: copilot
 
@@ -359,30 +362,26 @@ apps/
 | インフラ問題 | ランナー障害、ネットワーク問題                | 不可(Issueのみ) |
 | git競合      | rebase/push 失敗                              | 不可(Issueのみ) |
 
-### フェーズ 3: 重複Issue検索
+### フェーズ 3: 重複チェック
 
-Issue作成や修正PR作成の前に、必ず既存のIssueを検索する。
+> `skip-if-match` により ci-doctor ラベルのオープンPRがある場合はここに到達しない。
 
-1. ラベル `bug,automated` でオープンなIssueを検索する
-2. 以下のタイトルパターンに一致するIssueを探す:
-   - `[CI Doctor]` プレフィックスのIssue
-   - `Documentation fetch failed` を含むIssue
-   - `Changelog processing failed` を含むIssue
-3. 同じ根本原因のIssueが既に存在する場合:
-   - そのIssueにコメントを追加し、今回の失敗情報を記録する
-   - 新規Issueは作成しない
-4. 該当するIssueがない場合のみ、新規Issueを作成する
+1. `/tmp/gh-aw/cache-memory/last-diagnosis.json` を確認し、同一 `root_cause` なら既存Issueにコメント追加のみ行う
+2. ラベル `ci-doctor` または `automated` のオープンIssueを検索し、同じ原因なら新規Issue作成せずコメント追加のみ行う
+3. 該当Issueがなければ新規Issueを作成する
+4. 診断結果を `/tmp/gh-aw/cache-memory/last-diagnosis.json` に保存する
 
-### フェーズ 4: 修正PR作成 (コードバグ・設定ミスの場合のみ)
+### フェーズ 4: 修正PR作成
 
+**以下をすべて満たす場合のみ** 修正PRを作成する:
+- カテゴリが「コードバグ」または「設定ミス」
+- フェーズ3で同じ原因の既存Issue・PRが見つかっていない
+- キャッシュに同一 `root_cause` の記録がない
+
+修正PRを作成する場合:
 1. 根本原因に基づいて修正を実装する
 2. `pnpm run ai-check` を実行して修正を検証する
-3. 修正PRを作成する
-
-修正PRの注意事項:
-- 自動生成ファイル (上記リスト) は **絶対に変更しない**
-- コミットメッセージは日本語で記載する
-- PRの説明には根本原因と修正内容を日本語で記載する
+3. 修正PRを作成する (自動生成ファイルは変更禁止、コミットメッセージ・PR説明は日本語)
 
 ### フェーズ 5: 報告
 
@@ -414,18 +413,20 @@ Issue または PR の本文には以下を含める:
 
 ## 重要な制約
 
-- 外部API障害 (Gemini API レート制限等) の場合はIssue作成のみ行い、修正PRは作成しない
-- git競合による失敗は一時的な問題であることが多いため、Issueには再試行を推奨する旨を記載する
+- **既存のIssue・PRがある場合、新規作成せずコメント追加のみ**
+- 外部API障害・git競合の場合はIssue作成のみ (PR作成不可)
 - Issue・PR・コメントはすべて **日本語** で記載する
 - セキュリティに関わる情報 (APIキー、トークン等) はログやIssueに含めない
 
 ````
 
-`on` で `workflow_run` の `completed` + `failure` フィルタを指定しています。対象ワークフローが失敗で完了したときだけエージェントが起動します。
+`on` で `workflow_run` の `completed` + `failure` フィルタを指定しています。対象ワークフローが失敗で完了したときだけエージェントが起動します。`skip-if-match` は冪等性[^idempotency]のために重要な設定です。`is:pr is:open label:ci-doctor` と書くと、ci-doctor ラベルが付いたオープン PR が 1 件でも存在すれば、AI エージェントが起動する前にワークフロー全体がスキップされます。これがないと、同じ原因の CI 失敗が繰り返されるたびにブランチと PR が量産されてしまいます。
 
 `permissions` はすべて `read` のみです。エージェントに write 権限を与えません。「read しかないのにどうやって PR を作るのか」という疑問が浮かびますが、エージェントは「PR を作りたい」というリクエストを記録するだけです。実際の作成は、コンパイラが自動生成する別ジョブ (`safe_outputs`) が write 権限で行います。この権限分離の詳細はセキュリティ設計のセクションで説明します。
 
 `safe-outputs` がエージェントの「できること」を定義しています。Issue は 1 回の実行で最大 1 件、コメントは最大 3 件、PR も最大 1 件。`max` で暴走を防止しています。`close-older-issues: true` を設定すると、同じ接頭辞の古い Issue を自動でクローズしてくれるので、Issue がたまりません。
+
+`tools` の `cache-memory: true` を設定すると、エージェントがラン間で診断結果をキャッシュファイルに永続化できます。`skip-if-match` を通過したケース (PR はクローズ済みだが同じ原因の失敗が再発した場合など) でも、前回の診断結果と照合して重複対応を防止できます。`skip-if-match` がフロントマターレベルの第 1 層、`cache-memory` が AI 実行レベルの第 2 層として、多層的に冪等性を担保しています。
 
 `engine` は `copilot` を選択しました。Copilot サブスクリプション[^copilot-subscription]のプレミアムリクエスト内で動作するため、追加の API 費用が不要です。`claude`、`codex`、`gemini` も選択できますが、それぞれ Anthropic / OpenAI / Google のアカウントと API キーが別途必要で、各社の従量課金が発生します。GitHub のプレミアムリクエストとは別の課金体系です。
 
@@ -633,6 +634,8 @@ lock.yml には全部で 11 層の防御が自動で構築されています。
 
 `tools.github` には `toolsets` で必要な API のみを指定するとよいでしょう。全 API を開放するよりも、`[issues, pull_requests, actions]` のように限定する方が、エージェントが不要な API にアクセスするリスクを減らせます。
 
+冪等性の設計は最初から意識しておくべきポイントです。`safe-outputs` の `max: 1` は「1 回の実行で 1 つまで」という制限であり、ワークフロー自体が複数回実行されれば PR やブランチは複数作られてしまいます。`skip-if-match` で実行自体をスキップし、`cache-memory` で診断結果を永続化し、プロンプトで既存 Issue・PR の重複チェックを指示する。この 3 層を組み合わせることで、定期的に同じ CI 失敗が発生しても、ブランチや PR が量産されずに済みます。`skip-if-match` を設定せずにプロンプトの指示だけに頼ると、AI が指示を「解釈」するため確実に守られるとは限りません。インフラレベルのガードを最優先にするのが安全です。
+
 ## まとめ
 
 - GitHub Agentic Workflows は、Markdown に自然言語で指示を書くだけで AI エージェントが GitHub Actions 上でタスクを実行するしくみ
@@ -670,3 +673,4 @@ https://github.blog/jp/2026-02-16-automate-repository-tasks-with-github-agentic-
 [^package-lock]: npm が自動生成するファイルで、パッケージの正確なバージョンを固定する。`package.json` が「方針」、`package-lock.json` が「実際の状態記録」。
 [^technical-preview]: 製品として一般公開する前の試験的な提供段階。仕様が変わる可能性があり、本番利用は推奨されない。
 [^claude-md]: Claude Code がプロジェクト内で自動的に読み取る指示ファイル。プロジェクト固有のコーディング規約や手順を記述しておくことで、Claude Code が毎回一貫した動作をするようになる。
+[^idempotency]: 同じ操作を何度繰り返しても結果が変わらない性質のこと。ここでは「同じ CI 失敗が何度発生しても、ブランチや PR が 1 つだけ作られる」ことを指す。
