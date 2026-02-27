@@ -1,4 +1,3 @@
-import rehypeMermaid from 'rehype-mermaid';
 import rehypePrettyCode, { type Options } from 'rehype-pretty-code';
 import rehypeSlug from 'rehype-slug';
 import rehypeStringify from 'rehype-stringify';
@@ -8,10 +7,10 @@ import remarkGfm from 'remark-gfm';
 import { remarkAlert } from 'remark-github-blockquote-alert';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
+import { rehypeBeautifulMermaid } from '@/lib/rehype-beautiful-mermaid';
 import { rehypeCloudflareImages } from '@/lib/rehype-cloudflare-images';
 import { rehypeCodeCopyButton } from '@/lib/rehype-code-copy-button';
 import { rehypeLinkCard } from '@/lib/rehype-link-card';
-import { rehypeAddMermaidClass } from '@/lib/rehype-mermaid-class';
 import { rehypeR2ImageUrl } from '@/lib/rehype-r2-image-url';
 import { rehypeRichEmbed } from '@/lib/rehype-rich-embed';
 
@@ -59,11 +58,7 @@ const processor = remark()
   .use(rehypeCloudflareImages)
   .use(rehypeRichEmbed)
   .use(rehypeLinkCard)
-  .use(rehypeAddMermaidClass)
-  .use(rehypeMermaid, {
-    strategy: 'img-svg',
-    dark: true,
-  })
+  .use(rehypeBeautifulMermaid)
   .use(rehypePrettyCode, rehypePrettyCodeOptions)
   .use(rehypeCodeCopyButton)
   .use(rehypeStringify, { allowDangerousHtml: true });

@@ -194,7 +194,16 @@
   @apply h-auto w-full;
 }
 
-/* Mermaid ダークモード対応は rehype-mermaid の theme: 'dark' で対応 */
+/* beautiful-mermaid ダークモード対応 */
+.dark .markdown-content .mermaid svg {
+  --bg: transparent;
+  --fg: hsl(0 0% 95%);
+  --accent: hsl(199 100% 78%);
+  --muted: hsl(0 0% 70%);
+  --surface: hsl(0 0% 20%);
+  --border: hsl(0 0% 28%);
+  --line: hsl(0 0% 28%);
+}
 
 .markdown-content hr {
   @apply my-8 border-border/50;
