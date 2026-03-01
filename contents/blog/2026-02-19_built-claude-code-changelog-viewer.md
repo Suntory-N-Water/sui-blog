@@ -146,7 +146,7 @@ diagram:
 
 サイトはこちらです。
 
-https://claude-code-changelog-viewer.ayasnppk00.workers.dev/
+https://claude-code-log.com/
 
 ![Claude Codeのアップデートで「変更前/変更後/恩恵」が表示されている](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/7718a01d6b131c07f8464c39f7bed383.png)
 
