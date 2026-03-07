@@ -213,6 +213,8 @@ Claude Codeの変更項目は、MCP、Hooks、IDE/VSCode、Skillsなど、さま
 
 各変更項目に機能エリアのタグを自動で付与し、機能単位でバージョンを横断して変更を一覧できるページを用意しました。
 
+![Claude Codeの変更が機能単位で表示されているページ](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/bff28ffa829752dfd2e6f285238dfa79.png)
+
 https://claude-code-log.com/features
 
 タグ付けは正規表現によるルールベースの分類で行っています。たとえば `MCP` や `Model Context Protocol` を含む項目には「MCP」タグが付きます。現在はMCP、Hooks、IDE/VSCode、Skills、Memory、Permissionsなど11カテゴリに分類しています。
@@ -223,6 +225,10 @@ https://claude-code-log.com/features
 ### Discord通知
 
 サイトを毎回見に行くのも手間ですので、新しいバージョンがリリースされたらDiscordに通知を飛ばす機能も作りました。
+
+![Discordの通知送信を登録する画面](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/d07387fa46fd60b8ba4c19fc74c5e3f6.png)
+
+![実際に送信された通知の例](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/31c7939ea533694f9f6f470402c7a136.png)
 
 https://claude-code-log.com/notify
 
