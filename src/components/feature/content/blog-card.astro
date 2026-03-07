@@ -13,8 +13,13 @@ type Props = {
   transitionPrefix?: string;
 };
 
-const { data, priority, inlineSvg, readingTime, transitionPrefix = 'blog' } =
-  Astro.props;
+const {
+  data,
+  priority,
+  inlineSvg,
+  readingTime,
+  transitionPrefix = 'blog',
+} = Astro.props;
 
 /**
  * ブログ記事のカードを表示するコンポーネント

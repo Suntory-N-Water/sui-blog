@@ -226,6 +226,160 @@ export const PieChartSectionSchema = z.object({
   segments: z.array(PieSegmentSchema).min(2).max(5),
 });
 
+// 14. TwoColumnContrastSection
+const ContrastColumnSchema = z.object({
+  icon: IconNameSchema.optional(),
+  title: z.string(),
+  text: z.string(),
+  accentColor: ColorKeySchema.optional(),
+});
+
+export const TwoColumnContrastSectionSchema = z.object({
+  type: z.literal('two_column_contrast'),
+  title: z.string(),
+  introText: z.string().optional(),
+  icon: IconNameSchema.optional(),
+  left: ContrastColumnSchema,
+  right: ContrastColumnSchema,
+  summaryText: z.string().optional(),
+});
+
+// 15. AnalogyEquationSection
+export const AnalogyEquationSectionSchema = z.object({
+  type: z.literal('analogy_equation'),
+  title: z.string(),
+  introText: z.string().optional(),
+  icon: IconNameSchema.optional(),
+  leftLabel: z.string(),
+  leftDescription: z.string().optional(),
+  operator: z.enum(['=', '≠', '→']),
+  rightLabel: z.string(),
+  rightDescription: z.string().optional(),
+  summaryText: z.string().optional(),
+});
+
+// 16. HighlightCardSection
+export const HighlightCardSectionSchema = z.object({
+  type: z.literal('highlight_card'),
+  phrase: z.string(),
+  subText: z.string().optional(),
+  accentColor: ColorKeySchema.optional(),
+});
+
+// 17. FormulaDefinitionSection
+export const FormulaVariableSchema = z.object({
+  symbol: z.string(),
+  label: z.string(),
+});
+
+export const FormulaDefinitionSectionSchema = z.object({
+  type: z.literal('formula_definition'),
+  title: z.string(),
+  introText: z.string().optional(),
+  icon: IconNameSchema.optional(),
+  formula: z.string(),
+  variables: z.array(FormulaVariableSchema).optional(),
+  summaryText: z.string().optional(),
+});
+
+// 18. ScenarioComparisonSection
+const ScenarioSchema = z.object({
+  icon: IconNameSchema.optional(),
+  title: z.string(),
+  steps: z.array(z.string()),
+  result: z.string(),
+  isGood: z.boolean().optional(),
+});
+
+export const ScenarioComparisonSectionSchema = z.object({
+  type: z.literal('scenario_comparison'),
+  title: z.string(),
+  introText: z.string().optional(),
+  icon: IconNameSchema.optional(),
+  scenarios: z.array(ScenarioSchema).min(2).max(2),
+  summaryText: z.string().optional(),
+});
+
+// 19. NumericSimulationSection
+const SimulationItemSchema = z.object({
+  label: z.string(),
+  value: z.string(),
+  barPercentage: z.number(),
+  description: z.string().optional(),
+  accentColor: ColorKeySchema.optional(),
+});
+
+export const NumericSimulationSectionSchema = z.object({
+  type: z.literal('numeric_simulation'),
+  title: z.string(),
+  introText: z.string().optional(),
+  icon: IconNameSchema.optional(),
+  items: z.array(SimulationItemSchema).min(2).max(5),
+  summaryText: z.string().optional(),
+});
+
+// 20. FunnelFlowSection
+const FunnelStageSchema = z.object({
+  label: z.string(),
+  value: z.string().optional(),
+  description: z.string().optional(),
+  widthPercent: z.number().min(10).max(100),
+  accentColor: ColorKeySchema.optional(),
+});
+
+export const FunnelFlowSectionSchema = z.object({
+  type: z.literal('funnel_flow'),
+  title: z.string(),
+  introText: z.string().optional(),
+  icon: IconNameSchema.optional(),
+  stages: z.array(FunnelStageSchema).min(2).max(6),
+  summaryText: z.string().optional(),
+});
+
+// 21. QuoteReflectionSection
+export const QuoteReflectionSectionSchema = z.object({
+  type: z.literal('quote_reflection'),
+  quote: z.string(),
+  source: z.string().optional(),
+  reflection: z.string(),
+  icon: IconNameSchema.optional(),
+});
+
+// 22. MetaphorDiagramSection
+const MetaphorPartSchema = z.object({
+  icon: IconNameSchema.optional(),
+  partName: z.string(),
+  meaning: z.string(),
+});
+
+export const MetaphorDiagramSectionSchema = z.object({
+  type: z.literal('metaphor_diagram'),
+  title: z.string(),
+  introText: z.string().optional(),
+  icon: IconNameSchema.optional(),
+  metaphor: z.string(),
+  metaphorDescription: z.string().optional(),
+  parts: z.array(MetaphorPartSchema).min(2).max(6),
+  summaryText: z.string().optional(),
+});
+
+// 23. BeforeAfterTransformSection
+const TransformItemSchema = z.object({
+  icon: IconNameSchema.optional(),
+  domain: z.string(),
+  before: z.string(),
+  after: z.string(),
+});
+
+export const BeforeAfterTransformSectionSchema = z.object({
+  type: z.literal('before_after_transform'),
+  title: z.string(),
+  introText: z.string().optional(),
+  icon: IconNameSchema.optional(),
+  items: z.array(TransformItemSchema).min(2).max(6),
+  summaryText: z.string().optional(),
+});
+
 // Union型で全セクションをまとめる
 export const DiagramSectionSchema = z.discriminatedUnion('type', [
   HeroSectionSchema,
@@ -241,6 +395,16 @@ export const DiagramSectionSchema = z.discriminatedUnion('type', [
   TimelineProcessSectionSchema,
   MetricsImpactSectionSchema,
   PieChartSectionSchema,
+  TwoColumnContrastSectionSchema,
+  AnalogyEquationSectionSchema,
+  HighlightCardSectionSchema,
+  FormulaDefinitionSectionSchema,
+  ScenarioComparisonSectionSchema,
+  NumericSimulationSectionSchema,
+  FunnelFlowSectionSchema,
+  QuoteReflectionSectionSchema,
+  MetaphorDiagramSectionSchema,
+  BeforeAfterTransformSectionSchema,
 ]);
 
 // 型エクスポート

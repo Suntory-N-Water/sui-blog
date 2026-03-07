@@ -6,6 +6,6 @@ tags:
   - Astro
   - Cloudflare Workers
 thumbnail: /images/works/claude-code-changelog-viewer.png
-siteUrl: https://claude-code-changelog-viewer.ayasnppk00.workers.dev/
+siteUrl: https://claude-code-log.com/
 githubUrl: https://github.com/Suntory-N-Water/claude-code-changelog-viewer
 ---
