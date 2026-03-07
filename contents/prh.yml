@@ -22,3 +22,5 @@ imports:
       - expected: 一つは
       - expected: $いてる
       - expected: 頃
+      - expected: 並$1
+      - expected: 組込み$1
