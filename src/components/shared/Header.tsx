@@ -14,27 +14,27 @@ type MenuItemLinkProps = {
 
 const NAVIGATION_LINKS: MenuItemLinkProps[] = [
   {
-    href: '/blog/',
+    href: '/blog',
     title: 'Blog',
     icon: <Book className='size-5' />,
   },
   {
-    href: '/works/',
+    href: '/works',
     title: 'Works',
     icon: <Briefcase className='size-5' />,
   },
   {
-    href: '/about/',
+    href: '/about',
     title: 'About',
     icon: <User className='size-5' />,
   },
   {
-    href: '/tags/',
+    href: '/tags',
     title: 'Tags',
     icon: <Icons.tag className='size-5' />,
   },
   {
-    href: '/recap/',
+    href: '/recap',
     title: 'Recap',
     icon: <History className='size-5' />,
   },
