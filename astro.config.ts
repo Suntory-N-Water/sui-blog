@@ -10,6 +10,7 @@ import { siteConfig } from './src/config/site.js';
 // https://astro.build/config
 export default defineConfig({
   site: siteConfig.url,
+  trailingSlash: 'never',
   cacheDir: './node_modules/.astro',
   prefetch: true,
   integrations: [
@@ -22,6 +23,7 @@ export default defineConfig({
     react(),
   ],
   build: {
+    format: 'file',
     inlineStylesheets: 'auto',
     concurrency: 4,
   },
