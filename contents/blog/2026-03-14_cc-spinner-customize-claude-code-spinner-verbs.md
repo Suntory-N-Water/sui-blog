@@ -10,6 +10,112 @@ tags:
   - AI
   - ClaudeCode
   - OSS
+selfAssessment:
+  quizzes:
+    - question: "Claude Code の Spinner Verbs をカスタマイズするとき、`mode` に指定できる値として正しい組み合わせはどれですか？"
+      answers:
+        - text: "\"override\" と \"merge\""
+          correct: false
+          explanation: null
+        - text: "\"custom\" と \"default\""
+          correct: false
+          explanation: null
+        - text: "\"set\" と \"add\""
+          correct: false
+          explanation: null
+        - text: "\"replace\" と \"append\""
+          correct: true
+          explanation: "\"replace\" はデフォルトをすべて置き換え、\"append\" はデフォルトに追加します。"
+    - question: "cc-spinner で任意の GitHub リポジトリからテーマを適用するコマンドはどれですか？"
+      answers:
+        - text: "npx @suntory-n-water/cc-spinner add owner/repo"
+          correct: true
+          explanation: "owner/repo 形式でリポジトリを指定することで、公式テーマ以外の独自リポジトリからもテーマを追加できます。"
+        - text: "npx @suntory-n-water/cc-spinner import owner/repo"
+          correct: false
+          explanation: null
+        - text: "npx @suntory-n-water/cc-spinner fetch owner/repo"
+          correct: false
+          explanation: null
+        - text: "npx @suntory-n-water/cc-spinner install owner/repo"
+          correct: false
+          explanation: null
+diagram:
+  - type: hero
+    date: "2026/03/14"
+    title: "Claude Code の待ち時間にアニメのセリフを流したくて OSS を作った"
+    subtitle: "ターミナルの待ち時間をアニメの記憶が蘇る楽しい時間に変える「cc-spinner」"
+  - type: quote_reflection
+    icon: lightbulb
+    quote: "アニメのセリフを入れたらもっと楽しくなるのでは？"
+    source: "開発の動機"
+    reflection: "他の方の記事を読み、ただ待ち時間を癒すだけでなく自分の好きなコンテンツのセリフで記憶を追体験できるツールを思いつきました。"
+  - type: problem
+    variant: simple
+    title: "テーマ共有と適用における課題"
+    introText: "設定ファイルへの直接書き込みは簡単ですが、以下の問題がありました。"
+    cards:
+      - icon: fileJson
+        title: "手動コピペの手間"
+        subtitle: "共有のハードル"
+        description: "誰かが作った面白いテーマを試すたびにJSONをコピー&ペーストする必要がある。"
+      - icon: hourglass
+        title: "退屈な待ち時間"
+        subtitle: "数十秒のブランク"
+        description: "Claude Codeの処理中はターミナルをぼんやり眺めるだけの時間になりがち。"
+  - type: transition
+  - type: highlight_card
+    phrase: "アニメを見たときの記憶を追体験できる"
+    subText: "ターミナルに知っているセリフが流れるだけで、そのシーンの情景や感情が鮮やかに蘇ります。"
+    accentColor: GOLD
+  - type: list_steps
+    title: "コマンド1つでテーマを管理"
+    introText: "npxコマンドを使って、直感的にテーマの適用やプレビューが可能です。"
+    steps:
+      - badge: "1"
+        title: "テーマの適用"
+        description: "addコマンドで指定テーマを設定ファイルに自動書き込み。インタラクティブな選択も可能。"
+      - badge: "2"
+        title: "プレビュー"
+        description: "previewコマンドで、適用する前にテーマの中身をターミナル上で素早く確認できる。"
+      - badge: "3"
+        title: "テーマ検索"
+        description: "findコマンドを使い、テーマ名やタグを横断して好みのテーマを探し出せる。"
+  - type: grouped_content
+    title: "自分だけのテーマを作り、共有する"
+    introText: "簡単なJSONファイルを用意するだけで、誰でもテーマを作成・公開できます。"
+    icon: users
+    groups:
+      - title: "テーマの定義"
+        description: "JSONでセリフの配列を定義するだけ。"
+        cards:
+          - title: "JSONフォーマット"
+            text: "配列でセリフを列挙するシンプルな構造。"
+          - title: "モード指定"
+            text: "デフォルトを上書きするか、追加するかを選べる。"
+      - title: "オープンな共有"
+        description: "GitHubを通じて皆でテーマを持ち寄る仕組み。"
+        cards:
+          - title: "OSSへPR"
+            text: "リポジトリにJSONを追加してPRを送るだけ。"
+          - title: "独自リポジトリ"
+            text: "組織や個人用のリポジトリからの直接追加も可能。"
+            isHighlight: true
+            accentColor: GOLD
+  - type: transition
+  - type: action
+    title: "さあ、ターミナルを楽しくしよう"
+    mainText: "お気に入りのセリフを追加して、退屈な処理待ちの時間をエンタメに変えませんか。"
+    actionStepsTitle: "今すぐ試してみる"
+    actionSteps:
+      - title: "コマンドを実行"
+        description: "npx @suntory-n-water/cc-spinner add frieren を実行。"
+      - title: "オリジナルテーマを作成"
+        description: "好きな名言を集めてJSON化し、PRを送信する。"
+    pointText: "あなたの推しキャラのセリフが、誰かの開発体験を少しだけ幸せにするかもしれません。"
+    footerText: "皆さんの面白いテーマを待っています"
+    subFooterText: "sui Tech Blog"
+    accentColor: GOLD
 ---
 Claude Code で作業していると、処理待ちの時間が意外と長いことがあります。数十秒間、ターミナルをぼんやり眺めている人は多いのではないでしょうか。
 
