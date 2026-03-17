@@ -26,7 +26,52 @@ type Emoji = {
 type FluentEmojiParams = {
   /** 絵文字情報 */
   emojiInfo: Emoji;
+  /** unicode-emoji-json のルックアップに使用した絵文字文字 */
+  emoji: string;
 };
+
+/**
+ * unicode-emoji-json から絵文字情報を検索する
+ *
+ * 入力絵文字の U+FE0F (Variation Selector-16) の有無にかかわらずデータを取得できるよう、
+ * 以下の順で検索する:
+ * 1. 入力そのまま
+ * 2. U+FE0F をすべて除去
+ * 3. U+FE0F をすべて除去した上で末尾に U+FE0F を付与
+ *    (Mac からの ZWJ シーケンス入力で FE0F が欠落するケースに対応)
+ *
+ * @returns emojiInfo と実際にヒットした emoji 文字のペア、または見つからない場合は null
+ */
+function lookupEmojiInfo(
+  icon: string,
+): { emojiInfo: Emoji; emoji: string } | null {
+  const data = emojiData as Record<string, Emoji>;
+
+  const withoutFE0F = icon.replace(/\uFE0F/g, '');
+  const withFE0F = `${withoutFE0F}\uFE0F`;
+
+  for (const candidate of [icon, withoutFE0F, withFE0F]) {
+    const info = data[candidate];
+    if (info) {
+      return { emojiInfo: info, emoji: candidate };
+    }
+  }
+
+  return null;
+}
+
+/**
+ * コードポイント文字列から U+FE0F を除いて正規化する
+ *
+ * FluentUI metadata の unicode フィールドと入力絵文字のコードポイントで
+ * FE0F の有無が異なる場合があるため、比較前に両側を正規化する。
+ */
+function normalizeCodepoints(codepoints: string): string {
+  return codepoints
+    .split(' ')
+    .filter((cp) => cp.toLowerCase() !== 'fe0f')
+    .join(' ');
+}
 
 /**
  * 絵文字からFluentUI EmojiのURLを生成する
@@ -34,16 +79,16 @@ type FluentEmojiParams = {
  * Microsoft FluentUI Emojiのアセットは、GitHubのCDNでホストされています。
  * この関数は絵文字のメタデータからアセットのURLを生成します。
  *
- * URLの構造:
- * - 肌色サポートなし: `https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/{DirName}/Flat/{slug}_flat.svg`
- * - 肌色サポートあり: `https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/{DirName}/Default/Flat/{slug}_flat_default.svg`
+ * まず名前変換による単純なURL生成を試み、404の場合はGitHub APIで
+ * 正しいディレクトリを検索するフォールバックを実行します。
  *
  * @param params - FluentUI Emojiの生成パラメータ
- * @returns FluentUI EmojiのURL
+ * @returns FluentUI EmojiのURL、または見つからない場合はnull
  */
 async function generateFluentEmojiUrl({
   emojiInfo,
-}: FluentEmojiParams): Promise<string> {
+  emoji,
+}: FluentEmojiParams): Promise<string | null> {
   const { name, slug, skin_tone_support } = emojiInfo;
 
   // ディレクトリ名: nameを最初の文字だけ大文字にして、残りは小文字
@@ -58,39 +103,113 @@ async function generateFluentEmojiUrl({
     ? `${slug}_flat_default.svg`
     : `${slug}_flat.svg`;
 
-  // URLを生成
   const url = `${basePath}/${encodedDirName}/${flatPath}/${suffix}`;
 
-  // URLが有効か確認
   try {
     const response = await fetch(url, { method: 'HEAD' });
     if (response.ok) {
       return url;
     }
   } catch {
-    // fetch失敗時はそのまま返す
+    // fetch失敗時はフォールバックへ
   }
 
-  // 404の場合でもURLを返す(エラーログ用)
-  return url;
+  // フォールバック: GitHub APIでunicodeコードポイントから正しいディレクトリを検索
+  return await searchFluentEmojiUrl({ emoji, name, skin_tone_support });
 }
 
 /**
- * 絵文字を正規化する
+ * GitHub Git Trees APIを使ってFluentUI Emojiの正しいURLを検索する
  *
- * 異体字セレクタ(Variation Selector-16: U+FE0F)を削除して、
- * ライブラリに登録されている形式に統一します。
+ * FluentUI EmojiリポジトリのディレクトリはCLDR名と異なる場合がある。
+ * (例: 🧙 のCLDR名は "mage" だが、ディレクトリは "Person mage")
+ * contents APIは1000件上限があるためGit Trees APIを使用し、
+ * unicodeコードポイントでmetadata.jsonを照合して正しいパスを特定する。
  *
- * MacOSなどのOSでは絵文字に自動的にU+FE0Fが付加されることがありますが、
- * unicode-emoji-jsonライブラリには基本形(U+FE0Fなし)で登録されているため、
- * この正規化処理が必要です。
- *
- * @param emoji - 正規化する絵文字文字列
- * @returns 正規化された絵文字文字列
+ * @returns FluentUI EmojiのURL、または見つからない場合はnull
  */
-function normalizeEmoji(emoji: string): string {
-  // Variation Selector-16 (U+FE0F) を削除
-  return emoji.replace(/\uFE0F/g, '');
+async function searchFluentEmojiUrl({
+  emoji,
+  name,
+  skin_tone_support,
+}: {
+  emoji: string;
+  name: string;
+  skin_tone_support: boolean;
+}): Promise<string | null> {
+  // 絵文字からunicodeコードポイントを計算 (例: "1f9d9 200d 2640")
+  // FE0F は比較時に無視するため、ここでは除去した形で保持する
+  const codepoints = normalizeCodepoints(
+    [...emoji].map((c) => (c.codePointAt(0) ?? 0).toString(16)).join(' '),
+  );
+
+  // Git Trees API でリポジトリ全体のツリーを取得 (contents APIは1000件上限あり)
+  const treeUrl =
+    'https://api.github.com/repos/microsoft/fluentui-emoji/git/trees/main?recursive=1';
+  let allDirNames: string[];
+  try {
+    const res = await fetch(treeUrl, {
+      headers: { Accept: 'application/vnd.github.v3+json' },
+    });
+    if (!res.ok) {
+      return null;
+    }
+    const data = (await res.json()) as {
+      truncated: boolean;
+      tree: Array<{ path: string; type: string }>;
+    };
+    // assets直下のディレクトリ名のみ抽出
+    allDirNames = data.tree
+      .filter(
+        (item) => item.type === 'tree' && /^assets\/[^/]+$/.test(item.path),
+      )
+      .map((item) => item.path.replace('assets/', ''));
+  } catch {
+    return null;
+  }
+
+  // 絵文字のCLDR名を含むディレクトリに絞り込む
+  // 例: "mage" → ["Man mage", "Person mage", "Woman mage"]
+  const candidates = allDirNames.filter((dirName) =>
+    dirName.toLowerCase().includes(name.toLowerCase()),
+  );
+
+  for (const dirName of candidates) {
+    try {
+      const metaUrl = `https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/${encodeURIComponent(dirName)}/metadata.json`;
+      const metaRes = await fetch(metaUrl);
+      if (!metaRes.ok) {
+        continue;
+      }
+      const meta = (await metaRes.json()) as { unicode?: string };
+
+      // FE0F を除いて比較 (入力とFluentUI metadataで FE0F の有無が異なる場合があるため)
+      if (normalizeCodepoints(meta.unicode ?? '') !== codepoints) {
+        continue;
+      }
+
+      // FlatディレクトリからSVGファイル名を取得
+      const flatPath = skin_tone_support ? 'Default/Flat' : 'Flat';
+      const flatApiUrl = `https://api.github.com/repos/microsoft/fluentui-emoji/contents/assets/${encodeURIComponent(dirName)}/${flatPath}`;
+      const flatRes = await fetch(flatApiUrl, {
+        headers: { Accept: 'application/vnd.github.v3+json' },
+      });
+      if (!flatRes.ok) {
+        continue;
+      }
+      const files = (await flatRes.json()) as Array<{ name: string }>;
+      const svgFile = files.find((f) => f.name.endsWith('.svg'));
+      if (!svgFile) {
+        continue;
+      }
+
+      return `https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/${dirName.replace(/ /g, '%20')}/${flatPath}/${svgFile.name}`;
+    } catch {
+      // 個別のディレクトリ取得失敗は無視して次の候補へ
+    }
+  }
+
+  return null;
 }
 
 /**
@@ -107,17 +226,18 @@ export async function convertEmojiToFluentUrl({
 }: {
   icon: string;
 }): Promise<string> {
-  // 絵文字を正規化(異体字セレクタを削除)
-  const normalizedIcon = normalizeEmoji(icon);
-
-  // 絵文字データからメタデータを取得
-  const emojiInfo = emojiData[normalizedIcon as keyof typeof emojiData];
+  const result = lookupEmojiInfo(icon);
 
   // 絵文字データが見つからない場合は元の文字列を返す
-  if (!emojiInfo) {
+  if (!result) {
     return icon;
   }
 
-  // FluentUI EmojiのURLを生成
-  return await generateFluentEmojiUrl({ emojiInfo });
+  const { emojiInfo, emoji } = result;
+
+  // FluentUI EmojiのURLを生成(見つからない場合はnull)
+  const url = await generateFluentEmojiUrl({ emojiInfo, emoji });
+
+  // URLが取得できなかった場合は元の文字列を返す(呼び出し側でスキップ扱いになる)
+  return url ?? icon;
 }

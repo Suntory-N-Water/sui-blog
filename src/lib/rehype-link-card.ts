@@ -114,8 +114,12 @@ async function fetchLinkCardData(url: string): Promise<LinkCardData> {
   // External link
   try {
     const ogData = await getOGData(url);
+    // たまにCloudflareなどのサイトでブロッキングがあり、 title が「Just a moment...」になってしまうことがあるため
+    // その場合はタイトルを削除する
+    const BLOCKED_TITLES = ['Just a moment...'];
+    const isBlocked = BLOCKED_TITLES.includes(ogData.title);
 
-    if (!ogData.title) {
+    if (!ogData.title || isBlocked) {
       return {
         url,
         title: 'Page Not Found',

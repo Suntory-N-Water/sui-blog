@@ -69,6 +69,7 @@ export const TAG_SLUG_MAP: Record<string, string> = {
   NotionAPI: 'notion-api',
   Obsidian: 'obsidian',
   OGP: 'ogp',
+  OSS: 'oss',
   OpenCV: 'opencv',
   'OpenNext.js': 'opennextjs',
   pandas: 'pandas',
