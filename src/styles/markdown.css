@@ -137,6 +137,15 @@
   @apply rounded-md border border-border/50 h-auto max-w-full max-h-[600px] object-contain mx-auto cursor-zoom-in;
 }
 
+/* 画像キャプション */
+.markdown-content figure[data-image-figure] {
+  @apply my-6 flex flex-col items-center gap-2;
+}
+
+.markdown-content figure[data-image-figure] figcaption {
+  @apply text-sm text-muted-foreground text-center;
+}
+
 /* Image Zoom Dialog */
 .image-zoom-dialog {
   position: fixed;

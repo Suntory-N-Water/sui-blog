@@ -10,6 +10,7 @@ import remarkRehype from 'remark-rehype';
 import { rehypeBeautifulMermaid } from '@/lib/rehype-beautiful-mermaid';
 import { rehypeCloudflareImages } from '@/lib/rehype-cloudflare-images';
 import { rehypeCodeCopyButton } from '@/lib/rehype-code-copy-button';
+import { rehypeImageCaption } from '@/lib/rehype-image-caption';
 import { rehypeLinkCard } from '@/lib/rehype-link-card';
 import { rehypeR2ImageUrl } from '@/lib/rehype-r2-image-url';
 import { rehypeRichEmbed } from '@/lib/rehype-rich-embed';
@@ -56,6 +57,7 @@ const processor = remark()
   .use(rehypeSlug)
   .use(rehypeR2ImageUrl)
   .use(rehypeCloudflareImages)
+  .use(rehypeImageCaption)
   .use(rehypeRichEmbed)
   .use(rehypeLinkCard)
   .use(rehypeBeautifulMermaid)
