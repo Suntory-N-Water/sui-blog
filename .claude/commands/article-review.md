@@ -35,4 +35,4 @@ description: "引数で指定した記事のレビューを行います。"
 
 ## コンテキスト
 
-- 筆者の文章のスタイルは `writing-style.md` を参照
+- 筆者の文章のスタイルは `contents/writing-style.md` を参照

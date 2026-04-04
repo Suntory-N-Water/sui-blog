@@ -14,7 +14,7 @@ description: "指定された記事を日本語作文技術ガイドラインに
 > [!IMPORTANT]
 > 実行手順:
 > 1. まず、`Read` ツールを使用して `$1` のファイル内容を読み込んでください。
-> 2. 次に、ガイドラインファイル `japanese-composition-guidelines.md` の内容を参照してください。
+> 2. 次に、ガイドラインファイル `contents/japanese-composition-guidelines.md` の内容を参照してください。
 >    (※もし `@` 記法で読み込めない場合は、`japanese-composition-guidelines.md` を `Read` してください)
 > 3. 両方の内容を把握した上で、以下の評価を行ってください。
 
