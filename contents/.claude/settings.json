@@ -19,10 +19,6 @@
       "Bash(rm:*)"
     ]
   },
-  "statusLine": {
-    "type": "command",
-    "command": "node ~/.claude/scripts/statusline.js"
-  },
   "hooks": {
     "Stop": [
       {

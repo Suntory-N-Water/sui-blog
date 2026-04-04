@@ -27,6 +27,7 @@ export const TAG_SLUG_MAP: Record<string, string> = {
   ClaudeCode: 'claude-code',
   Cloudflare: 'cloudflare',
   CloudflareWorkers: 'cloudflare-workers',
+  CMS: 'cms',
   CSS: 'css',
   CSV: 'csv',
   Decode: 'decode',
