@@ -11,6 +11,122 @@ tags:
   - CMS
   - Astro
   - TypeScript
+selfAssessment:
+  quizzes:
+    - question: "EmDash のプラグインが WordPress のプラグインと最も大きく異なる点はどれですか？"
+      answers:
+        - text: "TypeScript で書かれている"
+          correct: false
+          explanation: null
+        - text: "各プラグインが宣言したケイパビリティ以外には一切アクセスできないサンドボックスで動作する"
+          correct: true
+          explanation: "EmDash では各プラグインが独立した Dynamic Worker のサンドボックスで動作し、宣言していないデータベースやファイルシステムへのアクセスが物理的に不可能です。WordPress のプラグインはサイト全体と同じ実行コンテキストで動くため、何でもアクセスできます。"
+        - text: "プラグインが無料で公開されている"
+          correct: false
+          explanation: null
+        - text: "プラグインのインストールにパスキー認証が必要"
+          correct: false
+          explanation: null
+    - question: "EmDash で `npx emdash seed` を実行してもコンテンツが反映されない場合、何をすれば反映されますか？"
+      answers:
+        - text: "開発サーバーを再起動する"
+          correct: false
+          explanation: null
+        - text: "seed.json を再編集して再実行する"
+          correct: false
+          explanation: null
+        - text: "管理画面(/_emdash/admin)の初期セットアップを完了させる"
+          correct: true
+          explanation: "EmDash の seed は管理画面の初期セットアップ完了をトリガーとして実 DB へ適用されます。POST /_emdash/api/setup が呼ばれた直後に画像のダウンロード・アップロードと seed 適用が走る設計です。"
+        - text: "pnpm install を再実行する"
+          correct: false
+          explanation: null
+    - question: "Cloudflare Access で EmDash の管理画面を保護する際、パスに指定すべき正しい値はどれですか？"
+      answers:
+        - text: "/_emdash/*"
+          correct: false
+          explanation: "このパスでは API エンドポイントを含む /_emdash/ 配下すべてが保護対象になります。管理画面のみを絞り込むには admin パスを指定する必要があります。"
+        - text: "/admin*"
+          correct: false
+          explanation: null
+        - text: "/_emdash/admin"
+          correct: false
+          explanation: "末尾にワイルドカードがないと、/_emdash/admin 直下のページのみが対象になり、管理画面内のサブパスが保護されません。"
+        - text: "/_emdash/admin*"
+          correct: true
+          explanation: "末尾にワイルドカード * を付けることで、/_emdash/admin 配下のすべてのパスが保護対象になります。"
+diagram:
+  - type: hero
+    date: "2026/04/05"
+    title: "Cloudflare が WordPress の後継 CMS「EmDash」を作ったので触ってみる"
+    subtitle: "Dynamic Workersのサンドボックス環境で動作するセキュアな次世代CMSの構築手順"
+  - type: transition
+  - type: two_column_contrast
+    title: "プラグイン動作モデルの根本的な違い"
+    introText: "WordPress最大の課題であったセキュリティ問題に対しEmDashは全く新しいアプローチを採用しています"
+    icon: shieldAlert
+    left:
+      icon: unlock
+      title: "従来のCMS"
+      text: "プラグインがサイト全体と同じ実行コンテキストで動作するためデータベースやファイルに自由にアクセスできる状態"
+    right:
+      icon: lock
+      title: "EmDash"
+      text: "各プラグインが独立したサンドボックスで動作し明示的に宣言した権限以外には一切アクセスできないセキュアな設計"
+      accentColor: GOLD
+  - type: highlight_card
+    phrase: "何でもできるCMSから、宣言したことしかできないCMSへ"
+    subText: "機能単位で権限を物理的に絞り込むことでプラグイン起因の脆弱性を構造レベルで防ぐアーキテクチャ"
+    accentColor: GOLD
+  - type: transition
+  - type: core_message
+    variant: highlight
+    icon: alertCircle
+    title: "Seedデータ反映における注意点"
+    mainMessage: "コマンドを実行してシードデータを配置しただけでは実際のデータベースには反映されません"
+    coreHighlight:
+      title: "初期セットアップがトリガ"
+      text: "管理画面でのサイト名と管理者作成を完了させて初めて対象環境へのデータ適用が終わる仕組み"
+      accentColor: RED
+  - type: steps
+    title: "ブログ機能の組み込みと公開プロセス"
+    introText: "マーケティングテンプレートにブログコンポーネントを移植する手順"
+    steps:
+      - number: 1
+        title: "コンポーネントの移植"
+        text: "ブログテンプレートから必要なAstroファイルをコピーしてディレクトリに配置する"
+      - number: 2
+        title: "記事の作成とプレビュー"
+        text: "ブラウザ上のSPA管理画面からマークダウン記法で記事を執筆しプレビューを確認する"
+      - number: 3
+        title: "デザインのテーマ調整"
+        text: "ベースとなるAstroファイルのCSS変数を上書きしてサイト全体の色合いやフォントを整える"
+  - type: flow_chart
+    title: "管理画面のアクセス制限設定"
+    introText: "固定URLである管理画面をCloudflare Accessで特定のメールアドレスだけに保護する流れ"
+    flows:
+      - label: "アプリの追加"
+        subLabel: "セルフホストを選択"
+      - label: "パスの指定"
+        subLabel: "/_emdash/admin*"
+      - label: "ポリシー追加"
+        subLabel: "許可アドレスの登録"
+        highlight: true
+        accentColor: GOLD
+  - type: transition
+  - type: action
+    title: "次世代のCMSを体感しよう"
+    mainText: "従来の課題に本気で向き合ったEmDashの可能性を実際に試してみてください"
+    actionStepsTitle: "Next Steps"
+    actionSteps:
+      - title: "公式リポジトリの確認"
+        description: "GitHubでオープンソースとして公開されているアーキテクチャを確認する"
+      - title: "ローカル環境の構築"
+        description: "pnpmコマンドを使用してマーケティングテンプレートのプロジェクトを作成する"
+    pointText: "サンドボックス機能を利用する場合はCloudflareの有料プランが必要になる点にご注意ください"
+    footerText: "小規模サイトの新しい選択肢へ"
+    subFooterText: "sui Tech Blog"
+    accentColor: GOLD
 ---
 WordPress は 2003 年の登場以来、インターネット上のWebサイトの 43% 以上を支え続けています[^wordpress]。これほどの規模で普及したソフトウェアは他にほとんどなく、「誰でもサイトを作れる」という体験を多くの人に届けた偉大なプロジェクトです。
 
