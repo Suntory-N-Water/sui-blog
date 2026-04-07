@@ -30,7 +30,7 @@
   --color-popover-foreground: var(--popover-foreground);
 
   /* フォントファミリー */
-  --font-sans: "noto-sans", sans-serif;
+  --font-sans: "Noto Sans JP", sans-serif;
   --font-mono: 'PlemolJP35Console', monospace;
 
   /* コンテナ設定(v4ではCSS変数として定義) */
@@ -130,7 +130,7 @@
     @apply text-3xl md:text-4xl;
   }
   h2 {
-    @apply mb-4 border-b text-2xl md:text-3xl;
+    @apply mb-4 border-b pb-2 text-2xl md:text-3xl;
   }
   p,
   li {
