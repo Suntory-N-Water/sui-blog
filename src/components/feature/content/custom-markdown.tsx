@@ -16,7 +16,7 @@ import { rehypeR2ImageUrl } from '@/lib/rehype-r2-image-url';
 import { rehypeRichEmbed } from '@/lib/rehype-rich-embed';
 
 const rehypePrettyCodeOptions: Options = {
-  theme: 'slack-dark',
+  theme: 'material-theme-palenight',
   keepBackground: true,
   defaultLang: 'plaintext',
   // ファイル名をtitle属性に変換
