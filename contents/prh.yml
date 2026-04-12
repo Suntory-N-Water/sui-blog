@@ -24,3 +24,5 @@ imports:
       - expected: 頃
       - expected: 並$1
       - expected: 組込み$1
+      - expected: で
+      - expected: 方
