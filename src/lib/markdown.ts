@@ -71,6 +71,7 @@ export async function getBlogPostBySlug(slug: string) {
 export function calculateReadingTime(body: string | undefined): number {
   const CHARS_PER_MINUTE_JA = 650;
   const readableText = (body ?? '')
+    .replace(/<details>[\s\S]*?<\/details>/g, '')
     .replace(/```[\s\S]*?```/g, '')
     .replace(/`[^`]+`/g, '')
     .replace(/\[([^\]]*)\]\([^)]+\)/g, '$1')
