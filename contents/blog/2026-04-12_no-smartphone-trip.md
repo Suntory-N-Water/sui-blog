@@ -39,6 +39,96 @@ selfAssessment:
         - text: "デジタルデバイスを必要としない"
           correct: false
           explanation: null
+diagram:
+  - type: hero
+    date: "2026-04-12"
+    title: "スマホ無し旅行のすゝめ"
+    subtitle: "意志ではなく環境を変える。デジタルから物理的に離れて脳を休める1泊2日の旅"
+  - type: transition
+  - type: core_message
+    variant: highlight
+    icon: target
+    title: "スマホ制限が続かない理由"
+    mainMessage: "使用制限をかけても自分で解除してしまうのは意志の弱さが原因ではありません。簡単に解除できてしまう構造自体に問題があります"
+    comparisons:
+      - icon: xCircle
+        title: "意志への依存"
+        text: "我慢しようと決意しても誘惑に負けて制限を解除してしまう"
+        isGood: false
+      - icon: checkCircle
+        title: "構造の変更"
+        text: "物理的に触れられない環境を作り出し選択肢をなくす"
+        isGood: true
+    coreHighlight:
+      title: "意思より構造を変える"
+      text: "やめたい習慣があるなら難しくするという原則に従い環境を設計することが重要です"
+      accentColor: GOLD
+  - type: problem
+    variant: simple
+    icon: alertCircle
+    title: "近場のカフェでは失敗する理由"
+    introText: "スマホを置いて近くのカフェに行ってもデジタルデトックスが成功しにくい理由があります"
+    cards:
+      - icon: home
+        title: "帰宅ハードルが低い"
+        subtitle: "いつでも帰れる環境"
+        description: "自宅が近いと我慢できなくなった時にすぐ帰宅できてしまう"
+      - icon: train
+        title: "物理的な距離が必要"
+        subtitle: "帰るコストを高める"
+        description: "新幹線で遠くまで行けば帰ることにコストがかかり諦めがつく"
+  - type: transition
+  - type: two_column_contrast
+    title: "情報の受け取り方の違い"
+    introText: "デジタルとアナログでは私たちが受け取る情報のアプローチが根本的に異なります"
+    icon: scale
+    left:
+      icon: smartphone
+      title: "受動的なデジタル"
+      text: "SNSや動画は開いた瞬間から次々と情報を投げつけてきて脳を強制的に刺激する"
+    right:
+      icon: bookOpen
+      title: "能動的なアナログ"
+      text: "本や温泉は自分からアクションを起こさない限り向こうからは何も言ってこない"
+      accentColor: GOLD
+  - type: highlight_card
+    phrase: "向こうから何も投げてこない環境"
+    subText: "自分から関わらないと何も起きない静かな空間が脳の疲労を回復させます"
+    accentColor: GOLD
+  - type: before_after_transform
+    title: "スマホ断ちがもたらす変化"
+    introText: "動画の流し聞きやマルチタスクをやめることで脳の疲労感に明確な違いが現れました"
+    icon: sparkles
+    items:
+      - icon: ear
+        domain: "インプット"
+        before: "常に何かを流し聞き"
+        after: "無音の静寂を楽しむ"
+      - icon: brain
+        domain: "脳の状態"
+        before: "常に刺激を受け疲弊"
+        after: "クリアで疲れていない感覚"
+      - icon: focus
+        domain: "集中力"
+        before: "細切れで中途半端"
+        after: "一つのことに没頭できる"
+    summaryText: "外部刺激を遮断することで初めて得られる認知のリセット効果"
+  - type: transition
+  - type: action
+    title: "スマホ無し旅行に出かけよう"
+    mainText: "意志の力に頼るのをやめて物理的にスマホから離れる体験をしてみませんか"
+    actionStepsTitle: "実行するためのステップ"
+    actionSteps:
+      - title: "遠方の宿を予約する"
+        description: "新幹線で40分以上かかる帰るのが面倒な場所を選ぶ"
+      - title: "事前準備を念入りにする"
+        description: "現地で検索できないため電車の時間や地図を調べておく"
+      - title: "スマホを家に置いていく"
+        description: "数冊の本だけをカバンに入れて出発する"
+    pointText: "向こうから何も投げてこない環境に身を置くことで本当の休息が得られます"
+    footerText: "同じ課題を感じている方へ"
+    subFooterText: "sui Tech Blog"
+    accentColor: GOLD
 ---
 仕事では一日中PCとにらめっこしています。コードを書いて、レビューして、今度はAIに「これ確認してくれ」と言われ、また確認する。そうして仕事が終わったら終わったで、なんとなくXを開いています。Short動画は毒だとわかってインストールはしていませんが、Xはどうしても見てしまいます。
 
