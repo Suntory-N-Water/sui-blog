@@ -1,5 +1,5 @@
 ---
-title: "Custom 404 pages"
+title: "Cloudflare Workers Static Assets は `not_found_handling` 未設定だと 404 レスポンスに `Content-Type` が付かない"
 date: 2026-04-17
 ---
 
