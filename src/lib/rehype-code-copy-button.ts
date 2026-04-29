@@ -91,6 +91,7 @@ export function rehypeCodeCopyButton() {
                       'opacity-70',
                       'hover:bg-muted/30',
                       'hover:opacity-100',
+                      'cursor-pointer',
                     ],
                   },
                   children: [

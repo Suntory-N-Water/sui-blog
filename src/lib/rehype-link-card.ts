@@ -304,7 +304,7 @@ function isPureUrlParagraph(node: Element): boolean {
   }
 
   const href = child.properties?.href as string;
-  if (href.startsWith('http')) {
+  if (!href || (!href.startsWith('http') && !href.startsWith('/'))) {
     return false;
   }
 

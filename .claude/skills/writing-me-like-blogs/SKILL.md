@@ -16,6 +16,29 @@ AI生成文章特有の「臭さ」を排除し、筆者の個性と価値観が
 - **[writing-guidelines.md](references/writing-guidelines.md)**: 構造と表現(見出し、導入部、結論部、対比、メタファー)
 - **[ai-police-checklist.md](references/ai-police-checklist.md)**: AI臭さ排除の詳細チェック項目
 
+## frontmatter の生成範囲
+
+このスキルが生成する frontmatter は以下のフィールドのみ。
+
+```yaml
+---
+title: 記事タイトル
+slug: url-slug-in-kebab-case
+date: YYYY-MM-DD
+modified_time: YYYY-MM-DD
+description: 記事の説明文(1〜2文)
+icon:
+icon_url:
+tags:
+  - タグ1
+  - タグ2
+---
+```
+
+`selfAssessment`(クイズ)と `diagram` は**生成しない**。これらは別途追加してもらう方針のため、含めないこと。
+
+---
+
 ## 執筆ワークフロー
 
 ### 1. 記事構成の決定
@@ -177,6 +200,7 @@ https://playwright.dev/docs/locators
 - [ ] 箇条書きで「`xxx` ... 説明」「項目: 説明」「項目 → 説明」のような区切り形式を使っていないか(AI臭い)
 - [ ] 二重否定で読みづらくなっていないか
 - [ ] 話し言葉(「〜ですよね」「〜でしょう」等)を無条件に入れていないか。前後の文脈に合う場合のみ使用する
+- [ ] `——`(全角ダッシュ2つ)を使っていないか。読点・句点・接続詞で代替する
 
 **導入部の情報設計**
 - [ ] 導入部が「自分の話」だけで始まっていないか。時代背景や一般的な事実 → 一般課題 → 自分の経験の順になっているか(パターンC推奨)

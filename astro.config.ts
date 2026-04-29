@@ -56,12 +56,6 @@ export default defineConfig({
       assetsInlineLimit: 4096,
       rollupOptions: {
         external: ['/pagefind/pagefind-ui.js'],
-        output: {
-          manualChunks: {
-            'react-vendor': ['react', 'react-dom'],
-            'radix-ui': ['@radix-ui/react-separator', '@radix-ui/react-slot'],
-          },
-        },
       },
     },
   },
