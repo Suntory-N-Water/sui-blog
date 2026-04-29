@@ -43,8 +43,8 @@ const displayUrl =
 <a
   href={`/blog/${slug}`}
   class={cn(
-    'group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-sm transition-all duration-300',
-    'hover:-translate-y-1 hover:border-primary/50 hover:shadow-md',
+    'group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-sm transition-[transform,border-color,box-shadow] duration-300',
+    'hover:-translate-y-1 hover:border-primary/50 hover:shadow-md active:scale-[0.96]',
     'focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
   )}
 >
@@ -83,7 +83,7 @@ const displayUrl =
       transition:name={`${transitionPrefix}-date-${slug}`}
     >
       <time datetime={dateISO}>{formattedDate}</time>
-      {readingTime && <span>{readingTime}分</span>}
+      {readingTime && <span class='tabular-nums'>{readingTime}分</span>}
     </div>
   </div>
 

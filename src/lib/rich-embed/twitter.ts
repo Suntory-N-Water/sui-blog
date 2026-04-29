@@ -21,7 +21,7 @@ export const twitterHandler: EmbedHandler = {
     }
 
     const data = (await response.json()) as { html?: string };
-    if (!data.html || !data.html.includes('<blockquote')) {
+    if (!data.html?.includes('<blockquote')) {
       return null;
     }
 
