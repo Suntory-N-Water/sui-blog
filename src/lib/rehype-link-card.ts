@@ -117,7 +117,7 @@ async function fetchLinkCardData(url: string): Promise<LinkCardData> {
     // たまにCloudflareなどのサイトでブロッキングがあり、 title が「Just a moment...」になってしまうことがあるため
     // その場合はタイトルを削除する
     const BLOCKED_TITLES = ['Just a moment...'];
-    const isBlocked = BLOCKED_TITLES.includes(ogData.title);
+    const isBlocked = BLOCKED_TITLES.includes(ogData.title?.trim() || '');
 
     if (!ogData.title || isBlocked) {
       return {
@@ -304,7 +304,7 @@ function isPureUrlParagraph(node: Element): boolean {
   }
 
   const href = child.properties?.href as string;
-  if (!href || !href.startsWith('http')) {
+  if (href.startsWith('http')) {
     return false;
   }
 

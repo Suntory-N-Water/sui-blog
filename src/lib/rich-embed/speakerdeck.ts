@@ -13,7 +13,7 @@ export const speakerdeckHandler: EmbedHandler = {
     }
 
     const data = (await response.json()) as { html?: string };
-    if (!data.html || !data.html.includes('<iframe')) {
+    if (!data.html?.includes('<iframe')) {
       return null;
     }
 

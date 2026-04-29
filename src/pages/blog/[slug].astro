@@ -214,7 +214,7 @@ const compiledHtml = await compileMarkdown({ source: post.body });
           }
           <span class='inline-flex items-center gap-1'>
             <Icons.Clock client:load className='size-4' />
-            <span>{readingTime}分で読めます</span>
+            <span class='tabular-nums'>{readingTime}分で読めます</span>
           </span>
         </div>
         {
@@ -246,7 +246,9 @@ const compiledHtml = await compileMarkdown({ source: post.body });
       </div>
       {
         post.data.description && (
-          <p class='mt-4 text-foreground/80'>{post.data.description}</p>
+          <p class='mt-4 text-foreground/80 text-pretty'>
+            {post.data.description}
+          </p>
         )
       }
       {
