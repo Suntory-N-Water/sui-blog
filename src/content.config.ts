@@ -1,5 +1,6 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
+import { z } from 'astro/zod';
 import { DiagramSectionSchema } from './types/diagram-schemas';
 
 const blog = defineCollection({
@@ -58,8 +59,8 @@ const works = defineCollection({
     date: z.coerce.date(),
     tags: z.array(z.string()).default([]),
     thumbnail: z.string(),
-    siteUrl: z.string().url(),
-    githubUrl: z.string().url(),
+    siteUrl: z.url(),
+    githubUrl: z.url(),
   }),
 });
 

@@ -1,4 +1,5 @@
 import { join } from 'node:path';
+import { z } from 'astro/zod';
 import { file, Glob } from 'bun';
 import matter from 'gray-matter';
 import {
@@ -7,7 +8,6 @@ import {
   Project,
   SyntaxKind,
 } from 'ts-morph';
-import { z } from 'zod';
 import { ICON_NAMES } from '../src/components/feature/diagram/icon-config';
 import {
   type DiagramSection,
@@ -80,14 +80,12 @@ async function main() {
       // スキーマエラーからもアイコンを抽出(invalid_enum_valueエラーのreceived値)
       for (const issue of result.error.issues) {
         if (
-          issue.code === 'invalid_enum_value' &&
-          issue.path.includes('icon') &&
-          typeof issue.received === 'string'
+          issue.code === 'invalid_value' &&
+          issue.path.join('.').includes('icon') &&
+          typeof issue.input === 'string'
         ) {
-          console.log(
-            `🔍 Found invalid icon in schema error: ${issue.received}`,
-          );
-          usedIcons.add(issue.received);
+          console.log(`🔍 Found invalid icon in schema error: ${issue.input}`);
+          usedIcons.add(issue.input);
         }
       }
       continue;
