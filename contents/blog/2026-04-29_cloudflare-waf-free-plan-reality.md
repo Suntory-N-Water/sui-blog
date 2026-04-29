@@ -9,6 +9,132 @@ icon_url: /icons/eyes_flat.svg
 tags:
   - Cloudflare
   - セキュリティ
+selfAssessment:
+  quizzes:
+    - question: "Cloudflareの無料プランのWAFが確実にブロックできた攻撃は主にどのようなものでしたか？"
+      answers:
+        - text: ".envやAWS credentialsなどの環境変数・認証情報を狙った攻撃"
+          correct: false
+          explanation: "これらのファイルに対する攻撃はWAFのルールに引っかからず、93%が素通りしてオリジンに到達していました。"
+        - text: "SupabaseのRLS設定ミスを突くような攻撃"
+          correct: false
+          explanation: null
+        - text: "WordPressの設定ファイル漏洩を狙った攻撃"
+          correct: true
+          explanation: "Cloudflareの無料プランで提供されるマネージドルールはWordPress向けのルールセットが中心であるため、wp-config.phpなどを狙った攻撃は確実にブロックされます。"
+        - text: "無差別に実行されるすべてのスキャンボットによるアクセス"
+          correct: false
+          explanation: null
+    - question: "著者のサイトでWAFを素通りした攻撃が多数あったにもかかわらず、実害がゼロだった本当の理由は何ですか？"
+      answers:
+        - text: "AstroとCloudflare Workersベースの静的サイトであり、攻撃対象となるファイルが最初から存在しなかったため"
+          correct: true
+          explanation: ".envやAWS credentialsなどのファイルが物理的に存在しないアーキテクチャであったため、攻撃者がアクセスしても404エラーになるだけでした。"
+        - text: "URLエンコードや拡張子偽装による攻撃手法が古いもので、無効化されていたため"
+          correct: false
+          explanation: null
+        - text: "Cloudflareが認定した正規のbot(verified bot)からのアクセスしか来ていなかったため"
+          correct: false
+          explanation: null
+        - text: "攻撃の大半がCloudflareのネットワーク内で自動的に破棄されていたため"
+          correct: false
+          explanation: null
+diagram:
+  - type: hero
+    date: "2026-04-29"
+    title: "「Cloudflare を入れていれば安心」は半分正解だった"
+    subtitle: "WAFを素通りする93%の攻撃と、被害をゼロに抑えたアーキテクチャの秘密"
+  - type: pie_chart
+    title: "Cloudflare WAFのブロック率の実態"
+    introText: "最も攻撃リクエストが多かったIPからの91件のデータを分析しました"
+    icon: pieChart
+    segments:
+      - label: "素通り"
+        value: 93
+      - label: "ブロック"
+        value: 7
+  - type: problem
+    variant: simple
+    title: "WAFを素通りしてオリジンに届く攻撃"
+    introText: "無料プランのマネージドルールではWordPress以外を狙った攻撃が検知を回避します"
+    icon: alertCircle
+    cards:
+      - icon: fileCode
+        title: "環境変数ファイル"
+        subtitle: ".envなどの秘匿情報"
+        description: "本番や開発用の環境変数ファイルを探るリクエスト"
+      - icon: lock
+        title: "クラウド認証情報"
+        subtitle: "AWSやDockerの認証"
+        description: "credentialsやconfig等を狙う攻撃"
+        isHighlight: true
+        accentColor: RED
+      - icon: gitMerge
+        title: "Git認証情報"
+        subtitle: ".git-credentials"
+        description: "ソースコード管理の認証情報を狙ったアクセス"
+  - type: transition
+  - type: scenario_comparison
+    title: "アーキテクチャによる被害の違い"
+    introText: "攻撃がオリジンに到達した際のサイト構成による結果の違いです"
+    icon: gitMerge
+    scenarios:
+      - icon: server
+        title: "従来の動的サイト"
+        steps:
+          - "WordPressなどをホスティング"
+          - "設定ファイルがサーバー上に存在"
+          - "攻撃がファイルに到達し情報漏洩"
+        result: "致命的な情報漏洩のリスク"
+        isGood: false
+      - icon: zap
+        title: "静的サイト+エッジ"
+        steps:
+          - "Astro + Cloudflare Workers"
+          - "対象のファイル自体が存在しない"
+          - "攻撃が到達しても404を返すだけ"
+        result: "実害は完全にゼロ"
+        isGood: true
+  - type: core_message
+    variant: highlight
+    icon: target
+    title: "実害がゼロだった本当の理由"
+    mainMessage: "Cloudflareのおかげではなく、攻撃者が求めるファイルが最初から存在しないアーキテクチャを選んだからです"
+    coreHighlight:
+      title: "構成が最高の防御"
+      text: "静的サイト生成とエッジホスティングの組み合わせが強力なセキュリティ対策として機能します"
+      accentColor: GOLD
+  - type: grouped_content
+    title: "個人開発者が真に警戒すべきリスク"
+    introText: "古典的な攻撃がWAFを素通りすることよりWAFのログにさえ現れない設定ミスの方が危険です"
+    icon: alertTriangle
+    groups:
+      - title: "見えない脆弱性"
+        description: "新しいSaaSやPaaSを利用する際の落とし穴に注意が必要です"
+        cards:
+          - title: "SupabaseのRLS設定"
+            text: "RLSを有効化しないと正規リクエストとして全データにアクセスされます"
+            isHighlight: true
+            accentColor: RED
+          - title: "セキュリティのAI相談"
+            text: "設定の理解が難しい場合は公開前にAIに相談してみるのも一案です"
+  - type: highlight_card
+    phrase: "まずはSecurity Analyticsを確認しよう"
+    subText: "自分のサイトへの攻撃の実態を知ることが具体的な対策への第一歩です"
+    accentColor: GOLD
+  - type: action
+    title: "サイトの守り方を見直そう"
+    mainText: "WAFに頼り切るのではなくアーキテクチャと設定の両面からセキュリティを構築しましょう"
+    actionStepsTitle: "今日からできる対策"
+    actionSteps:
+      - title: "WAFのログを確認"
+        description: "Security Analyticsを見てどのような攻撃が来ているか把握する"
+      - title: "BaaSの設定を見直し"
+        description: "SupabaseなどでRLSが適切に設定されているか確認する"
+    pointText: "対象ファイルを持たない構成と適切なアクセス制御が最大の防御です"
+    footerText: "見えない脅威からシステムを守ろう"
+    subFooterText: "sui Tech Blog"
+    accentColor: GOLD
 ---
 個人サイトに Cloudflare を入れている人は多いと思います。ダッシュボードを開くと Security Analytics に「blocked」のログが並んでいて、「攻撃を防いでくれている」という安心感があります。私が運営する [Webサイト](https://claude-code-log.com/)も同じでした。
 
