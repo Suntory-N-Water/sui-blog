@@ -12,7 +12,7 @@ selfAssessment:
   quizzes:
     - question: "agent-browser を ubuntu-latest 環境で実行する際、実際に不足しており `apt-get` で新規インストールが必要だったパッケージは何でしたか？"
       answers:
-        - text: "2つのフォントパッケージ（fonts-freefont-ttf, fonts-noto-cjk）"
+        - text: "2つのフォントパッケージ(fonts-freefont-ttf, fonts-noto-cjk)"
           correct: true
           explanation: "Ubuntu 24.04 には Chromium の依存パッケージの大部分がすでに含まれており、不足していたのはこの2つのフォントパッケージのみでした。"
         - text: "agent-browser が要求する35個の依存ライブラリすべて"
@@ -24,7 +24,7 @@ selfAssessment:
         - text: "Node.js の最新バージョン"
           correct: false
           explanation: null
-    - question: "この記事において、CI の実行時間を最も効果的に短縮（50〜60%削減）した最終的なキャッシュ戦略はどれですか？"
+    - question: "この記事において、CI の実行時間を最も効果的に短縮(50〜60%削減)した最終的なキャッシュ戦略はどれですか？"
       answers:
         - text: ".deb ファイルをキャッシュし、ヒット時は `apt-get update` をスキップして `dpkg` で直接インストールする"
           correct: true
@@ -53,7 +53,7 @@ diagram:
       - icon: clock
         title: "CI実行時間の増加"
         subtitle: "毎回ゼロからインストール"
-        description: "ワークフロー実行ごとにインストールが走り時間がかかる"
+        description: "ワークフロー実行ごとにインストールが毎回実行され時間がかかる"
       - icon: box
         title: "システム依存の壁"
         subtitle: "APTパッケージの壁"
@@ -92,7 +92,7 @@ diagram:
       - label: "最小パッケージ指定"
         value: "24〜30秒"
         barPercentage: 66
-        description: "対象は減るがupdateが毎回走る"
+        description: "対象は減るがupdateが毎回実行される"
       - label: "既存アクション利用"
         value: "13〜19秒"
         barPercentage: 42
@@ -132,9 +132,9 @@ diagram:
     subFooterText: "sui Tech Blog"
 ---
 
-GitHub Actions のランナーはジョブ実行のたびにクリーンな状態で起動します。ビルドの再現性を保証するための設計ですが、「毎回クリーン」ということはシステム依存もゼロからそろえ直すことを意味します。依存が軽いプロジェクトでは問題になりませんが、ブラウザを含むプロジェクトだと話が変わってきます。
+GitHub Actions のランナーはジョブ実行のたびにクリーンな状態で起動します。ビルドの再現性を保証するための設計ですが、「毎回クリーン」ということはシステム依存もゼロからそろえ直すことを意味し、ブラウザを含むプロジェクトでは実行時間に直接影響します。
 
-Vercel Labs が開発した [agent-browser](https://github.com/vercel-labs/agent-browser) は AI エージェント向けのブラウザ操作ライブラリです。実際の Chrome を動かすため、Ubuntu ランナーではシステム依存パッケージも合わせてインストールが必要です。私も GitHub Actions 上で agent-browser を使い始めたとき、ワークフロー実行ごとにこのインストールが走って実行時間が膨らんでいくのを感じていました。
+Vercel Labs が開発した [agent-browser](https://github.com/vercel-labs/agent-browser) は AI エージェント向けのブラウザ操作ライブラリです。実際の Chrome を動かすため、Ubuntu ランナーではシステム依存パッケージも合わせてインストールが必要です。GitHub Actions 上で agent-browser を使い始めると、ワークフロー実行ごとにこのインストールが発生し、実行時間が膨らんでいきます。
 
 「ランナーが毎回クリーンなのだからシステム依存のキャッシュは無理」と思い込んでいましたが、調べると APT[^apt] パッケージも `.deb` ファイル単位でキャッシュできます。この記事では、その発見に至るまでの各アプローチを順番に検証し、最終的に CI 実行時間を 50〜60% 削減した構成を紹介します。
 
@@ -148,7 +148,7 @@ Vercel Labs が開発した [agent-browser](https://github.com/vercel-labs/agent
 | agent-browser | `npm install -g agent-browser`(グローバルインストール) |
 | Chrome | Chrome for Testing 148.0.7778.97(175MB) |
 | 検証サイト | https://claude-code-log.com (筆者開発のサイト) |
-| 計測方法 | 各アプローチを複数回(4〜9回)実行して範囲を記録 |
+| 計測方法 | 各アプローチを複数回(4〜9回)実行して実行時間の最小〜最大を記録 |
 
 ```yaml
 name: ベースライン計測(キャッシュなし)
@@ -203,7 +203,7 @@ The following NEW packages will be installed:
 Need to get 66.9 MB of archives.
 ```
 
-`--with-deps` は内部で 35 パッケージのリストを `apt-get` に渡しますが、実際に新規インストールされたのは `fonts-freefont-ttf` と `fonts-noto-cjk` の 2 パッケージだけです。残り 33 パッケージは Ubuntu 24.04 にすでに含まれており、66.9MB のフォントデータのダウンロードが時間を食っていました。
+`--with-deps` は内部で 35 パッケージのリストを `apt-get` に渡しますが、実際に新規インストールされたのは `fonts-freefont-ttf` と `fonts-noto-cjk` の 2 パッケージだけです。残り 33 パッケージは Ubuntu 24.04 にすでに含まれており、66.9MB のフォントデータのダウンロードが大半の時間を占めていました。
 
 ボトルネックが特定できたので、改善アプローチを整理します。
 
@@ -213,19 +213,19 @@ Need to get 66.9 MB of archives.
 | 最小パッケージ手動指定 | 不足する 2 パッケージのみ `apt install` | APT インストール対象を削減 |
 | APT パッケージキャッシュ | `.deb` ファイルをキャッシュし `dpkg`[^dpkg] でインストール | `apt-get update` とダウンロードをスキップ |
 
-## 各アプローチを検証した
+## 各アプローチを検証する
 
 ### Chrome バイナリのみキャッシュ
 
 `~/.agent-browser/browsers/` を `actions/cache` でキャッシュして Chrome の再ダウンロードをスキップする方法です。このアプローチの[検証ワークフロー](https://github.com/Suntory-N-Water/github-actions-agent-browser-cache-strategy/blob/main/.github/workflows/cache-chrome.yml)はこちらです。
 
-キャッシュヒット時のログで `✓ Chrome 148.0.7778.97 is already installed` が確認でき、Chrome のダウンロードはスキップされています。ただしシステム依存の `apt-get` は毎回走るため、ほとんど改善しませんでした。
+キャッシュヒット時のログで `✓ Chrome 148.0.7778.97 is already installed` が確認でき、Chrome のダウンロードはスキップされています。ただしシステム依存の `apt-get` は毎回実行されるため、ほとんど改善しませんでした。
 
 | | ベースライン | キャッシュヒット(4回) |
 |---|---|---|
 | 合計 | 36〜45秒 | 36〜46秒 |
 
-Chrome のダウンロードの 2.5 秒を節約しても、APT の 30 秒超は毎回走り続けます。ボトルネック自体に届いていないため、ほぼ改善しませんでした。
+Chrome のダウンロードの 2.5 秒を節約しても、APT の 30 秒超は毎回実行されます。ボトルネック自体に届いていないため、ほぼ改善しませんでした。
 
 ### 最小パッケージの手動指定
 
@@ -235,15 +235,16 @@ Chrome のダウンロードの 2.5 秒を節約しても、APT の 30 秒超は
 |---|---|---|
 | 合計 | 36〜45秒 | 24〜30秒 |
 
-`apt-get install` の対象が 35 パッケージから 2 パッケージに減って速くなりましたが、`apt-get update` は引き続き走ります。フォント 2 パッケージのダウンロードとインストールで約 20 秒かかるため、Chrome キャッシュの有無に関係なく毎回同じ時間がかかります。
+`apt-get install` の対象が 35 パッケージから 2 パッケージに減って速くなりましたが、`apt-get update` は毎回実行されます。フォント 2 パッケージのダウンロードとインストールで約 20 秒かかるため、Chrome キャッシュの有無に関係なく毎回同じ時間がかかります。
 
 ### APT パッケージキャッシュ
 
 `.deb` ファイルそのものをキャッシュし、ヒット時は `apt-get update` なしで `dpkg` から直接インストールする方法です。
 
-既存ライブラリを調べると、最も使われているのが [awalsh128/cache-apt-pkgs-action](https://github.com/awalsh128/cache-apt-pkgs-action)(★346)でした。このアクションを使った[検証ワークフロー](https://github.com/Suntory-N-Water/github-actions-agent-browser-cache-strategy/blob/main/.github/workflows/cache-apt-packages.yml)はこちらです。動作確認では最速(ヒット時 4 秒)でしたが、内部で `actions/cache@v4`(Node.js 20)を使用しています。Node.js 20 の廃止予定(2026 年 9 月 16 日)以降に動作しなくなる可能性があり、[Issue #193](https://github.com/awalsh128/cache-apt-pkgs-action/issues/193) や [PR #198](https://github.com/awalsh128/cache-apt-pkgs-action/pull/198) で議論されているもののメンテナンスの動きが止まっています。
+既存ライブラリを調べると、最も使われているのが [awalsh128/cache-apt-pkgs-action](https://github.com/awalsh128/cache-apt-pkgs-action)(★346)でした。このアクションを使った[検証ワークフロー](https://github.com/Suntory-N-Water/github-actions-agent-browser-cache-strategy/blob/main/.github/workflows/cache-apt-packages.yml)はこちらです。
+動作確認では最速(ヒット時 4 秒)でしたが、内部で `actions/cache@v4`(Node.js 20)を使用しています。そのため、Node.js 20 の廃止予定(2026 年 9 月 16 日)以降に動作しなくなる可能性があり、[Issue #193](https://github.com/awalsh128/cache-apt-pkgs-action/issues/193) や [PR #198](https://github.com/awalsh128/cache-apt-pkgs-action/pull/198) で議論されているものの、メンテナンスの動きが止まっています。
 
-もう 1 つ調べたのが [gerlero/apt-install](https://github.com/gerlero/apt-install) です。このアクションを使った[検証ワークフロー](https://github.com/Suntory-N-Water/github-actions-agent-browser-cache-strategy/blob/main/.github/workflows/cache-apt-gerlero.yml)はこちらです。Node.js を一切使わない composite action[^composite] + bash 実装で `actions/cache@v5`(Node.js 24)を使用しており廃止リスクはありません。ただしキャッシュヒット時も `apt-get update` を実行するため、ヒット時でも 20 秒かかりました。
+もう 1 つ調べたのが [gerlero/apt-install](https://github.com/gerlero/apt-install) です。このアクションを使った[検証ワークフロー](https://github.com/Suntory-N-Water/github-actions-agent-browser-cache-strategy/blob/main/.github/workflows/cache-apt-gerlero.yml)はこちらです。シェルスクリプトのみで構成された composite action[^composite] で、内部の `actions/cache@v5` は Node.js 24 を使用しているため廃止リスクはありません。ただしキャッシュヒット時も `apt-get update` を実行するため、ヒット時でも 20 秒かかりました。
 
 | 実装 | 実測範囲(4回) | Node.js 問題 |
 |---|---|---|
@@ -341,7 +342,7 @@ jobs:
           path: ~/.agent-browser/browsers
           key: ${{ runner.os }}-chrome-${{ steps.ab-version.outputs.version }}
 
-      - name: 不足パッケージをキャッシュ付きでインストール(自前実装)
+      - name: 不足パッケージをキャッシュ付きでインストール
         uses: ./.github/actions/apt-cache
         with:
           packages: fonts-freefont-ttf fonts-noto-cjk
@@ -373,13 +374,13 @@ jobs:
 
 ## 注意点
 
-### Ubuntu-latest のバージョンアップについて
+### Ubuntu-latest が更新された場合の影響
 
-今回の「新規インストールが 2 パッケージだけ」という結果は Ubuntu 24.04 時点の依存構成によるものです。Ubuntu-latest が更新されて今まで含まれていたパッケージが削除された場合、Chrome が起動できずブラウザ操作ステップで落ちる可能性はゼロではありません。コアなシステムライブラリが削除されることは考えにくいので現実的なリスクは低いですが、念頭に置いておくとよいでしょう。
+今回の「新規インストールが 2 パッケージだけ」という結果は Ubuntu 24.04 時点の依存構成によるものです。Ubuntu-latest が更新されて今まで含まれていたパッケージが削除された場合、Chrome が起動できずブラウザ操作ステップで落ちる可能性はゼロではありません。コアなシステムライブラリが削除されることは考えにくいので、現実的なリスクは低いですが、念頭に置いておくとよいでしょう。
 
 インストール対象パッケージを変更した場合は `inputs.packages` が変わるためキャッシュキーが自動的に変わります。`cache-version` の手動バストが必要になるのは、同じパッケージ構成のままキャッシュを強制リセットしたい場合だけです。
 
-### さらなる短縮について
+### さらに短縮するには
 
 今回のキャッシュでは `.deb` のダウンロードをスキップできましたが、キャッシュミス時の `apt-get update`(約 10 秒)は毎回発生します。さらなる短縮にはカスタムランナーイメージが有効ですが、GitHub Team / Enterprise プランが必要です。個人リポジトリでは現実的な選択肢ではないため、今回は対象外としました。
 
