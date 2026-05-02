@@ -8,6 +8,36 @@ icon: 🪨
 icon_url: /icons/rock_flat.svg
 tags:
   - GitHubActions
+selfAssessment:
+  quizzes:
+    - question: "agent-browser を ubuntu-latest 環境で実行する際、実際に不足しており `apt-get` で新規インストールが必要だったパッケージは何でしたか？"
+      answers:
+        - text: "2つのフォントパッケージ（fonts-freefont-ttf, fonts-noto-cjk）"
+          correct: true
+          explanation: "Ubuntu 24.04 には Chromium の依存パッケージの大部分がすでに含まれており、不足していたのはこの2つのフォントパッケージのみでした。"
+        - text: "agent-browser が要求する35個の依存ライブラリすべて"
+          correct: false
+          explanation: "35パッケージが指定されますが、そのうち33パッケージはすでにOSに含まれていました。"
+        - text: "Chrome ブラウザ本体のバイナリ"
+          correct: false
+          explanation: "Chrome のバイナリは別でダウンロード・キャッシュされるものであり、APT パッケージの話ではありません。"
+        - text: "Node.js の最新バージョン"
+          correct: false
+          explanation: null
+    - question: "この記事において、CI の実行時間を最も効果的に短縮（50〜60%削減）した最終的なキャッシュ戦略はどれですか？"
+      answers:
+        - text: ".deb ファイルをキャッシュし、ヒット時は `apt-get update` をスキップして `dpkg` で直接インストールする"
+          correct: true
+          explanation: "この方法により、時間のかかるパッケージのダウンロードと `apt-get update` をスキップでき、CI実行時間を大幅に短縮できました。"
+        - text: "Chrome バイナリをキャッシュし、APT パッケージのインストールはそのまま実行する"
+          correct: false
+          explanation: "Chrome のダウンロードはスキップできても、APT のインストールに毎回30秒以上かかるため、ほとんど時間短縮になりませんでした。"
+        - text: "不要なパッケージを除外し、不足している2パッケージのみを毎回 `apt-get install` で指定する"
+          correct: false
+          explanation: "対象は減りますが、`apt-get update` とパッケージのダウンロードが毎回発生するため、期待したほどの効果は得られませんでした。"
+        - text: "GitHub Team プランを契約し、カスタムランナーイメージを利用する"
+          correct: false
+          explanation: "カスタムランナーイメージは有効な手段ですが、個人リポジトリでは現実的な選択肢ではないとして今回の対象外とされています。"
 ---
 
 GitHub Actions のランナーはジョブ実行のたびにクリーンな状態で起動します。ビルドの再現性を保証するための設計ですが、「毎回クリーン」ということはシステム依存もゼロからそろえ直すことを意味します。依存が軽いプロジェクトでは問題になりませんが、ブラウザを含むプロジェクトだと話が変わってきます。
