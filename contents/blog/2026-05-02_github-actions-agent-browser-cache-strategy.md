@@ -1,9 +1,9 @@
 ---
-title: GitHub Actions で APT 依存をキャッシュして CI を高速化する
+title: GitHub Actions で APT 依存をキャッシュしてワークフローを高速化する
 slug: github-actions-agent-browser-cache-strategy
 date: 2026-05-02
 modified_time: 2026-05-02
-description: GitHub Actions で agent-browser を使う際の APT 依存インストールを 4 つのキャッシュ戦略で検証しました。.deb ファイルをキャッシュして dpkg で直接インストールする方式でキャッシュヒット時の apt-get update をスキップでき、CI 実行時間を 36〜45 秒から 16〜19 秒へ 50〜60% 削減できました。本記事では既存ライブラリの Node.js 廃止リスクも含めた各アプローチの比較と、自前実装の composite action を紹介します。
+description: GitHub Actions で agent-browser を使う際の APT 依存インストールを 4 つのキャッシュ戦略で検証しました。.deb ファイルをキャッシュして dpkg で直接インストールする方式でキャッシュヒット時の apt-get update をスキップでき、ワークフローの実行時間を 36〜45 秒から 16〜19 秒へ 50〜60% 削減できました。本記事では既存ライブラリの Node.js 廃止リスクも含めた各アプローチの比較と、自前実装の composite action を紹介します。
 icon: 🪨
 icon_url: /icons/rock_flat.svg
 tags:
