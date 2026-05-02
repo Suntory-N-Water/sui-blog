@@ -38,6 +38,98 @@ selfAssessment:
         - text: "GitHub Team プランを契約し、カスタムランナーイメージを利用する"
           correct: false
           explanation: "カスタムランナーイメージは有効な手段ですが、個人リポジトリでは現実的な選択肢ではないとして今回の対象外とされています。"
+diagram:
+  - type: hero
+    date: "2026-05-02"
+    title: "GitHub Actions で APT 依存をキャッシュして CI を高速化する"
+    subtitle: "agent-browser の CI 実行時間を半減させる4つのキャッシュ戦略と比較検証"
+  - type: transition
+  - type: problem
+    variant: simple
+    icon: alertCircle
+    title: "agent-browser導入でCI時間が膨らむ"
+    introText: "クリーンなランナー環境は再現性を保証しますがブラウザ操作ライブラリの導入で新たな問題が発生します"
+    cards:
+      - icon: clock
+        title: "CI実行時間の増加"
+        subtitle: "毎回ゼロからインストール"
+        description: "ワークフロー実行ごとにインストールが走り時間がかかる"
+      - icon: box
+        title: "システム依存の壁"
+        subtitle: "APTパッケージの壁"
+        description: "ChromeだけでなくUbuntuのシステム依存も必要になる"
+        isHighlight: true
+        accentColor: RED
+      - icon: arrowDown
+        title: "見えないボトルネック"
+        subtitle: "実はフォントが重い"
+        description: "不要なパッケージまで確認とダウンロードをしてしまっている"
+  - type: metrics_impact
+    title: "ベースライン計測で見えた課題"
+    introText: "キャッシュなしのCIで実行時間を計測すると想定外の箇所が時間を占めていました"
+    layout: horizontal
+    icon: trendingUp
+    metrics:
+      - value: "43"
+        unit: "秒"
+        label: "合計実行時間"
+        description: "キャッシュなしの全体時間"
+      - value: "33"
+        unit: "秒"
+        label: "依存インストール"
+        description: "全体の75パーセント以上を占めるボトルネック"
+        accentColor: RED
+  - type: transition
+  - type: numeric_simulation
+    title: "各キャッシュ戦略の実行時間比較"
+    introText: "ボトルネック解消のため様々なアプローチを検証しました"
+    icon: hourglass
+    items:
+      - label: "ベースライン"
+        value: "36〜45秒"
+        barPercentage: 100
+        description: "キャッシュなしで毎回全実行"
+      - label: "最小パッケージ指定"
+        value: "24〜30秒"
+        barPercentage: 66
+        description: "対象は減るがupdateが毎回走る"
+      - label: "既存アクション利用"
+        value: "13〜19秒"
+        barPercentage: 42
+        description: "最速だがNode.js環境の廃止リスクあり"
+      - label: "自前実装キャッシュ"
+        value: "16〜19秒"
+        barPercentage: 42
+        description: "廃止リスクはないが現時点の選択肢の一つ"
+        accentColor: GOLD
+  - type: transition
+  - type: two_column_contrast
+    title: "実装手法はプロジェクトの運用に合わせて選択"
+    introText: "どちらの実装を選んでもAPTパッケージキャッシュにより大幅なCI時間削減が可能です"
+    icon: scale
+    left:
+      icon: box
+      title: "既存ライブラリを利用"
+      text: "導入は簡単だが将来的なNode.js廃止リスクが懸念される"
+    right:
+      icon: settings
+      title: "自前でキャッシュ実装"
+      text: "廃止リスクはないが運用に合わせた自己管理が求められる"
+      accentColor: GOLD
+    summaryText: "重要なのは「APTキャッシュという戦略を選ぶこと」です"
+  - type: transition
+  - type: action
+    title: "CIの待機時間を削減しよう"
+    mainText: "APTパッケージをキャッシュして快適な開発環境を手に入れましょう"
+    actionStepsTitle: "導入へのステップ"
+    actionSteps:
+      - title: "ボトルネックの特定"
+        description: "ログを確認し実際に不足しているパッケージを見極める"
+      - title: "キャッシュ戦略の選択"
+        description: "プロジェクトの要件に合ったAPTキャッシュの手法を導入する"
+    pointText: "ランナーが毎回クリーンでもシステム依存のキャッシュは諦める必要はありません"
+    footerText: "快適なCI環境を構築しよう"
+    subFooterText: "sui Tech Blog"
 ---
 
 GitHub Actions のランナーはジョブ実行のたびにクリーンな状態で起動します。ビルドの再現性を保証するための設計ですが、「毎回クリーン」ということはシステム依存もゼロからそろえ直すことを意味します。依存が軽いプロジェクトでは問題になりませんが、ブラウザを含むプロジェクトだと話が変わってきます。
