@@ -45,6 +45,7 @@ export const TAG_SLUG_MAP: Record<string, string> = {
   Firebase: 'firebase',
   Flask: 'flask',
   GAS: 'gas',
+  Grafana: 'grafana',
   GitHub: 'github',
   GitHubCopilot: 'github-copilot',
   GitHubActions: 'github-actions',
