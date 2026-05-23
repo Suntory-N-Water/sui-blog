@@ -4,7 +4,6 @@ import '@/styles/markdown.css';
 import { siteConfig } from '@/config/site';
 import { SOCIAL_CONSTANTS } from '@/constants';
 import { absoluteUrl } from '@/lib/utils';
-import { ClientRouter } from 'astro:transitions';
 import ThemeProvider from '@/components/ui/theme-provider.astro';
 import Header from '@/components/shared/Header';
 import { SearchDialog } from '@/components/feature/search/search-dialog';
@@ -59,10 +58,7 @@ const jsonLdWebsite = {
 ---
 
 <!doctype html>
-<html
-  lang='ja'
-  class='font-(family-name:--font-plemol-jp-35-console) overflow-x-hidden'
->
+<html lang='ja' class='overflow-x-hidden'>
   <head>
     <meta charset='UTF-8' />
     <meta name='viewport' content='width=device-width, initial-scale=1.0' />
@@ -145,8 +141,6 @@ const jsonLdWebsite = {
     />
 
     <ThemeProvider />
-
-    <ClientRouter />
 
     <script
       is:inline

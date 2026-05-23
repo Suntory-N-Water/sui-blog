@@ -10,16 +10,9 @@ type Props = {
   priority?: boolean;
   inlineSvg?: string;
   readingTime?: number;
-  transitionPrefix?: string;
 };
 
-const {
-  data,
-  priority,
-  inlineSvg,
-  readingTime,
-  transitionPrefix = 'blog',
-} = Astro.props;
+const { data, priority, inlineSvg, readingTime } = Astro.props;
 
 /**
  * ブログ記事のカードを表示するコンポーネント
@@ -53,7 +46,6 @@ const displayUrl =
     </div>
     <div
       class='absolute inset-0 flex items-center justify-center transition-transform duration-500 group-hover:scale-110'
-      transition:name={`${transitionPrefix}-icon-${slug}`}
     >
       {
         inlineSvg ? (
@@ -80,7 +72,6 @@ const displayUrl =
     </div>
     <div
       class='absolute bottom-3 left-3 flex items-center gap-2 rounded bg-background/90 px-2 py-0.5 font-mono text-xs text-muted-foreground backdrop-blur'
-      transition:name={`${transitionPrefix}-date-${slug}`}
     >
       <time datetime={dateISO}>{formattedDate}</time>
       {readingTime && <span>{readingTime}分</span>}
@@ -106,7 +97,6 @@ const displayUrl =
 
     <h2
       class='mb-3 text-base font-bold transition-colors group-hover:text-primary leading-[1.5]'
-      transition:name={`${transitionPrefix}-title-${slug}`}
     >
       {metadata.title}
     </h2>
