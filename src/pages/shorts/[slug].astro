@@ -97,7 +97,7 @@ const { short, nextShort, compiledPages } = Astro.props;
 
         <a
           href={`/shorts/${nextShort.id}`}
-          class='absolute bottom-6 right-1/2 translate-x-1/2 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xl border-2 border-background'
+          class='absolute bottom-6 right-1/2 translate-x-1/2 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xl transition-all duration-200 hover:scale-110 active:scale-95 border-2 border-background'
           aria-label='次のShort'
         >
           <Icons.ArrowRight className='h-6 w-6' />
