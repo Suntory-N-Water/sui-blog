@@ -43,10 +43,6 @@
       "Bash(git switch:*)",
       "Bash(bun add:*)",
       "Bash(bun remove:*)",
-      "WebFetch",
-      "WebSearch",
-      "Bash(curl:*)",
-      "Bash(wget:*)",
       "Bash(rm:*)"
     ]
   },
