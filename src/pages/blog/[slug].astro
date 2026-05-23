@@ -162,10 +162,7 @@ const compiledHtml = await compileMarkdown({ source: post.body });
       </div>
       {
         (displayUrl || post.data.icon) && (
-          <div
-            class='mb-6 flex justify-center'
-            transition:name={`blog-icon-${slug}`}
-          >
+          <div class='mb-6 flex justify-center'>
             {inlineSvg ? (
               <span
                 class='h-20 w-20 [&>svg]:h-full [&>svg]:w-full [&>svg]:object-contain'
@@ -198,10 +195,7 @@ const compiledHtml = await compileMarkdown({ source: post.body });
           </address>
           {
             post.data.date && (
-              <div
-                class='inline-flex items-center gap-1'
-                transition:name={`blog-date-${slug}`}
-              >
+              <div class='inline-flex items-center gap-1'>
                 <Icons.Calendar client:load className='size-4' />
                 <time
                   datetime={post.data.date.toISOString()}
@@ -234,10 +228,7 @@ const compiledHtml = await compileMarkdown({ source: post.body });
       <div
         class='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'
       >
-        <h1
-          class='text-2xl font-bold leading-snug tracking-normal'
-          transition:name={`blog-title-${slug}`}
-        >
+        <h1 class='text-2xl font-bold leading-snug tracking-normal'>
           {post.data.title}
         </h1>
         <div class='self-start sm:self-auto'>

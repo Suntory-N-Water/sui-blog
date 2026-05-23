@@ -31,7 +31,7 @@
 
   /* フォントファミリー */
   --font-sans: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic Medium", "Yu Gothic", "Noto Sans CJK JP", sans-serif;
-  --font-mono: 'PlemolJP35Console', monospace;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
   /* コンテナ設定(v4ではCSS変数として定義) */
   --container-center: true;
@@ -241,15 +241,3 @@ mark {
   color: hsl(0 0% 100%) !important;
 }
 
-/* Custom font */
-@font-face {
-  font-family: 'PlemolJP35Console';
-  src: url('/fonts/PlemolJP35Console-Regular.woff2') format('woff2');
-  font-display: optional;
-  font-weight: normal;
-  font-style: normal;
-}
-
-:root {
-  --font-plemol-jp-35-console: 'PlemolJP35Console', monospace;
-}
