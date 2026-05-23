@@ -232,7 +232,7 @@ const compiledHtml = await compileMarkdown({ source: post.body });
           {post.data.title}
         </h1>
         <div class='self-start sm:self-auto'>
-          <MarkdownCopyButton client:idle content={post.body} />
+          <MarkdownCopyButton client:visible content={post.body} />
         </div>
       </div>
       {
