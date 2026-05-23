@@ -1,9 +1,10 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "sui-tech-blog",
-  "compatibility_date": "2025-12-27",
+  "compatibility_date": "2026-05-20",
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    "not_found_handling": "404-page"
   },
   "compatibility_flags": ["nodejs_compat"],
   "vars": {
