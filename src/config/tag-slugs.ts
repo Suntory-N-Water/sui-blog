@@ -73,6 +73,7 @@ export const TAG_SLUG_MAP: Record<string, string> = {
   OGP: 'ogp',
   OSS: 'oss',
   OpenCV: 'opencv',
+  OpenTelemetry: 'opentelemetry',
   'OpenNext.js': 'opennextjs',
   pandas: 'pandas',
   Pagefind: 'pagefind',
