@@ -13,6 +13,6 @@
       "@types/node",
       "./worker-configuration.d.ts",
       "typed-query-selector"
-    ],
+    ]
   }
 }
