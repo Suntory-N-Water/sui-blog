@@ -31,7 +31,7 @@ contents/blog/*.md  →  Astro Content Collections (glob loader)  →  静的ペ
 ## CI/CD
 
 - **CI** (`ci.yml`): lint, type-check, svg-security (push 時)
-- **Deploy** (`deploy.yml`): PR でプレビューデプロイ、main マージで本番デプロイ (Cloudflare Workers)
+- **Deploy**: Cloudflare Workers Builds で実行。Build command は `bun run build`、production deploy command は `bun run deploy`、non-production branch deploy command は `bun run deploy:preview`
 
 ## textlint
 
