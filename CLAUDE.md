@@ -26,12 +26,6 @@ contents/blog/*.md  →  Astro Content Collections (glob loader)  →  静的ペ
 ## 記事管理
 
 - ブログ記事: `contents/blog/YYYY-MM-DD_slug-name.md`
-- 短編記事: `contents/shorts/*.md`
-
-## CI/CD
-
-- **CI** (`ci.yml`): lint, type-check, svg-security (push 時)
-- **Deploy** (`deploy.yml`): PR でプレビューデプロイ、main マージで本番デプロイ (Cloudflare Workers)
 
 ## textlint
 
