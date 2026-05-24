@@ -67,7 +67,7 @@ export const GET = async () => {
 };
 ```
 
-``` .env.local
+```properties .env.local
 API_URL=http://localhost:3000
 ```
 

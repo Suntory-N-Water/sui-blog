@@ -87,7 +87,7 @@ async def on_message(message):
 client.run(DISCORD_BOT_TOKEN)
 ```
 
-``` text:pn_ja_dic.txt
+``` text pn_ja_dic.txt
 優れる:すぐれる:動詞:1
 良い:よい:形容詞:0.999995
 喜ぶ:よろこぶ:動詞:0.999979

@@ -1,7 +1,7 @@
 {
   "extends": "astro/tsconfigs/base",
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist", "contents"],
+  "exclude": ["dist", "contents", "temp"],
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"]
@@ -13,6 +13,6 @@
       "@types/node",
       "./worker-configuration.d.ts",
       "typed-query-selector"
-    ]
+    ],
   }
 }

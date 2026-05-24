@@ -131,7 +131,7 @@ React推奨のやり方で試してみる。
 <details><summary>React</summary>
 
 
-```react
+```tsx
 import { useEffect, useState } from 'react';
 import './App.css';
 import axios from "axios";

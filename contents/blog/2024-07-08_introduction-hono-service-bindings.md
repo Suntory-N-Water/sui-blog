@@ -64,12 +64,12 @@ https://github.com/Suntory-N-Water/hono-service-binding
 ```
 
 Workers のコードは、`workers` ディレクトリにパッケージとして配置します。
-```yaml:pnpm-workspace.yaml
+```yaml pnpm-workspace.yaml
 packages:
   - "workers/*"
 ```
 
-```bash:.gitignore
+```bash .gitignore
 node_modules
 .wrangler
 .turbo
