@@ -24,11 +24,11 @@ MySQLにCSVファイルをインポートするときに少々躓いたので、
 ## 作成
 ### データベースを作成
 
-```sql 
+```sql
 create database coffeetypes;
 ```
 ### テーブルを作成
-```sql 
+```sql
 create table testtable (
     store_name varchar(50) primary key,
     address varchar(50) not null,
@@ -36,17 +36,17 @@ create table testtable (
 );
 ```
 ### ユーザーを作成
-```sql 
+```sql
 create user test@localhost identified by 'test0000';
 ```
 
 ## 権限
 ### 権限を付与
-```sql 
+```sql
 show grants for test@localhost;
 ```
 この時点では作成直後のためなにも権限は付与していない
-```sql 
+```sql
 +------------------------------------------+
 | Grants for test@localhost                |
 +------------------------------------------+
@@ -101,7 +101,7 @@ MySQLのログイン時にオプションでローカルの入力ファイルを
 
 ### 一度ログアウトし、再度インポートを試みる
 
-```terminal
+```bash
 mysql -u test -p --enable-local-infile
 ```
 
@@ -133,4 +133,3 @@ Records: 300  Deleted: 0  Skipped: 0  Warnings: 0
 - [MySQL ユーザを作成して権限を設定・削除する](https://qiita.com/miriwo/items/899c06fdc91beb2f6d62)
 - [【MySQL】csvファイルをDBにインポートする方法](https://qiita.com/oden141/items/239a7ce3cfe3197a3ba7)
 - [MySQL – CSVファイルのインポートでエラー](https://taustation.com/mysql-csv-file-import-error/)
-

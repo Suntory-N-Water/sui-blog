@@ -28,7 +28,7 @@ Eclipseを使用
 C:\ocjp\workspace\CoffeeChoiceApp>tree /f
 ```
 
-```terminal
+```bash
 C:.
 │  .classpath
 │  .project
@@ -55,14 +55,14 @@ C:.
 ## 実際にやったこと
 cmdからコンパイルをしようと下記の階層に移動し実行
 
-```terminal
+```bash
 C:\ocjp\workspace\CoffeeChoiceApp\src\main>javac BestCoffeeChoiceApp.java
 ```
 
 ## エラー内容
 コンパイルしようとすると以下のようなエラーが発生した
 
-```terminal
+```bash
 BestCoffeeChoiceApp.java:9: エラー: シンボルを見つけられません
                 ConnectDatabase cd = new ConnectDatabase();
                 ^
@@ -118,9 +118,8 @@ BestCoffeeChoiceApp.java:12: エラー: シンボルを見つけられません
 上記のサイトを参考に解消した
 
 `src` をカレントディレクトリとして以下を実行する
-```terminal
+```bash
 javac main/BestCoffeeChoiceApp.java
 ```
 
 無事コンパイルが完了した
-

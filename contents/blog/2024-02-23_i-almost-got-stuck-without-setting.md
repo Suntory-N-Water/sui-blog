@@ -45,7 +45,7 @@ https://places.googleapis.com/v1/places:searchNearby
 
 実際に同じようなことをやるAPIを作ってみる
 
-``` api/map/route.ts
+```ts api/map/route.ts
 import { NextResponse } from 'next/server';
 import { config } from '@/lib/config';
 import { LatLng } from '@/app/types';

@@ -132,7 +132,7 @@ uvicorn api.main:app --reload --port 8000 --host 0.0.0.0
 API は足し算したい単語であれば `positive`、引き算したい単語であれば `negative` にカンマ区切りで設定します。
 クエリパラメータに入力された値を一度分かち書きしてから、モデルに入力を行います。
 
-```py:router/vectors.py
+```py router/vectors.py
 @router.get(
     "/vectors",
     response_model=vectors_schema.WordVectorResponse,
@@ -174,7 +174,7 @@ async def calculate_vectors(
         # 省略
 ```
 
-```py:services/tokenizer.py
+```py services/tokenizer.py
 import MeCab
 from typing import List
 
