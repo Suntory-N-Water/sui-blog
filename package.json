@@ -46,7 +46,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@astrojs/react": "5.0.5",
+    "@astrojs/react": "5.0.6",
     "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.2",
     "@radix-ui/react-separator": "^1.1.8",
@@ -73,7 +73,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
-    "@biomejs/biome": "2.4.15",
+    "@biomejs/biome": "2.4.16",
     "@lhci/cli": "^0.15.1",
     "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/vite": "^4.3.0",
