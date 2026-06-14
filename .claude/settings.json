@@ -32,19 +32,9 @@
       "Read(.dev.vars)",
       "Write(.env*)",
       "Bash(wget:*)",
-      "NotebookEdit",
-      "NotebookRead"
+      "NotebookEdit"
     ],
-    "ask": [
-      "Bash(git push:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(git checkout:*)",
-      "Bash(git switch:*)",
-      "Bash(bun add:*)",
-      "Bash(bun remove:*)",
-      "Bash(rm:*)"
-    ]
+    "ask": ["Bash(rm:*)"]
   },
   "hooks": {
     "Stop": [
