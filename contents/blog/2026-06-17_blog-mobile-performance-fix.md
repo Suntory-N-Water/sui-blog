@@ -9,7 +9,6 @@ icon_url: /icons/turtle_flat.svg
 tags:
   - Cloudflare
   - Astro
-  - ポエム
 ---
 
 久々に iPhone で自分のブログを開いたら、白い画面が10秒以上動きませんでした。
