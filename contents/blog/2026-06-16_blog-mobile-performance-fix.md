@@ -14,22 +14,22 @@ tags:
 
 久々に iPhone で自分のブログを開いたら、白い画面が10秒以上動きませんでした。
 
-PageSpeed Insights[^psi] でモバイルのスコアを測ったら 53 点。最初に疑ったのは Cloudflare の自動最適化です。Cloudflare Fonts も Bot Fight Mode も、ダッシュボードのトグルを押しただけで中身を一度も見ていませんでした。
+PageSpeed Insights[^psi] でモバイルのスコアを測ったら 53 点。最初に疑ったのは Cloudflare の自動最適化です。Cloudflare Fonts も Bot Fight Mode も、ダッシュボードのトグルを押しただけで、中身は一度も見ていません。
 
-設定を解除してみると、たしかに遅さの一因ではありました。ただ、両方とも消したあとも白画面は10秒消えませんでした。最後まで残った10秒の正体は、Cloudflare でも Astro でもなく、過去の自分が書いた1行の CSS でした。
+設定を解除してみると、たしかに遅さの一因ではあります。ただ、消したあとも白画面は10秒のまま動きません。最後まで残った10秒の正体は、Cloudflare でも Astro でもなく、過去の自分が書いた1行の CSS でした。
 
-最終的に PageSpeed スコアは 97、FCP[^fcp] は 8.0 秒から 1.1 秒になりました。順番に解除していきます。
+最終的に PageSpeed スコアは 97、FCP[^fcp] は 8.0 秒から 1.1 秒になりました。この記事では、検証の過程で学んだことと、次に同じ症状が出たときのための調査手順をまとめます。
 
 ## まず Cloudflare を疑った
 
-PageSpeed Insights のレポートを開くと、最初に出てくるのは「レンダリングをブロックしているリクエスト」、つまり Google Fonts の Noto Sans JP でした。CSS が 119KB、1,530ms のブロック。フォントだろうな…と思いつつ、HTML 自体のサイズも測ってみました。
+PageSpeed Insights のレポートを開くと、最初に出てくるのは「レンダリングをブロックしているリクエスト」、つまり Google Fonts の Noto Sans JP です。CSS のサイズは 119KB あり、1,530ms 間ブロックしています。フォントだろうな…と思いつつ、HTML 自体のサイズも測ってみます。
 
 ```bash
 curl -s https://suntory-n-water.com/ | wc -c
 # → 399,015 バイト(約 399 KB)
 ```
 
-399 KB。技術ブログのトップページは普通 20〜50 KB なので、明らかにおかしい。中を覗くと、1つの `<style>` ブロックに 374 KB の `@font-face` 宣言が詰め込まれていました。
+399 KB もあります。技術ブログのトップページは普通 20〜50 KB なので、明らかにおかしいです。中を覗いてみると、1つの `<style>` ブロックに 374 KB の `@font-face` 宣言が詰め込まれていました。
 
 ```
 Style block 1: 373,928 bytes
@@ -38,15 +38,15 @@ Style block 1: 373,928 bytes
 
 [Cloudflare Fonts](https://developers.cloudflare.com/speed/optimization/content/fonts/) の挙動でした。Google Fonts の CSS を外部リクエストなしで配信するために、`@font-face` 宣言を全部 HTML にインライン化するしくみです。Noto Sans JP は日本語対応で Unicode-range のサブセットが数百個あり、展開するとこのサイズになります。「速くなる機能」が、日本語フォントだと逆に肥大化していました。
 
-Cloudflare ダッシュボードの Speed → Optimization から Cloudflare Fonts を無効化。HTML は 99 KB まで縮みました。Google Fonts そのものも `<link>` ごと削除し、本文は `system-ui, ヒラギノ角ゴ ProN, Yu Gothic, sans-serif` のスタックに切り替えました。コードブロック用に自己ホストしていた `PlemolJP35Console`(1.1 MB)も外し、`Menlo, SF Mono` などのシステム等幅フォントに変更しました。
+Cloudflare Fonts を無効化すると、HTML は 99 KB まで縮みます。Google Fonts そのものも `<link>` ごと削除し、本文は `system-ui, ヒラギノ角ゴ ProN, Yu Gothic, sans-serif` のスタックに切り替えました。コードブロック用に自己ホストしていた `PlemolJP35Console`(1.1 MB)も外し、`Menlo, SF Mono` などのシステム等幅フォントに変更します。
 
-これで終わるはずでした。実機 iPhone の白画面は、まだ消えていませんでした。
+ここまでやっても、iPhone の白画面は消えていません。
 
-## iOS Safari の13秒の空白
+## iOS Safari で13秒の空白がある
 
-ローカルや Mac のブラウザでは速いのに、実機 iPhone だけ遅い。デスクトップの DevTools をいくら眺めても話は進みません。iPhone を Mac に USB 接続して、Safari の Web インスペクタで HAR[^har] を取りました。
+ローカルや Mac のブラウザでは速いのに、実機 iPhone だけが遅いです。デスクトップの DevTools をいくら眺めても話は進みません。iPhone を Mac に USB 接続して、Safari の Web インスペクタで HAR[^har] を取得します。
 
-並べてみると、リクエストが2つのグループに分かれていました。
+並べてみると、リクエストが2段階で読み込まれていました。
 
 ```
       0ms  HTML・CSS・React本体(全部ここで完了)
@@ -55,15 +55,15 @@ Cloudflare ダッシュボードの Speed → Optimization から Cloudflare Fon
   13,032ms  jsx-runtime.js, lucide-icons.js, Header(以下多数)
 ```
 
-700ms で全リソースのダウンロードは終わっているのに、13 秒後に第 2 グループが突然読み込まれる。空白の13秒には、原因が2つ重なっていました。
+700ms で全リソースのダウンロードは終わっているのに、13 秒後に再度読み込まれます。空白の13秒には、原因が2つ重なっていました。
 
 ### `client:idle` と `requestIdleCallback` の相性
 
-第 2 グループに並んでいたのは、すべて Astro の `client:idle` を付けていたコンポーネントの JS でした。
+第 2 グループに並んでいたのは、すべて Astro の `client:idle` を付けていたコンポーネントの JS です。
 
-`client:idle` はブラウザのアイドル状態を検知して JS を遅延実行するしくみで、内部で `requestIdleCallback` を使います。便利そうな名前ですが、[Safari はこの API をデフォルト非対応](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback#browser_compatibility)で、機能フラグの裏に隠れています。Astro は非対応ブラウザ向けに `setTimeout` でフォールバックします。ところが iOS のバッテリー管理や省電力制御は、この `setTimeout` を平気で 13 秒以上ずらしてきます。「アイドルになったら実行する」が「電力的に都合がよくなったら実行する」になり、iOS ではその都合がなかなか来ない。
+`client:idle` はブラウザのアイドル状態を検知して JS を遅延実行するしくみで、内部で `requestIdleCallback` を使います。便利そうな名前ですが、[Safari はこの API をデフォルト非対応](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback#browser_compatibility)で、機能フラグの裏に隠れています。Astro は非対応ブラウザ向けに `setTimeout` でフォールバックします。ところが iOS のバッテリー管理や省電力制御は、この `setTimeout` を平気で 13 秒以上ずらしてきます。「アイドルになったら実行する」が「電力的に都合がよくなったら実行する」になり、iOS ではその都合がなかなか来てくれません。
 
-`client:idle` を全部 `client:visible` に変えました。IntersectionObserver ベースで、要素が画面に入った時点で即座にハイドレーションされます。電力管理の影響を受けません。
+`client:idle` を全部 `client:visible` に変えます。IntersectionObserver ベースで、要素が画面に入った時点で即座にハイドレーションされ、電力管理の影響を受けません。
 
 ### Bot Fight Mode のトグルが効いていなかった
 
@@ -75,9 +75,9 @@ Cloudflare ダッシュボードの Speed → Optimization から Cloudflare Fon
 
 Cloudflare のbot検出スクリプト(JavaScript Detection)が 12.6 秒かかって、`window.load` をブロックしていました。
 
-ダッシュボードに戻ると、Bot Fight Mode のトグルそのものはたしかにオフ。でも「JS 検出」の項目だけがオンのまま残っていました。[コミュニティでも報告されている](https://community.cloudflare.com/t/super-bot-fight-mode-not-disabling-js-detection/)とおり、ダッシュボードのトグルだけでは JS Detection が消えないバグです。
+ダッシュボードに戻ってみると、Bot Fight Mode のトグルそのものはたしかにオフになっています。でも「JS 検出」の項目だけがオンのまま残っていました。[コミュニティでも報告されている](https://community.cloudflare.com/t/unable-to-disable-javascript-detections-even-when-bot-fight-mode-is-turned-off/839664)とおり、ダッシュボードのトグルだけでは JS Detection が消えないバグです。
 
-API 経由でたたく必要がありました。
+API 経由で無効化する必要がありそうです。
 
 ```bash
 curl -s https://api.cloudflare.com/client/v4/zones/{ZONE_ID}/bot_management \
@@ -87,13 +87,11 @@ curl -s https://api.cloudflare.com/client/v4/zones/{ZONE_ID}/bot_management \
   -d '{"enable_js": false, "fight_mode": false}'
 ```
 
-「トグルがオフなのにオフになっていない」。自動化された設定への信頼が一段下がりました。入れたものは自分の目で挙動を観測しないとダメだ、と痛感した瞬間です。
-
-これで `window.load` は 383ms まで縮みました。ところが、実機 iPhone ではまだ白画面が10秒続いていました。
+これで `window.load` は 383ms まで縮みます。ところが、実機 iPhone ではまだ白画面が10秒続いていました。
 
 ## 残った10秒の正体は、過去の自分が書いた一行だった
 
-スピナーは2秒で止まっていて、`load` イベントも発生済み。ネットワーク的にもアセット的にもページは完成しているはずなのに、画面は真っ白のまま。10秒ほど経ってから、コンテンツが一気に現れます。
+スピナーは2秒で止まっていて、`load` イベントも発生しています。ネットワーク的にもアセット的にもページは完成しているはずなのに、画面は真っ白のままです。10秒ほど経ってから、コンテンツが一気に現れます。
 
 「GPU の計算が終わるまで、ブラウザがペイントを保留している」状態です。ここまで追ってきたネットワークでも JS でもなく、純粋に描画の問題でした。
 
@@ -106,39 +104,39 @@ curl -s https://api.cloudflare.com/client/v4/zones/{ZONE_ID}/bot_management \
 
 いつ書いたか思い出せないくらい昔、見た目を整えるために自分で入れた一行です。
 
-`filter: blur(110px)` は、各ピクセルに対して周囲 220px 分のピクセルを全方向に畳み込む計算をします。Mac の GPU では一瞬で終わるため、Mac の Safari でも iOS シミュレータでも気付けません。モバイル GPU だと数秒〜十数秒かかります。そしてこの計算が終わるまで、ブラウザは一切ペイントを始めません。
+`filter: blur(110px)` の `110px` はガウス分布の標準偏差で、各ピクセルに対して半径 110px(実装上はその数倍まで)の周辺ピクセルを全方向に畳み込む計算をします。Mac の GPU では一瞬で終わるため、Mac の Safari でも iOS シミュレータでも気付けません。モバイル GPU だと数秒〜十数秒かかります。そしてこの計算が終わるまで、ブラウザは一切ペイントを始めません。
 
-要素を削除しました。白画面が消えました。
+要素を削除すると、白画面が消えました。
 
 遅さの本体は Cloudflare でも Astro でもなく、過去の自分が見た目のために置いた1行の CSS でした。
 
 ## 次に遅くなったときのための調査手順
 
-今回の反省は、よしなにやってくれる機能ほど、しくみと影響を一度は自分の目で見ておくべきだった、ということです。Cloudflare Fonts も Bot Fight Mode も機能としては合理的で、日本語フォントや iOS Safari という自分の条件で噛み合わなかっただけ。そして、新しく入れた機能を疑う前に、過去に自分が書いたコードも同じくらい疑う必要があります。
+今回の反省は、よしなにやってくれる機能ほど、しくみと影響を一度は自分の目で見ておくべきだった、ということです。Cloudflare Fonts も Bot Fight Mode も機能としては合理的で、日本語フォントや iOS Safari という自分の条件で噛み合わなかっただけなのです。そして、新しく入れた機能を疑う前に、過去に自分が書いたコードも同じくらい疑う必要があります。
 
 次に同じ症状が出たときのために、自分用のたどり方も残しておきます。
 
-まず HTML サイズを測る。
+まず HTML サイズを測ります。
 
 ```bash
-curl -s https://your-site.example.com/ | wc -c
+curl -s https://suntory-n-water.com/ | wc -c
 ```
 
-100 KB 前後ならまず正常。3〜400 KB あれば CDN が何かをインライン化している可能性が高いです。次に、注入されているスクリプトの種類を確認します。
+100 KB 前後ならまず正常です。3〜400 KB あれば CDN が何かをインライン化している可能性が高いと言えます。次に、注入されているスクリプトの種類を確認します。
 
 ```bash
-curl -s https://your-site.example.com/ | grep -E "challenge-platform|cf-rocket|Cloudflare Fonts"
+curl -s https://suntory-n-water.com/ | grep -E "challenge-platform|cf-rocket|Cloudflare Fonts"
 ```
 
-何も出なければ OK。`challenge-platform` が出てきたら bot 検出 JS が動いています。ここまでで HTML 側の問題はだいたい潰せます。
+何も出なければ問題ありません。`challenge-platform` が出てきたら bot 検出 JS が動いています。ここまでで HTML 側の問題はだいたい潰せるはずです。
 
-ここから先は実機を見るしかありません。iPhone の「設定 → Safari → 詳細 → Web インスペクタ」をオンにして USB でつなぎ、Mac の Safari の開発メニューから iPhone のページを選んで HAR をエクスポート。時系列で並べたとき、リクエストが2つのグループに分かれていたら、その間に何かがブロックしています。原因は状況によって変わりますが、分断さえ見つかれば絞り込みは時間の問題です。
+ここから先は実機を見るしかありません。iPhone の「設定 → Safari → 詳細 → Web インスペクタ」をオンにして USB でつなぎ、Mac の Safari の開発メニューから iPhone のページを選んで HAR をエクスポートします。時系列で並べたとき、リクエストが2つのグループに分かれていたら、その間に何かがブロックしています。原因は状況によって変わりますが、分断さえ見つかれば絞り込みは時間の問題です。
 
 ## おわりに
 
-PageSpeed のスコアは 53 から 97。FCP は 8.0 秒から 1.1 秒、LCP[^lcp] は 8.9 秒から 1.3 秒。数字としては気持ちのよい改善です。
+PageSpeed のスコアは 53 から 97 に上がりました。FCP は 8.0 秒から 1.1 秒、LCP[^lcp] は 8.9 秒から 1.3 秒に縮みました。数字としては気持ちのよい改善です。
 
-ただ、この1日で得たのは数字よりも「入れたものは検証する」「過去の自分のコードも疑う」という当たり前のことでした。よしなにやってくれるものに任せるなら、その「よしな」がどんな顔をしているかは、自分の目で見ておきたい。
+ただ、この1日で得たのは数字よりも「入れたものは検証する」「過去の自分のコードも疑う」という当たり前のことだったのです。よしなにやってくれるものに任せるなら、その「よしな」がどんな顔をしているかは、自分の目で見ておきたいなと思いました。
 
 自分のサイトに少しでも不安があれば、いったん `curl -s https://... | wc -c` だけでも叩いてみてほしいです。HTML が想像より大きかったら、裏で何かが起きています。
 
