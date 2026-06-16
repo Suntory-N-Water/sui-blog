@@ -1,9 +1,9 @@
 ---
 title: スマホで開いたブログが10秒固まっていた話と、原因が過去の自分だった件
 slug: blog-mobile-performance-fix
-date: 2026-06-16
-modified_time: 2026-06-16
-description: 久々に iPhone で自分のブログを開いたら白い画面が10秒以上動かなかった。最初に疑った Cloudflare の自動最適化もたしかに遅さの一因だったが、最後まで残った10秒の原因は別にあった。原因を1つずつ解除していく1日の記録です。
+date: 2026-06-17
+modified_time: 2026-06-17
+description: iPhone で自分のブログを開いたら10秒以上白画面が続きました。Cloudflare Fonts や Bot Fight Mode、Astro の client:idle を順に疑っていったら、最後に残った10秒の正体は、過去の自分が書いた1行の CSS でした。
 icon: 🐢
 icon_url: /icons/turtle_flat.svg
 tags:
