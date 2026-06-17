@@ -137,13 +137,13 @@ curl -s https://suntory-n-water.com/ | grep -E "challenge-platform|cf-rocket|Clo
 ここから先は実機を見るしかありません。iPhone の「設定 → Safari → 詳細 → Web インスペクタ」をオンにして USB でつなぎ、Mac の Safari の開発メニューから iPhone のページを選んで HAR をエクスポートします。
 時系列で並べたとき、リクエストが2つのグループに分かれていたら、その間に何かがブロックしています。原因は状況によって変わりますが、分断さえ見つかれば絞り込みは時間の問題です。
 
-## おわりに
+## まとめ
 
-PageSpeed のスコアは 53 から 97 に上がりました。FCP は 8.0 秒から 1.1 秒、LCP[^lcp] は 8.9 秒から 1.3 秒に縮みました。数字としては気持ちのよい改善です。
-
-ただ、この1日で得たのは数字よりも「入れたものは検証する」「過去の自分のコードも疑う」という当たり前のことでした。よしなにやってくれるものに任せるなら、その「よしな」がどんな顔をしているかは、自分の目で見ておきたいなと思いました。
-
-自分のサイトに少しでも不安があれば、いったん `curl -s https://... | wc -c` だけでも叩いてみてほしいです。HTML が想像より大きかったら、裏で何かが起きています。
+- Cloudflare Fonts は Google Fonts の `@font-face` を HTML にインライン化するしくみで、Noto Sans JP のように Unicode-range サブセットが多いフォントでは HTML が 374 KB まで膨らむ
+- Astro の `client:idle` は Safari で `setTimeout` フォールバックになり、iOS の電力管理で 13 秒以上ずれることがある。`client:visible` に切り替えると IntersectionObserver ベースになり電力管理の影響を受けない
+- Bot Fight Mode はダッシュボードのトグルだけでは JS Detection が消えないことがあり、API 経由で `enable_js: false` を送る必要があった
+- モバイル GPU では `filter: blur(110px)` のような半径の大きいぼかしが描画を十数秒ブロックする。Mac の Safari でも iOS シミュレータでも気付けない
+- PageSpeed 53 → 97、FCP[^fcp] 8.0 秒 → 1.1 秒、LCP[^lcp] 8.9 秒 → 1.3 秒。数字よりも「入れた機能は中身を見ておく」「過去の自分のコードも疑う」という当たり前のことを得た1日だった
 
 ## 参考
 
