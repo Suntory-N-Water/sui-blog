@@ -139,12 +139,11 @@ curl -s https://suntory-n-water.com/ | grep -E "challenge-platform|cf-rocket|Clo
 
 ## まとめ
 
-- PageSpeed のスコアは 53 から 97 に、FCP は 8.0 秒から 1.1 秒、LCP[^lcp] は 8.9 秒から 1.3 秒まで縮んだ。数字としては気持ちのよい改善だが、この1日で得たのは数字よりも「入れたものは検証する」「過去の自分のコードも疑う」という当たり前のことだった
-- Cloudflare Fonts は Google Fonts の `@font-face` を HTML にインライン化するしくみで、Noto Sans JP のように Unicode-range サブセットが多いフォントだと HTML が 374KB 肥大化する。よしなにやってくれる機能ほど、しくみと影響を自分の目で見ておくべきだった
-- Astro の `client:idle` は Safari で `setTimeout` フォールバックに落ち、iOS の電力管理で 13 秒以上遅延することがある。`client:visible` に切り替えると IntersectionObserver ベースになり、電力管理の影響を受けない
-- Bot Fight Mode はダッシュボードのトグルだけでは JS Detection が消えないことがあり、API 経由で `enable_js: false` を送る必要があった。トグルを押しただけで満足してはいけない
-- 最後まで残った10秒の白画面の正体は、過去の自分が書いた `filter: blur(110px)` の1行だった。モバイル GPU だとぼかし半径に比例して計算量が膨らみ、その間ブラウザはペイントを始めない。Mac では一瞬で終わるので、Mac の Safari でも iOS シミュレータでも気付けない
-- 自分のサイトに少しでも不安があれば、まず `curl -s https://... | wc -c` だけでも叩いてみてほしい。HTML が想像より大きかったら、裏で何かが起きている
+- Cloudflare Fonts は Google Fonts の `@font-face` を HTML にインライン化するしくみで、Noto Sans JP のように Unicode-range サブセットが多いフォントでは HTML が 374 KB まで膨らむ
+- Astro の `client:idle` は Safari で `setTimeout` フォールバックになり、iOS の電力管理で 13 秒以上ずれることがある。`client:visible` に切り替えると IntersectionObserver ベースになり電力管理の影響を受けない
+- Bot Fight Mode はダッシュボードのトグルだけでは JS Detection が消えないことがあり、API 経由で `enable_js: false` を送る必要があった
+- モバイル GPU では `filter: blur(110px)` のような半径の大きいぼかしが描画を十数秒ブロックする。Mac の Safari でも iOS シミュレータでも気付けない
+- PageSpeed 53 → 97、FCP[^fcp] 8.0 秒 → 1.1 秒、LCP[^lcp] 8.9 秒 → 1.3 秒。数字よりも「入れた機能は中身を見ておく」「過去の自分のコードも疑う」という当たり前のことを得た1日だった
 
 ## 参考
 
