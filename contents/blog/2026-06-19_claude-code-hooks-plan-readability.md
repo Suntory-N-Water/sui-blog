@@ -66,6 +66,15 @@ https://gist.github.com/Suntory-N-Water/014ef19e993a2db4ea3761b6dd81c9e8#file-cr
 - 文体の指示は AGENT.md にも書けるが、プランモード専用なら Hooks で動的に注入する方が適している
 - プランの認知負荷が高いとレビューが機能しない。読める状態にするチューニングは自分でやるしかない
 
+## おまけ
+<details>
+<summary>ふにゃふにゃで不思議そうなマンゴー</summary>
+
+ChatGPT Images 2.0 で `squishy-wondering-mango` を画像出力してみました。結局最後までなんなのかわかりませんでした。
+
+![squishy-wondering-mango](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/ce427b7ff754a86eb493242a0b9d1b62.png)
+</details>
+
 ## 参考
 
 https://x.com/zaru/status/2067397422138204526?s=20
