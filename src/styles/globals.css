@@ -7,6 +7,7 @@
 @theme {
   /* カスタムカラー */
   --color-twitter: #1DA1F2;
+  --color-accent-vivid: var(--accent-vivid);
 
   /* デザインシステムカラー */
   --color-border: var(--border);
@@ -39,59 +40,61 @@
   --container-max-width-2xl: 1400px;
 
   /* ボーダーradius */
-  --radius: 0.5rem;
-  --radius-lg: 0.5rem;
-  --radius-md: calc(0.5rem - 2px);
-  --radius-sm: calc(0.5rem - 4px);
+  --radius: 0.375rem;
+  --radius-lg: 0.375rem;
+  --radius-md: calc(0.375rem - 2px);
+  --radius-sm: calc(0.375rem - 4px);
 }
 
 @layer base {
   /* ライトモード(デフォルト) */
   :root {
-    --border: hsl(0 0% 86%);
-    --input: hsl(0 0% 86%);
-    --ring: hsl(199 100% 78%);
-    --background: hsl(0 0% 98%);
-    --foreground: hsl(0 0% 20%);
-    --primary: hsl(214 100% 27%);
-    --primary-foreground: hsl(0 0% 100%);
-    --secondary: hsl(220 14% 96%);
-    --secondary-foreground: hsl(0 0% 20%);
-    --muted: hsl(220 14% 96%);
-    --muted-foreground: hsl(0 0% 35%);
-    --accent: hsl(199 100% 78%);
-    --accent-foreground: hsl(0 0% 20%);
+    --border: hsl(166 10% 82%);
+    --input: hsl(166 10% 82%);
+    --ring: hsl(166 50% 45%);
+    --background: hsl(42 38% 95%);
+    --foreground: hsl(166 14% 18%);
+    --primary: hsl(166 98% 25%);
+    --primary-foreground: hsl(42 38% 95%);
+    --secondary: hsl(42 25% 92%);
+    --secondary-foreground: hsl(166 14% 18%);
+    --muted: hsl(42 25% 92%);
+    --muted-foreground: hsl(166 8% 40%);
+    --accent: hsl(166 30% 90%);
+    --accent-foreground: hsl(166 98% 25%);
     --destructive: hsl(0 84% 60%);
     --destructive-foreground: hsl(0 0% 98%);
-    --card: hsl(0 0% 100%);
-    --card-foreground: hsl(0 0% 20%);
-    --popover: hsl(0 0% 100%);
-    --popover-foreground: hsl(0 0% 20%);
-    --code-block-bg: #111A1F;
+    --card: hsl(42 30% 97%);
+    --card-foreground: hsl(166 14% 18%);
+    --popover: hsl(42 30% 97%);
+    --popover-foreground: hsl(166 14% 18%);
+    --accent-vivid: hsl(166 50% 45%);
+    --code-block-bg: #111F1A;
   }
 
   /* ダークモード */
   .dark {
-    --border: hsl(0 0% 28%);
-    --input: hsl(0 0% 28%);
-    --ring: hsl(199 100% 78%);
-    --background: hsl(0 0% 12%);
-    --foreground: hsl(0 0% 95%);
-    --primary: hsl(199 100% 78%);
-    --primary-foreground: hsl(0 0% 12%);
-    --secondary: hsl(0 0% 20%);
-    --secondary-foreground: hsl(0 0% 95%);
-    --muted: hsl(0 0% 20%);
-    --muted-foreground: hsl(0 0% 70%);
-    --accent: hsl(199 100% 78%);
-    --accent-foreground: hsl(0 0% 12%);
+    --border: hsl(166 8% 25%);
+    --input: hsl(166 8% 25%);
+    --ring: hsl(166 60% 50%);
+    --background: hsl(166 10% 10%);
+    --foreground: hsl(42 20% 93%);
+    --primary: hsl(166 60% 50%);
+    --primary-foreground: hsl(166 10% 10%);
+    --secondary: hsl(166 8% 18%);
+    --secondary-foreground: hsl(42 20% 93%);
+    --muted: hsl(166 8% 18%);
+    --muted-foreground: hsl(166 10% 65%);
+    --accent: hsl(166 15% 22%);
+    --accent-foreground: hsl(166 60% 50%);
     --destructive: hsl(0 84% 60%);
     --destructive-foreground: hsl(0 0% 98%);
-    --card: hsl(0 0% 15%);
-    --card-foreground: hsl(0 0% 95%);
-    --popover: hsl(0 0% 15%);
-    --popover-foreground: hsl(0 0% 95%);
-    --code-block-bg: #151A1E;
+    --card: hsl(166 8% 14%);
+    --card-foreground: hsl(42 20% 93%);
+    --popover: hsl(166 8% 14%);
+    --popover-foreground: hsl(42 20% 93%);
+    --accent-vivid: hsl(166 60% 50%);
+    --code-block-bg: #101F1A;
   }
 
   p,
@@ -240,4 +243,3 @@ mark {
   background-color: hsl(45 100% 40%) !important;
   color: hsl(0 0% 100%) !important;
 }
-

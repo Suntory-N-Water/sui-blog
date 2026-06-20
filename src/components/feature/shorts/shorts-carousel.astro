@@ -10,9 +10,16 @@ const { shorts } = Astro.props;
 ---
 
 <section class='py-6'>
-  <div class='mb-4 flex items-center justify-between px-4 container mx-auto'>
-    <h2 class='text-xl font-bold flex items-center gap-2'>Shorts</h2>
-    <a href='/shorts' class='text-sm text-muted-foreground hover:text-primary'>
+  <div
+    class='mb-6 flex items-baseline justify-between border-b border-border/60 pb-3 container mx-auto px-4'
+  >
+    <h2 class='text-2xl font-bold tracking-tight border-b-0 mb-0 pb-0'>
+      Shorts
+    </h2>
+    <a
+      href='/shorts'
+      class='text-sm font-bold text-primary transition-colors hover:underline'
+    >
       すべて見る
     </a>
   </div>

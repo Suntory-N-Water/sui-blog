@@ -21,20 +21,11 @@ const {
   transitionPrefix = 'blog',
 } = Astro.props;
 
-/**
- * ブログ記事のカードを表示するコンポーネント
- *
- * このコンポーネントはブログ記事のメタデータを受け取り、カード形式で表示します。
- * アイコン(絵文字または画像)、タイトル、説明文、日付、タグを含むカードをレンダリングし、
- * クリックすると記事ページに遷移します。ホバー時にはカードが拡大し、視覚的なフィードバックを提供します。
- */
-
 const metadata = data.data;
 const slug = data.id;
 const dateISO = metadata.date.toISOString();
 const formattedDate = formatDate(metadata.date.getTime());
 
-// icon_urlを優先、なければiconのURLを使用
 const displayUrl =
   metadata.icon_url ||
   (metadata.icon?.startsWith('https://') ? metadata.icon : null);
@@ -43,12 +34,12 @@ const displayUrl =
 <a
   href={`/blog/${slug}`}
   class={cn(
-    'group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-sm transition-all duration-300',
-    'hover:-translate-y-1 hover:border-primary/50 hover:shadow-md',
+    'group flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card text-card-foreground transition-all duration-300',
+    'hover:border-primary/50 hover:shadow-sm',
     'focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
   )}
 >
-  <div class='relative aspect-video w-full bg-muted overflow-hidden'>
+  <div class='relative aspect-[2/1] w-full bg-muted overflow-hidden'>
     <div class='absolute inset-0 bg-linear-to-br from-secondary to-background'>
     </div>
     <div

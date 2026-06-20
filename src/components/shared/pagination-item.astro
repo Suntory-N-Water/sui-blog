@@ -1,11 +1,5 @@
 ---
-import { Icons } from '@/components/icons';
-import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-
-type PageItem =
-  | { type: 'page'; value: number }
-  | { type: 'ellipsis'; key: string };
 
 type Props = {
   currentPage: number;
@@ -15,153 +9,128 @@ type Props = {
 
 const { currentPage, totalPages, basePath } = Astro.props;
 
-/**
- * ページ番号リストを構築
- *
- * @param currentPage - 現在のページ番号
- * @param totalPages - 総ページ数
- * @returns ページアイテムの配列
- */
-function buildPageList({
-  currentPage,
-  totalPages,
-}: {
-  currentPage: number;
-  totalPages: number;
-}): PageItem[] {
-  if (totalPages <= 5) {
-    return Array.from({ length: totalPages }, (_, i) => ({
-      type: 'page',
-      value: i + 1,
-    }));
-  }
+const firstPagePath = basePath.split('/').slice(0, -1).join('/') || basePath;
 
-  if (currentPage <= 3) {
-    return [
-      { type: 'page', value: 1 },
-      { type: 'page', value: 2 },
-      { type: 'page', value: 3 },
-      { type: 'ellipsis', key: 'ellipsis-end' },
-      { type: 'page', value: totalPages },
-    ];
-  }
-
-  if (currentPage >= totalPages - 2) {
-    return [
-      { type: 'page', value: 1 },
-      { type: 'ellipsis', key: 'ellipsis-start' },
-      { type: 'page', value: totalPages - 3 },
-      { type: 'page', value: totalPages - 2 },
-      { type: 'page', value: totalPages - 1 },
-      { type: 'page', value: totalPages },
-    ];
-  }
-
-  return [
-    { type: 'page', value: 1 },
-    { type: 'ellipsis', key: 'ellipsis-start' },
-    { type: 'page', value: currentPage - 1 },
-    { type: 'page', value: currentPage },
-    { type: 'page', value: currentPage + 1 },
-    { type: 'ellipsis', key: 'ellipsis-end' },
-    { type: 'page', value: totalPages },
-  ];
-}
-
-const firstPagePath = `${basePath.split('/').slice(0, -1).join('/') || basePath}`;
-const prevPage = currentPage > 1 ? currentPage - 1 : null;
-const nextPage = currentPage < totalPages ? currentPage + 1 : null;
-const pages = buildPageList({ currentPage, totalPages });
 const prevHref =
-  prevPage === null
+  currentPage <= 1
     ? null
-    : prevPage === 1
+    : currentPage === 2
       ? firstPagePath
-      : `${basePath}/${prevPage}`;
+      : `${basePath}/${currentPage - 1}`;
+
+const nextHref =
+  currentPage >= totalPages ? null : `${basePath}/${currentPage + 1}`;
+
+const paginationPages = Array.from({ length: totalPages }, (_, i) => {
+  const pageNumber = i + 1;
+  return {
+    number: pageNumber,
+    url: pageNumber === 1 ? firstPagePath : `${basePath}/${pageNumber}`,
+  };
+});
+
+const navButtonBase =
+  'inline-flex items-center justify-center size-11 rounded-lg border border-border bg-background text-muted-foreground transition-colors';
+const navButtonEnabled =
+  'hover:border-primary/30 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
 ---
 
 <nav
-  class='flex flex-col items-center gap-4 py-8'
+  class='flex items-center justify-center gap-3 py-8'
   aria-label='ページネーション'
 >
-  <div class='flex items-center gap-2'>
+  <div class='shrink-0'>
     {
       prevHref ? (
-        <a
-          href={prevHref}
-          class={cn(buttonVariants({ variant: 'outline' }), 'gap-1 pl-2.5')}
-        >
-          <Icons.chevronLeft className='size-4' />
+        <a href={prevHref} class={cn(navButtonBase, navButtonEnabled)}>
           <span class='sr-only'>前のページへ</span>
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            class='size-4'
+            viewBox='0 0 24 24'
+            fill='none'
+            stroke='currentColor'
+            stroke-width='2'
+            stroke-linecap='round'
+            stroke-linejoin='round'
+            aria-hidden='true'
+          >
+            <path d='m15 18-6-6 6-6' />
+          </svg>
         </a>
       ) : (
-        <div
-          class={cn(
-            buttonVariants({ variant: 'outline' }),
-            'pointer-events-none gap-1 pl-2.5 opacity-50',
-          )}
-        >
-          <Icons.chevronLeft className='size-4' />
-          <span class='sr-only'>前のページへ</span>
-        </div>
+        <span class={cn(navButtonBase, 'opacity-40')} aria-hidden='true' />
       )
     }
+  </div>
 
-    <div class='hidden items-center gap-2 md:flex'>
+  <div class='relative min-w-0'>
+    <label for='pagination-select' class='sr-only'>表示するページ</label>
+    <select
+      id='pagination-select'
+      data-pagination-select
+      class='w-36 sm:w-40 h-11 appearance-none rounded-lg border border-border bg-background px-4 pr-10 text-center text-sm font-medium tabular-nums text-muted-foreground cursor-pointer hover:border-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors'
+    >
       {
-        pages.map((item) =>
-          item.type === 'page' ? (
-            <a
-              href={
-                item.value === 1 ? firstPagePath : `${basePath}/${item.value}`
-              }
-              aria-current={item.value === currentPage ? 'page' : undefined}
-              class={cn(
-                'flex h-10 w-10 items-center justify-center rounded-full text-sm font-medium transition-all',
-                item.value === currentPage
-                  ? 'bg-linear-to-r from-primary to-blue-600 text-primary-foreground shadow-lg shadow-primary/20'
-                  : 'bg-secondary/20 text-muted-foreground hover:border-primary/30 hover:bg-secondary/50 hover:text-primary',
-              )}
-            >
-              {item.value}
-            </a>
-          ) : (
-            <span class='flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground'>
-              ...
-            </span>
-          ),
-        )
+        paginationPages.map((p) => (
+          <option value={p.url} selected={p.number === currentPage}>
+            {p.number} / {totalPages} ページ
+          </option>
+        ))
       }
-    </div>
+    </select>
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      class='pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground/60'
+      viewBox='0 0 24 24'
+      fill='none'
+      stroke='currentColor'
+      stroke-width='2'
+      stroke-linecap='round'
+      stroke-linejoin='round'
+      aria-hidden='true'
+    >
+      <path d='m6 9 6 6 6-6'></path>
+    </svg>
+  </div>
 
-    <div class='md:hidden'>
-      <div
-        class='flex h-10 items-center justify-center rounded-full border border-border bg-secondary/20 px-4 text-sm font-medium text-muted-foreground'
-      >
-        Page {currentPage} of {totalPages}
-      </div>
-    </div>
-
+  <div class='shrink-0'>
     {
-      nextPage ? (
-        <a
-          href={`${basePath}/${nextPage}`}
-          class={cn(buttonVariants({ variant: 'outline' }), 'gap-1 pr-2.5')}
-        >
+      nextHref ? (
+        <a href={nextHref} class={cn(navButtonBase, navButtonEnabled)}>
           <span class='sr-only'>次のページへ</span>
-          <Icons.chevronRight className='size-4' />
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            class='size-4'
+            viewBox='0 0 24 24'
+            fill='none'
+            stroke='currentColor'
+            stroke-width='2'
+            stroke-linecap='round'
+            stroke-linejoin='round'
+            aria-hidden='true'
+          >
+            <path d='m9 18 6-6-6-6' />
+          </svg>
         </a>
       ) : (
-        <div
-          class={cn(
-            buttonVariants({ variant: 'outline' }),
-            'pointer-events-none gap-1 pr-2.5 opacity-50',
-          )}
-        >
-          <span class='sr-only'>次のページへ</span>
-          <Icons.chevronRight className='size-4' />
-        </div>
+        <span class={cn(navButtonBase, 'opacity-40')} aria-hidden='true' />
       )
     }
   </div>
 </nav>
+
+<script>
+  document.addEventListener('change', (event) => {
+    const target = event.target;
+    if (
+      !(target instanceof HTMLSelectElement) ||
+      !target.matches('[data-pagination-select]')
+    ) {
+      return;
+    }
+    if (target.value) {
+      window.location.href = target.value;
+    }
+  });
+</script>
