@@ -73,7 +73,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
-    "@biomejs/biome": "2.5.0",
+    "@biomejs/biome": "2.4.15",
     "@lhci/cli": "^0.15.1",
     "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/vite": "^4.3.0",

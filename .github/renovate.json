@@ -34,6 +34,11 @@
       "description": "Major は更新対象外",
       "matchUpdateTypes": ["major"],
       "enabled": false
+    },
+    {
+      "description": "Biome は更新対象外",
+      "matchPackageNames": ["@biomejs/biome"],
+      "enabled": false
     }
   ],
 

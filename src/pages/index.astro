@@ -53,13 +53,13 @@ const canonicalUrl = absoluteUrl('/');
 <BaseLayout canonicalUrl={canonicalUrl}>
   <section data-pagefind-ignore class='space-y-16 pt-16'>
     <!-- Hero -->
-    <div class='relative mx-auto max-w-3xl text-center animate-fade-in-bottom'>
+    <div class='relative max-w-2xl animate-fade-in-bottom'>
       <h1
-        class='flex flex-wrap items-center justify-center gap-x-6 text-center text-4xl font-bold leading-tight tracking-tight md:flex-nowrap md:text-5xl font-mono'
+        class='text-4xl font-bold leading-tight tracking-tight md:text-5xl font-mono'
       >
-        <span class='shrink-0'>Welcome to the</span>
+        <span class='block'>Welcome to the</span>
         <span
-          class='shrink-0 whitespace-nowrap leading-[1.25] bg-linear-to-r from-primary to-blue-400 bg-clip-text text-transparent'
+          class='block leading-[1.25] bg-linear-to-r from-primary to-accent-vivid bg-clip-text text-transparent'
         >
           sui Tech Blog!
         </span>
@@ -69,9 +69,7 @@ const canonicalUrl = absoluteUrl('/');
         <br />
         TypeScript に関する記事が中心です。
       </p>
-      <div
-        class='mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6'
-      >
+      <div class='mt-8 flex flex-col items-start gap-4 sm:flex-row sm:gap-6'>
         <Button client:load asChild className='h-11 rounded-full px-8'>
           <a
             href='/blog'
@@ -97,8 +95,10 @@ const canonicalUrl = absoluteUrl('/');
 
     <!-- Articles -->
     <div id='articles' class='space-y-8'>
-      <div class='flex items-end justify-between pb-2'>
-        <h2 class='border-b-4 border-primary pb-1 text-2xl font-bold'>
+      <div
+        class='flex items-baseline justify-between border-b border-border/60 pb-3'
+      >
+        <h2 class='text-2xl font-bold tracking-tight border-b-0 mb-0 pb-0'>
           最新記事
         </h2>
         <a

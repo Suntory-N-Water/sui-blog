@@ -12,6 +12,6 @@ const { html } = Astro.props;
 
 <div class='markdown-content' set:html={html} />
 
-<CodeCopyButtons client:visible />
+<CodeCopyButtons client:load />
 <ImageZoom client:visible />
 <TwitterWidgets client:visible />

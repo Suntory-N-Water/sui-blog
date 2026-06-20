@@ -99,7 +99,7 @@ export default function Header({ pathname }: HeaderProps) {
         </a>
 
         {/* Desktop Navigation */}
-        <nav className='hidden items-center gap-1 rounded-full border border-border/50 bg-secondary/20 px-2 py-1 backdrop-blur-md md:flex'>
+        <nav className='hidden items-center gap-1 rounded-lg border border-border/50 bg-secondary/20 px-2 py-1 backdrop-blur-md md:flex'>
           {NAVIGATION_LINKS.map((link) => (
             <Button
               key={link.href}
@@ -107,7 +107,7 @@ export default function Header({ pathname }: HeaderProps) {
               size='sm'
               asChild
               className={cn(
-                'rounded-full px-4 text-sm font-medium text-muted-foreground transition-colors',
+                'rounded-md px-4 text-sm font-medium text-muted-foreground transition-colors',
                 isLinkActive(link.href) &&
                   'bg-background text-foreground font-bold',
               )}
