@@ -1,9 +1,5 @@
 #:schema https://developers.openai.com/codex/config-schema.json
 
-[mcp_servers.context7]
-args = ["-y", "@upstash/context7-mcp@latest"]
-command = "npx"
-
 [tui]
 status_line = [
     "model-with-reasoning",
