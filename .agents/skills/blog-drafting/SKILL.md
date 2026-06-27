@@ -13,8 +13,9 @@ AI生成文章特有の「臭さ」を排除し、筆者の個性と価値観が
 
 詳細なガイドラインは、以下のリファレンスを必要に応じて読み込む。
 
-- **[voice-and-tone.md](references/voice-and-tone.md)**: 文体とトーン(話し言葉、一人称、問いかけ、避けるべき表現)
-- **[writing-guidelines.md](references/writing-guidelines.md)**: 構造と表現(見出し、導入部、結論部、対比、メタファー)
+- **[voice-and-tone.md](references/voice-and-tone.md)**: 文体とトーン(話し言葉、一人称、問いかけ、接続詞、避けるべき表現)
+- **[writing-guidelines.md](references/writing-guidelines.md)**: 構造と表現(見出し、導入部、結論部、対比、メタファー、一次ソース、MECE と文末表現)
+- **[markdown-conventions.md](references/markdown-conventions.md)**: Markdown 記法(コードブロック、画像 alt、`>[!CAUTION]` と textlint 回避、サンプルコードの品質)
 - **[ai-police-checklist.md](references/ai-police-checklist.md)**: AI臭さ排除の詳細チェック項目
 
 ## frontmatter の生成範囲
