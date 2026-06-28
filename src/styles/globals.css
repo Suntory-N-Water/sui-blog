@@ -138,7 +138,6 @@
   p,
   li {
     @apply leading-relaxed text-foreground/90;
-    text-wrap: pretty;
   }
 
   /* パイチャート用セグメントカラー */
