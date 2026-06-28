@@ -8,11 +8,10 @@ icon: 🧩
 icon_url: /icons/puzzle_piece_flat.svg
 tags:
   - ClaudeCode
-  - AgentsSkills
-  - OpenTelemetry
 ---
 
-Claude Code には Explore、Plan、general-purpose といった built-in[^built-in] の subagent があり、用途別に呼び分けて使えます。私もここ数か月、Explore で読み、Plan で設計、general-purpose で調査と、built-in をそのまま呼び分けて使ってきました。built-in で足りているうちは、自分でカスタム agent を定義する理由もありません。
+Claude Code には Explore、Plan、general-purpose といった built-in[^built-in] の subagent があり、用途別に呼び分けて使えます。これに加えて、`.claude/agents/` 配下に description やモデルを指定した Markdown を置くことで、自分専用のカスタム agent も定義できます。
+私は普段の使い方として、Explore で読み、Plan で設計、general-purpose で調査と、built-in をそのまま呼び分けて使ってきました。built-in で足りているうちは、わざわざカスタム agent を増やす理由もありません。
 
 実際、カスタム agent を作るのは気が進みませんでした。description が機能するか確信が持てないですし、いったん作ればカスタム agent の保守も発生します。「既存ので動いているし、まあいいか」と先送りにしていました。
 
