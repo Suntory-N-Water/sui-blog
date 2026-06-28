@@ -1,6 +1,7 @@
 ---
 name: ai-police
 description: AI生成文章特有の「冗長表現」「過剰修飾」「テンプレート表現」を検出し、人間らしい文章への改善を提案する専門エージェント。Humanity Score(0.0-5.0)を算出し、具体的な修正案を提示します。
+model: sonnet
 ---
 
 # AI Police(AI警察)
