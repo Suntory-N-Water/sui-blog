@@ -39,7 +39,7 @@ import discord
 import MeCab
 from collections import defaultdict
 
-## 日本語評価極性辞書の読み込み 
+## 日本語評価極性辞書の読み込み
 polarity_dict = defaultdict(lambda: 0)
 with open('pn_ja_dic.txt', 'r', encoding='utf-8') as f:
     for line in f:
@@ -80,7 +80,7 @@ async def on_message(message):
 
     # ネガティブな雰囲気を感じる場合、返信を送信する
     # 閾値は要調整
-    if sentiment < -0.7:  
+    if sentiment < -0.7:
         await message.channel.send("ピピーっ！👮👮ネガティブ警察です🚨🚨🚨🙅🙅🙅🙅\nそのつぶやきは❗❗❗ネガティブな考えになるゾ😤😤😤💢💢💢")
 
 ## Bot の起動と Discord サーバーへの接続
@@ -114,7 +114,7 @@ client.run(DISCORD_BOT_TOKEN)
 
 各品詞の極性値を算出すると、**日**や**さ**で極性値がマイナスに向かうことが分かった。
 
-``` :今日は誕生日です。
+```bash 今日は誕生日です。
 今日: 0.172375
 Sentiment:0.172375
 は: 0
@@ -132,7 +132,7 @@ Sentiment:-0.3350709999999999
 Total Sentiment:-0.3350709999999999
 ```
 
-``` :今日は水瀬いのりさんの誕生日です。
+```bash 今日は水瀬いのりさんの誕生日です。
 今日: 0.172375
 Sentiment:0.172375
 は: 0
@@ -176,4 +176,3 @@ Received message: ピピーっ！👮👮ネガティブ警察です🚨🚨🚨
 ## その他
 
 github → https://github.com/Suntory-N-Water/NegativeCommentsCheck
-
