@@ -1,5 +1,5 @@
 ---
-title: built-in subagent で足りていると思っていたら、軽い調査も Opus で走っていた話
+title: built-in subagent で足りていると思っていたら、軽い調査も Opus で走っていた
 slug: claude-code-subagent-model-inheritance
 date: 2026-06-28
 modified_time: 2026-06-28
