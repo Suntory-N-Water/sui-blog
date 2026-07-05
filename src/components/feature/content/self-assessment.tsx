@@ -30,7 +30,7 @@ type QuizItemProps = {
 function QuizItem({ quiz, quizNumber }: QuizItemProps) {
   return (
     <div className='flex flex-col justify-center'>
-      <h3 className='rounded-t-md bg-gray-200 px-4 py-8 text-base font-semibold dark:bg-zinc-600'>
+      <h3 className='rounded-t-md bg-muted px-4 py-8 text-base font-semibold'>
         問題{quizNumber}: {quiz.question}
       </h3>
       <ul className='flex flex-col justify-center'>
@@ -53,11 +53,11 @@ function AnswerItem({ answer }: AnswerItemProps) {
 
   return (
     <details
-      className='group border border-t-0 border-gray-300 font-medium text-gray-900 dark:border-zinc-600 dark:text-gray-50'
+      className='group border border-t-0 border-border font-medium text-foreground'
       open={isOpen}
       onToggle={(e) => setIsOpen(e.currentTarget.open)}
     >
-      <summary className='flex cursor-pointer items-center gap-3 p-4 text-base leading-7 hover:bg-gray-100 dark:hover:bg-zinc-700 [&::-webkit-details-marker]:hidden'>
+      <summary className='flex cursor-pointer items-center gap-3 p-4 text-base leading-7 hover:bg-accent [&::-webkit-details-marker]:hidden'>
         <svg
           xmlns='http://www.w3.org/2000/svg'
           viewBox='0 0 20 20'
@@ -73,7 +73,7 @@ function AnswerItem({ answer }: AnswerItemProps) {
         </svg>
         <span>{answer.text}</span>
       </summary>
-      <div className='animate-in fade-in-50 slide-in-from-top-2 border-t border-gray-200 bg-gray-50 p-4 duration-300 dark:border-zinc-700 dark:bg-zinc-800/50'>
+      <div className='animate-in fade-in-50 slide-in-from-top-2 border-t border-border bg-muted/50 p-4 duration-300'>
         <p className='leading-7'>
           {answer.correct ? (
             <span className='flex items-center gap-1 text-green-500'>
