@@ -123,7 +123,7 @@ export default function Header({ pathname }: HeaderProps) {
           <button
             type='button'
             onClick={openSearch}
-            className='hidden h-9 items-center justify-start gap-2 overflow-hidden rounded-lg border border-border/50 bg-secondary/20 px-3 text-sm font-medium text-muted-foreground transition-all hover:border-border/80 hover:bg-secondary/60 hover:text-foreground w-48 lg:w-64 md:inline-flex'
+            className='group hidden h-9 items-center justify-start gap-2 overflow-hidden rounded-lg border border-border/50 bg-secondary/20 px-3 text-sm font-medium text-muted-foreground transition-all hover:border-border/80 hover:bg-secondary/60 hover:text-foreground w-48 lg:w-64 md:inline-flex'
           >
             <Search className='h-4 w-4 transition-transform group-hover:scale-110' />
             <span>Search...</span>
