@@ -43,7 +43,7 @@ export default function HamburgerMenu({ params }: Props) {
     <div className='relative' ref={menuRef}>
       <button
         type='button'
-        className='flex h-11 w-11 items-center justify-center rounded-lg md:hidden'
+        className='flex h-10 w-10 items-center justify-center rounded-lg border border-border/50 bg-secondary/20 text-muted-foreground transition-all hover:bg-secondary/60 hover:text-foreground md:hidden'
         aria-label='メニューを開く'
         aria-expanded={open}
         onClick={() => setOpen((prev) => !prev)}

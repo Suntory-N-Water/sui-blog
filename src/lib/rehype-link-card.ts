@@ -163,7 +163,7 @@ function createLinkCardHTML(data: LinkCardData): string {
   const { url, title, description, image, isInternal, error } = data;
   const hostname = url.startsWith('http') ? new URL(url).hostname : '';
 
-  const cardClasses = `group my-4 flex overflow-hidden rounded-lg border bg-card transition-all duration-200 hover:bg-accent/5 hover:shadow-md ${
+  const cardClasses = `group my-4 flex overflow-hidden rounded-lg border bg-card transition-all duration-200 hover:border-primary/50 hover:shadow-md ${
     error ? 'border-border/50 bg-card/50' : ''
   }`;
 
@@ -208,7 +208,7 @@ function createLinkCardHTML(data: LinkCardData): string {
         </div>
       </div>
       <div class="flex-1">
-        <h3 class="font-semibold leading-tight text-foreground transition-colors group-hover:text-accent">
+        <h3 class="font-semibold leading-tight text-foreground transition-colors group-hover:text-primary">
           ${error ? 'Page Not Found' : title}
         </h3>
         ${
