@@ -3,7 +3,6 @@
     "allow": [
       "Read",
       "Edit",
-      "Write",
       "Grep",
       "Glob",
       "Bash(mkdir:*)",
@@ -30,7 +29,7 @@
       "Bash(sudo:*)",
       "Read(.env)",
       "Read(.dev.vars)",
-      "Write(.env*)",
+      "Edit(.env*)",
       "Bash(wget:*)",
       "NotebookEdit"
     ],
