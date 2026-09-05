@@ -80,6 +80,7 @@ export const TAG_SLUG_MAP: Record<string, string> = {
   Playwright: 'playwright',
   PokeAPI: 'pokeapi',
   Postman: 'postman',
+  pnpm: 'pnpm',
   PostgreSQL: 'postgresql',
   PowerPoint: 'powerpoint',
   pyautogui: 'pyautogui',

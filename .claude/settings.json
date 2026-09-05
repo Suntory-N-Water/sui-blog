@@ -49,26 +49,6 @@
           }
         ]
       }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bun run --silent -i ~/.claude/scripts/typescript/no-restricted-edit.ts"
-          }
-        ]
-      },
-      {
-        "matcher": "WebFetch",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bun run --silent -i ~/.claude/scripts/typescript/web-fetch-advice.ts"
-          }
-        ]
-      }
     ]
   },
   "enabledPlugins": {},
