@@ -170,8 +170,7 @@ bun run dev:cf
 ```
 sui-blog/
 ├── contents/              # コンテンツファイル
-│   ├── blog/             # ブログ記事（Markdown）
-│   └── shorts/           # 短編記事
+│   └── blog/             # ブログ記事（Markdown）
 ├── public/               # 静的アセット
 ├── scripts/              # ビルド・ユーティリティスクリプト
 ├── src/
@@ -192,7 +191,6 @@ sui-blog/
 
 ### 記事ファイルの配置
 - **ブログ記事**: `contents/blog/*.md`
-- **短編記事**: `contents/shorts/*.md`
 
 ### フロントマター形式
 

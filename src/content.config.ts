@@ -37,31 +37,4 @@ const blog = defineCollection({
   }),
 });
 
-const shorts = defineCollection({
-  loader: glob({
-    pattern: '**/*.md',
-    base: './contents/shorts',
-  }),
-  schema: z.object({
-    title: z.string(),
-    date: z.coerce.date(),
-  }),
-});
-
-const works = defineCollection({
-  loader: glob({
-    pattern: '**/*.md',
-    base: './contents/works',
-  }),
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    date: z.coerce.date(),
-    tags: z.array(z.string()).default([]),
-    thumbnail: z.string(),
-    siteUrl: z.url(),
-    githubUrl: z.url(),
-  }),
-});
-
-export const collections = { blog, shorts, works };
+export const collections = { blog };

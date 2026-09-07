@@ -27,11 +27,6 @@ paths:
 - `selfAssessment`: 理解度チェッククイズ(オブジェクト)
 - `diagram`: 図解セクション(配列)
 
-## 短編記事(Shorts)
-
-- 配置場所: `contents/shorts/`
-- 必須フィールド: `title`, `date` のみ
-
 ## 日本語文章の校正
 
 - 記事作成・編集後は `bun run textlint` で校正チェックを実行する

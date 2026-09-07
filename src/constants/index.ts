@@ -68,14 +68,6 @@ export const BLOG_CONSTANTS = {
 } as const;
 
 /**
- * Shorts設定
- */
-export const SHORTS_CONSTANTS = {
-  /** Shortsページのページネーション: 1ページあたりの記事数 */
-  POSTS_PER_PAGE: 12,
-} as const;
-
-/**
  * 検索機能の設定
  */
 export const SEARCH_CONSTANTS = {

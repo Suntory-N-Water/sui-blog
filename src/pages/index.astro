@@ -7,30 +7,10 @@ import { BLOG_CONSTANTS } from '@/constants';
 import BlogCard from '@/components/feature/content/blog-card.astro';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
-import ShortsCarousel from '@/components/feature/shorts/shorts-carousel.astro';
 
-import { getCollection } from 'astro:content';
-import { compileMarkdown } from '@/components/feature/content/custom-markdown';
 import { absoluteUrl } from '@/lib/utils';
-import { getFirstPage } from '@/lib/shorts';
 
 const allPosts = await getAllBlogPosts();
-const allShorts = await getCollection('shorts');
-const sortedShorts = allShorts
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 10); // Limit usage
-
-const compiledShorts = await Promise.all(
-  sortedShorts.map(async (short) => {
-    // Split BEFORE compiling
-    const firstPageMarkdown = getFirstPage(short.body ?? '');
-    const compiledHtml = await compileMarkdown({ source: firstPageMarkdown });
-    return {
-      ...short,
-      body: compiledHtml,
-    };
-  }),
-);
 const { items: paginatedPosts } = paginateItems({
   items: allPosts,
   page: 1,
@@ -136,8 +116,5 @@ const canonicalUrl = absoluteUrl('/');
         </a>
       </div>
     </div>
-
-    {/* Shorts Carousel */}
-    <ShortsCarousel shorts={compiledShorts} />
   </section>
 </BaseLayout>
