@@ -1,5 +1,5 @@
 ---
-title: GAS の LockService が守るのはコードの範囲で、スプレッドシートの行ではない
+title: GAS の LockService が同時に実行させないのはコードの範囲で、スプレッドシートの行ではない
 slug: gas-lockservice-exclusive-control
 date: 2026-09-10
 modified_time: 2026-09-10
@@ -11,13 +11,13 @@ tags:
   - TypeScript
 ---
 
-実務で Google Apps Script を使うプロジェクトが始まりました。ただ、2026 年の GAS で何がどこまでできるのかを、私は分かっていませんでした。状態を持つものを 1 つ作れば分かると考えて、社内の書籍を貸し借りするウェブアプリを作りました。
+社内に置いてある本は、誰が借りていったのか分からなくなることがありました。貸し借りを記録して一覧できる仕組みが欲しくなり、Google Apps Script とスプレッドシートでウェブアプリを作りました。
 
 データの置き場所はスプレッドシートにしましたが、利用者には直接見せたくありません。閲覧できると誰が何を借りているかが全部見えます。編集できると貸出の記録を書き換えられます。そこでスプレッドシートは私だけが開ける状態にして、利用者ができる操作はウェブアプリの画面だけに限りました。
 
-1 冊の本を同時に 2 人が借りられては困るので、`LockService.getScriptLock()` で排他制御を入れます。ロックを取得して解放するコードを書けば足りる、というのが最初の理解でした。
+1 冊の本を同時に 2 人が借りられては困るので、排他制御が必要になります。GAS でこれを行う仕組みは `LockService` で、貸出の処理をロックの取得と解放で囲めば済むと考えていました。
 
-足りません。`LockService` が止めるのは、同じコードの範囲を 2 つの実行が同時に走ることです。スプレッドシートの行ではありません。判定に使う値をロックの外で読むと、ロックを取得していても同じ本の貸出が 2 回実行されます。
+ところが、ロックを取得していても同じ本の貸出が 2 回実行される書き方があります。`LockService` が同時に実行させないのは同じコードの範囲であって、スプレッドシートの行ではないためです。判定に使う値をロックの外で読むと、その値はロックを取得する前に他の実行から書き換えられている可能性があります。
 
 この記事に書くのは、その 2 回の貸出を実際に発生させて確かめた結果と、判定に使う値を読む位置の決め方です。
 
@@ -26,7 +26,7 @@ tags:
 
 ## 書籍貸出アプリとスプレッドシートの構造
 
-画面は 3 つの部分でできています。自分が借りている本の一覧、蔵書の一覧と絞り込み、管理者だけに表示される登録フォームです。データの保存先はスプレッドシート 1 つで、`books` / `loans` / `config` の 3 シートに分けました。
+排他制御を確かめるために作った書籍貸出アプリの画面は、3 つの部分でできています。自分が借りている本の一覧、蔵書の一覧と絞り込み、管理者だけに表示される登録フォームです。データの保存先はスプレッドシート 1 つで、`books` / `loans` / `config` の 3 シートに分けました。
 
 <!-- TODO(media): スクリーンショットを入れる。/exec を開いた直後のウェブアプリ全体を写す。読者が確認するのは、蔵書の表に「在架」と「貸出中」が並び、管理者のアカウントでは登録フォームが表示されること。代替テキスト: 書籍貸出アプリの画面。自分が借りている本、蔵書の一覧、蔵書の登録フォームが縦に並んでいる -->
 
@@ -56,23 +56,21 @@ export function openSpreadsheet(): GoogleAppsScript.Spreadsheet.Spreadsheet {
 }
 ```
 
-ID を指定して開くには、`appsscript.json` の `oauthScopes` に権限を書いておく必要があります。スプレッドシート向けの権限は 2 つです。開いているスプレッドシート 1 つだけを許可する `https://www.googleapis.com/auth/spreadsheets.currentonly` と、利用者のスプレッドシート全体を許可する `https://www.googleapis.com/auth/spreadsheets` です。単独で作ったスクリプトには「開いているスプレッドシート」が存在しないため、後者にしました。
+ID を指定して開くには、`appsscript.json` の `oauthScopes` に権限を書いておく必要があります。スプレッドシート向けの権限は 2 つです。開いているスプレッドシート 1 つだけを許可する `https://www.googleapis.com/auth/spreadsheets.currentonly` と、利用者のスプレッドシート全体を許可する `https://www.googleapis.com/auth/spreadsheets` です。単独で作ったスクリプトには「開いているスプレッドシート」が存在しないため、後者を指定して `openById()` が成功することを確かめました。`currentonly` に変えたときにどうなるかは確かめていません。
 
-`spreadsheets` を指定した状態で `openById()` が成功することは確かめました。`spreadsheets.currentonly` に変えると失敗するかどうかは、確かめていません。
-
-## LockService が止めているもの
+## LockService が同時に実行させない範囲
 
 貸出の処理では、スプレッドシートへの書き込みが 2 か所あります。1 つは `loans` への 1 行の追加、もう 1 つは `books` の該当行の `status` を `lent` にする更新です。この 2 つの間に別の実行が同じ処理を始めると、1 冊の本に貸出の記録が 2 行できます。
 
 単独で作ったスクリプトなので、使えるのはスクリプトロックです。[リファレンス](https://developers.google.com/apps-script/reference/lock/lock-service)には、`getDocumentLock()` が `null` を返す条件として `if called from a standalone script or webapp` と書かれています。
 
-`getScriptLock()` の説明は次の一文です。ここに、このロックが何を止めるのかが書かれています。
+`getScriptLock()` の説明は次の一文です。ここに、このロックが何を単位にしているのかが書かれています。
 
 > prevents any user from concurrently running a section of code
 
-止めるのは `a section of code` です。利用者が誰であっても、この範囲を同時に走らせるのは 1 つの実行だけになります。行やセルではなく、コードの範囲が単位です。
+同時に実行させない対象は `a section of code` です。利用者が誰であっても、この範囲を同時に走らせるのは 1 つの実行だけになります。行やセルではなく、コードの範囲が単位です。
 
-取得と解放は関数にまとめました。
+ロックの取得と解放は関数にまとめました。
 
 ```ts src/lending.ts
 const LOCK_TIMEOUT_MS = 10_000;
@@ -91,7 +89,7 @@ function withScriptLock<T>(action: () => T): T {
 }
 ```
 
-守られるのは `action` の中だけです。`action` に渡す前に読んだ値は、この範囲の外で読んだ値なので、`action` の中で使っても守られていません。
+2 つの実行が同時に入らないのは `action` の中だけです。`action` に渡す前に読んだ値は、この範囲の外で読んだ値なので、`action` の中で使っても他の実行から保護されていません。
 
 ## 状態を読む位置をロックの外へ出す
 
@@ -133,7 +131,7 @@ export function lendBook(bookId: string): Loan {
 
 `loans` に増えた未返却の行は 1 行で、`books.status` は `lent` になりました。2 回目が拒否された理由は、`findBookRow` が読み直した `status` が `lent` だったためです。
 
-では、読む位置だけをロックの外へ出すとどうなるか。`lendBook` との違いが `findBookRow` の位置だけになる関数を用意しました。
+次に、読む位置だけをロックの外へ出した場合を確かめました。`lendBook` との違いが `findBookRow` の位置だけになる関数を用意しています。
 
 ```ts src/lending.ts
 export function lendBookReadingOutsideLock(
@@ -257,7 +255,7 @@ google.script.run
 
 ## まとめ
 
-- `LockService.getScriptLock()` が止めるのは、同じコードの範囲を 2 つの実行が同時に走ることである。スプレッドシートの行ではない。リファレンスの説明は `prevents any user from concurrently running a section of code`
+- `LockService.getScriptLock()` が同時に実行させないのは、同じコードの範囲である。スプレッドシートの行ではない。リファレンスの説明は `prevents any user from concurrently running a section of code`
 - ロックの外で読んだ `status` をロックの中で判定に使うと、同じ本の貸出が 2 回実行される。判定に使う値は、ロックを取得した後に読み直す
 - シートの変更はスクリプトの終了時にまとめて適用される場合があると、`SpreadsheetApp.flush()` のリファレンスに書かれている。ロックを解放する前に確定させるため、更新の直後に `flush()` を呼ぶ
 - スクリプトロックは実行をまたいで共有される。待機時間を超えた側は例外になり、書き込みを実行しない
