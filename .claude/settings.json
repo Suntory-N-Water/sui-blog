@@ -35,22 +35,6 @@
     ],
     "ask": ["Bash(rm:*)"]
   },
-  "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bun run --silent -i ~/.claude/scripts/typescript/multi-command-check.ts -c format,lint:ai,type-check:ai"
-          },
-          {
-            "type": "command",
-            "command": "bun run --silent -i ~/.claude/scripts/typescript/fix-brackets.ts"
-          }
-        ]
-      }
-    ]
-  },
   "enabledPlugins": {},
   "plansDirectory": ".claude/plans"
 }
