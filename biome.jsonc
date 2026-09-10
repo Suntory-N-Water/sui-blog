@@ -18,7 +18,8 @@
       "!!**/dist",
       "!worker-configuration.d.ts",
       "!**/.obsidian",
-      "!**/.astro"
+      "!**/.astro",
+      "!examples/*"
     ]
   },
   "formatter": {
@@ -34,7 +35,8 @@
       "**/*.jsonc",
       "**/*.html",
       "!node_modules",
-      "!!**/dist"
+      "!!**/dist",
+      "!examples/*"
     ]
   },
   "linter": {
