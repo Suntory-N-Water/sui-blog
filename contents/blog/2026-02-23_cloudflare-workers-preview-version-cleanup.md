@@ -236,7 +236,7 @@ Cloudflare Access は Zero Trust の認証基盤で、プレビュー URL への
 > `previews_enabled` は Worker 全体の設定です。`false` にすると**すべてのプレビュー URL が無効化**されます。複数人で開発していて他の PR のプレビューも同時に使いたい場合は、[Cloudflare Access](https://developers.cloudflare.com/cloudflare-one/policies/access/) を検討してください。
 <!-- textlint-enable preset-ja-technical-writing/no-unmatched-pair -->
 
-このブログは私一人で開発しているので、シンプルに切り替え方式を選びました。本番デプロイが走るタイミングでプレビュー URL を無効化すれば、他の PR を壊す心配はありません。
+このブログは私一人で開発しているので、シンプルに切り替え方式を選びました。本番デプロイが実行されるタイミングでプレビュー URL を無効化すれば、他の PR を壊す心配はありません。
 
 ## GitHub Actions での実装
 

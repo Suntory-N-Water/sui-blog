@@ -37,7 +37,7 @@ Claude Code のプランモードでファイルを作らせたあと、しば�
 ## 文体を改善するHook
 
 EnterPlanMode[^enter-plan-mode] ツールの実行時に発火する Hook で、文体指針を Claude に注入します。
-「過剰な形容詞・感嘆・誇張を削除」「断定する」「同じことを二度書かない」といった指示を自動で渡します。
+「過剰な形容詞・感嘆・誇張を削除」「言い切る」「同じことを二度書かない」といった指示を自動で渡します。
 
 https://gist.github.com/Suntory-N-Water/014ef19e993a2db4ea3761b6dd81c9e8#file-plan-mode-style-ts
 

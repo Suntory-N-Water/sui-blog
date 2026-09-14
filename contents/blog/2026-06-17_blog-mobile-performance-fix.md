@@ -13,13 +13,13 @@ tags:
 
 久々に iPhone で自分のブログを開いたら、白い画面が10秒以上動きませんでした。
 
-PageSpeed Insights[^psi] でモバイルのスコアを測ったら 53 点。最初に疑ったのは Cloudflare の自動最適化です。Cloudflare Fonts も Bot Fight Mode も、ダッシュボードのトグルを押しただけで、中身は一度も見ていません。
+PageSpeed Insights[^psi] でモバイルのスコアを測ったら 53 点。最初に原因と考えたのは Cloudflare の自動最適化です。Cloudflare Fonts も Bot Fight Mode も、ダッシュボードのトグルを押しただけで、中身は一度も見ていません。
 
 設定を解除してみると、たしかに遅さの一因ではあります。ただ、消したあとも白画面は10秒のまま動きません。最後まで残った10秒の正体は、Cloudflare でも Astro でもなく、過去の自分が書いた1行の CSS でした。
 
 最終的に PageSpeed スコアは 97、FCP[^fcp] は 8.0 秒から 1.1 秒になりました。この記事では、検証の過程で学んだことと、次に同じ症状が出たときのための調査手順をまとめます。
 
-## まず Cloudflare を疑う
+## まず Cloudflare の設定を確認する
 
 PageSpeed Insights のレポートを開くと、最初に出てくるのは「レンダリングをブロックしているリクエスト」、つまり Google Fonts の Noto Sans JP です。CSS のサイズは 119KB あり、1,530ms 間ブロックしています。フォントだろうな…と思いつつ、HTML 自体のサイズも測ってみます。
 
@@ -65,7 +65,7 @@ Astro は非対応ブラウザ向けに `setTimeout` でフォールバックし
 
 `client:idle` を全部 `client:visible` に変えます。IntersectionObserver ベースで、要素が画面に入った時点で即座にハイドレーションされ、電力管理の影響を受けません。
 
-### Bot Fight Mode のトグルが効いていなかった
+### Bot Fight Mode のトグルが反映されていなかった
 
 それでも `window.load` イベントだけは 12 秒後にしか発生しません。HAR をさらに眺めて、見慣れないリクエストに気付きました。
 
@@ -116,7 +116,7 @@ curl -s https://api.cloudflare.com/client/v4/zones/{ZONE_ID}/bot_management \
 
 ## 次に遅くなったときのための調査手順
 
-今回の反省は、よしなにやってくれる機能ほど、しくみと影響を一度は自分の目で見ておくべきだった、ということです。Cloudflare Fonts も Bot Fight Mode も機能としては合理的で、日本語フォントや iOS Safari という自分の条件で噛み合わなかっただけです。そして、新しく入れた機能を疑う前に、過去に自分が書いたコードも同じくらい疑う必要があります。
+今回の反省は、よしなにやってくれる機能ほど、しくみと影響を一度は自分の目で見ておくべきだった、ということです。Cloudflare Fonts も Bot Fight Mode も機能としては合理的で、日本語フォントや iOS Safari という自分の条件で噛み合わなかっただけです。そして、新しく入れた機能に目を向ける前に、過去に自分が書いたコードも同じくらい見直す必要があります。
 
 次に同じ症状が出たときのために、自分用のたどり方も残しておきます。
 
@@ -143,7 +143,7 @@ curl -s https://suntory-n-water.com/ | grep -E "challenge-platform|cf-rocket|Clo
 - Astro の `client:idle` は Safari で `setTimeout` フォールバックになり、iOS の電力管理で 13 秒以上ずれることがある。`client:visible` に切り替えると IntersectionObserver ベースになり電力管理の影響を受けない
 - Bot Fight Mode はダッシュボードのトグルだけでは JS Detection が消えないことがあり、API 経由で `enable_js: false` を送る必要があった
 - モバイル GPU では `filter: blur(110px)` のような半径の大きいぼかしが描画を十数秒ブロックする。Mac の Safari でも iOS シミュレータでも気付けない
-- PageSpeed 53 → 97、FCP[^fcp] 8.0 秒 → 1.1 秒、LCP[^lcp] 8.9 秒 → 1.3 秒。数字よりも「入れた機能は中身を見ておく」「過去の自分のコードも疑う」という当たり前のことを得た1日だった
+- PageSpeed 53 → 97、FCP[^fcp] 8.0 秒 → 1.1 秒、LCP[^lcp] 8.9 秒 → 1.3 秒。数字よりも「入れた機能は中身を見ておく」「過去の自分のコードも見直す」という当たり前のことを得た1日だった
 
 ## 参考
 

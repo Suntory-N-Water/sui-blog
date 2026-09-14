@@ -231,7 +231,7 @@ Chrome のダウンロードの 2.5 秒を節約しても、APT の 30 秒超は
 
 `--with-deps` を使わず、実際に不足している 2 パッケージだけを直接指定する方法です。このアプローチの[検証ワークフロー](https://github.com/Suntory-N-Water/github-actions-agent-browser-cache-strategy/blob/main/.github/workflows/cache-min-packages.yml)はこちらです。
 
-| | ベースライン | 実測範囲(5回) |
+| | ベースライン | 計測範囲(5回) |
 |---|---|---|
 | 合計 | 36〜45秒 | 24〜30秒 |
 
@@ -246,7 +246,7 @@ Chrome のダウンロードの 2.5 秒を節約しても、APT の 30 秒超は
 
 もう 1 つ調べたのが [gerlero/apt-install](https://github.com/gerlero/apt-install) です。このアクションを使った[検証ワークフロー](https://github.com/Suntory-N-Water/github-actions-agent-browser-cache-strategy/blob/main/.github/workflows/cache-apt-gerlero.yml)はこちらです。シェルスクリプトのみで構成された composite action[^composite] で、内部の `actions/cache@v5` は Node.js 24 を使用しているため廃止リスクはありません。ただしキャッシュヒット時も `apt-get update` を実行するため、ヒット時でも 20 秒かかりました。
 
-| 実装 | 実測範囲(4回) | Node.js 問題 |
+| 実装 | 計測範囲(4回) | Node.js 問題 |
 |---|---|---|
 | `cache-apt-pkgs-action` | 13〜19秒 | Node.js 20 廃止予定 |
 | gerlero | 24〜36秒 | なし |
@@ -361,7 +361,7 @@ jobs:
 
 全アプローチの比較です。
 
-| No | アプローチ | キャッシュ状態 | 実測範囲 |
+| No | アプローチ | キャッシュ状態 | 計測範囲 |
 |----|------------|----------------|----------|
 | 1 | ベースライン | キャッシュなし(毎回) | 36〜45秒 |
 | 2 | Chrome のみ | Chrome ヒット・APT 毎回 | 36〜46秒 |
