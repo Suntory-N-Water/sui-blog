@@ -27,7 +27,7 @@ TypeError: Illegal invocation: function called with incorrect `this` reference.
 See https://developers.cloudflare.com/workers/observability/errors/#illegal-invocation-errors for details.
 ```
 
-エラーになるかどうかは、fetch をどこから呼ぶかで決まります。クラスのフィールドに入れて `this.fetcher(url)` と書くと、Cloudflare Workers では処理が失敗します。この記事では、8 通りの呼び出し方を 1 つの Worker で試して、エラーになる条件を切り分けました。
+エラーになるかどうかは、fetch をどこから呼ぶかで決まります。クラスのフィールドに入れて `this.fetcher(url)` と書くと、Cloudflare Workers では処理が失敗します。この記事では、8 通りの呼び出し方を 1 つの Worker で試して、エラーになる条件を調べました。
 
 ## fetch を差し替えられるようにしたクライアント
 
@@ -135,7 +135,7 @@ flowchart TB
 
 `fetcher = fetch` と書いた時点では、まだ何も起きていません。関数への参照が 1 つコピーされただけです。落ちるのは、その参照をプロパティに置き、`this.fetcher(url)` という形で呼んだときです。この形はレシーバが ApiClient のインスタンスになるため、fetch は自分と無関係なオブジェクトを this として受け取ります。
 
-`const bare = fetch; bare(url)` がエラーにならないのは、この呼び方だとレシーバが存在せず、this がグローバルオブジェクトとして扱われるからです。実測でも `call(undefined)` と `call(globalThis)` は同じく 200 でした。変数へ代入して呼ぶだけの試し方では、この失敗は起きません。
+`const bare = fetch; bare(url)` がエラーにならないのは、この呼び方だとレシーバが存在せず、this がグローバルオブジェクトとして扱われるからです。実際に試した結果でも `call(undefined)` と `call(globalThis)` は同じく 200 でした。変数へ代入して呼ぶだけの試し方では、この失敗は起きません。
 
 ## workerd がレシーバを確かめる理由
 
@@ -178,7 +178,7 @@ export default {
 };
 ```
 
-今回起きたのは、取り出した関数を別のオブジェクトのプロパティへ置いたときに落ちる形でした。どちらもレシーバが本来のオブジェクトから離れる点は同じです。回避方法として公式が挙げているのは、直接呼ぶか、bind・call・apply で元のオブジェクトへ結び直すことです。
+今回起きたのは、取り出した関数を別のオブジェクトのプロパティへ置いたときに失敗する形でした。どちらもレシーバが本来のオブジェクトから離れる点は同じです。回避方法として公式が挙げているのは、直接呼ぶか、bind・call・apply で元のオブジェクトへ結び直すことです。
 
 ## ローカルの bun での挙動
 
@@ -200,14 +200,14 @@ bun の fetch は JavaScript のランタイムが用意する普通の関数で
   }
 ```
 
-`fetch.bind(globalThis)` と書いても結果は同じで、実測ではどちらも 200 でした。
+`fetch.bind(globalThis)` と書いても結果は同じで、実際に試したところどちらも 200 でした。
 
 ## まとめ
 
 - Cloudflare Workers の組み込み API は、取り出した元のオブジェクトをレシーバにして呼ぶ必要がある。fetch なら globalThis、`ctx.waitUntil` なら ctx
 - `const bare = fetch` のような変数への代入だけでは落ちない。落ちるのは、その関数を別のオブジェクトのプロパティに置き、`obj.method()` の形で呼んだとき
 - workerd の組み込み API は C++ オブジェクトのメソッドとして公開されており、呼び出しのたびにレシーバの型が確かめられる
-- 直し方は `fetch.bind(globalThis)` か `(input, init) => fetch(input, init)` のどちらかで、実測ではどちらも動く
+- 直し方は `fetch.bind(globalThis)` か `(input, init) => fetch(input, init)` のどちらかで、実際に試した環境ではどちらも動く
 - bun では 8 通りの呼び方すべてが成功する。Workers 向けのコードは `wrangler dev` まで動かして確認する
 
 ## 参考

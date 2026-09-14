@@ -11,9 +11,9 @@ tags:
   - pnpm
 ---
 
-GitHub Actions で pnpm を使うとき、`pnpm/action-setup` で pnpm を入れて `actions/setup-node` で Node.js を入れる、という 2 つの step を並べる書き方が長く定番でした。CI が遅いと感じたときに疑うのも、たいていはテストやビルドです。セットアップ step にかかった時間をログで確認する機会は、あまりありません。
+GitHub Actions で pnpm を使うとき、`pnpm/action-setup` で pnpm を入れて `actions/setup-node` で Node.js を入れる、という 2 つの step を並べる書き方が長く一般的でした。CI が遅いと感じたときに目を向けるのも、たいていはテストやビルドです。セットアップ step にかかった時間をログで確認する機会は、あまりありません。
 
-しかし pnpm v11 の登場によって、この定番の構成には見直しの余地が生まれています。pnpm v11 以降では、[pnpm/setup](https://github.com/pnpm/setup) という別の action が使用できます。この action は pnpm の実行ファイルを直接取得し、Node.js のインストールも同じ step で担うため、`actions/setup-node` そのものが不要になります。
+しかし pnpm v11 の登場によって、この従来の構成には見直しの余地が生まれています。pnpm v11 以降では、[pnpm/setup](https://github.com/pnpm/setup) という別の action が使用できます。この action は pnpm の実行ファイルを直接取得し、Node.js のインストールも同じ step で担うため、`actions/setup-node` そのものが不要になります。
 
 この記事では、実際にセットアップ step が 7 分かかっていたログを元に、`pnpm/setup` へ移行する手順を紹介します。
 
@@ -108,7 +108,7 @@ pnpm v10 以前は `pnpm/action-setup` を使い、v11 以降は `pnpm/setup` �
 
 ### install が二重に実行される場合
 
-移行で見落としやすいのが `pnpm install` の扱いです。`pnpm/setup` は `package.json` があるとき、既定で `pnpm install` まで実行します。`install` の既定値が `true` であるためです。
+移行で注意したいのが `pnpm install` の扱いです。`pnpm/setup` は `package.json` があるとき、デフォルトで `pnpm install` まで実行します。`install` の既定値が `true` であるためです。
 
 そのため、これまで別の step で install を書いていた場合、そのまま差し替えると install が 2 回実行されます。2 回目は依存関係に差分がないので、手元の検証では 26 ミリ秒で `Already up to date` と出て終わりました。CI の時間が延びるわけではありませんが、workflow を読んだ人が install の意図を追えなくなります。自前の step を残すなら、action 側の install を止めます。
 
@@ -123,13 +123,13 @@ pnpm v10 以前は `pnpm/action-setup` を使い、v11 以降は `pnpm/setup` �
   - run: pnpm install --frozen-lockfile
 ```
 
-install を action に任せる場合、`--frozen-lockfile` を書く場所がなくなりますが、GitHub Actions では環境変数 `CI` が設定されるため、pnpm は既定で lockfile を更新せずに失敗します。実際に `package.json` の依存バージョンだけを書き換えて `require-lockfile` なしで実行したところ、次のエラーで止まりました。
+install を action に任せる場合、`--frozen-lockfile` を書く場所がなくなりますが、GitHub Actions では環境変数 `CI` が設定されるため、pnpm はデフォルトで lockfile を更新せずに失敗します。実際に `package.json` の依存バージョンだけを書き換えて `require-lockfile` なしで実行したところ、次のエラーで止まりました。
 
 ```text
 [ERR_PNPM_OUTDATED_LOCKFILE] Cannot install with "frozen-lockfile" because pnpm-lock.yaml is not up to date with <ROOT>/package.json
 ```
 
-既定で失敗しないのは、lockfile が 1 つも存在しない場合です。このとき pnpm はレジストリから解決して lockfile を新しく書き、正常終了します。lockfile の欠落を CI の失敗として扱いたい場合に `require-lockfile: true` を指定します。
+デフォルトで失敗しないのは、lockfile が 1 つも存在しない場合です。このとき pnpm はレジストリから解決して lockfile を新しく書き、正常終了します。lockfile の欠落を CI の失敗として扱いたい場合に `require-lockfile: true` を指定します。
 
 ```yaml
 - name: Setup pnpm and Node.js
@@ -154,9 +154,9 @@ Commit the lockfile, or unset `require-lockfile` to let pnpm resolve and write o
 - pnpm v11 以降を GitHub Actions で使う場合、`pnpm/setup` へ移行するとセットアップの step が 1 つになる
 - `pnpm/setup` は Node.js を同じ step でインストールするため、`actions/setup-node` の step は削除できる
 - `package.json` の `packageManager` に pnpm v11 以降が宣言されていれば、`version` の指定を省略できる
-- `pnpm/setup` は既定で `pnpm install` まで実行するため、別 step で install しているなら `install: false` を指定する
+- `pnpm/setup` はデフォルトで `pnpm install` まで実行するため、別 step で install しているなら `install: false` を指定する
 - install 時に環境変数を渡している構成では、action の install に環境変数を渡せないため自前の step を残す
-- GitHub Actions では lockfile が古いときの失敗は既定で起きる。`require-lockfile: true` が追加するのは lockfile の欠落を失敗として扱う条件
+- GitHub Actions では lockfile が古いときの失敗はデフォルトで起きる。`require-lockfile: true` が追加するのは lockfile の欠落を失敗として扱う条件
 - CI の実行時間を調べるときは、テストやビルドだけでなくセットアップ step の所要時間も確認する
 
 ## 参考

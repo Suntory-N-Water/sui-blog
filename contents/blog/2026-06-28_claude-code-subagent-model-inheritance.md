@@ -80,7 +80,7 @@ Explore の 1 件あたりの tool 利用数は最大で 60 に達していて�
 
 ### 親会話で使っているモデルを子が継承する系統
 
-`Plan`、`general-purpose`、catch-all の `claude` は、定義側ではモデルを固定していません。公式ドキュメントの記述も `Model: inherits from the main conversation` で、subagent 定義の `model` フィールドはデフォルトが `inherit` だと明記されています[^model-resolution]。親会話で使っているモデルが子にもそのまま渡ります。親が Opus 4.7 のときは子も Opus 4.7、Opus 4.8 に切り替えた期間は Opus 4.8 で動き、Sonnet を使っていた瞬間に起動した 1 件だけ Sonnet でした。
+`Plan`、`general-purpose`、catch-all の `claude` は、定義側ではモデルを固定していません。公式ドキュメントの記述も `Model: inherits from the main conversation` で、subagent 定義の `model` フィールドはデフォルトが `inherit` だと明記されています[^model-resolution]。親会話で使っているモデルが子にもそのまま渡ります。親が Opus 4.7 のときは子も Opus 4.7、Opus 4.8 に切り替えた期間は Opus 4.8 で動き、Sonnet を使っていたときに起動した 1 件だけ Sonnet でした。
 
 親が Opus なら子も Opus でよさそうに見えますが、問題は `general-purpose` にどんなタスクが流れ込んでくるかにあります。意図して `general-purpose` を指定して呼び出しているわけではありません。調査系のタスクを依頼すると、Claude Code は意味的解釈で subagent を選びます。その結果、本来 `Explore` で済むはずの粒度の調査が `general-purpose` に振られてしまうことがあります。Haiku で十分こなせる作業でも、`general-purpose` に振られた時点で親会話のモデルを継承して Opus で動きます。データを見るまで気付きませんでした。
 
@@ -110,7 +110,7 @@ Explore の 1 件あたりの tool 利用数は最大で 60 に達していて�
 
 逆に、こういう作業は切り出さない方がよさそうです。
 
-- 設計判断を含む(モデルの推論品質が結果に効く)
+- 設計判断を含む(モデルの推論品質が結果を左右する)
 - 1 回しか発生しない(定義する手間が回収できない)
 - 親会話の文脈を強く必要とする(渡し直しのコストが高い)
 

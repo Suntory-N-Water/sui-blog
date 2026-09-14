@@ -221,7 +221,7 @@ Workers Builds は、ビルド 1 件ごとの記録にその時点のビルド�
 
 - Bun 1.4.0 から `bun.lock` の `lockfileVersion` が 1 から 2 に上がる。1.3 系の最終版である 1.3.14 はまだ 1 を書く
 - 形式 2 のロックファイルを古い Bun で読ませると `Unknown lockfile version` で止まる。`bunx bun@1.2.15 install --frozen-lockfile` で手元でも再現できる
-- Cloudflare Workers Builds のビルドイメージには、Bun 1.2.15 が既定で入る。ドキュメントの表に Bun のバージョン指定ファイルの記載はなく、ビルド変数 `BUN_VERSION` で指定する
+- Cloudflare Workers Builds のビルドイメージには、初期状態で Bun 1.2.15 が入る。ドキュメントの表に Bun のバージョン指定ファイルの記載はなく、ビルド変数 `BUN_VERSION` で指定する
 - Workers Builds のビルド設定は、本番用とプレビュー用の 2 つのトリガーに分かれて保存される。ビルド変数もトリガーごとに独立している
 - ダッシュボードの「変数とシークレット」で保存した値は、本番トリガーにしか入らない。プレビュートリガーの変数は画面に表示されず、REST API でしか読み書きできない
 - プレビュートリガーに `BUN_VERSION` が設定されているかは、ビルドログの `Detected the following tools from environment:` に出る Bun のバージョンで判断できる

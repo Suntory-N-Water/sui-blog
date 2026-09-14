@@ -157,7 +157,7 @@ diagram:
 
 AI コーディングアシスタントの利用が広がり、Claude Code のように Skill や Plugin でカスタマイズできる環境が整ってきました。カスタマイズの幅が広がるほど、「自分が設定したものが実際に動いているか」が見えにくくなります。
 
-Skill を追加した瞬間は便利そうに思えます。でも、Claude Code が文脈から自律的に Skill を起動しているのか、明示的に指示したときしか動いていないのか、数字で確認したことはありませんでした。
+Skill を追加した直後は便利そうに思えます。でも、Claude Code が文脈から自律的に Skill を起動しているのか、明示的に指示したときしか動いていないのか、数字で確認したことはありませんでした。
 
 そこで、自分の Claude Code 環境を棚卸しするために、[OpenTelemetry](https://code.claude.com/docs/en/monitoring-usage) 出力を Cloudflare Worker で受け取り、[Cloudflare D1](https://developers.cloudflare.com/d1/) に保存するしくみを作りました。
 
@@ -311,7 +311,7 @@ GitHub 関連の Skill が最多でした。コミットや Actions の確認は
 
 ## やってみて
 
-まだログを取り始めた段階ですので、「なんとなく使っている気がする」で放置せず、数字で見直す土台は作れたと思います。
+まだログを取り始めた段階ですので、「なんとなく使っている気がする」で放置せず、数字で見直す仕組みは作れたと思います。
 
 [社員に何もさせずにClaude Code利用ログを集める ── 数百名規模のOpenTelemetry収集基盤の構築](https://techblog.zozo.com/entry/claudecode-otel)では、数百名規模の Claude Code 利用ログを Google Cloud と BigQuery で扱っています。組織で本格的に使うなら、既存の分析基盤に乗せる方がよいと思います。今回はそこまで大きな話ではなく、個人でまず試すために Cloudflare Worker と D1 を使いました。
 

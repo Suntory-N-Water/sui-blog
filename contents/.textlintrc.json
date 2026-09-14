@@ -32,7 +32,8 @@
         "after": true
       }
     },
-    "@textlint-ja/preset-ai-writing": true
+    "@textlint-ja/preset-ai-writing": true,
+    "preset-ai-words-ja": true
   },
   "@proofdict/proofdict": {
     "dictURL": "https://azu.github.io/proof-dictionary/"
