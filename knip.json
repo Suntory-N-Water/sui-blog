@@ -8,7 +8,6 @@
     "@types/dompurify",
     "react",
     "react-dom",
-    "remark-gfm",
     "github-slugger"
   ],
   "ignoreExportsUsedInFile": true,
