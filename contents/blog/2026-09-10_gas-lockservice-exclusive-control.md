@@ -1,9 +1,9 @@
 ---
-title: GAS の LockService が同時に実行させないのはコードの範囲で、スプレッドシートの行ではない
+title: GAS のロックは行単位ではない
 slug: gas-lockservice-exclusive-control
 date: 2026-09-10
-modified_time: 2026-09-10
-description: 社内の書籍を貸し借りするウェブアプリを Google Apps Script とスプレッドシートで作り、1 冊を 2 人が同時に借りられないよう LockService で排他制御を入れました。ロックを取得していても、その外で読んだ値を判定に使うと更新が 2 回実行されます。同じ本の貸出を 2 回実行させて確かめた結果と、判定に使う値を読む位置の決め方を書きます。
+modified_time: 2026-09-16
+description: GAS の排他制御を確かめたくて、書籍の貸出を記録するウェブアプリを Google Apps Script とスプレッドシートで作りました。LockService でロックを取得していても、その外で読んだ値を判定に使うと更新が 2 回実行されます。同じ本の貸出を 2 回実行させて確かめた結果と、判定に使う値を読む位置の決め方を書きます。
 icon: 🎫
 icon_url: /icons/ticket_flat.svg
 tags:
@@ -11,24 +11,47 @@ tags:
   - TypeScript
 ---
 
-社内に置いてある本は、誰が借りていったのか分からなくなることがありました。貸し借りを記録して一覧できる仕組みが欲しくなり、Google Apps Script とスプレッドシートでウェブアプリを作りました。
+GAS で排他制御がどう実装されるのかを確かめたくて、書籍の貸出を記録するウェブアプリを Google Apps Script とスプレッドシートで作りました。
 
-データの置き場所はスプレッドシートにしましたが、利用者には直接見せたくありません。閲覧できると誰が何を借りているかが全部見えます。編集できると貸出の記録を書き換えられます。そこでスプレッドシートは私だけが開ける状態にして、利用者ができる操作はウェブアプリの画面だけに限りました。
+データの置き場所はスプレッドシートにしましたが、利用者には直接見せたくありません。閲覧できると誰が何を借りているかが全部見えてしまいます。
+編集できると貸出の記録を書き換えられます。そこでスプレッドシートは私だけが開ける状態にして、利用者ができる操作はウェブアプリの画面だけに限りました。
 
-1 冊の本を同時に 2 人が借りられては困るので、排他制御が必要になります。GAS でこれを行う仕組みは `LockService` で、貸出の処理をロックの取得と解放で囲めば済むと考えていました。
+1 冊の本を同時に 2 人が借りられては困るので、排他制御が必要になります。GAS でこれを行う仕組みが `LockService` です。[リファレンス](https://developers.google.com/apps-script/reference/lock/lock-service?hl=ja)の説明は次の 2 文です。
 
-ところが、ロックを取得していても同じ本の貸出が 2 回実行される書き方があります。`LockService` が同時に実行させないのは同じコードの範囲であって、スプレッドシートの行ではないためです。判定に使う値をロックの外で読むと、その値はロックを取得する前に他の実行から書き換えられている可能性があります。
+> コードのセクションへの同時アクセスを防ぎます。複数のユーザーまたはプロセスが共有リソースを変更している場合に、競合を防ぐことができます。
+
+ロックを取得してから解放するまでの間、同じロックを使う他の実行は待たされます。貸出の処理をロックの取得と解放ではさめば済むと考えていました。
+
+ところが、ロックを取得していても同じ本の貸出が 2 回実行される書き方があります。
+理由は、`LockService` が同時に実行させないのは同じコードの範囲であって、スプレッドシートの行ではないためです。判定に使う値をロックの外で読むと、その値はロックを取得する前に他の実行から書き換えられている可能性があります。
+
+```mermaid
+sequenceDiagram
+    participant A as 実行 A（ロックの外で読む）
+    participant S as スプレッドシート
+    participant B as 実行 B
+    A->>S: 本の状態を読む
+    S-->>A: 在架
+    B->>B: ロックを取得
+    B->>S: 貸出を 1 行追加し、状態を貸出中に更新
+    B->>B: ロックを解放
+    A->>A: ロックを取得（成功する）
+    A->>A: 手元の「在架」で判定し、通過する
+    A->>S: 貸出を 1 行追加し、状態を貸出中に更新
+    Note over S: 同じ本の未返却の行が 2 行
+```
+
+実行 A がロックを取得できたのは、実行 B がすでに解放しているからです。ロックは正しく適用されています。それでも判定を通ったのは、判定に使う状態が図の 2 行目で読んだ「在架」のままだからです。
 
 この記事に書くのは、その 2 回の貸出を実際に発生させて確かめた結果と、判定に使う値を読む位置の決め方です。
 
-> [!NOTE]
-> Apps Script の V8 ランタイムでウェブアプリを作り、スプレッドシートを保存先にしている場合を対象にしています。情報は 2026 年 9 月 10 日時点のものです。
-
 ## 書籍貸出アプリとスプレッドシートの構造
 
-排他制御を確かめるために作った書籍貸出アプリの画面は、3 つの部分でできています。自分が借りている本の一覧、蔵書の一覧と絞り込み、管理者だけに表示される登録フォームです。データの保存先はスプレッドシート 1 つで、`books` / `loans` / `config` の 3 シートに分けました。
+排他制御を確かめるために作った書籍貸出アプリは、3 つの画面でできています。自分が借りている本の一覧、蔵書の一覧と絞り込み、管理者だけに表示される登録フォームです。データの保存先はスプレッドシート 1 つで、`books` / `loans` / `config` の 3 シートに分けました。
 
 <!-- TODO(media): スクリーンショットを入れる。/exec を開いた直後のウェブアプリ全体を写す。読者が確認するのは、蔵書の表に「在架」と「貸出中」が並び、管理者のアカウントでは登録フォームが表示されること。代替テキスト: 書籍貸出アプリの画面。自分が借りている本、蔵書の一覧、蔵書の登録フォームが縦に並んでいる -->
+
+![image](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/0e2fcf907b8b75d725ec3ca4d21b5cb3.png)
 
 このスクリプトは、どのスプレッドシートにも紐づいていません。GAS のスクリプトには、スプレッドシートやドキュメントに紐づけて作る形（コンテナバインド）と、単独で作る形（スタンドアロン）の 2 つがあります。ウェブアプリとして公開するので、後者にしました。
 
@@ -62,13 +85,19 @@ ID を指定して開くには、`appsscript.json` の `oauthScopes` に権限�
 
 貸出の処理では、スプレッドシートへの書き込みが 2 か所あります。1 つは `loans` への 1 行の追加、もう 1 つは `books` の該当行の `status` を `lent` にする更新です。この 2 つの間に別の実行が同じ処理を始めると、1 冊の本に貸出の記録が 2 行できます。
 
-単独で作ったスクリプトなので、使えるのはスクリプトロックです。[リファレンス](https://developers.google.com/apps-script/reference/lock/lock-service)には、`getDocumentLock()` が `null` を返す条件として `if called from a standalone script or webapp` と書かれています。
+`LockService` が返すロックは 3 種類あります。スクリプト全体を単位にする `getScriptLock()`、利用者ごとの `getUserLock()`、スクリプトを紐づけたドキュメントごとの `getDocumentLock()` です。
 
-`getScriptLock()` の説明は次の一文です。ここに、このロックが何を単位にしているのかが書かれています。
+このスクリプトは単独で作ったので、使えるのはスクリプトロックです。[リファレンス](https://developers.google.com/apps-script/reference/lock/lock-service?hl=ja)の `getDocumentLock()` には、次の条件が書かれています。
 
-> prevents any user from concurrently running a section of code
+> このメソッドが、包含ドキュメントのコンテキスト外（スタンドアロン スクリプトやウェブアプリなど）から呼び出された場合は、`null` が返されます。
 
-同時に実行させない対象は `a section of code` です。利用者が誰であっても、この範囲を同時に走らせるのは 1 つの実行だけになります。行やセルではなく、コードの範囲が単位です。
+`getScriptLock()` の説明は次の 2 文です。ここに、このロックが何を単位にしているのかが書かれています。
+
+> ユーザーがコードのセクションを同時に実行できないようにするロックを取得します。スクリプト ロックで保護されたコード セクションは、ユーザーの ID に関係なく同時に実行できません。
+
+同時に実行させない対象は「コードのセクション」です。利用者が誰であっても、この範囲を同時に実行できるのは 1 つだけになります。行やセルではなく、コードの範囲が単位です。
+
+`getScriptLock()` を呼んだ時点では、ロックはまだ取得されていません。リファレンスにも、`tryLock(timeoutInMillis)` または `waitLock(timeoutInMillis)` が呼び出されるまでロックは取得されないと書かれています。[`Lock` クラスのリファレンス](https://developers.google.com/apps-script/reference/lock/lock?hl=ja)によると、`tryLock()` は指定したミリ秒でタイムアウトして取得の可否を `Boolean` で返し、`waitLock()` は取得できなかったときに例外を投げます。取得したロックは `releaseLock()` で解放します。今回は、取得できなかったときの表示を自分で決めたかったので `tryLock()` にしました。
 
 ロックの取得と解放は関数にまとめました。
 
@@ -145,25 +174,7 @@ export function lendBookReadingOutsideLock(
 }
 ```
 
-この形で貸出が 2 回実行されるのは、状態を読んでからロックを取得するまでの間に、別の実行が同じ本の貸出を終えたときだけです。
-
-```mermaid
-sequenceDiagram
-    participant A as 実行 A（ロックの外で読む）
-    participant S as スプレッドシート
-    participant B as 実行 B
-    A->>S: findBookRow で status を読む
-    S-->>A: status = available
-    B->>B: ロックを取得
-    B->>S: loans に 1 行追加、status を lent に更新
-    B->>B: ロックを解放
-    A->>A: ロックを取得（成功する）
-    A->>A: 手元の status = available で判定、通過する
-    A->>S: loans に 1 行追加、status を lent に更新
-    Note over S: 同じ本の未返却の行が 2 行
-```
-
-実行 A がロックを取得できたのは、実行 B がすでに解放しているからです。ロックは正しく働いています。それでも判定を通ったのは、判定に使う `status` が図の 2 行目で読んだ `available` のままだからです。
+この形で貸出が 2 回実行されるのは、冒頭の図の順序になったときだけです。`findBookRow` が読んだ `status` は `available` のまま `commitLoan` へ渡り、その間に別の実行が同じ本の貸出を終えていても、判定はその値で行われます。
 
 この順序をブラウザの操作で作ることはできません。そこで `beforeLock` に `lendBook` を渡し、1 回の実行の中で順序を固定しました。
 
@@ -185,18 +196,17 @@ lendBookReadingOutsideLock(target.bookId, () => {
 
 確かめるのに使ったのは、clasp 3.4.1、Apps Script の V8 ランタイム、rollup 4.63.1 です。
 
-<!-- TODO(link): clasp 3.x + rollup の記事を公開したら、この位置に /blog/clasp3-rollup-typescript-gas-deploy へのリンクを入れる -->
-
-
 ## 変更が確定する位置
 
 読む位置と同じ話が、書いた後にもあります。`commitLoan` は `setValue` の直後に `SpreadsheetApp.flush()` を呼ぶ形にしました。
 
-[リファレンス](https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet-app#flush)の `flush()` の説明は `Applies all pending Spreadsheet changes` で、同じページのサンプルには次のコメントが付いています。
+[リファレンス](https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet-app?hl=ja#flush)の `flush()` の説明は「保留中のスプレッドシートの変更をすべて適用します。」で、続けてスプレッドシートの操作が性能のためにまとめられる場合があると書かれています。同じページのサンプルに付いているコメント（日本語のページでも英語のままです）には、`flush()` を呼ばない場合の挙動が書かれています。
 
-> the updates may be applied live or may all be applied at once when the script completes
+> If flush() is not called, the updates may be applied live or may all be applied at once when the script completes.
 
 変更がスクリプトの終了時にまとめて適用される場合、確定するのはロックを解放した後です。次にロックを取得した実行は、確定前の値を読むことになります。ロックの外で読むと古い値が入り、ロックの外で確定すると古い値が残ります。どちらも、ロックの範囲がデータを扱う範囲より狭いことが原因です。
+
+[`releaseLock()` の説明](https://developers.google.com/apps-script/reference/lock/lock?hl=ja#releaselock)にも、スプレッドシートを使う場合はロックを解放する前に `SpreadsheetApp.flush()` を呼び、保留中の変更をコミットするよう書かれています。
 
 `flush()` を外した状態は確かめていないため、この呼び出しはリファレンスの記述に沿って入れたものです。
 
@@ -230,32 +240,19 @@ export function holdScriptLock(): string {
 Error: 混み合っています。しばらくしてからもう一度お試しください
 ```
 
+このときの画面で見るのは、エラーの表示と蔵書の状態の 2 つです。
+
+<!-- TODO(media): スクリーンショットを入れる。holdScriptLock の実行中に「借りる」を押した直後のウェブアプリを写す。読者が確認するのは、赤字のエラーメッセージが表示されていることと、蔵書の状態が「在架」のままであること。代替テキスト: 画面上部に「混み合っています。しばらくしてからもう一度お試しください」と赤字で表示され、蔵書の表の状態欄は「在架」のままになっている -->
+
 `LockService.getScriptLock()` は実行をまたいで共有されます。エディタからの実行がロックを保持している間、ウェブアプリからの実行は同じロックの解放を待ちました。`tryLock(10_000)` は 10 秒待っても取得できず、`withScriptLock` で例外が発生しています。蔵書の状態は「在架」のまま、「自分が借りている本」も空でした。`appendRow` と `setValue` はどちらもロックの中にしかないため、書き込みは 1 回も実行されていません。
-
-サーバ側のエラーメッセージは「混み合っています。しばらくしてからもう一度お試しください」だけで、`Error: ` は含めていません。この前置きが表示されるのは、`google.script.run` の `withFailureHandler` に渡るオブジェクトの `message` に、サーバの例外の文字列表現がそのまま入るためです。利用者に見せる文字列としては不要なので、クライアント側で取り除きました。
-
-```js src/index.html
-google.script.run
-  .withSuccessHandler(resolve)
-  .withFailureHandler((error) =>
-    reject(new Error(error.message.replace(/^Error:\s*/, ''))),
-  )
-  [name](...args);
-```
-
-この修正を入れた後、同じ手順でもう一度「借りる」を押しました。
-
-<!-- TODO(media): スクリーンショットを入れる。前置きを取り除いた版で、holdScriptLock の実行中に「借りる」を押した直後のウェブアプリを写す。読者が確認するのは、赤字のエラーメッセージに `Error: ` が付いていないことと、蔵書の状態が「在架」のままであること。代替テキスト: 画面上部に「混み合っています。しばらくしてからもう一度お試しください」と赤字で表示され、蔵書の表の状態欄は「在架」のままになっている -->
-
-エラーメッセージから `Error: ` が消え、蔵書の状態は「在架」のままです。
 
 ここまでの 3 つの試し方は、どれも 2 つの実行を同じ瞬間に始めたものではありません。`probeDoubleLend` は 1 回の実行の中で `lendBook` を 2 回呼んだもの、`probeStaleRead` は `beforeLock` で順序を固定したもの、`holdScriptLock` は先にロックを取得しておいて待たせたものです。同じ瞬間に 2 つの実行を始める手段は、この環境では用意できませんでした。
 
-貸出が 2 回実行されるのは、2 つの実行の順序が図の形になったときだけです。ブラウザで 2 つのタブを同時に押しても、状態を読んでからロックを取得するまでの間に別の実行が貸出を終える順序になるとは限りません。この不具合は狙って再現できないので、動作確認で見つかることを前提にはできません。判定に使う値を読む位置は、試験ではなくコードの構造で固定します。
+貸出が 2 回実行されるのは、2 つの実行の順序が冒頭の図の形になったときだけです。ブラウザで 2 つのタブを同時に押しても、状態を読んでからロックを取得するまでの間に別の実行が貸出を終える順序になるとは限りません。この不具合は狙って再現できないので、動作確認で見つかることを前提にはできません。判定に使う値を読む位置は、試験ではなくコードの構造で固定します。
 
 ## まとめ
 
-- `LockService.getScriptLock()` が同時に実行させないのは、同じコードの範囲である。スプレッドシートの行ではない。リファレンスの説明は `prevents any user from concurrently running a section of code`
+- `LockService.getScriptLock()` が同時に実行させないのは、同じコードの範囲である。スプレッドシートの行ではない。リファレンスの説明は「スクリプト ロックで保護されたコード セクションは、ユーザーの ID に関係なく同時に実行できません」
 - ロックの外で読んだ `status` をロックの中で判定に使うと、同じ本の貸出が 2 回実行される。判定に使う値は、ロックを取得した後に読み直す
 - シートの変更はスクリプトの終了時にまとめて適用される場合があると、`SpreadsheetApp.flush()` のリファレンスに書かれている。ロックを解放する前に確定させるため、更新の直後に `flush()` を呼ぶ
 - スクリプトロックは実行をまたいで共有される。待機時間を超えた側は例外になり、書き込みを実行しない
@@ -263,8 +260,14 @@ google.script.run
 
 ## 参考
 
-- [LockService | Apps Script](https://developers.google.com/apps-script/reference/lock/lock-service)
-- [Class SpreadsheetApp | Apps Script](https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet-app)
-- [Web Apps | Apps Script](https://developers.google.com/apps-script/guides/web)
-- [V8 Runtime Overview | Apps Script](https://developers.google.com/apps-script/guides/v8-runtime)
-- [Google Apps Script、意外と簡単に始められること知ってましたか？](https://suntory-n-water.com/blog/did-you-know-you-can-easily)
+https://developers.google.com/apps-script/reference/lock/lock-service
+
+https://developers.google.com/apps-script/reference/lock/lock
+
+https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet-app
+
+https://developers.google.com/apps-script/guides/web
+
+https://developers.google.com/apps-script/guides/v8-runtime
+
+https://suntory-n-water.com/blog/did-you-know-you-can-easily
