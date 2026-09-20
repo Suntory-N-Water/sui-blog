@@ -16,6 +16,8 @@
       "**/*.html",
       "!node_modules",
       "!!**/dist",
+      // 記事用のサンプルコードと取得済み HTML 置き場。リポジトリには入れない
+      "!examples",
       "!worker-configuration.d.ts",
       "!**/.obsidian",
       "!**/.astro"
@@ -34,7 +36,8 @@
       "**/*.jsonc",
       "**/*.html",
       "!node_modules",
-      "!!**/dist"
+      "!!**/dist",
+      "!examples"
     ]
   },
   "linter": {
