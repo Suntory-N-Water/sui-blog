@@ -17,7 +17,8 @@ const lightTheme: RenderOptions = {
   line: '#dbdbdb',
   font: 'noto-sans, sans-serif',
   transparent: true,
-  padding: 40,
+  // 外側の .mermaid コンテナに余白があるため、SVG 内部の余白は最小限にする
+  padding: 8,
 };
 
 /**

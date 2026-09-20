@@ -58,6 +58,7 @@ export const TAG_SLUG_MAP: Record<string, string> = {
   HonoX: 'honox',
   HTML: 'html',
   InversifyJS: 'inversify-js',
+  Jev: 'jev',
   Java: 'java',
   JavaScript: 'javascript',
   Kubernetes: 'kubernetes',

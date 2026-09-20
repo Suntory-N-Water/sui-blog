@@ -204,8 +204,9 @@
   @apply my-6 overflow-x-auto rounded-lg border border-border/50 bg-muted/40 p-4;
 }
 
+/* w-full だと縦長の図が本文幅まで引き伸ばされて過大になるため、SVG 本来の寸法を上限にする */
 .markdown-content .mermaid svg {
-  @apply h-auto w-full;
+  @apply mx-auto block h-auto w-auto max-w-full;
 }
 
 /* beautiful-mermaid ダークモード対応 */
