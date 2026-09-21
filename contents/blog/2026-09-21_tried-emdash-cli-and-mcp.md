@@ -4,8 +4,8 @@ slug: tried-emdash-cli-and-mcp
 date: 2026-09-21
 modified_time: 2026-09-21
 description: EmDash には CLI と MCP サーバーの両方が最初から入っています。blog-cloudflare テンプレートで作ったサイトを Cloudflare Workers と D1 と R2 で動かし、同じ「記事を作って」という指示を CLI と MCP に渡して、公開状態の違い、認証で必要になるもの、不正な入力が止まる場所の違いを確かめました。
-icon: ''
-icon_url: ''
+icon: 🧦
+icon_url: /icons/socks_flat.svg
 tags:
   - Cloudflare
   - CMS
