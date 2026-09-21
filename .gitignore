@@ -84,4 +84,5 @@ temp/**
 !temp/.gitkeep
 
 # blog article verification projects (see blog-writing-skills / write-blog-article)
-examples/
+examples/**
+!examples/.gitkeep
