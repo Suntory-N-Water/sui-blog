@@ -4,8 +4,11 @@ import { readFileSync } from 'node:fs';
 import { basename, join, relative } from 'node:path';
 
 import matter from 'gray-matter';
+import rehypeStringify from 'rehype-stringify';
 import { remark } from 'remark';
 import remarkGfm from 'remark-gfm';
+import { remarkAlert } from 'remark-github-blockquote-alert';
+import remarkRehype from 'remark-rehype';
 
 import { getTagSlug } from '../src/config/tag-slugs.ts';
 
@@ -79,13 +82,32 @@ type ConverterContext = {
   images: Array<ImageInventoryItem & { source: string; kind: string }>;
   linkCounter: number;
   blockCounter: number;
+  footnoteNumbers: Map<string, number>;
+  footnoteDefinitions: Map<string, MarkdownNode>;
 };
 
 type InlinePiece =
   | { kind: 'span'; span: PortableTextSpan }
   | { kind: 'image'; image: PortableTextBlock };
 
-const processor = remark().use(remarkGfm);
+const processor = remark().use(remarkGfm).use(remarkAlert);
+const htmlProcessor = remark()
+  .use(remarkGfm)
+  .use(remarkRehype)
+  .use(rehypeStringify);
+
+const ALERT_LABELS: Record<string, string> = {
+  note: 'Note',
+  tip: 'Tip',
+  important: 'Important',
+  warning: 'Warning',
+  caution: 'Caution',
+};
+
+const ALERT_ALIASES: Record<string, string> = {
+  INFO: 'NOTE',
+  TIPS: 'TIP',
+};
 
 function asRecord(value: unknown): UnknownRecord {
   return typeof value === 'object' && value !== null
@@ -218,6 +240,64 @@ function markDefKey(context: ConverterContext): string {
   return `link-${context.linkCounter}`;
 }
 
+function footnoteAnchor(identifier: string): string {
+  return `fn-${identifier.replace(/[^\w-]+/gu, '-')}`;
+}
+
+function footnoteNumber(context: ConverterContext, identifier: string): number {
+  const existing = context.footnoteNumbers.get(identifier);
+  if (existing) return existing;
+  const next = context.footnoteNumbers.size + 1;
+  context.footnoteNumbers.set(identifier, next);
+  return next;
+}
+
+function rewriteLegacyUrl<T extends string | undefined>(value: T): T {
+  if (value === undefined) return value;
+  return value.replace(
+    /https:\/\/suntory-n-water\.com\/blog\/([\w-]+)/gu,
+    '/posts/$1',
+  ) as T;
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/gu, '&amp;')
+    .replace(/</gu, '&lt;')
+    .replace(/>/gu, '&gt;')
+    .replace(/"/gu, '&quot;');
+}
+
+function footnotesBlock(context: ConverterContext): PortableTextBlock | null {
+  for (const [identifier] of context.footnoteDefinitions) {
+    if (context.footnoteNumbers.has(identifier)) continue;
+    context.warnings.push(`footnote ${identifier}: defined without a reference`);
+    footnoteNumber(context, identifier);
+  }
+  const entries = [...context.footnoteNumbers.entries()].sort(
+    ([, a], [, b]) => a - b,
+  );
+  const items = entries.map(([identifier]) => {
+    const definition = context.footnoteDefinitions.get(identifier);
+    if (!definition) {
+      context.warnings.push(
+        `footnote ${identifier}: referenced without a definition`,
+      );
+      return `<li id="${escapeHtml(footnoteAnchor(identifier))}"></li>`;
+    }
+    const root = { type: 'root', children: definition.children ?? [] };
+    const html = htmlProcessor.stringify(
+      htmlProcessor.runSync(root as never) as never,
+    );
+    return `<li id="${escapeHtml(footnoteAnchor(identifier))}">${html}</li>`;
+  });
+  if (!items.length) return null;
+  return htmlBlock(
+    context,
+    `<section class="footnotes"><h2>脚注</h2><ol>${items.join('')}</ol></section>`,
+  );
+}
+
 function inlinePieces(
   nodes: MarkdownNode[],
   context: ConverterContext,
@@ -229,7 +309,7 @@ function inlinePieces(
   for (const node of nodes) {
     const type = node.type;
     if (type === 'text') {
-      const text = asString(node.value) ?? '';
+      const text = rewriteLegacyUrl(asString(node.value)) ?? '';
       if (text)
         pieces.push({
           kind: 'span',
@@ -283,7 +363,7 @@ function inlinePieces(
       continue;
     }
     if (type === 'link') {
-      const url = asString(node.url);
+      const url = rewriteLegacyUrl(asString(node.url));
       if (!url) {
         context.warnings.push(
           'link: missing URL; link text was preserved without a mark',
@@ -332,13 +412,19 @@ function inlinePieces(
     if (type === 'footnoteReference') {
       const identifier =
         asString(node.identifier) ?? asString(node.label) ?? '?';
+      const linkKey = markDefKey(context);
+      markDefs.push({
+        _type: 'link',
+        _key: linkKey,
+        href: `#${footnoteAnchor(identifier)}`,
+      });
       pieces.push({
         kind: 'span',
         span: {
           _type: 'span',
           _key: key(context, 'span'),
-          text: `[^${identifier}]`,
-          ...(marks.length ? { marks } : {}),
+          text: String(footnoteNumber(context, identifier)),
+          marks: [...marks, 'superscript', linkKey],
         },
       });
       continue;
@@ -548,6 +634,49 @@ function listBlocks(
   return result;
 }
 
+function normalizeAlertAliases(markdown: string): string {
+  return markdown.replace(
+    /^(\s*>\s*)\[!([A-Za-z]+)\]/gmu,
+    (match, prefix: string, kind: string) => {
+      const canonical = ALERT_ALIASES[kind.toUpperCase()];
+      if (!canonical) return match;
+      return `${prefix}[!${canonical}]`.padEnd(match.length, ' ');
+    },
+  );
+}
+
+function alertLabel(node: MarkdownNode): string | null {
+  const className = asRecord(asRecord(node.data).hProperties).className;
+  if (!Array.isArray(className)) return null;
+  for (const name of className) {
+    const kind =
+      typeof name === 'string' && name.startsWith('markdown-alert-')
+        ? name.slice('markdown-alert-'.length)
+        : null;
+    if (kind && ALERT_LABELS[kind]) return ALERT_LABELS[kind];
+  }
+  return null;
+}
+
+function alertLabelBlock(
+  context: ConverterContext,
+  label: string,
+): PortableTextBlock {
+  return {
+    _type: 'block',
+    _key: key(context, 'block'),
+    style: 'blockquote',
+    children: [
+      {
+        _type: 'span',
+        _key: key(context, 'span'),
+        text: label,
+        marks: ['strong'],
+      },
+    ],
+  };
+}
+
 function rawHtmlImage(
   node: MarkdownNode,
   context: ConverterContext,
@@ -595,7 +724,13 @@ function flowBlocks(
         );
         break;
       case 'blockquote': {
-        const nested = flowBlocks(asChildren(node), context, article, source);
+        const children = asChildren(node);
+        const label = alertLabel(node);
+        if (label) {
+          result.push(alertLabelBlock(context, label));
+          children.shift();
+        }
+        const nested = flowBlocks(children, context, article, source);
         for (const block of nested) {
           if (block._type === 'block' && typeof block.style === 'string')
             block.style = 'blockquote';
@@ -629,18 +764,12 @@ function flowBlocks(
           `${node.type}: reference definition was not rendered by Portable Text`,
         );
         break;
-      case 'footnoteDefinition':
-        context.warnings.push(
-          'footnoteDefinition: preserved as a Markdown code block',
-        );
-        result.push(
-          codeBlock(
-            { type: 'code', value: nodeRaw(node, source), lang: 'markdown' },
-            context,
-            source,
-          ),
-        );
+      case 'footnoteDefinition': {
+        const identifier =
+          asString(node.identifier) ?? asString(node.label) ?? '?';
+        context.footnoteDefinitions.set(identifier, node);
         break;
+      }
       default: {
         const raw = nodeRaw(node, source);
         context.warnings.push(
@@ -714,13 +843,19 @@ function parseArticle(fileName: string): {
     images: [],
     linkCounter: 0,
     blockCounter: 0,
+    footnoteNumbers: new Map(),
+    footnoteDefinitions: new Map(),
   };
+  const body = normalizeAlertAliases(parsed.content);
+  const tree = processor.runSync(processor.parse(body));
   const blocks = flowBlocks(
-    asChildren(processor.parse(parsed.content) as unknown as MarkdownNode),
+    asChildren(tree as unknown as MarkdownNode),
     context,
     fileName,
-    parsed.content,
+    body,
   );
+  const footnotes = footnotesBlock(context);
+  if (footnotes) blocks.push(footnotes);
 
   let featuredImage: UnknownRecord | undefined;
   if (typeof data.icon_url === 'string') {
