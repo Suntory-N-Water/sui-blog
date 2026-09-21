@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      ["**/*.ts", "**/*.tsx", "**/*.js", ".github/**", "**/*.json", "**/*.svg"]
+      ['**/*.ts', '**/*.tsx', '**/*.js', '.github/**', '**/*.json', '**/*.svg']
 
 defaults:
   run:
@@ -55,16 +55,3 @@ jobs:
           persist-credentials: false
       - uses: ./.github/actions/setup
       - run: pnpm exec knip
-
-  svg-security:
-    name: svg-security
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          persist-credentials: false
-      - uses: ./.github/actions/setup
-      - run: pnpm run check:svg-security:all

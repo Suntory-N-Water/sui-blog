@@ -5,12 +5,12 @@ permissions: {}
 on:
   pull_request:
     paths:
-      - ".github/**"
+      - '.github/**'
   push:
     branches:
       - main
     paths:
-      - ".github/**"
+      - '.github/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -56,5 +56,4 @@ jobs:
       - uses: koki-develop/github-actions-lint/zizmor@5ecd42b59803f14bfaa7ed0bfb8de8c1dc1b4c6d # v1.6.0
         with:
           github-token: ${{ github.token }}
-          # TODO: 厳密すぎるのもどうなのか
           persona: regular
