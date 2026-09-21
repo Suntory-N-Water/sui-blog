@@ -1,18 +1,12 @@
 {
   "extends": "astro/tsconfigs/base",
-  "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist", "contents", "temp", "examples"],
   "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"]
-    },
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
-    "verbatimModuleSyntax": true,
-    "types": [
-      "@types/node",
-      "./worker-configuration.d.ts",
-      "typed-query-selector"
-    ]
-  }
+    "types": ["node"]
+  },
+  "include": [
+    "src",
+    ".astro/types.d.ts",
+    "emdash-env.d.ts",
+    "worker-configuration.d.ts"
+  ]
 }

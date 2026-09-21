@@ -1,23 +1,33 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
+import Base from "../layouts/Base.astro";
 ---
 
-<BaseLayout
-  title='404 - ページが見つかりませんでした'
-  description='お探しのページは存在しないか、移動した可能性があります。'
->
-  <div class='flex flex-col items-center justify-center py-20'>
-    <h1 class='mb-4 text-4xl font-bold'>404 - ページが見つかりませんでした</h1>
-    <p class='mb-8 text-muted-foreground'>
-      お探しのページは存在しないか、移動した可能性があります。
-    </p>
-    <div class='flex gap-4'>
-      <a
-        href='/'
-        class='rounded border border-primary px-6 py-2 text-primary transition-colors hover:bg-primary/10'
-      >
-        トップページへ
-      </a>
-    </div>
-  </div>
-</BaseLayout>
+<Base title="Page not found">
+	<div class="not-found">
+		<h1>404</h1>
+		<p>The page you're looking for doesn't exist.</p>
+		<a href="/">Go back home</a>
+	</div>
+</Base>
+
+<style>
+	.not-found {
+		text-align: center;
+		padding: var(--spacing-24) var(--spacing-6);
+	}
+
+	.not-found h1 {
+		font-size: var(--font-size-5xl);
+		margin-bottom: var(--spacing-2);
+		color: var(--color-border);
+	}
+
+	.not-found p {
+		color: var(--color-muted);
+		margin-bottom: var(--spacing-6);
+	}
+
+	.not-found a {
+		color: var(--color-text);
+	}
+</style>
