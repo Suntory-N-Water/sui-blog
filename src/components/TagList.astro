@@ -8,10 +8,12 @@ const { tags, class: className } = Astro.props;
 ---
 
 {tags.length > 0 && (
-  <ul class:list={["tag-list", className]}>
+  <ul class:list={['tag-list', className]}>
     {tags.map((tag) => (
       <li>
-        <a href={`/tag/${tag.slug}`} class="tag">{tag.label}</a>
+        <a href={`/tag/${tag.slug}`} class='tag'>
+          {tag.label}
+        </a>
       </li>
     ))}
   </ul>
@@ -35,7 +37,9 @@ const { tags, class: className } = Astro.props;
     background: var(--color-surface);
     border-radius: var(--radius);
     text-decoration: none;
-    transition: color var(--transition-fast), background var(--transition-fast);
+    transition:
+      color var(--transition-fast),
+      background var(--transition-fast);
   }
 
   .tag:hover {

@@ -1,16 +1,25 @@
 ---
-import { getTaxonomyTermsWithCacheHint } from "emdash";
-import Base from "../../layouts/Base.astro";
+import { getTaxonomyTermsWithCacheHint } from 'emdash';
+import Base from '../../layouts/Base.astro';
 
-const { data: tags, cacheHint } = await getTaxonomyTermsWithCacheHint("tag", { includeCounts: true });
+const { data: tags, cacheHint } = await getTaxonomyTermsWithCacheHint('tag', {
+  includeCounts: true,
+});
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 ---
 
-<Base title="タグ一覧" description="記事のタグ一覧">
-	<section class="page-shell">
-		<header class="page-header"><h1>タグ一覧</h1></header>
-		<div class="tag-grid">
-			{tags.map((tag) => <a href={`/tag/${tag.slug}`}>{tag.label}{typeof tag.count === "number" ? ` (${tag.count})` : ""}</a>)}
-		</div>
-	</section>
+<Base title='タグ一覧' description='記事のタグ一覧'>
+  <section class='page-shell'>
+    <header class='page-header'>
+      <h1>タグ一覧</h1>
+    </header>
+    <div class='tag-grid'>
+      {tags.map((tag) => (
+        <a href={`/tag/${tag.slug}`}>
+          {tag.label}
+          {typeof tag.count === 'number' ? ` (${tag.count})` : ''}
+        </a>
+      ))}
+    </div>
+  </section>
 </Base>
