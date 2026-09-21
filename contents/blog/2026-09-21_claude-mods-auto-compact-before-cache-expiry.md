@@ -1,5 +1,5 @@
 ---
-title: Claude Mods で、離席中にプロンプトキャッシュが切れる前に compact する
+title: Claude Mods でプロンプトキャッシュが切れる前に compact する
 slug: claude-mods-auto-compact-before-cache-expiry
 date: 2026-09-21
 modified_time: 2026-09-21
@@ -358,8 +358,6 @@ compact の完了後には `SessionStart` Hook が `source` を `compact` とし
 ## 参考
 
 https://github.com/anthropics/claude-code/issues/91870
-
-https://github.com/anthropics/claude-code/blob/main/mods/README.md
 
 https://code.claude.com/docs/en/prompt-caching
 
