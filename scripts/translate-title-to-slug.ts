@@ -1,10 +1,10 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
 /**
  * タイトルを英語翻訳してスラグ化するスクリプト
  *
  * 使用例:
- *   bun run scripts/translate-title-to-slug.ts "Claude Code でスキルが実行されると isMeta プロパティが付与される"
+ *   pnpm exec node --experimental-strip-types scripts/translate-title-to-slug.ts "Claude Code でスキルが実行されると isMeta プロパティが付与される"
  *   => claude-code-skill-execution-ismeta-property
  */
 
@@ -59,10 +59,10 @@ async function main() {
 
   if (args.length === 0) {
     console.error(
-      '使用法: bun run scripts/translate-title-to-slug.ts <タイトル>',
+      '使用法: pnpm exec node --experimental-strip-types scripts/translate-title-to-slug.ts <タイトル>',
     );
     console.error(
-      '例: bun run scripts/translate-title-to-slug.ts "記事タイトル"',
+      '例: pnpm exec node --experimental-strip-types scripts/translate-title-to-slug.ts "記事タイトル"',
     );
     process.exit(1);
   }

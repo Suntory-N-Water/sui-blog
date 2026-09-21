@@ -164,7 +164,9 @@ function printReport(
   if (dryRun) {
     console.log('実際に修正するには、以下のコマンドを実行してください：');
     console.log();
-    console.log('  bun run scripts/fix-url-blank-lines.ts --apply');
+    console.log(
+      '  pnpm exec node --experimental-strip-types scripts/fix-url-blank-lines.ts --apply',
+    );
     console.log();
   } else {
     console.log('✅ 修正完了！');

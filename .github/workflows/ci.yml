@@ -28,7 +28,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup
-      - run: bun run lint
+      - run: pnpm run lint
 
   type-check:
     name: type-check
@@ -41,7 +41,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup
-      - run: bun run type-check
+      - run: pnpm run type-check
 
   knip:
     name: knip
@@ -54,7 +54,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup
-      - run: bun knip
+      - run: pnpm exec knip
 
   svg-security:
     name: svg-security
@@ -67,4 +67,4 @@ jobs:
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup
-      - run: bun run check:svg-security:all
+      - run: pnpm run check:svg-security:all

@@ -7,8 +7,8 @@
  *
  * ## 実行方法
  * ```bash
- * bun run check:svg-security        # 差分チェック(git diff --cached)
- * bun run check:svg-security:all    # 全件チェック(public/icons配下すべて)
+ * pnpm run check:svg-security        # 差分チェック(git diff --cached)
+ * pnpm run check:svg-security:all    # 全件チェック(public/icons配下すべて)
  * ```
  *
  * ## 検出対象

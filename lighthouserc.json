@@ -2,10 +2,10 @@
   "ci": {
     "collect": {
       "numberOfRuns": 3,
-      "startServerCommand": "bun run start",
+      "startServerCommand": "pnpm run start",
       "url": [
         "http://localhost:4321/",
-        "http://localhost:4321/blog/enforce-rules-with-stop-hooks-and-biome-v2"
+        "http://localhost:4321/posts/i-want-use-linear-programming-determine"
       ],
       "settings": {
         "preset": "desktop",

@@ -39,10 +39,10 @@ jobs:
         run: |
           if [ -n "$PACKAGE_NAME" ]; then
             echo "Updating package: $PACKAGE_NAME"
-            bun update "$PACKAGE_NAME"
+            pnpm update "$PACKAGE_NAME"
           else
             echo "Updating all packages"
-            bun update
+            pnpm update
           fi
 
       - name: Create Pull Request

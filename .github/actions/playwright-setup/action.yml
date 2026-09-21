@@ -20,10 +20,10 @@ runs:
 
     - name: Install Playwright browsers
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: bunx --bun playwright install --with-deps chromium
+      run: pnpm exec playwright install --with-deps chromium
       shell: bash
 
     - name: Install Playwright system dependencies
       if: steps.playwright-cache.outputs.cache-hit == 'true'
-      run: bunx --bun playwright install-deps chromium
+      run: pnpm exec playwright install-deps chromium
       shell: bash
