@@ -169,9 +169,9 @@ Mermaidは実行可能な図へ変換せず、`mermaid`指定のコードブロ�
 
 ### 8.5 ローカル確認
 
-1. `pnpm run dev`でAstroの公開面を確認する。
-2. `pnpm run dev:cf`でWorker、D1、R2を使う実行を確認する。
-3. 記事一覧、記事詳細、タグ、RSS、`llms.txt`、Markdown、OGP画像を確認する。
+1. `pnpm run dev`で公開面を確認する。Cloudflareアダプタを使うため、この起動でD1とR2のバインディングも合わせて使う。
+2. 記事一覧、記事詳細、タグ、RSS、`llms.txt`、Markdown、OGP画像を確認する。
+3. メディアファイルがR2から配信されることを確認する。
 4. 管理画面で記事を編集して公開し、再ビルドなしに公開ページへ反映することを確認する。
 5. 対象外のabout、privacy、contact、diagram、自己評価機能と旧URLが公開されていないことを確認する。
 
@@ -191,7 +191,11 @@ Mermaidは実行可能な図へ変換せず、`mermaid`指定のコードブロ�
 - タイトル、概要、本文、タグ、公開日、slug、画像を移行前後で確認できる。
 - 記事一覧、記事詳細、タグ、RSS、`llms.txt`、Markdown、OGP画像が動作する。
 - 管理画面で公開した記事が再ビルドなしで反映される。
-- `emdash seed --validate`、`emdash doctor`、ビルド、型確認、lint、textlintが成功する。
+- `emdash seed --validate`、ビルド、型確認、lintが成功する。
+- `contents/`のtextlintが成功する。
+- 公開ページの表示、管理画面へのログイン、メディアの保存と取得、`wrangler tail`での定期実行ハンドラの確認ができる。
+
+`emdash doctor`はローカルのSQLiteファイルを対象とする確認コマンドであり、D1構成では接続、マイグレーション、コレクション、ユーザーの確認が対象外になる。Cron Triggerと`scheduled()`の組み合わせの確認だけが有効なため、完了条件には含めない。
 - 公開処理と実行時処理が`contents/blog`を読まない。
 - 対応できない本文と取得できない画像が、警告なしに消えていない。
 - Cloudflareへの公開とリモートデータの確認は、明示的な承認後に完了する。
