@@ -51,7 +51,7 @@ curl -i -X POST http://localhost:4322/_emdash/api/mcp \
 
 CLI の接続先は、指定しなければ `http://localhost:4321` になります。開発サーバーを 4322 で動かしているので、`--url` で接続先を渡しています。以降の CLI の例でも同じ指定が必要です。
 
-CLI は一覧を返し、MCP はエラーコード `NOT_AUTHENTICATED` を返します。401 のレスポンスヘッダーには `WWW-Authenticate: Bearer resource_metadata="…/.well-known/oauth-protected-resource"` が付きます。
+CLI は一覧を返却し、MCP はエラーコード `NOT_AUTHENTICATED` を返却します。401 のレスポンスヘッダーには `WWW-Authenticate: Bearer resource_metadata="…/.well-known/oauth-protected-resource"` が付与されます。
 
 EmDash 側のミドルウェア `src/astro/middleware/auth.ts` を読むと、MCP エンドポイントではセッション認証が参照されず、Bearer トークン以外は 401 になります。ブラウザで管理画面にログイン済みでも、そのセッション Cookie は MCP では使われません。
 
@@ -74,15 +74,15 @@ pnpm create emdash@latest
 
 テンプレートには seed が付いてきます。seed はコレクションの定義とデモ記事をまとめた初期データで、`seed/seed.json` に入っています。この seed が DB へ入るタイミングは、コレクションの定義とデモ記事とで違いました。
 
-`pnpm dev` の起動ログには `Auto-seeded default collections` が出ます。この時点で `emdash schema list` は posts と pages を返し、`source` は `seed` です。ところが `emdash content list posts` は `{"items": []}` のままです。`/_emdash/admin` で初期セットアップを終えてから同じコマンドを実行すると、8 件返ってきました。
+`pnpm dev` の起動ログには `Auto-seeded default collections` が出ます。この時点で `emdash schema list` は posts と pages を返却し、`source` は `seed` です。ところが `emdash content list posts` は `{"items": []}` のままです。`/_emdash/admin` で初期セットアップを終えてから同じコマンドを実行すると、8 件返却されました。
 
 コレクションの定義は開発サーバーの起動時に入り、デモ記事は管理画面の初期セットアップを終えた時点で入ります。2026 年 4 月の記事では「seed は管理画面の初期セットアップ完了をきっかけに反映される」と書きましたが、0.38.0 でこれが当てはまるのはデモ記事だけです。ソースを読むと、起動時の自動 seed は `applySeed(db, seed, { onConflict: "skip" })` を呼んでいて、記事を含めるかどうかを決める `includeContent` の既定値が `false` でした。
 
-本番は `pnpm run deploy` を実行します。本番の管理画面でも同じ初期セットアップを済ませました。以降、本番の URL は `https://<your-site>` と書きます。
+本番は `pnpm run deploy` でデプロイします。デプロイ後は、本番の管理画面でも同じ初期セットアップを実行しましょう。
 
-## CLI で記事を作らせる
+## CLI で記事を作成する
 
-`content create` はコレクションのスラッグと、フィールドの値を JSON で受け取ります。
+`content create` はコレクションの slug と、フィールドの値を JSON で受け取ります。
 
 ```bash
 npx emdash content create posts --json --url http://localhost:4322 --data '{
@@ -102,7 +102,7 @@ npx emdash content create posts --json --url http://localhost:4322 --data '{
 }
 ```
 
-作成を指示しただけで公開まで済んでいます。`liveRevisionId` も設定されました。`version` が 2 になっているのは、作成と公開で書き込みが 2 回発生したためだと考えられます。
+作成を指示しただけで公開まで済んでいます。`liveRevisionId` も設定されました。`version` が 2 になっているのは、作成と公開で書き込みが 2 回発生したためである可能性があります。
 
 管理画面の記事一覧でも、公開済みとして並んでいます。
 
@@ -131,21 +131,21 @@ claude mcp add --transport http emdash-site http://localhost:4322/_emdash/api/mc
 
 注目するのは status の行です。同じ入力を渡しているのに、CLI で作った記事は公開済み、MCP で作った記事は下書きになります。
 
-理由はツールの説明文に書いてありました。`content_create` の説明には `Items are created as 'draft' by default — use content_publish to make them live.` とあり、`status` パラメータの説明は `Initial status (default 'draft'). Requires publish permission.` です。CLI が自動公開、MCP が下書きで、既定値が逆向きに決められています。
+理由はツールの説明文に書いてありました。`content_create` の説明には `Items are created as 'draft' by default — use content_publish to make them live.` とあり、`status` パラメータの説明は `Initial status (default 'draft'). Requires publish permission.` です。CLI は公開状態を指定しなければ公開済みになり、MCP は指定しなければ下書きになります。同じ「記事を作る」操作でも、既定値が反対に決められています。
 
 Markdown から Portable Text への変換は両方で実行されます。違うのは返り値の形だけで、MCP でも `content_get` に `markdown: true` を渡すと Markdown 文字列が返却されます。
 
-## 更新のとき、両者で必要になるもの
+## 更新のとき必要になるもの
 
-更新には、直前に取得したリビジョンの識別子が要ります。渡さずに実行すると、どちらもエラーになりますが、エラーになる場所が違います。
+更新には、直前に取得したリビジョンの識別子が必要です。渡さずに実行すると、どちらもエラーになりますが、エラーになる場所が異なります。
 
-CLI は手元の引数解析でエラーになり、`Missing required argument: --rev` と usage の全文を出します。リクエストは送られません。MCP はリクエストが送られたうえで、JSON-RPC のエラー `-32602 Input validation error: … _rev is required: call content_get for this item and pass back the _rev it returns` が返ります。MCP 側は次にすべき操作まで文面に書いてあります。
+CLI は手元の引数解析でエラーになり、`Missing required argument: --rev` と usage の全文を出します。リクエストは送られません。MCP はリクエストが送られたうえで、JSON-RPC のエラー `-32602 Input validation error: … _rev is required: call content_get for this item and pass back the _rev it returns.` が返却されます。MCP 側は次にすべき操作まで文面に書いてあります。
 
 識別子を渡すと、今度は更新後の状態が分かれます。
 
 | | CLI | MCP |
 |---|---|---|
-| status | published | draft |
+| status | **published** | **draft** |
 | liveRevisionId | 更新される | 変わらない |
 | draftRevisionId | null | 設定される |
 | 返り値 | 更新後の値 | `liveData` に公開中の古い値が入る |
@@ -164,7 +164,7 @@ content:read だけのトークンを発行して、読み取りと書き込み�
 | 書き込み | `ERROR Token lacks required scope: content:write` | `[INSUFFICIENT_SCOPE] Insufficient scope: requires content:write` |
 | `tools/list` | — | **59 件** |
 
-最後の行が意外でした。content:read しかないトークンでも `tools/list` は 59 件返り、admin のトークンで取ったときと件数が変わりません。`tools/list` はスコープで絞られないため、呼べないツールも一覧に並び、実際に呼んだ時点で初めて拒否されます。MCP 側の拒否は `isError: true` と `_meta.code` が `INSUFFICIENT_SCOPE` という形で返ります。
+最後の行が意外でした。content:read しかないトークンでも `tools/list` は 59 件返却され、admin のトークンで取ったときと件数が変わりません。`tools/list` はスコープで絞られないため、呼べないツールも一覧に並び、実際に呼んだ時点で初めて拒否されます。MCP 側の拒否は `isError: true` と `_meta.code` が `INSUFFICIENT_SCOPE` という形で返却されます。
 
 トークンのスコープは 12 種類あります。これとは別に、ユーザーのロールが 5 種類あります。`@emdash-cms/auth` 0.38.0 から権限の定義を抽出すると、こうなっていました。
 
@@ -176,13 +176,13 @@ content:read だけのトークンを発行して、読み取りと書き込み�
 | EDITOR | 33 | あり | あり |
 | ADMIN | 47 | あり | あり |
 
-AUTHOR と CONTRIBUTOR の 2 行を見てください。検証の計画として「Author に公開を指示して拒否されるか試す」と書いていましたが、前提が違っていました。Author は自分の記事を公開できます。公開できないのは Contributor のほうです。
+AUTHOR と CONTRIBUTOR の 2 行に注目します。Author には content:publish_own があり、自分の記事を公開できます。Contributor にはこの権限がなく、自分の記事でも公開できません。
 
-ただし、Author と Contributor のトークンで実際にどう拒否されるかまでは試せませんでした。API トークンは発行した本人の権限を引き継ぐ作りになっていて、管理者の画面から別のロールのトークンを発行できないためです。試すなら、そのロールのユーザーをパスキーで別途登録します。
+この表は権限の定義を読んだ結果で、Author と Contributor のトークンでは試していません。API トークンは発行した本人の権限を引き継ぐ作りになっていて、管理者の画面から別のロールのトークンを発行できないためです。
 
 なお `mcp:tools` というスコープもありますが、これはプラグインが提供する MCP ツール専用です。コアの 59 ツールは content:read や content:write で判定されます。
 
-## 不正な入力を渡して、どこでエラーになるか確認する
+## どこでエラーになるか確認する
 
 不正な入力を 3 通り渡して、どこでエラーになるかを確認しました。
 
@@ -190,21 +190,19 @@ AUTHOR と CONTRIBUTOR の 2 行を見てください。検証の計画として
 |---|---|---|---|
 | 存在しないフィールドを 2 つ | `ERROR author_name: unknown field on collection 'posts'; published_date: unknown field on collection 'posts'` | `[VALIDATION_ERROR] author_name: unknown field on collection 'posts'; published_date: unknown field on collection 'posts'` | 両方とも EmDash のスキーマ検証 |
 | `schedule` の日時に `2026-13-45T99:00:00Z` | `ERROR Invalid scheduled date` | `[VALIDATION_ERROR] Invalid scheduled date` | 両方とも EmDash の日付検証 |
-| `update` の `publishedAt` に `2026-13-45T99:00:00Z` | 該当するオプションが CLI にない | `-32602 Input validation error: Invalid input at publishedAt` | MCP サーバーの引数検証 |
+| `update` の `publishedAt` に `2026-13-45T99:00:00Z` | 該当するオプションが CLI にない | `-32602 Input validation error: Invalid arguments for tool content_update: Invalid input at publishedAt` | MCP サーバーの引数検証 |
 
 1 行目では、CLI と MCP で接頭辞が違うだけで、あとの文言が 1 文字も変わりません。どちらも EmDash の同じ検証でエラーになっているためです。
 
-3 行目だけが、EmDash のハンドラーへ届く手前でエラーになっています。同じ形の不正な日付なのに、2 行目は EmDash まで届きます。理由はツールごとの型の書き方です。`content_schedule` の `scheduledAt` は引数のスキーマの上では単なる `string` ですが、`content_update` の `publishedAt` には ISO 8601 の制約が付いています。
+3 行目だけが、EmDash のハンドラーを呼ぶ前にエラーになっています。同じ形の不正な日付なのに、2 行目は EmDash のハンドラーまで渡されます。理由はツールごとの型の書き方です。`content_schedule` の `scheduledAt` は引数のスキーマの上では単なる `string` ですが、`content_update` の `publishedAt` には ISO 8601 の制約が付いています。
 
 この検証を実行しているのは MCP クライアントではありません。クライアントを通さずに `/_emdash/api/mcp` へ直接 POST しても同じ `-32602` が返却されました。文面は `@modelcontextprotocol/sdk` 1.30.0 の `server/mcp.js` にあり、ツールの処理を呼ぶ直前に引数を検証する作りになっています。
 
 不正な入力がエラーになる場所は 3 つに分かれます。CLI は手元の引数解析、MCP は MCP サーバーの引数検証、両方に共通するのが EmDash のスキーマ検証です。ただし MCP が EmDash へ渡す手前でエラーにするのは、そのツールの型に制約が書かれている場合だけです。
 
-## 59 個のツールと CLI のコマンドを並べる
+## MCP のツールと CLI のコマンドの対応
 
 MCP のコアツールは 59 個です。Administrator のトークンで取得した `tools/list` の件数と、`src/mcp/server.ts` から抽出した件数が一致しました。CLI のトップレベルコマンドは 18 個です。
-
-サブコマンドの単位で並べると、こうなります。
 
 | 区分 | CLI | MCP | MCP にしかないもの |
 |---|---:|---:|---|
@@ -218,7 +216,7 @@ MCP のコアツールは 59 個です。Administrator のトークンで取得�
 | **revision** | **0** | **2** | 全部 |
 | **settings** | **0** | **2** | 全部 |
 
-太字にした 3 行は、CLI 側に対応するコマンドがありません。著者情報、リビジョンの操作、サイト設定の読み書きは、MCP からしか実行できません。
+byline、revision、settings は、CLI 側に対応するコマンドがありません。著者情報、リビジョンの操作、サイト設定の読み書きは、MCP からしか実行できません。
 
 逆に CLI にしかないのは init / types / doctor / seed / migrate / export-seed / secrets / auth / login / logout / whoami / plugin の 12 個です。どれもローカルの DB かプロジェクトの運用に関わるもので、コンテンツの操作ではありません。この分かれ方からは、CLI はプロジェクトを組み立てるため、MCP はコンテンツを編集するために用意されていると考えられます。
 
@@ -247,18 +245,18 @@ curl -s https://<your-site>/.well-known/oauth-authorization-server/_emdash
 EmDash は自身が OAuth 2.0 の認可サーバーになっています。MCP クライアントは個人のトークンを手で貼り付けなくても、サイトの URL を渡すだけで認可の手順に入れます。
 
 > [!WARNING]
-> MCP の仕様は 2026-07-28 版で `client_id` の取得方法を 3 つに整理し、クライアント自身の URL をメタデータの置き場所として使う Client ID Metadata Documents を先頭に置きました。RFC 7591 の動的クライアント登録は、対応していない認可サーバーのために残す扱いになっています。
+> MCP の仕様は 2026-07-28 版で `client_id` の取得方法を 3 つに整理し、クライアントが試す順番を決めました。事前に登録した情報があればそれを使い、無ければクライアント自身の URL をメタデータの置き場所として使う Client ID Metadata Documents を使います。RFC 7591 の動的クライアント登録は非推奨になり、Client ID Metadata Documents に対応していない認可サーバーのための代替として残っています。
 > emdash 0.38.0 のソースと認可サーバーメタデータを確認したところ、Client ID Metadata Documents の実装はなく、`client_id_metadata_document_supported` も出ません。`client_id` を取得する方法は、動的クライアント登録か管理画面での事前登録の 2 つです。
 
-CLI も同じ認可サーバーを使います。`emdash login --url https://<your-site>` を実行すると、`POST /_emdash/api/oauth/device/code` が `user_code` と `/_emdash/admin/device` を返し、CLI はブラウザでの承認を待ちます。承認すると `✔ Logged in as …(admin)` と表示され、トークンが `~/.config/emdash/auth.json` に保存されます。アクセストークンの寿命は 1 時間、リフレッシュトークンは 90 日です。
+CLI も同じ認可サーバーを使います。`emdash login --url https://<your-site>` を実行すると、`POST /_emdash/api/oauth/device/code` が `user_code` と `/_emdash/admin/device` を返却し、CLI はブラウザでの承認を待ちます。承認すると `✔ Logged in as …(admin)` と表示され、トークンが `~/.config/emdash/auth.json` に保存されます。アクセストークンの寿命は 1 時間、リフレッシュトークンは 90 日です。
 
 ローカルでは CLI が無認証、MCP が Bearer トークン必須という非対称でしたが、リモートではどちらも同じ認可サーバーを使います。
 
 この流れで発行されたトークンのスコープは `["admin"]` の 1 つだけです。それでも `content_create` は成功します。`src/auth/scopes.ts` のコメントに `Token-authenticated requests must have the required scope (or "admin")` とあり、admin が他のスコープを兼ねる扱いになっていました。
 
-### ログインに成功した直後に Token is invalid or expired が返る
+### ログインに成功した直後に Token is invalid or expired が返却される
 
-本番へ `emdash login` して成功したのに、続けて実行した `emdash whoami --url https://<your-site>` が `ERROR Token is invalid or expired. Run: emdash login` を返しました。
+本番へ `emdash login` して成功したのに、続けて実行した `emdash whoami --url https://<your-site>` が `ERROR Token is invalid or expired. Run: emdash login` を返却しました。
 
 保存されていた認証情報そのものは正しく、同じトークンを `fetch` で直接送信すると 200 が返却されます。原因はシェルに残っていた `EMDASH_TOKEN` でした。ローカルの検証で使ったトークンで、ローカル DB をリセットしたため無効になっていたものです。CLI がトークンを決める順番は `--token`、`EMDASH_TOKEN`、保存済みの認証情報の順です。環境変数が保存済みより先に選ばれるため、何度ログインし直しても結果は変わりません。
 
@@ -268,7 +266,7 @@ unset EMDASH_TOKEN
 
 これで成功するようになりました。`emdash whoami` の `Auth:` 行が `token` か `stored` かで、どちらを使っているか分かります。
 
-### 本番でも同じ非対称が出る
+### 本番で同じ指示を出す
 
 ローカルと同じ内容で、本番に CLI と MCP から 1 件ずつ記事を作りました。
 
@@ -279,11 +277,11 @@ unset EMDASH_TOKEN
 | version | 2 | 1 |
 | **公開 URL** | **200** | **302** |
 
-最後の行が結果です。CLI で作った記事は公開 URL がそのまま 200 を返し、MCP で作った下書きは 302 が返却され、`/404` へ転送されます。ローカルで確認した差が、そのまま本番の公開状態の差になりました。同じ指示のつもりでも、どちらから作ったかで読者に見えるかどうかが変わります。
+CLI で作った記事は公開 URL がそのまま 200 を返却し、MCP で作った下書きは 302 を返却して、`/404` へ転送されます。ローカルで確認した差が、そのまま本番の公開状態の差になりました。同じ指示のつもりでも、どちらから作ったかで読者に見えるかどうかが変わります。
 
-ついでに分かったこととして、日本語のタイトルからスラッグを作ると日本語がそのまま残ります (`/posts/cli-から本番に作った記事`)。CLI と MCP で同じでした。
+ついでに分かったこととして、日本語のタイトルから slug を作ると日本語がそのまま残ります (`/posts/cli-から本番に作った記事`)。CLI と MCP で同じでした。
 
-CLI と MCP のどちらからでも同じコンテンツを操作できますが、既定の公開状態と認証で要求されるものは同じではありません。エージェントに記事を書かせる構成を組むなら、公開まで任せるのか下書きで止めるのかを先に決めて、それに合うほうを選びます。
+CLI と MCP のどちらからでも同じコンテンツを操作できますが、既定の公開状態と認証で要求されるものは同じではありません。私は下書きを自分で読んでから公開したいので、エージェントに記事を書かせるときは MCP を使います。
 
 ## まとめ
 
@@ -292,7 +290,7 @@ CLI と MCP のどちらからでも同じコンテンツを操作できます�
 - デバイスコードで発行されるトークンのスコープは admin の 1 つだけで、これが他のスコープを兼ねる
 - `tools/list` はスコープで絞られない。content:read だけのトークンでも 59 件返却され、拒否されるのは実際に呼んだ時点になる
 - 不正な入力がエラーになる場所は、CLI が手元の引数解析、MCP が MCP サーバーの引数検証、共通が EmDash のスキーマ検証に分かれる。MCP が EmDash へ渡す手前でエラーにするのは、そのツールの型に制約が書かれている場合だけ
-- ロールは 5 種類あり、Author は自分の記事を公開できる。公開できないのは Contributor
+- ロールは 5 種類あり、Author は自分の記事を公開でき、Contributor は自分の記事でも公開できない
 
 ## 参考
 
