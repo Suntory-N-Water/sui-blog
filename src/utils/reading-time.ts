@@ -64,10 +64,3 @@ export function getReadingTime(
   );
   return Math.max(1, minutes);
 }
-
-/**
- * Format reading time for display
- */
-export function formatReadingTime(minutes: number): string {
-  return `${minutes} min read`;
-}
