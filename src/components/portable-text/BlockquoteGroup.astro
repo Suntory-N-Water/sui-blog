@@ -1,0 +1,25 @@
+---
+import { emdashComponents } from 'emdash/ui';
+import { alertKind } from '../../lib/github-alert';
+import Alert from './Alert.astro';
+
+interface Props {
+  node: {
+    _type: 'blockquoteGroup';
+    _key: string;
+    blocks: Array<{ _type: string; _key?: string; style?: string }>;
+  };
+}
+
+const { node } = Astro.props;
+
+const blocks = node?.blocks ?? [];
+const kind = blocks.length > 0 ? alertKind(blocks[0]) : null;
+const EmDashBlockquoteGroup = emdashComponents.type.blockquoteGroup;
+---
+
+{kind ? (
+  <Alert kind={kind} blocks={blocks.slice(1)} />
+) : (
+  <EmDashBlockquoteGroup node={node} />
+)}

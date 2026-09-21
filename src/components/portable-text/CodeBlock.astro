@@ -1,0 +1,112 @@
+---
+import { Code } from 'astro:components';
+import type { ComponentProps } from 'astro/types';
+import { bundledLanguagesInfo } from 'shiki/langs';
+import Mermaid from './Mermaid.astro';
+
+const SUPPORTED_LANGUAGES = new Set([
+  'plaintext',
+  'plain',
+  'text',
+  'txt',
+  'ansi',
+  ...bundledLanguagesInfo.flatMap((info) => [info.id, ...(info.aliases ?? [])]),
+]);
+
+export interface Props {
+  node: {
+    _type: 'code';
+    _key: string;
+    code: string;
+    language?: string;
+    filename?: string;
+  };
+}
+
+const { node } = Astro.props;
+
+const code = node?.code ?? '';
+const language = node?.language?.toLowerCase();
+const filename = node?.filename;
+
+const isMermaid = language === 'mermaid';
+
+const lang = (
+  language && SUPPORTED_LANGUAGES.has(language) ? language : 'plaintext'
+) as ComponentProps<typeof Code>['lang'];
+---
+
+{code &&
+  (isMermaid ? (
+    <Mermaid code={code} />
+  ) : (
+    <div class='code-block'>
+      {filename && <div class='code-block-filename'>{filename}</div>}
+      <Code
+        code={code}
+        lang={lang}
+        themes={{ light: 'github-light', dark: 'github-dark' }}
+        defaultColor={false}
+      />
+    </div>
+  ))}
+
+<style is:global>
+  .code-block .astro-code,
+  .code-block .astro-code span {
+    color: var(--shiki-light);
+    background-color: var(--shiki-light-bg);
+  }
+
+  :root.dark .code-block .astro-code,
+  :root.dark .code-block .astro-code span {
+    color: var(--shiki-dark);
+    background-color: var(--shiki-dark-bg);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not(.light) .code-block .astro-code,
+    :root:not(.light) .code-block .astro-code span {
+      color: var(--shiki-dark);
+      background-color: var(--shiki-dark-bg);
+    }
+  }
+</style>
+
+<style>
+  .code-block {
+    margin: 2em 0;
+  }
+
+  .code-block-filename {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    background: var(--color-bg-subtle);
+    border: 1px solid var(--color-border);
+    border-bottom: none;
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: var(--spacing-2) var(--spacing-4);
+  }
+
+  .code-block :global(pre.astro-code) {
+    margin: 0;
+    padding: var(--spacing-5);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    line-height: 1.6;
+  }
+
+  .code-block-filename + :global(pre.astro-code) {
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  }
+
+  .code-block :global(pre.astro-code code) {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+  }
+</style>
