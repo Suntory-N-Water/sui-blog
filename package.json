@@ -21,15 +21,13 @@
     "lint:fix": "biome lint --write .",
     "typecheck": "astro check && tsc --noEmit",
     "type-check": "pnpm typecheck",
-    "astro-check": "astro check",
     "textlint": "cd contents && node node_modules/textlint/bin/textlint.js blog/ --quiet",
     "textlint:fix": "cd contents && node node_modules/textlint/bin/textlint.js --fix blog/",
     "migrate:emdash": "node --experimental-strip-types scripts/migrate-emdash.ts",
     "migrate:emdash:check-assets": "node --experimental-strip-types scripts/migrate-emdash.ts --check-assets",
     "migrate:emdash:backdate": "node --experimental-strip-types scripts/emdash-backdate-posts.ts",
     "verify:emdash": "node --experimental-strip-types scripts/verify-emdash-migration.ts",
-    "check:svg-security:all": "node --experimental-strip-types scripts/check-svg-security.ts --all",
-    "prepare": "node -e \"process.exit(0)\""
+    "check:svg-security:all": "node --experimental-strip-types scripts/check-svg-security.ts --all"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.3.1",
