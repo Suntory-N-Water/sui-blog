@@ -3,7 +3,7 @@ title: Claude Mods で、離席中にプロンプトキャッシュが切れる�
 slug: claude-mods-auto-compact-before-cache-expiry
 date: 2026-09-21
 modified_time: 2026-09-21
-description: Claude Code のプロンプトキャッシュは 1 時間で切れます。前に書いたシェルフックは、戻ってきた最初の入力を止めて /clear を促すものでした。新しく入った Claude Mods には `$.clock.every` があるので、離席中にタイマーを動かして、切れる前に自動で compact する mod を作りました。
+description: Claude Code のプロンプトキャッシュは 1 時間で切れます。前に書いた Hook は、戻ってきた最初の入力を止めて /clear を促すものでした。新しく入った Claude Mods には `$.clock.every` があるので、離席中にタイマーを動かして、切れる前に自動で compact する mod を作りました。
 icon: ☕
 icon_url: /icons/hot_beverage_flat.svg
 tags:
@@ -12,32 +12,32 @@ tags:
   - TypeScript
 ---
 
-Claude Code のプロンプトキャッシュが 1 時間で切れること、切れたあとの最初の 1 回が一番高くつくことを[前の記事](/blog/claude-code-next-morning-resume-cost)に書きました。そのときの対策は、1 時間以上あいた入力を `UserPromptSubmit` フックで止めて、`/clear` を促すものです。
+Claude Code のプロンプトキャッシュが 1 時間で切れること、切れたあとの最初の 1 回が一番高くつくことを[前の記事](/blog/claude-code-next-morning-resume-cost)に書きました。そのときの対策は、1 時間以上あいた入力を `UserPromptSubmit` Hook で止めて、`/clear` を促すものです。
 
 この対策には、戻ってきてからしか動かないという性質があります。そのため、止めた時点でキャッシュはもう切れています。切れる前に何かをするには、離席している間に動く仕組みが必要です。
 
-2026 年 9 月ごろ、Claude Code に Claude Mods という仕組みが追加されました。TypeScript の関数をフックとして登録できるもので、その中に `$.clock.every` というタイマーがあります。これを使って、離席が続いたら自動で `/compact` を実行する mod を作りました。この記事では、その mod のコードと、閾値を 55 分に決めた理由、1 時間放置して確かめた結果を紹介します。
+2026 年 9 月ごろ、Claude Code に Claude Mods という仕組みが追加されました。TypeScript の関数を Hook として登録できるもので、その中に `$.clock.every` というタイマーがあります。これを使って、離席が続いたら自動で `/compact` を実行する mod を作りました。この記事では、その mod のコードと、閾値を 55 分に決めた理由、1 時間放置して確かめた結果を紹介します。
 
 > [!NOTE]
 > Claude Mods は 2026 年 9 月時点で early access で、使用するには環境変数 `CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1` が必要です。
 > この記事の内容は Claude Code 2.1.278 で確認しました。
 
-## 入力を止めるフックでは間に合わない場面
+## 入力を止める Hook では間に合わない場面
 
-前の記事のフックは、キャッシュが切れたあとの入力を終了コード 2 で止めます。止められたあとに選択できるのは `/clear`、またはトークン消費が高くなることを承知で会話を続けることでした。
+前の記事の Hook は、キャッシュが切れたあとの入力を終了コード 2 で止めます。止められたあとに選択できるのは `/clear`、またはトークン消費が高くなることを承知で会話を続けることでした。
 ただし、有効期間が切れたあとに `/compact` を選択すると、履歴の全体を未キャッシュで処理し直すことになります。[公式ドキュメント](https://code.claude.com/docs/en/prompt-caching)は、`/compact` の要約リクエストについて「After a break longer than the cache lifetime, there is no cache left to read, so the summarization request reprocesses the full history as uncached input」と書いています。
 
 つまり、要約のリクエストがキャッシュから履歴を読み込めるのは、有効期間が切れる前だけです。切れる前に compact を済ませておけば、会話を捨てずに、次の入力が読み込むキャッシュを小さく作り直せます。
 
 前の記事で集計した 38,500 件のうち、間隔が 60 分以上のリクエストは 129 件でした。この 129 件は 1 件あたりのコストがキャッシュの適用されていたリクエストの 10.57 倍で、うち 74 件はそのセッションで最もコストの高いリクエストです。この 1 回を避けるために、離席中に動く仕組みを作成します。
 
-## シェルフックに経過時間を測る手段が無い理由
+## Hook が離席の途中で実行されない理由
 
-シェルフックが実行されるのは、Claude Code が何かをしたときだけです。`SessionStart` はセッションが始まったとき、`UserPromptSubmit` は入力が送られたとき、`Stop` は応答が終わったときに実行されます。離席している間は何も起きないので、フックも実行されません。
+Hook が実行されるのは、Claude Code が何かをしたときだけです。`SessionStart` はセッションが始まったとき、`UserPromptSubmit` は入力が送られたとき、`Stop` は応答が終わったときに実行されます。これは `type` が `command` でも `http` でも変わりません。離席している間は何も起きないので、Hook も実行されません。
 
 前の記事で `Stop` に終了時刻をファイルへ書かせ、`UserPromptSubmit` でその時刻からの経過を計算していたのは、この制約のためです。経過時間そのものは計算できるのですが、計算できるのは次に入力が送られたときであって、その途中ではありません。
 
-離席の途中で何かをするには、Claude Code の外に常駐するプロセスが必要でした。cron で定期的に起こすか、tmux のセッションを別に立ち上げて監視させるかです。どちらも、Claude Code の状態を外から推定することになります。
+離席の途中で何かをするには、Claude Code の外に常駐するプロセスが必要でした。cron に登録したスクリプトを定期的に実行するか、tmux のセッションを別に立ち上げて Claude Code のプロセスの確認を続けるかです。どちらも、Claude Code の状態を外から推定することになります。
 
 ## Claude Mods で追加した機能
 
@@ -45,13 +45,13 @@ Claude Mods の mod は、`register(on, options)` を export する TypeScript �
 
 今回の mod で使う機能は 3 つです。
 
-`$.clock.every(ms, fn)` は、`ms` ごとに `fn` を実行し続けます。返却されるのは `cancel()` を持つオブジェクトで、これを呼ぶとタイマーは停止します。1 周期につき 1 回 `clock.every` イベントが発生するため、他のフックに拒否されればその時点で周期は終わりです。
+`$.clock.every(ms, fn)` は、`ms` ごとに `fn` を実行し続けます。返却されるのは `cancel()` を持つオブジェクトで、これを呼ぶとタイマーは停止します。1 周期につき 1 回 `clock.every` イベントが発生するため、他の Hook に拒否されればその時点で周期は終わりです。
 
-`$.session.compact()` は、`/compact` と同じ処理を実行します。違いは trigger が `plugin` になることだけで、呼び出し元以外のすべてのフックと本体の処理をそのまま通るため、他のフックが拒否すれば結果は `{ skip }` になります。この `skip` は真偽値ではなく、拒否の理由を表す文字列です。ただし、呼び出せるのはターンの合間だけです。ターンの実行中に呼ぶと reject されるので、コールバックの側で受け止めて次の周期へ回す必要があります。
+`$.session.compact()` は、`/compact` と同じ処理を実行します。違いは trigger が `plugin` になることだけで、呼び出し元以外のすべての Hook と本体の処理をそのまま通るため、他の Hook が拒否すれば結果は `{ skip }` になります。この `skip` は真偽値ではなく、拒否の理由を表す文字列です。ただし、呼び出せるのはターンの合間だけです。ターンの実行中に呼ぶと reject されるので、コールバックの側で受け止めて次の周期へ回す必要があります。
 
 `$.ui.log(text)` は、transcript に薄い色の行を 1 行追加します。この行はモデルへ送られないため、mod の動作を確認する用途に使えます。
 
-フックの実行には 10 秒の予算がありますが、タイマーのコールバックはフックの実行ではないため、この予算の対象外です。約 57 秒かかった compact が、途中で打ち切られずに完了しました。
+Hook の実行には 10 秒の予算がありますが、タイマーのコールバックは Hook の実行ではないため、この予算の対象外です。約 57 秒かかった compact が、途中で打ち切られずに完了しました。
 
 ## mod を作る
 
@@ -86,7 +86,7 @@ mod を動かすのに必要なファイルは 3 つで、置き場所のディ�
 
 `userConfig` の 2 項目は、どちらも `default` を書いてあるので `required` を false にしてあります。利用者が何も設定しなければ、ここに書いた 55 と 1 がそのまま `register` の第 2 引数へ渡ります。
 
-次に、hooks module の場所を `hooks/hooks.json` に作成します。Claude Code はこのファイルを読んで、どの TypeScript のファイルをフックとして読み込むかを決めます。
+次に、hooks module の場所を `hooks/hooks.json` に作成します。Claude Code はこのファイルを読んで、どの TypeScript のファイルを Hook として読み込むかを決めます。
 
 ```json cache-ttl-compact/hooks/hooks.json
 {
@@ -134,7 +134,7 @@ export function register(on: On, options: PluginOptions): void {
         // skip は boolean ではなく理由の文字列。空文字も string に含まれるため、
         // if (result.skip) では compact 済みの型まで絞り込めない。
         if (result.skip !== undefined) {
-          $.ui.log(`他のフックが compact を拒否しました (${result.skip})`)
+          $.ui.log(`他の Hook が compact を拒否しました (${result.skip})`)
           return
         }
         $.ui.log(
@@ -172,6 +172,30 @@ export function register(on: On, options: PluginOptions): void {
 
 読んでほしいのは `turn.complete` のほうです。無操作の起点をここに置いているので、作業を続けている間は compact される時刻が後ろへずれ続けます。`agentId` があるターンを除いているのは、サブエージェントのリクエストがメインの会話のキャッシュを読まないためです。サブエージェントが動いていても、メインの会話のキャッシュの有効期間は延びません。
 
+タイマーと `turn.complete` の関係を図にすると次のようになります。
+
+```mermaid
+sequenceDiagram
+    participant U as 利用者
+    participant C as Claude Code
+    participant M as mod
+    participant T as $.clock.every のタイマー
+    U->>C: 入力
+    C->>M: turn.complete(agentId なし)
+    M->>M: lastTurnEndedAt を現在時刻に更新
+    C->>M: turn.complete(agentId あり = サブエージェント)
+    M->>M: 何もしない
+    Note over U: ここから離席
+    loop 1 分ごと
+        T->>M: コールバック
+        M->>M: 現在時刻 - lastTurnEndedAt を計算
+    end
+    T->>M: 55 分を超えた周期のコールバック
+    M->>C: $.session.compact()
+    C-->>M: tokensBefore と tokensAfter
+    M->>C: $.ui.log で transcript に 1 行追加
+```
+
 時刻を `Date.now()` ではなく `$.clock.now()` で取得しているのは、この呼び出しが host を通るためです。`claude plugin test <ディレクトリ>` で実行するテストからは `claude-code/testing` の `mock.clock` で時計を差し替えられるので、1 時間待たずに動作を確かめられます。
 
 なお、1 行目の `import type { On, PluginOptions, Timer } from 'claude-code'` は、このままでは「モジュール 'claude-code' が見つかりません」という型エラーになります。`claude-code` というモジュールの実体は Claude Code 自身が書き出す宣言ファイルで、npm には公開されていないからです。mod のディレクトリでセッションを開き、`/plugin-types` を実行すると生成されます。
@@ -187,7 +211,7 @@ Point the plugin's tsconfig.json (or jsconfig.json) at them: "include": [".claud
 "hooks"] with "lib": ["es2023"] and "jsx": "react", "jsxFactory": "h"
 ```
 
-最後の行が示すとおり、出力された `.claude/types` を tsconfig の `include` に入れると型エラーが解消します。これに沿って書いたのが、実際に `tsc` を通した次の tsconfig です。
+最後の行が示すとおり、出力された `.claude/types` を tsconfig の `include` に入れると型エラーが解消します。これに沿って書いたのが、実際に `tsc` でエラーが出ないことを確認した次の tsconfig です。
 
 ```json cache-ttl-compact/tsconfig.json
 {
@@ -206,11 +230,11 @@ Point the plugin's tsconfig.json (or jsconfig.json) at them: "include": [".claud
 }
 ```
 
-`noEmit` から下は普通の TypeScript のプロジェクトと同じ設定ですが、`"types": []` だけは理由があります。mod を既存のリポジトリの中に置いたところ、祖先の `node_modules` にある `@types/node` が自動で読み込まれ、`URL` や `crypto` や `performance` の宣言が `claude-code.d.ts` の宣言と衝突して 7 件のエラーになったためです。hooks module は Node でも DOM でもない環境で動くので、`@types` の自動読み込みは要りません。
+`noEmit` から下は普通の TypeScript のプロジェクトと同じ設定ですが、`"types": []` には理由があります。`tsc` は指定が無いかぎり、上のディレクトリを順にたどって見つけた `node_modules/@types` の中身をすべて読み込みます。mod のディレクトリを既存のリポジトリの中に作ったところ、そのリポジトリの `@types/node` が読み込まれ、`URL` や `crypto` や `performance` の宣言が `claude-code.d.ts` の宣言と衝突して 7 件のエラーになりました。同じ mod をリポジトリの外の空のディレクトリへ複製して実行したときは、このエラーは出ていません。hooks module は Node でも DOM でもない環境で動くので、`@types` の自動読み込みは要りません。
 
 この宣言ファイルが必要なのは、型を確かめるときだけです。`claude-code.d.ts` の冒頭にも「at run time the import is empty」と書いてあるとおり、`import type` は型だけの取り込みなので、Claude Code が `register.ts` を読み込んで動かす際には何も解決されません。
 
-それでも生成する価値はありました。私は最初 `$.session.compact()` の結果を `if (result.skip)` で分岐させていたのですが、`tsc` が通らずに気づきました。宣言ファイルを読むと `skip` は真偽値ではなく `string` で、空文字も `string` に含まれるため、真偽での判定では compact 済みの型まで絞り込めません。上のコードが `!== undefined` で判定しているのはこのためです。
+それでも生成する価値はありました。私は最初 `$.session.compact()` の結果を `if (result.skip)` で分岐させていたのですが、`tsc` がエラーを出したことで気づきました。宣言ファイルを読むと `skip` は真偽値ではなく `string` で、空文字も `string` に含まれるため、真偽での判定では compact 済みの型まで絞り込めません。上のコードが `!== undefined` で判定しているのはこのためです。
 
 ファイルが揃ったら、セッションで動かす前に静的に確認します。
 
@@ -218,7 +242,7 @@ Point the plugin's tsconfig.json (or jsconfig.json) at them: "include": [".claud
 claude plugin validate .
 ```
 
-登録したフックと、呼び出している `$` の一覧が表示されます。
+登録した Hook と、呼び出している `$` の一覧が表示されます。
 
 ```text
   ❯ ./register.ts hooks: session.start, turn.complete, session.end
@@ -227,7 +251,7 @@ claude plugin validate .
 ✔ Validation passed
 ```
 
-起動は `--plugin-dir` にディレクトリを渡します。
+起動するときは、`--plugin-dir` に mod のディレクトリを指定します。
 
 ```bash
 CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1 claude --plugin-dir ./cache-ttl-compact
@@ -296,9 +320,13 @@ transcript には次の 2 行が残ります。
 
 「56 分」は `Math.round` を通した表示で、検知した時点の経過は 55 分 51 秒です。
 
+最初の行が起動時の表示、その下の `date` の出力が 15 時 44 分 26 秒、最後の行が 56 分後の compact の完了です。
+
+![Claude Code の transcript。上から順に、cache-ttl-compact が 55 分の無操作で compact する旨を表示した行、date コマンドの出力「2026年9月21日 15時44分26秒」、Conversation compacted の行、SessionStart:compact says: で始まる複数の行、そして cache-ttl-compact が 56 分の離席を検知して 15729 から 3321 トークンへ compact したことを表示した行](https://pub-151065dba8464e6982571edb9ce95445.r2.dev/images/61815335f56c3a65633e7edc62692d99.png)
+
 ## 使うときに確認すること
 
-`pluginConfigs` が読み込まれる設定ファイルは、ユーザーの `~/.claude/settings.json`、`--settings`、そして組織の管理設定の 3 つだけです。プロジェクトの `.claude/settings.json` と `.claude/settings.local.json` に書いても無視されます。理由は[公式ドキュメント](https://code.claude.com/docs/en/plugins-reference)に書かれています。この 2 つのファイルはワークスペースの中にあるので、クローンしたリポジトリが値を仕込めば、プラグインのフックコマンドや MCP サーバーの設定へその値が流れ込みます。これを防ぐために、v2.1.207 で読み込みの対象から外れました。
+`pluginConfigs` が読み込まれる設定ファイルは、ユーザーの `~/.claude/settings.json`、`--settings`、そして組織の管理設定の 3 つだけです。プロジェクトの `.claude/settings.json` と `.claude/settings.local.json` に書いても無視されます。理由は[公式ドキュメント](https://code.claude.com/docs/en/plugins-reference)に書かれています。この 2 つのファイルはワークスペースの中にあるので、クローンしたリポジトリが値を仕込めば、プラグインの Hook のコマンドや MCP サーバーの設定へその値が流れ込みます。これを防ぐために、v2.1.207 で読み込みの対象から外れました。
 
 実際に、`idleMinutes` を 2 と書いた `.claude/settings.json` のあるディレクトリで起動しても、`$.ui.log` に出るのは `plugin.json` の既定値の 55 でした。オプションを渡すなら `--settings` を使います。
 
@@ -311,15 +339,15 @@ CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1 claude --plugin-dir ./cache-ttl-compact \
 
 タイマーのコールバックが属しているのは、mod が読み込まれたときの環境です。mod のファイルを編集するとホットリロードが実行され、待機中のタイマーは古い環境ごと取り消されます。セッションを開いたまま `register.ts` を編集した場合、そのセッションのタイマーはもう動きません。
 
-compact の完了後には `SessionStart` フックが `source` を `compact` として再実行されます。1 時間放置した実行でも、要約の直後に `SessionStart:compact says:` の行が並びました。約 59 秒という所要の大半は、登録していたフックのこの再実行が占めています。前の記事のフックは、この場合に経過時間の記録を削除します。自動の compact で作り直したキャッシュを、直後の入力で切れていると判定することはありません。
+compact の完了後には `SessionStart` Hook が `source` を `compact` として再実行されます。1 時間放置した実行でも、要約の直後に `SessionStart:compact says:` の行が並びました。約 59 秒という所要の大半は、登録していた Hook のこの再実行が占めています。前の記事の Hook は、この場合に経過時間の記録を削除します。自動の compact で作り直したキャッシュを、直後の入力で切れていると判定することはありません。
 
 > [!WARNING]
 > この mod は予告なく compact を実行します。作業の途中で会話が要約されて困る場合は、`idleMinutes` を長くするか、mod を読み込まないでください。
 
 ## まとめ
 
-- Claude Mods の `$.clock.every` を使うと、離席している間に Claude Code の中でタイマーを動かせる。シェルフックには、Claude Code が動いていない間に実行される手段が無い
-- タイマーのコールバックから `$.session.compact()` を呼べる。フックの 10 秒の予算には縛られず、約 57 秒かかった compact が完了した
+- Claude Mods の `$.clock.every` を使うと、離席している間に Claude Code の中でタイマーを動かせる。Hook には、Claude Code が動いていない間に実行される手段が無い
+- タイマーのコールバックから `$.session.compact()` を呼べる。Hook の 10 秒の予算には縛られず、約 57 秒かかった compact が完了した
 - `$.session.compact()` はターンの合間でだけ呼べる。ターンの実行中は reject されるので、次の周期に回す
 - 無操作の起点を `turn.complete` に置くと、作業を続けている間は compact が先送りされる。閾値 2 分に対し 90 秒おきに 3 回入力した間、compact は始まらなかった
 - 閾値は 60 分ではなく 55 分にした。compact 自体に約 1 分、確認の間隔に最大 1 分、`turn.complete` の起点のずれの分だけ、失効の時刻より手前に置く必要がある
