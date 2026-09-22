@@ -27,6 +27,7 @@ export default defineConfig({
 			mcp: true,
 			database: d1({ binding: "DB", session: "auto" }),
 			storage: r2({ binding: "MEDIA" }),
+			middleware: { outer: "./src/middleware/outer.ts" },
 			plugins: [formsPlugin()],
 			sandboxed: [webhookNotifier],
 			sandboxRunner: sandbox(),
