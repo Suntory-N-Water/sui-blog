@@ -6,6 +6,8 @@ import Base from '../layouts/Base.astro';
 import PageShell from '../components/PageShell.astro';
 import ArchiveHead from '../components/ArchiveHead.astro';
 
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+
 const query = Astro.url.searchParams.get('q')?.trim() || '';
 
 const { items: results } = query

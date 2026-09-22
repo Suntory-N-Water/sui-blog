@@ -1,6 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageShell from '../components/PageShell.astro';
+
+Astro.response.headers.set('Cache-Control', 'private, no-store');
 ---
 
 <Base title='ページが見つかりません'>

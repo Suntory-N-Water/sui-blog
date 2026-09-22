@@ -27,6 +27,10 @@
     {
       "binding": "SESSION",
       "id": "816fa61942dd43c08524f2ac74bcfca9"
+    },
+    {
+      "binding": "CACHE",
+      "id": "175dccb4d8c14be9a0cfd85a901ef7e2"
     }
   ],
   // Sandboxed plugins require Worker Loader, available on Workers paid plans. Uncomment to enable:

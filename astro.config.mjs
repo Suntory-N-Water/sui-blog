@@ -1,6 +1,7 @@
 import cloudflare from "@astrojs/cloudflare";
+import { cacheCloudflare } from "@astrojs/cloudflare/cache";
 import react from "@astrojs/react";
-import { d1, r2, sandbox } from "@emdash-cms/cloudflare";
+import { d1, kvCache, r2, sandbox } from "@emdash-cms/cloudflare";
 import { formsPlugin } from "@emdash-cms/plugin-forms";
 import webhookNotifier from "@emdash-cms/plugin-webhook-notifier";
 import { defineConfig, fontProviders } from "astro/config";
@@ -10,6 +11,22 @@ export default defineConfig({
 	output: "server",
 	site: "https://suntory-n-water.com",
 	adapter: cloudflare(),
+	cache: {
+		provider: cacheCloudflare(),
+	},
+	routeRules: {
+		"/": { maxAge: 300, swr: 86400 },
+		"/blog": { maxAge: 300, swr: 86400 },
+		"/blog/page/[page]": { maxAge: 300, swr: 86400 },
+		"/blog/[slug]": { maxAge: 300, swr: 86400 },
+		"/blog/[slug].md": { maxAge: 300, swr: 86400 },
+		"/blog/ogp/[slug].png": { maxAge: 86400, swr: 604800 },
+		"/tags": { maxAge: 300, swr: 86400 },
+		"/tags/[slug]": { maxAge: 300, swr: 86400 },
+		"/rss.xml": { maxAge: 300, swr: 86400 },
+		"/sitemap.xml": { maxAge: 300, swr: 86400 },
+		"/llms.txt": { maxAge: 300, swr: 86400 },
+	},
 	redirects: {
 		"/sitemap-index.xml": { status: 301, destination: "/sitemap.xml" },
 	},
@@ -27,6 +44,7 @@ export default defineConfig({
 			mcp: true,
 			database: d1({ binding: "DB", session: "auto" }),
 			storage: r2({ binding: "MEDIA" }),
+			objectCache: kvCache({ binding: "CACHE" }),
 			middleware: { outer: "./src/middleware/outer.ts" },
 			plugins: [formsPlugin()],
 			sandboxed: [webhookNotifier],
