@@ -150,14 +150,6 @@ export function getTagSlug(tagName: string): string {
 }
 
 /**
- * slugからタグ名を取得
- */
-export function getTagNameFromSlug(slug: string): string | undefined {
-  const entry = Object.entries(TAG_SLUG_MAP).find(([_, s]) => s === slug);
-  return entry?.[0];
-}
-
-/**
  * タグ名を自動的にslug化する関数(フォールバック用)
  *
  * 変換例:
