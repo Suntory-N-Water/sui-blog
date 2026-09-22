@@ -63,7 +63,7 @@ const sub = dateRange
             {yearPosts.map((post) => (
               <PostRow
                 title={post.data.title}
-                href={`/posts/${post.id}`}
+                href={`/blog/${post.id}`}
                 date={postDate(post.data)}
                 readingTime={getReadingTime(post.data.content)}
                 icon={post.data.featured_image}

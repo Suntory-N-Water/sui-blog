@@ -16,7 +16,7 @@ export const GET: APIRoute = async ({ site, url }) => {
   for (const post of posts) {
     const title = post.data.title || 'Untitled';
     const excerpt = post.data.excerpt ? `: ${post.data.excerpt}` : '';
-    lines.push(`- [${title}](${origin}/posts/${post.id})${excerpt}`);
+    lines.push(`- [${title}](${origin}/blog/${post.id})${excerpt}`);
   }
 
   return new Response(`${lines.join('\n')}\n`, {

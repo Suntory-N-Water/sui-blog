@@ -37,7 +37,7 @@ const displayDate = formatIndexDate(date);
         {tags && tags.length > 0 && (
           <div class='row-tags'>
             {tags.map((tag) => (
-              <a href={`/tag/${tag.slug}`} class='tag'>
+              <a href={`/tags/${tag.slug}`} class='tag'>
                 #{tag.label}
               </a>
             ))}

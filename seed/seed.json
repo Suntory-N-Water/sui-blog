@@ -25,7 +25,7 @@
         "search",
         "seo"
       ],
-      "urlPattern": "/posts/{slug}",
+      "urlPattern": "/blog/{slug}",
       "routable": true,
       "titleField": "title",
       "dateField": "modified_time",
@@ -51641,7 +51641,7 @@
                 {
                   "_type": "span",
                   "_key": "span-53",
-                  "text": "/posts/add-blog-to-portfolio",
+                  "text": "/blog/add-blog-to-portfolio",
                   "marks": [
                     "link-6"
                   ]
@@ -51651,7 +51651,7 @@
                 {
                   "_type": "link",
                   "_key": "link-6",
-                  "href": "/posts/add-blog-to-portfolio"
+                  "href": "/blog/add-blog-to-portfolio"
                 }
               ]
             },
@@ -56571,7 +56571,7 @@
                 {
                   "_type": "span",
                   "_key": "span-93",
-                  "text": "/posts/messaging-api-github-pr",
+                  "text": "/blog/messaging-api-github-pr",
                   "marks": [
                     "link-5"
                   ]
@@ -56581,7 +56581,7 @@
                 {
                   "_type": "link",
                   "_key": "link-5",
-                  "href": "/posts/messaging-api-github-pr"
+                  "href": "/blog/messaging-api-github-pr"
                 }
               ]
             },
@@ -74339,7 +74339,7 @@
                 {
                   "_type": "span",
                   "_key": "span-5",
-                  "text": "/posts/notion-images-put-cloudflare",
+                  "text": "/blog/notion-images-put-cloudflare",
                   "marks": [
                     "link-1"
                   ]
@@ -74349,7 +74349,7 @@
                 {
                   "_type": "link",
                   "_key": "link-1",
-                  "href": "/posts/notion-images-put-cloudflare"
+                  "href": "/blog/notion-images-put-cloudflare"
                 }
               ]
             },
@@ -77283,7 +77283,7 @@
                 {
                   "_type": "span",
                   "_key": "span-5",
-                  "text": "/posts/ios-kawaii-emoji",
+                  "text": "/blog/ios-kawaii-emoji",
                   "marks": [
                     "link-1"
                   ]
@@ -77293,7 +77293,7 @@
                 {
                   "_type": "link",
                   "_key": "link-1",
-                  "href": "/posts/ios-kawaii-emoji"
+                  "href": "/blog/ios-kawaii-emoji"
                 }
               ]
             },
@@ -81119,7 +81119,7 @@
                 {
                   "_type": "span",
                   "_key": "span-37",
-                  "text": "/posts/delegate-coding-rules-to-biome",
+                  "text": "/blog/delegate-coding-rules-to-biome",
                   "marks": [
                     "link-3"
                   ]
@@ -81129,7 +81129,7 @@
                 {
                   "_type": "link",
                   "_key": "link-3",
-                  "href": "/posts/delegate-coding-rules-to-biome"
+                  "href": "/blog/delegate-coding-rules-to-biome"
                 }
               ]
             },
@@ -81227,7 +81227,7 @@
                 {
                   "_type": "span",
                   "_key": "span-53",
-                  "text": "/posts/dont-forget-check-typescript-types-stop",
+                  "text": "/blog/dont-forget-check-typescript-types-stop",
                   "marks": [
                     "link-4"
                   ]
@@ -81237,7 +81237,7 @@
                 {
                   "_type": "link",
                   "_key": "link-4",
-                  "href": "/posts/dont-forget-check-typescript-types-stop"
+                  "href": "/blog/dont-forget-check-typescript-types-stop"
                 }
               ]
             },
@@ -86548,7 +86548,7 @@
                 {
                   "_type": "link",
                   "_key": "link-1",
-                  "href": "/posts/claude-code-dynamic-skill-loading/"
+                  "href": "/blog/claude-code-dynamic-skill-loading/"
                 }
               ]
             },
@@ -89077,7 +89077,7 @@
                 {
                   "_type": "link",
                   "_key": "link-2",
-                  "href": "/posts/i-tried-using-agent-browser/"
+                  "href": "/blog/i-tried-using-agent-browser/"
                 }
               ]
             },
@@ -99937,7 +99937,7 @@
                 {
                   "_type": "link",
                   "_key": "link-1",
-                  "href": "/posts/playwright-cli-vs-agent-browser-token-comparison/"
+                  "href": "/blog/playwright-cli-vs-agent-browser-token-comparison/"
                 }
               ]
             },
@@ -100399,7 +100399,7 @@
                 {
                   "_type": "link",
                   "_key": "link-4",
-                  "href": "/posts/playwright-cli-vs-agent-browser-token-comparison"
+                  "href": "/blog/playwright-cli-vs-agent-browser-token-comparison"
                 }
               ]
             },
@@ -112815,7 +112815,7 @@
                 {
                   "_type": "link",
                   "_key": "link-2",
-                  "href": "/posts/claude-code-usage-otel-cloudflare-d1"
+                  "href": "/blog/claude-code-usage-otel-cloudflare-d1"
                 }
               ]
             },
@@ -118614,7 +118614,7 @@
                 {
                   "_type": "link",
                   "_key": "link-1",
-                  "href": "/posts/claude-code-usage-otel-cloudflare-d1"
+                  "href": "/blog/claude-code-usage-otel-cloudflare-d1"
                 }
               ]
             },
@@ -121170,7 +121170,7 @@
                 {
                   "_type": "span",
                   "_key": "span-408",
-                  "text": "/posts/claude-code-usage-otel-cloudflare-d1",
+                  "text": "/blog/claude-code-usage-otel-cloudflare-d1",
                   "marks": [
                     "link-10"
                   ]
@@ -121180,7 +121180,7 @@
                 {
                   "_type": "link",
                   "_key": "link-10",
-                  "href": "/posts/claude-code-usage-otel-cloudflare-d1"
+                  "href": "/blog/claude-code-usage-otel-cloudflare-d1"
                 }
               ]
             },
@@ -133852,7 +133852,7 @@
                 {
                   "_type": "span",
                   "_key": "span-481",
-                  "text": "/posts/claude-code-next-morning-resume-cost",
+                  "text": "/blog/claude-code-next-morning-resume-cost",
                   "marks": [
                     "link-8"
                   ]
@@ -133862,7 +133862,7 @@
                 {
                   "_type": "link",
                   "_key": "link-8",
-                  "href": "/posts/claude-code-next-morning-resume-cost"
+                  "href": "/blog/claude-code-next-morning-resume-cost"
                 }
               ]
             }
@@ -135826,7 +135826,7 @@
                 {
                   "_type": "span",
                   "_key": "span-288",
-                  "text": "/posts/did-you-know-you-can-easily",
+                  "text": "/blog/did-you-know-you-can-easily",
                   "marks": [
                     "link-11"
                   ]
@@ -135836,7 +135836,7 @@
                 {
                   "_type": "link",
                   "_key": "link-11",
-                  "href": "/posts/did-you-know-you-can-easily"
+                  "href": "/blog/did-you-know-you-can-easily"
                 }
               ]
             }
@@ -140581,7 +140581,7 @@
                 {
                   "_type": "span",
                   "_key": "span-757",
-                  "text": "/posts/cli-から本番に作った記事",
+                  "text": "/blog/cli-から本番に作った記事",
                   "marks": [
                     "code"
                   ]

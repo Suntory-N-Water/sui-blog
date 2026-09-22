@@ -256,7 +256,7 @@ function rewriteLegacyUrl<T extends string | undefined>(value: T): T {
   if (value === undefined) return value;
   return value.replace(
     /https:\/\/suntory-n-water\.com\/blog\/([\w-]+)/gu,
-    '/posts/$1',
+    '/blog/$1',
   ) as T;
 }
 
@@ -1063,7 +1063,7 @@ async function main(): Promise<void> {
         labelSingular: '記事',
         description: '公開済みの技術記事',
         supports: ['drafts', 'revisions', 'search', 'seo'],
-        urlPattern: '/posts/{slug}',
+        urlPattern: '/blog/{slug}',
         routable: true,
         titleField: 'title',
         dateField: 'modified_time',

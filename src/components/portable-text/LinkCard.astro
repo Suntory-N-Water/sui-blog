@@ -11,8 +11,8 @@ const { url } = Astro.props;
 
 const isExternal = /^https?:\/\//u.test(url);
 const internalSlug =
-  !isExternal && url.startsWith('/posts/')
-    ? decodeURIComponent(url.slice('/posts/'.length).split(/[?#]/u)[0])
+  !isExternal && url.startsWith('/blog/')
+    ? decodeURIComponent(url.slice('/blog/'.length).split(/[?#]/u)[0])
     : null;
 
 let title = '';

@@ -11,7 +11,7 @@ const { tags, currentSlug } = Astro.props;
   {tags.map((tag) => (
     <li>
       <a
-        href={`/tag/${tag.slug}`}
+        href={`/tags/${tag.slug}`}
         class:list={['tag-link', tag.slug === currentSlug && 'is-current']}
       >
         <span class='tag-label'>#{tag.label}</span>

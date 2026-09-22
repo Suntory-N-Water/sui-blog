@@ -90,7 +90,7 @@ const topTags = tags
               {formatIndexDate(postDate(leadPost.data))}
             </div>
             <h2>
-              <a href={`/posts/${leadPost.id}`}>{leadPost.data.title}</a>
+              <a href={`/blog/${leadPost.id}`}>{leadPost.data.title}</a>
             </h2>
             {leadPost.data.excerpt && (
               <p class='lead-excerpt'>{leadPost.data.excerpt}</p>
@@ -102,7 +102,7 @@ const topTags = tags
               {leadTags.length > 0 && (
                 <div class='lead-tags'>
                   {leadTags.map((tag) => (
-                    <a href={`/tag/${tag.slug}`} class='tag'>
+                    <a href={`/tags/${tag.slug}`} class='tag'>
                       #{tag.label}
                     </a>
                   ))}
@@ -114,17 +114,13 @@ const topTags = tags
 
         {listPosts.length > 0 && (
           <Fragment>
-            <SectionBand
-              title='最近の記事'
-              href='/posts'
-              linkLabel='記事一覧'
-            />
+            <SectionBand title='最近の記事' href='/blog' linkLabel='記事一覧' />
             <div class='index-wrap'>
               <PostIndex>
                 {listPosts.map((post) => (
                   <PostRow
                     title={post.data.title}
-                    href={`/posts/${post.id}`}
+                    href={`/blog/${post.id}`}
                     date={postDate(post.data)}
                     readingTime={getReadingTime(post.data.content)}
                     excerpt={post.data.excerpt}
@@ -146,7 +142,7 @@ const topTags = tags
       <Fragment>
         <SectionBand
           title='タグから探す'
-          href='/tag'
+          href='/tags'
           linkLabel='すべてのタグ'
         />
         <div class='index-wrap'>

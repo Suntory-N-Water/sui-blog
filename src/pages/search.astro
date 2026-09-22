@@ -41,10 +41,7 @@ const sub = query ? `"${query}" の検索結果 ${results.length} 件` : null;
         <ul class='search-results'>
           {results.map((result) => (
             <li class='search-result'>
-              <a
-                href={`/posts/${result.slug ?? result.id}`}
-                class='result-link'
-              >
+              <a href={`/blog/${result.slug ?? result.id}`} class='result-link'>
                 <h2 class='result-title'>{result.title ?? '無題'}</h2>
                 {result.snippet && (
                   <p class='result-snippet' set:html={result.snippet} />
