@@ -17,41 +17,22 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
-    name: lint
+  check:
+    name: ${{ matrix.task }}
     timeout-minutes: 5
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        task: [lint, type-check, knip]
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/setup
-      - run: pnpm run lint
-
-  type-check:
-    name: type-check
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+      - uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3.0.0
         with:
-          persist-credentials: false
-      - uses: ./.github/actions/setup
-      - run: pnpm run type-check
-
-  knip:
-    name: knip
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          persist-credentials: false
-      - uses: ./.github/actions/setup
-      - run: pnpm exec knip
+          cache: true
+          require-lockfile: true
+      - run: pnpm run ${{ matrix.task }}
