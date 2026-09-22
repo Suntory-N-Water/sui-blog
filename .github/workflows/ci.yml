@@ -4,7 +4,17 @@ on:
   workflow_dispatch:
   push:
     paths:
-      ['**/*.ts', '**/*.tsx', '**/*.js', '.github/**', '**/*.json', '**/*.svg']
+      - '**/*.astro'
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '**/*.js'
+      - '**/*.mjs'
+      - '**/*.css'
+      - '**/*.json'
+      - '**/*.jsonc'
+      - '**/*.svg'
+      - 'pnpm-lock.yaml'
+      - '.github/**'
 
 defaults:
   run:
