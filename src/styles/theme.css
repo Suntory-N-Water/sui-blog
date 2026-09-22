@@ -72,11 +72,6 @@
 	word-break: auto-phrase;
 }
 
-:where(.site-root) :is(p, li, dd, figcaption, blockquote) {
-	text-wrap: pretty;
-	word-break: auto-phrase;
-}
-
 .nav-admin {
 	margin-inline-start: var(--spacing-5);
 }
