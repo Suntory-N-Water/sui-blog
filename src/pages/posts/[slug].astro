@@ -294,11 +294,18 @@ const mobileMetaLine = [authorNames || null, publishDate, `${readingTime} 分`]
 
 <style>
   .article-head {
+    display: grid;
+    grid-template-columns:
+      var(--meta-col-width) minmax(0, var(--content-width))
+      var(--gutter-width);
+    gap: 0 48px;
     padding: 52px 0 30px;
     border-bottom: 1px solid var(--color-rule-strong);
   }
 
   .article-head :global(.head-icon) {
+    grid-column: 2;
+    justify-self: start;
     width: 40px;
     height: 40px;
     object-fit: contain;
@@ -306,17 +313,17 @@ const mobileMetaLine = [authorNames || null, publishDate, `${readingTime} 分`]
   }
 
   .article-head .title {
+    grid-column: 2 / -1;
     font-size: 30px;
     font-weight: var(--font-weight-display);
     line-height: 1.6;
     letter-spacing: var(--tracking-tight);
-    max-width: 760px;
     color: var(--color-heading);
   }
 
   .article-head .summary {
+    grid-column: 2;
     margin-top: 18px;
-    max-width: 660px;
     font-size: 15px;
     line-height: 1.95;
     color: var(--color-text-secondary);
@@ -641,9 +648,16 @@ const mobileMetaLine = [authorNames || null, publishDate, `${readingTime} 分`]
   }
 
   @media (max-width: 1060px) {
+    .article-head,
     .article-grid {
       grid-template-columns: minmax(0, var(--content-width));
       gap: 0;
+    }
+
+    .article-head :global(.head-icon),
+    .article-head .title,
+    .article-head .summary {
+      grid-column: 1;
     }
 
     .meta-col,
