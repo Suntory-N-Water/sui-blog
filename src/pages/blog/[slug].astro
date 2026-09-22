@@ -16,7 +16,10 @@ import PostIndex from '../../components/PostIndex.astro';
 import PostRow from '../../components/PostRow.astro';
 import { articlePortableTextComponents } from '../../components/portable-text/components';
 import { prefetchLinkPreviews } from '../../lib/link-card';
-import { withFootnoteBacklinks } from '../../lib/footnotes';
+import {
+  withFootnoteBacklinks,
+  withMarkdownFootnotes,
+} from '../../lib/footnotes';
 import { getReadingTime } from '../../utils/reading-time';
 import { resolveBlogSiteIdentity } from '../../utils/site-identity';
 import { formatIndexDate, postDate } from '../../utils/format-date';
@@ -54,7 +57,7 @@ const readingTime = getReadingTime(post.data.content);
 
 await prefetchLinkPreviews(post.data.content);
 
-const content = withFootnoteBacklinks(post.data.content);
+const content = withFootnoteBacklinks(withMarkdownFootnotes(post.data.content));
 
 const tags = post.data.terms?.tag ?? [];
 
