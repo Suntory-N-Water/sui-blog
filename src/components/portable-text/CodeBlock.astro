@@ -42,66 +42,33 @@ const lang = (
   ) : (
     <div class='code-block'>
       {filename && <div class='code-block-filename'>{filename}</div>}
-      <Code
-        code={code}
-        lang={lang}
-        themes={{ light: 'github-light', dark: 'github-dark' }}
-        defaultColor={false}
-      />
+      <Code code={code} lang={lang} theme='dark-plus' />
     </div>
   ))}
 
-<style is:global>
-  .code-block .astro-code,
-  .code-block .astro-code span {
-    color: var(--shiki-light);
-    background-color: var(--shiki-light-bg);
-  }
-
-  :root.dark .code-block .astro-code,
-  :root.dark .code-block .astro-code span {
-    color: var(--shiki-dark);
-    background-color: var(--shiki-dark-bg);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root:not(.light) .code-block .astro-code,
-    :root:not(.light) .code-block .astro-code span {
-      color: var(--shiki-dark);
-      background-color: var(--shiki-dark-bg);
-    }
-  }
-</style>
-
 <style>
   .code-block {
-    margin: 2em 0;
+    margin: 0 0 26px;
   }
 
   .code-block-filename {
     font-family: var(--font-mono);
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-    background: var(--color-bg-subtle);
-    border: 1px solid var(--color-border);
-    border-bottom: none;
-    border-radius: var(--radius) var(--radius) 0 0;
-    padding: var(--spacing-2) var(--spacing-4);
+    font-size: 12px;
+    padding: 8px 18px;
+    background: var(--color-code-bar);
+    color: var(--color-code-label);
+    border-bottom: 1px solid var(--color-code-rule);
   }
 
   .code-block :global(pre.astro-code) {
     margin: 0;
-    padding: var(--spacing-5);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
+    padding: 16px 18px;
+    background: var(--color-code-bg) !important;
+    border-radius: 0;
     overflow-x: auto;
     font-family: var(--font-mono);
-    font-size: var(--font-size-sm);
-    line-height: 1.6;
-  }
-
-  .code-block-filename + :global(pre.astro-code) {
-    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    font-size: 13px;
+    line-height: 1.9;
   }
 
   .code-block :global(pre.astro-code code) {

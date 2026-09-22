@@ -1,270 +1,115 @@
 ---
 import { getEmDashCollection, getTermsForEntries } from 'emdash';
 import Base from '../../layouts/Base.astro';
+import PageShell from '../../components/PageShell.astro';
+import ArchiveHead from '../../components/ArchiveHead.astro';
+import PostIndex from '../../components/PostIndex.astro';
+import PostRow from '../../components/PostRow.astro';
 import { getReadingTime } from '../../utils/reading-time';
+import { formatYearMonth, getYear, postDate } from '../../utils/format-date';
 
-// Sort in the database rather than in JS — lets the DB use its index on
-// published_at and avoids a full-table scan on the client.
 const { entries: posts, cacheHint } = await getEmDashCollection('posts', {
-  orderBy: { published_at: 'desc' },
+  orderBy: { modified_time: 'desc' },
 });
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
-// Single batched query for tags across all posts, instead of one
-// getEntryTerms() call per post (which would be N round-trips).
-// Bylines are already hydrated on entry.data.bylines.
 const tagsByEntry = await getTermsForEntries(
   'posts',
   posts.map((p) => p.data.id),
   'tag',
 );
 
-const postsWithTags = posts.map((post) => ({
-  post,
-  tags: tagsByEntry.get(post.data.id) ?? [],
-  bylines: post.data.bylines ?? [],
-}));
+const yearGroups = new Map<string, typeof posts>();
+for (const post of posts) {
+  const year = getYear(postDate(post.data)) ?? '不明';
+  const group = yearGroups.get(year);
+  if (group) {
+    group.push(post);
+  } else {
+    yearGroups.set(year, [post]);
+  }
+}
 
-const formatDate = (date: Date) =>
-  date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+const lastPost = posts.at(-1);
+const firstPost = posts[0];
+const oldest = lastPost ? formatYearMonth(postDate(lastPost.data)) : null;
+const newest = firstPost ? formatYearMonth(postDate(firstPost.data)) : null;
+const dateRange =
+  oldest && newest
+    ? oldest === newest
+      ? oldest
+      : `${oldest} — ${newest}`
+    : null;
+const sub = dateRange
+  ? `${posts.length} 件 / ${dateRange}`
+  : `${posts.length} 件`;
 ---
 
-<Base title='All Posts' description='Browse all blog posts'>
-  <div class='posts-page'>
-    <header class='page-header'>
-      <h1 class='page-title'>All Posts</h1>
-      <p class='page-description'>
-        {posts.length}
-        {posts.length === 1 ? 'article' : 'articles'}
-      </p>
-    </header>
+<Base title='記事一覧' description='すべての記事の一覧'>
+  <PageShell>
+    <ArchiveHead title='記事一覧' sub={sub} />
 
     {posts.length === 0 ? (
-      <p class='empty'>No posts yet.</p>
+      <p class='empty'>まだ記事がありません。</p>
     ) : (
-      <div class='posts-list'>
-        {postsWithTags.map(({ post, tags, bylines }) => (
-          <article class='post-item'>
-            <a href={`/posts/${post.id}`} class='post-link'>
-              <div class='post-meta'>
-                {bylines.length > 0 && (
-                  <>
-                    <div class='post-bylines'>
-                      {bylines.slice(0, 2).map((credit, index) => (
-                        <>
-                          {index > 0 && <span class='byline-sep'>,</span>}
-                          <span class='post-byline'>
-                            {credit.byline.avatarMediaId && (
-                              <img
-                                src={`/_emdash/api/media/file/${credit.byline.avatarMediaId}`}
-                                alt={credit.byline.displayName}
-                                class='post-byline-avatar'
-                              />
-                            )}
-                            <span class='post-byline-name'>
-                              {credit.byline.displayName}
-                            </span>
-                          </span>
-                        </>
-                      ))}
-                      {bylines.length > 2 && (
-                        <span class='byline-more'>+{bylines.length - 2}</span>
-                      )}
-                    </div>
-                    <span class='meta-dot' />
-                  </>
-                )}
-                {post.data.publishedAt && (
-                  <time>{formatDate(post.data.publishedAt)}</time>
-                )}
-                {post.data.publishedAt && <span class='meta-dot' />}
-                <span>{getReadingTime(post.data.content)} min read</span>
-              </div>
-              <h2 class='post-title'>{post.data.title}</h2>
-              {post.data.excerpt && (
-                <p class='post-excerpt'>{post.data.excerpt}</p>
-              )}
-            </a>
-            {tags.length > 0 && (
-              <div class='post-tags'>
-                {tags.slice(0, 3).map((t) => (
-                  <a href={`/tag/${t.slug}`} class='post-tag'>
-                    {t.label}
-                  </a>
-                ))}
-              </div>
-            )}
-          </article>
-        ))}
-      </div>
+      Array.from(yearGroups.entries()).map(([year, yearPosts]) => (
+        <section class='year-group'>
+          <div class='year'>
+            <h2>{year}</h2>
+            <span>{yearPosts.length} 件</span>
+          </div>
+          <PostIndex topRule={false}>
+            {yearPosts.map((post) => (
+              <PostRow
+                title={post.data.title}
+                href={`/posts/${post.id}`}
+                date={postDate(post.data)}
+                readingTime={getReadingTime(post.data.content)}
+                icon={post.data.featured_image}
+                tags={(tagsByEntry.get(post.data.id) ?? []).map((t) => ({
+                  slug: t.slug,
+                  label: t.label,
+                }))}
+              />
+            ))}
+          </PostIndex>
+        </section>
+      ))
     )}
-  </div>
+  </PageShell>
 </Base>
 
 <style>
-  .posts-page {
-    max-width: var(--content-width);
-    margin: 0 auto;
-    padding: var(--spacing-8) var(--spacing-6) var(--spacing-16);
+  .year-group {
+    max-width: var(--index-width);
   }
 
-  .page-header {
-    margin-bottom: var(--spacing-12);
+  .year {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 34px 0 6px;
+    border-bottom: 1px solid var(--color-rule-strong);
   }
 
-  .page-title {
-    font-size: var(--font-size-4xl);
-    font-weight: var(--font-weight-display);
-    letter-spacing: var(--tracking-tight);
-    margin-bottom: var(--spacing-2);
+  .year h2 {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 500;
   }
 
-  .page-description {
-    font-size: var(--font-size-lg);
-    color: var(--color-muted);
+  .year span {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    font-variant-numeric: tabular-nums;
   }
 
   .empty {
-    color: var(--color-muted);
-    font-size: var(--font-size-lg);
-  }
-
-  .posts-list {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .post-item {
-    padding: var(--spacing-8) 0;
-    border-bottom: 1px solid var(--color-border-subtle);
-  }
-
-  .post-item:first-child {
-    padding-top: 0;
-  }
-
-  .post-item:last-child {
-    border-bottom: none;
-  }
-
-  .post-link {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .post-meta {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-3);
-    font-size: var(--font-size-sm);
-    color: var(--color-muted);
-    margin-bottom: var(--spacing-2);
-  }
-
-  .meta-dot {
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: var(--color-muted);
-  }
-
-  /* Post bylines */
-  .post-bylines {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-  }
-
-  .post-byline {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-1);
-  }
-
-  .post-byline-avatar {
-    width: var(--avatar-size-sm);
-    height: var(--avatar-size-sm);
-    border-radius: 50%;
-    object-fit: cover;
-  }
-
-  .post-byline-name {
-    font-weight: 500;
+    max-width: var(--index-width);
+    padding: 40px 0;
     color: var(--color-text-secondary);
-  }
-
-  .byline-sep {
-    color: var(--color-muted);
-    margin-right: 2px;
-  }
-
-  .byline-more {
-    font-size: var(--font-size-xs);
-    color: var(--color-muted);
-    margin-left: 2px;
-  }
-
-  .post-title {
-    font-size: var(--font-size-2xl);
-    font-weight: var(--font-weight-heading);
-    line-height: var(--leading-snug);
-    letter-spacing: var(--tracking-snug);
-    margin-bottom: var(--spacing-2);
-    transition: color var(--transition-fast);
-  }
-
-  .post-link:hover .post-title {
-    color: var(--color-brand);
-  }
-
-  .post-excerpt {
-    font-size: var(--font-size-lg);
-    line-height: var(--leading-relaxed);
-    color: var(--color-text-secondary);
-  }
-
-  .post-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-2);
-    margin-top: var(--spacing-4);
-  }
-
-  .post-tag {
-    display: inline-block;
-    padding: var(--tag-padding-y) var(--spacing-2);
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-    background: var(--color-surface);
-    border-radius: var(--radius);
-    text-decoration: none;
-    transition:
-      color var(--transition-fast),
-      background var(--transition-fast);
-  }
-
-  .post-tag:hover {
-    color: var(--color-text);
-    background: var(--color-border);
-  }
-
-  @media (max-width: 600px) {
-    .posts-page {
-      padding: var(--spacing-6) var(--spacing-4) var(--spacing-12);
-    }
-
-    .page-title {
-      font-size: var(--font-size-3xl);
-    }
-
-    .post-title {
-      font-size: var(--font-size-xl);
-    }
+    border-top: 1px solid var(--color-border);
   }
 </style>

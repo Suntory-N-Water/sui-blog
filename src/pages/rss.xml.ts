@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { getEmDashCollection, getSiteSettings } from 'emdash';
 
 import { resolveBlogSiteIdentity } from '../utils/site-identity';
+import { postDate } from '../utils/format-date';
 
 export const GET: APIRoute = async ({ site, url }) => {
   const siteUrl = site?.toString().replace(/\/+$/u, '') || url.origin;
@@ -10,16 +11,17 @@ export const GET: APIRoute = async ({ site, url }) => {
   );
 
   const { entries: posts } = await getEmDashCollection('posts', {
-    orderBy: { published_at: 'desc' },
+    orderBy: { modified_time: 'desc' },
     limit: 20,
   });
 
   const items = posts
     .map((post) => {
-      if (!post.data.publishedAt) {
+      const published = postDate(post.data);
+      if (!published) {
         return null;
       }
-      const pubDate = post.data.publishedAt.toUTCString();
+      const pubDate = published.toUTCString();
 
       const postUrl = `${siteUrl}/posts/${post.id}`;
       const title = escapeXml(post.data.title || 'Untitled');

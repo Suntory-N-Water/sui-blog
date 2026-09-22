@@ -1,10 +1,6 @@
 ---
 import { PortableText } from 'emdash/ui';
-import {
-  ALERT_ICON_PATH,
-  ALERT_LABEL,
-  type AlertKind,
-} from '../../lib/github-alert';
+import type { AlertKind } from '../../lib/github-alert';
 import CodeBlock from './CodeBlock.astro';
 
 interface Props {
@@ -14,6 +10,14 @@ interface Props {
 
 const { kind, blocks } = Astro.props;
 
+const ALERT_LABEL_JA: Record<AlertKind, string> = {
+  note: 'メモ',
+  tip: 'ヒント',
+  important: '重要',
+  warning: '警告',
+  caution: '注意',
+};
+
 const body = (blocks as Array<Record<string, unknown>>).map((block) => ({
   ...block,
   style: 'normal',
@@ -21,18 +25,7 @@ const body = (blocks as Array<Record<string, unknown>>).map((block) => ({
 ---
 
 <div class={`markdown-alert markdown-alert-${kind}`} dir='auto'>
-  <p class='markdown-alert-title'>
-    <svg
-      class='octicon'
-      viewBox='0 0 16 16'
-      width='16'
-      height='16'
-      aria-hidden='true'
-    >
-      <path d={ALERT_ICON_PATH[kind]}></path>
-    </svg>
-    {ALERT_LABEL[kind]}
-  </p>
+  <p class='markdown-alert-title'>{ALERT_LABEL_JA[kind]}</p>
   {body.length > 0 && (
     <PortableText value={body} components={{ type: { code: CodeBlock } }} />
   )}
@@ -40,9 +33,9 @@ const body = (blocks as Array<Record<string, unknown>>).map((block) => ({
 
 <style>
   .markdown-alert {
-    margin: 1.5em 0;
-    padding: 0.5rem 1em;
-    border-left: 0.25em solid var(--alert-emphasis);
+    margin: 0 0 26px;
+    padding-left: 18px;
+    border-left: 2px solid var(--color-rule-strong);
   }
 
   .markdown-alert :global(> :last-child) {
@@ -50,43 +43,14 @@ const body = (blocks as Array<Record<string, unknown>>).map((block) => ({
   }
 
   .markdown-alert-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 0.5em;
-    color: var(--alert-fg);
-    font-size: var(--font-size-sm);
-    font-weight: 500;
-    line-height: 1;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-heading);
+    margin-bottom: 2px;
   }
 
-  .octicon {
-    flex-shrink: 0;
-    fill: currentColor;
-  }
-
-  .markdown-alert-note {
-    --alert-emphasis: light-dark(#0969da, #1f6feb);
-    --alert-fg: light-dark(#0969da, #58a6ff);
-  }
-
-  .markdown-alert-tip {
-    --alert-emphasis: light-dark(#1f883d, #238636);
-    --alert-fg: light-dark(#1a7f37, #3fb950);
-  }
-
-  .markdown-alert-important {
-    --alert-emphasis: light-dark(#8250df, #8957e5);
-    --alert-fg: light-dark(#8250df, #a371f7);
-  }
-
-  .markdown-alert-warning {
-    --alert-emphasis: light-dark(#9a6700, #9e6a03);
-    --alert-fg: light-dark(#9a6700, #d29922);
-  }
-
-  .markdown-alert-caution {
-    --alert-emphasis: light-dark(#cf222e, #da3633);
-    --alert-fg: light-dark(#d1242f, #f85149);
+  .markdown-alert :global(p) {
+    font-size: 15px;
+    line-height: 1.9;
   }
 </style>

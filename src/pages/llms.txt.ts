@@ -8,7 +8,7 @@ export const GET: APIRoute = async ({ site, url }) => {
     await getSiteSettings(),
   );
   const { entries: posts } = await getEmDashCollection('posts', {
-    orderBy: { published_at: 'desc' },
+    orderBy: { modified_time: 'desc' },
     limit: 1000,
   });
 

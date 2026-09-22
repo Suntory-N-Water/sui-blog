@@ -1,0 +1,46 @@
+---
+interface Props {
+  title: string;
+  href?: string | null;
+  linkLabel?: string | null;
+  flush?: boolean;
+}
+
+const { title, href, linkLabel, flush = false } = Astro.props;
+---
+
+<div class:list={['band', flush && 'is-flush']}>
+  <h2>{title}</h2>
+  {href && linkLabel && <a href={href}>{linkLabel}</a>}
+</div>
+
+<style>
+  .band {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 44px 0 10px;
+    max-width: var(--index-width);
+  }
+
+  .is-flush {
+    padding-top: 0;
+  }
+
+  .band h2 {
+    font-size: 14px;
+    font-weight: var(--font-weight-heading);
+  }
+
+  .band a {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .band a:hover {
+    color: var(--color-brand);
+    border-bottom-color: var(--color-brand);
+  }
+</style>
