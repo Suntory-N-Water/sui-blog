@@ -71,6 +71,17 @@ h5,
 h6 {
 	color: var(--color-heading);
 	line-height: 1.5;
+	text-wrap: balance;
+	word-break: auto-phrase;
+}
+
+p,
+li,
+dd,
+figcaption,
+blockquote {
+	text-wrap: pretty;
+	word-break: auto-phrase;
 }
 
 .nav-admin {
