@@ -21,6 +21,7 @@
 	--color-code-text: light-dark(#dde6f1, #dbe5f2);
 	--color-code-label: light-dark(#9aa8bd, #a3b1c6);
 	--color-code-rule: light-dark(#243348, #2d3d59);
+	--color-code-accent: #8ecfff;
 
 	--radius: 0;
 	--radius-lg: 0;
@@ -60,6 +61,7 @@
 		--color-code-text: #dde6f1;
 		--color-code-label: #9aa8bd;
 		--color-code-rule: #243348;
+		--color-code-accent: #8ecfff;
 	}
 }
 
