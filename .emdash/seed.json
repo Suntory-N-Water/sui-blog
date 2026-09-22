@@ -12,13 +12,14 @@
 	"collections": [
 		{
 			"slug": "posts",
-			"label": "Posts",
-			"labelSingular": "Post",
+			"label": "Blogs",
+			"labelSingular": "Blog",
 			"supports": [
 				"drafts",
 				"revisions",
 				"search"
 			],
+			"urlPattern": "/blog/{slug}",
 			"fields": [
 				{
 					"slug": "title",
@@ -46,7 +47,7 @@
 			]
 		}
 	],
-	"defaultLocale": "en",
+	"defaultLocale": "ja",
 	"taxonomies": [
 		{
 			"id": "tax:category",
@@ -86,6 +87,7 @@
 				"status": "published",
 				"data": {
 					"title": "記法サンプル記事",
+					"excerpt": "見出し、コードブロック、Mermaid、Alert、画像、リンクカード、表、脚注の表示をまとめて確認するためのサンプルです。",
 					"featured_image": {
 						"$media": {
 							"url": "https://suntory-n-water.com/opengraph-image.png",
@@ -865,8 +867,7 @@
 								}
 							]
 						}
-					],
-					"excerpt": "見出し、コードブロック、Mermaid、Alert、画像、リンクカード、表、脚注の表示をまとめて確認するためのサンプルです。"
+					]
 				},
 				"taxonomies": {
 					"tag": [
