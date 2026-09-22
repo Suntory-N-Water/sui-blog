@@ -53,13 +53,19 @@ type Block = {
 
 export function bareLinkHref(node: unknown): string | null {
   const block = node as Block | null;
-  if (!block || block._type !== 'block') return null;
-  if (block.style && block.style !== 'normal') return null;
+  if (!block || block._type !== 'block') {
+    return null;
+  }
+  if (block.style && block.style !== 'normal') {
+    return null;
+  }
 
   const children = (block.children ?? []).filter(
     (child) => textOf(child).trim() !== '',
   );
-  if (children.length !== 1) return null;
+  if (children.length !== 1) {
+    return null;
+  }
 
   const [child] = children;
   const href =
@@ -71,23 +77,33 @@ export function bareLinkHref(node: unknown): string | null {
 }
 
 function markTreeHref(child: Child): string | null {
-  if (child.markType !== 'link') return null;
+  if (child.markType !== 'link') {
+    return null;
+  }
   const href = child.markDef?.href;
   return typeof href === 'string' ? href : null;
 }
 
 function spanHref(child: Child, markDefs: MarkDef[]): string | null {
-  if (child._type !== 'span') return null;
+  if (child._type !== 'span') {
+    return null;
+  }
   const linkKey = (child.marks ?? []).find((mark) => !TEXT_MARKS.has(mark));
-  if (!linkKey) return null;
+  if (!linkKey) {
+    return null;
+  }
 
   const def = markDefs.find((mark) => mark._key === linkKey);
-  if (!def || def._type !== 'link' || typeof def.href !== 'string') return null;
+  if (!def || def._type !== 'link' || typeof def.href !== 'string') {
+    return null;
+  }
   return def.href;
 }
 
 function textOf(child: Child): string {
-  if (typeof child.text === 'string') return child.text;
+  if (typeof child.text === 'string') {
+    return child.text;
+  }
   return (child.children ?? []).map(textOf).join('');
 }
 
@@ -95,21 +111,29 @@ const previews = new Map<string, LinkPreview | null>();
 
 export async function getLinkPreview(url: string): Promise<LinkPreview | null> {
   const cached = previews.get(url);
-  if (cached !== undefined) return cached;
+  if (cached !== undefined) {
+    return cached;
+  }
 
   const preview = await fetchLinkPreview(url);
-  if (previews.size >= MAX_CACHED_PREVIEWS) previews.clear();
+  if (previews.size >= MAX_CACHED_PREVIEWS) {
+    previews.clear();
+  }
   previews.set(url, preview);
   return preview;
 }
 
 export async function prefetchLinkPreviews(blocks: unknown): Promise<void> {
-  if (!Array.isArray(blocks)) return;
+  if (!Array.isArray(blocks)) {
+    return;
+  }
 
   const urls = new Set<string>();
   for (const block of blocks) {
     const href = bareLinkHref(block);
-    if (href && /^https?:\/\//u.test(href)) urls.add(href);
+    if (href && /^https?:\/\//u.test(href)) {
+      urls.add(href);
+    }
   }
 
   await Promise.all([...urls].map((url) => getLinkPreview(url)));
@@ -126,11 +150,15 @@ async function fetchLinkPreview(url: string): Promise<LinkPreview | null> {
       cf: { cacheEverything: true, cacheTtl: CACHE_TTL_SECONDS },
     } as RequestInit);
 
-    if (!response.ok) return null;
+    if (!response.ok) {
+      return null;
+    }
 
     const html = await readDocumentHead(response);
     const title = metaContent(html, 'og:title') ?? titleTag(html);
-    if (!title || BLOCKED_TITLES.has(title)) return null;
+    if (!title || BLOCKED_TITLES.has(title)) {
+      return null;
+    }
 
     return {
       url,
@@ -149,16 +177,22 @@ async function fetchLinkPreview(url: string): Promise<LinkPreview | null> {
 
 async function readDocumentHead(response: Response): Promise<string> {
   const reader = response.body?.getReader();
-  if (!reader) return response.text();
+  if (!reader) {
+    return response.text();
+  }
 
   const decoder = new TextDecoder();
   let html = '';
   try {
     while (html.length < MAX_HEAD_LENGTH) {
       const { done, value } = await reader.read();
-      if (done) break;
+      if (done) {
+        break;
+      }
       html += decoder.decode(value, { stream: true });
-      if (html.includes('</head>')) break;
+      if (html.includes('</head>')) {
+        break;
+      }
     }
   } finally {
     await reader.cancel().catch(() => undefined);
@@ -171,7 +205,9 @@ function metaContent(html: string, property: string): string | undefined {
     `<meta[^>]*(?:property|name)\\s*=\\s*["']?${property}["']?[^>]*>`,
     'iu',
   ).exec(html)?.[0];
-  if (!tag) return undefined;
+  if (!tag) {
+    return undefined;
+  }
 
   const content = /content\s*=\s*(?:["']([^"']*)["']|([^\s>]+))/iu.exec(tag);
   const value = (content?.[1] ?? content?.[2] ?? '').trim();
@@ -179,12 +215,15 @@ function metaContent(html: string, property: string): string | undefined {
 }
 
 function titleTag(html: string): string | undefined {
-  return /<title[^>]*>([\s\S]*?)<\/title>/iu.exec(html)?.[1]?.trim() ||
-    undefined;
+  return (
+    /<title[^>]*>([\s\S]*?)<\/title>/iu.exec(html)?.[1]?.trim() || undefined
+  );
 }
 
 function absoluteUrl(value: string | undefined, base: string): string {
-  if (!value) return '';
+  if (!value) {
+    return '';
+  }
   try {
     return new URL(value, base).href;
   } catch {

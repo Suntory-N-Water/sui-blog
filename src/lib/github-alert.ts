@@ -43,20 +43,28 @@ type Block = {
 export function alertKind(block: unknown): AlertKind | null {
   const children = (block as Block | null)?.children ?? [];
   const meaningful = children.filter((child) => textOf(child).trim() !== '');
-  if (meaningful.length !== 1) return null;
+  if (meaningful.length !== 1) {
+    return null;
+  }
 
   const [child] = meaningful;
-  if (!isStrong(child)) return null;
+  if (!isStrong(child)) {
+    return null;
+  }
 
   return KIND_BY_LABEL[textOf(child).trim()] ?? null;
 }
 
 function isStrong(child: Child): boolean {
-  if (child._type === '@span') return child.markType === 'strong';
+  if (child._type === '@span') {
+    return child.markType === 'strong';
+  }
   return (child.marks ?? []).includes('strong');
 }
 
 function textOf(child: Child): string {
-  if (typeof child.text === 'string') return child.text;
+  if (typeof child.text === 'string') {
+    return child.text;
+  }
   return (child.children ?? []).map(textOf).join('');
 }
