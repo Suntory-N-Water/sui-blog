@@ -2,7 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "sui-blog",
   "main": "./src/worker.ts",
-  "compatibility_date": "2026-02-24",
+  "compatibility_date": "2026-09-01",
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "binding": "ASSETS",
@@ -11,15 +11,22 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "sui-blog",
-      "migrations_dir": "../../migrations",
-      "database_id": "94f1929f-8836-49ee-9ce8-ac22cf416246"
+      "database_name": "sui-blog"
     }
   ],
+  "observability": {
+    "enabled": true
+  },
   "r2_buckets": [
     {
       "binding": "MEDIA",
       "bucket_name": "sui-blog-media"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "SESSION",
+      "id": "816fa61942dd43c08524f2ac74bcfca9"
     }
   ],
   // Sandboxed plugins require Worker Loader, available on Workers paid plans. Uncomment to enable:
@@ -27,5 +34,15 @@
   // General maintenance cron trigger
   "triggers": {
     "crons": ["* * * * *"]
-  }
+  },
+  "routes": [
+    {
+      "pattern": "suntory-n-water.com",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.suntory-n-water.com",
+      "custom_domain": true
+    }
+  ]
 }
