@@ -60,4 +60,7 @@ export default defineConfig({
 		},
 	],
 	devToolbar: { enabled: false },
+	vite: {
+		build: { cssTarget: ["chrome123", "edge123", "firefox120", "safari17.5"] },
+	},
 });
