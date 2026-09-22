@@ -40,11 +40,31 @@ const body = (blocks as Array<Record<string, unknown>>).map((block) => ({
   .markdown-alert {
     margin: 0 0 26px;
     padding-left: 18px;
-    border-left: 2px solid var(--color-rule-strong);
+    border-left: 2px solid var(--alert-fg);
   }
 
   .markdown-alert :global(> :last-child) {
     margin-bottom: 0;
+  }
+
+  .markdown-alert-note {
+    --alert-fg: var(--color-brand);
+  }
+
+  .markdown-alert-tip {
+    --alert-fg: light-dark(#1a6b3c, #62c98d);
+  }
+
+  .markdown-alert-important {
+    --alert-fg: light-dark(#5b3fa8, #b39bf0);
+  }
+
+  .markdown-alert-warning {
+    --alert-fg: light-dark(#8a5a00, #e0b25c);
+  }
+
+  .markdown-alert-caution {
+    --alert-fg: light-dark(#a3242c, #f09088);
   }
 
   .markdown-alert-title {
@@ -53,7 +73,7 @@ const body = (blocks as Array<Record<string, unknown>>).map((block) => ({
     gap: 6px;
     font-family: var(--font-mono);
     font-size: 12px;
-    color: var(--color-heading);
+    color: var(--alert-fg);
     margin-bottom: 2px;
   }
 
@@ -65,5 +85,23 @@ const body = (blocks as Array<Record<string, unknown>>).map((block) => ({
   .markdown-alert :global(p) {
     font-size: 15px;
     line-height: 1.9;
+  }
+
+  @supports not (color: light-dark(#000, #fff)) {
+    .markdown-alert-tip {
+      --alert-fg: #1a6b3c;
+    }
+
+    .markdown-alert-important {
+      --alert-fg: #5b3fa8;
+    }
+
+    .markdown-alert-warning {
+      --alert-fg: #8a5a00;
+    }
+
+    .markdown-alert-caution {
+      --alert-fg: #a3242c;
+    }
   }
 </style>
