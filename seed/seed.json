@@ -97214,7 +97214,7 @@
             {
               "_type": "code",
               "_key": "code-209",
-              "code": "- name: Enable preview URLs\n  run: |\n    SCRIPT_NAME=\"sui-tech-blog\"\n    API_BASE=\"https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers\"\n\n    curl -sf -X POST \\\n      \"$API_BASE/scripts/$SCRIPT_NAME/subdomain\" \\\n      -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \\\n      -H \"Content-Type: application/json\" \\\n      -d '{\"enabled\": true, \"previews_enabled\": true}'\n\n    echo \"Preview URLs enabled\"\n  env:\n    CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}\n    CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}",
+              "code": "- name: Enable preview URLs\n  run: |\n    SCRIPT_NAME=\"sui-blog\"\n    API_BASE=\"https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers\"\n\n    curl -sf -X POST \\\n      \"$API_BASE/scripts/$SCRIPT_NAME/subdomain\" \\\n      -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \\\n      -H \"Content-Type: application/json\" \\\n      -d '{\"enabled\": true, \"previews_enabled\": true}'\n\n    echo \"Preview URLs enabled\"\n  env:\n    CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}\n    CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}",
               "language": "yaml"
             },
             {
@@ -97245,7 +97245,7 @@
             {
               "_type": "code",
               "_key": "code-214",
-              "code": "- name: Disable preview URLs\n  continue-on-error: true\n  run: |\n    SCRIPT_NAME=\"sui-tech-blog\"\n    API_BASE=\"https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers\"\n\n    HTTP_CODE=$(curl -s -o /dev/null -w \"%{http_code}\" -X POST \\\n      \"$API_BASE/scripts/$SCRIPT_NAME/subdomain\" \\\n      -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \\\n      -H \"Content-Type: application/json\" \\\n      -d '{\"enabled\": true, \"previews_enabled\": false}')\n\n    if [ \"$HTTP_CODE\" -ge 200 ] && [ \"$HTTP_CODE\" -lt 300 ]; then\n      echo \"Preview URLs disabled (HTTP $HTTP_CODE)\"\n    else\n      echo \"::warning::Failed to disable preview URLs (HTTP $HTTP_CODE)\"\n    fi\n  env:\n    CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}\n    CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}",
+              "code": "- name: Disable preview URLs\n  continue-on-error: true\n  run: |\n    SCRIPT_NAME=\"sui-blog\"\n    API_BASE=\"https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers\"\n\n    HTTP_CODE=$(curl -s -o /dev/null -w \"%{http_code}\" -X POST \\\n      \"$API_BASE/scripts/$SCRIPT_NAME/subdomain\" \\\n      -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \\\n      -H \"Content-Type: application/json\" \\\n      -d '{\"enabled\": true, \"previews_enabled\": false}')\n\n    if [ \"$HTTP_CODE\" -ge 200 ] && [ \"$HTTP_CODE\" -lt 300 ]; then\n      echo \"Preview URLs disabled (HTTP $HTTP_CODE)\"\n    else\n      echo \"::warning::Failed to disable preview URLs (HTTP $HTTP_CODE)\"\n    fi\n  env:\n    CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}\n    CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}",
               "language": "yaml"
             },
             {

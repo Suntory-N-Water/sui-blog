@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "sui-tech-blog",
+  "name": "sui-blog",
   "main": "./src/worker.ts",
   "compatibility_date": "2026-02-24",
   "compatibility_flags": ["nodejs_compat"],
@@ -11,13 +11,15 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "sui-tech-blog"
+      "database_name": "sui-blog",
+      "migrations_dir": "../../migrations",
+      "database_id": "94f1929f-8836-49ee-9ce8-ac22cf416246"
     }
   ],
   "r2_buckets": [
     {
       "binding": "MEDIA",
-      "bucket_name": "sui-tech-blog-media"
+      "bucket_name": "sui-blog-media"
     }
   ],
   // Sandboxed plugins require Worker Loader, available on Workers paid plans. Uncomment to enable:
