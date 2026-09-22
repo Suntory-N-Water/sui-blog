@@ -79,10 +79,8 @@ const isLoggedIn = !!Astro.locals.user;
     <title>{fullTitle}</title>
     <EmDashHead page={pageCtx} />
     <script is:inline>
-      (function () {
-        var c = document.cookie;
-        var i = c.indexOf('theme=');
-        var theme = i >= 0 ? c.slice(i + 6).split(';')[0] : null;
+      (() => {
+        const theme = document.cookie.match(/(?:^|;\s*)theme=([^;]*)/)?.[1];
         if (theme === 'dark' || theme === 'light') {
           document.documentElement.classList.add(theme);
         }
@@ -265,8 +263,7 @@ const isLoggedIn = !!Astro.locals.user;
     </footer>
 
     <script>
-      // Theme switcher
-      const THEME_REGEX = /theme=([^;]+)/;
+      const THEME_REGEX = /(?:^|;\s*)theme=([^;]*)/;
       const themeBtns =
         document.querySelectorAll<HTMLButtonElement>('.theme-btn');
       const root = document.documentElement;
@@ -284,16 +281,17 @@ const isLoggedIn = !!Astro.locals.user;
         }
       }
 
-      function setTheme(theme: string) {
-        if (theme === 'system') {
-          setCookie('theme', '');
-          root.classList.remove('light', 'dark');
-        } else {
-          setCookie('theme', theme);
-          root.classList.remove('light', 'dark');
+      function applyTheme(theme: string) {
+        root.classList.remove('light', 'dark');
+        if (theme === 'light' || theme === 'dark') {
           root.classList.add(theme);
         }
         updateActiveBtn(theme);
+      }
+
+      function setTheme(theme: string) {
+        setCookie('theme', theme === 'system' ? '' : theme);
+        applyTheme(theme);
       }
 
       function updateActiveBtn(theme: string) {
@@ -303,12 +301,11 @@ const isLoggedIn = !!Astro.locals.user;
       }
 
       function getStoredTheme(): string {
-        const match = document.cookie.match(THEME_REGEX);
-        return match ? match[1] : 'system';
+        const value = document.cookie.match(THEME_REGEX)?.[1];
+        return value === 'light' || value === 'dark' ? value : 'system';
       }
 
-      const storedTheme = getStoredTheme();
-      setTheme(storedTheme);
+      applyTheme(getStoredTheme());
 
       themeBtns.forEach((btn) => {
         btn.addEventListener('click', () => {
