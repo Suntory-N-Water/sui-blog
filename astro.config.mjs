@@ -13,6 +13,10 @@ export default defineConfig({
 	redirects: {
 		"/sitemap-index.xml": { status: 301, destination: "/sitemap.xml" },
 	},
+ i18n: {
+    defaultLocale: "ja",
+    locales: ["ja"],
+  },
 	image: {
 		layout: "constrained",
 		responsiveStyles: true,
