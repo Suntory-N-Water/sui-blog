@@ -48,7 +48,11 @@ export const GET: APIRoute = async ({ params, request }) => {
     const post = asPost(entry);
     const image = await renderOgpImage({
       title: post.data.title,
-      excerpt: post.data.excerpt ?? '',
+      tags: (post.data.terms?.tag ?? []).map((term) => term.label),
+      iconFilename:
+        typeof post.data.featured_image === 'object'
+          ? post.data.featured_image.filename
+          : undefined,
       origin,
     });
 
