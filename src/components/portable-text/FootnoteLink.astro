@@ -1,0 +1,27 @@
+---
+import { Link } from 'emdash/ui';
+
+const props = Astro.props as {
+  node: {
+    markDef: {
+      _type: 'link';
+      _key: string;
+      href: string;
+      blank?: boolean;
+      refId?: string;
+    };
+  };
+};
+const markDef = props.node?.markDef;
+const refId = typeof markDef?.refId === 'string' ? markDef.refId : null;
+---
+
+{refId ? (
+  <a id={refId} href={markDef.href} class='footnote-ref'>
+    <slot />
+  </a>
+) : (
+  <Link {...props}>
+    <slot />
+  </Link>
+)}
