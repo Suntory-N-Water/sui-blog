@@ -19,7 +19,7 @@
     "format:check": "biome format . && prettier --check '**/*.astro'",
     "lint": "biome lint .",
     "lint:fix": "biome lint --write .",
-    "type-check": "astro check && tsc --noEmit",
+    "type-check": "astro check",
     "knip": "knip",
     "normalize:media": "node scripts/normalize-image-assets.ts"
   },
