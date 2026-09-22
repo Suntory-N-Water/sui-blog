@@ -72,9 +72,7 @@ const label = hostname || 'このサイトの記事';
         <span class='link-card-host'>{label}</span>
       </span>
       <span class='link-card-title'>{title}</span>
-      {description && (
-        <span class='link-card-description'>{description}</span>
-      )}
+      {description && <span class='link-card-description'>{description}</span>}
     </span>
     {internalImage ? (
       <span class='link-card-thumbnail'>

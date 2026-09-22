@@ -8,12 +8,15 @@ import LinkCard from './LinkCard.astro';
 
 const props = Astro.props as BlockProps;
 const href = bareLinkHref(props.node);
-const kind =
-  props.node.style === 'blockquote' ? alertKind(props.node) : null;
+const kind = props.node.style === 'blockquote' ? alertKind(props.node) : null;
 const EmDashBlock = emdashComponents.block;
 ---
 
-{href ? <LinkCard url={href} /> : kind ? <Alert kind={kind} blocks={[]} /> : (
+{href ? (
+  <LinkCard url={href} />
+) : kind ? (
+  <Alert kind={kind} blocks={[]} />
+) : (
   <EmDashBlock {...props}>
     <slot />
   </EmDashBlock>

@@ -30,7 +30,8 @@ const body = (blocks as Array<Record<string, unknown>>).map((block) => ({
       aria-hidden='true'
     >
       <path d={ALERT_ICON_PATH[kind]}></path>
-    </svg>{ALERT_LABEL[kind]}
+    </svg>
+    {ALERT_LABEL[kind]}
   </p>
   {body.length > 0 && (
     <PortableText value={body} components={{ type: { code: CodeBlock } }} />

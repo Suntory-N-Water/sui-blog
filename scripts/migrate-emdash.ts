@@ -271,7 +271,9 @@ function escapeHtml(value: string): string {
 function footnotesBlock(context: ConverterContext): PortableTextBlock | null {
   for (const [identifier] of context.footnoteDefinitions) {
     if (context.footnoteNumbers.has(identifier)) continue;
-    context.warnings.push(`footnote ${identifier}: defined without a reference`);
+    context.warnings.push(
+      `footnote ${identifier}: defined without a reference`,
+    );
     footnoteNumber(context, identifier);
   }
   const entries = [...context.footnoteNumbers.entries()].sort(
