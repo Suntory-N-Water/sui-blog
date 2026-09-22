@@ -44,19 +44,12 @@ const {
 const { siteTitle, siteTagline, siteLogo } = resolveBlogSiteIdentity(
   await getSiteSettings(),
 );
-// If title already includes site title (from getSeoMeta), use as-is
+const ogImage =
+  image ?? new URL('/opengraph-image.png', Astro.url.origin).toString();
 const fullTitle = title.includes(siteTitle) ? title : `${title} — ${siteTitle}`;
 
-// Fetch primary menu defined in seed
 const menu = await getMenu('primary');
-
-// Optional "social" menu. If a site defines a `social` menu in its seed,
-// it'll render in the footer's "Connect" column. Otherwise that column
-// just shows RSS, avoiding duplication with the "Navigate" column above.
 const socialMenu = await getMenu('social');
-
-// Build public page context for plugin contributions
-// SEO data is passed here and rendered securely by EmDashHead
 const pageCtx = createPublicPageContext({
   Astro,
   kind: content ? 'content' : 'custom',
@@ -65,14 +58,13 @@ const pageCtx = createPublicPageContext({
   pageTitle: pageTitle ?? title,
   description,
   canonical,
-  image,
+  image: ogImage,
   content,
-  seo: { ogImage: image, robots },
+  seo: { ogImage, robots },
   articleMeta: { publishedTime, modifiedTime, author },
   siteName: siteTitle,
 });
 
-// Check if user is logged in (for showing admin link)
 const isLoggedIn = !!Astro.locals.user;
 ---
 
@@ -86,8 +78,6 @@ const isLoggedIn = !!Astro.locals.user;
     <title>{fullTitle}</title>
     <EmDashHead page={pageCtx} />
     <script is:inline>
-      // Apply an explicit theme choice immediately to prevent flash.
-      // With no cookie, color-scheme: light dark follows the OS.
       (function () {
         var c = document.cookie;
         var i = c.indexOf('theme=');
@@ -317,7 +307,6 @@ const isLoggedIn = !!Astro.locals.user;
         return match ? match[1] : 'system';
       }
 
-      // Initialize
       const storedTheme = getStoredTheme();
       setTheme(storedTheme);
 
@@ -328,11 +317,6 @@ const isLoggedIn = !!Astro.locals.user;
       });
     </script>
     <style is:global>
-      /*
-       * Establish layer order: "base" has lower priority than unlayered
-       * styles, so theme.css overrides always win regardless of source
-       * order in the bundled CSS.
-       */
       @layer base;
 
       @layer base {
@@ -363,15 +347,6 @@ const isLoggedIn = !!Astro.locals.user;
         ol {
           padding: 0;
         }
-
-        /*
-        	 * Design tokens live in src/styles/tokens.css. Colors are
-        	 * defined with light-dark(); these rules pin the scheme when
-        	 * the footer switcher sets an explicit choice. With no class,
-        	 * color-scheme: light dark follows the OS preference. The
-        	 * @supports guard keeps the toggle from forcing dark UA form
-        	 * controls on browsers stuck on the plain-light fallback.
-        	 */
         @supports (color: light-dark(#000, #fff)) {
           :root.light {
             color-scheme: light;
