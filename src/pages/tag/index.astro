@@ -1,25 +1,38 @@
 ---
 import { getTaxonomyTermsWithCacheHint } from 'emdash';
 import Base from '../../layouts/Base.astro';
+import PageShell from '../../components/PageShell.astro';
+import ArchiveHead from '../../components/ArchiveHead.astro';
+import TagIndex from '../../components/TagIndex.astro';
 
 const { data: tags, cacheHint } = await getTaxonomyTermsWithCacheHint('tag', {
   includeCounts: true,
 });
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const sortedTags = tags.slice().sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
 ---
 
 <Base title='タグ一覧' description='記事のタグ一覧'>
-  <section class='page-shell'>
-    <header class='page-header'>
-      <h1>タグ一覧</h1>
-    </header>
-    <div class='tag-grid'>
-      {tags.map((tag) => (
-        <a href={`/tag/${tag.slug}`}>
-          {tag.label}
-          {typeof tag.count === 'number' ? ` (${tag.count})` : ''}
-        </a>
-      ))}
+  <PageShell>
+    <ArchiveHead
+      title='タグ一覧'
+      sub={`${sortedTags.length} タグ / 記事数の多い順`}
+    />
+    <div class='tag-index-wrap'>
+      <TagIndex
+        tags={sortedTags.map((tag) => ({
+          slug: tag.slug,
+          label: tag.label,
+          count: tag.count,
+        }))}
+      />
     </div>
-  </section>
+  </PageShell>
 </Base>
+
+<style>
+  .tag-index-wrap {
+    max-width: var(--index-width);
+  }
+</style>

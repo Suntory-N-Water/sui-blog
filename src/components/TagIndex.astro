@@ -1,0 +1,88 @@
+---
+interface Props {
+  tags: Array<{ slug: string; label: string; count?: number | null }>;
+  currentSlug?: string | null;
+}
+
+const { tags, currentSlug } = Astro.props;
+---
+
+<ul class='tag-index'>
+  {tags.map((tag) => (
+    <li>
+      <a
+        href={`/tag/${tag.slug}`}
+        class:list={['tag-link', tag.slug === currentSlug && 'is-current']}
+      >
+        <span class='tag-label'>#{tag.label}</span>
+        <span class='tag-dots'></span>
+        {typeof tag.count === 'number' && (
+          <span class='tag-count'>{tag.count}</span>
+        )}
+      </a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .tag-index {
+    columns: 3;
+    column-gap: 40px;
+    list-style: none;
+    margin: 0;
+    padding: 14px 0 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .tag-index li {
+    break-inside: avoid;
+  }
+
+  .tag-link {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 14px;
+    color: var(--color-text);
+  }
+
+  .tag-link:hover,
+  .tag-link.is-current {
+    color: var(--color-brand);
+  }
+
+  .tag-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tag-dots {
+    flex: 1;
+    min-width: 12px;
+    border-bottom: 1px dotted var(--color-border);
+    transform: translateY(-4px);
+  }
+
+  .tag-count {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 860px) {
+    .tag-index {
+      columns: 2;
+      column-gap: 32px;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .tag-index {
+      columns: 1;
+    }
+  }
+</style>

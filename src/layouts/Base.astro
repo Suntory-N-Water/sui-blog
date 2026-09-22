@@ -69,12 +69,13 @@ const isLoggedIn = !!Astro.locals.user;
 ---
 
 <!doctype html>
-<html lang='en'>
+<html lang='ja'>
   <head>
     <meta charset='UTF-8' />
     <meta name='viewport' content='width=device-width, initial-scale=1.0' />
-    <Font cssVariable='--font-body' preload />
-    <Font cssVariable='--font-mono' />
+    <Font cssVariable='--font-latin' preload />
+    <Font cssVariable='--font-jp' preload />
+    <Font cssVariable='--font-mono-latin' />
     <title>{fullTitle}</title>
     <EmDashHead page={pageCtx} />
     <script is:inline>
@@ -105,24 +106,26 @@ const isLoggedIn = !!Astro.locals.user;
         </a>
         <div class='nav-right'>
           <LiveSearch
-            placeholder='Search...'
+            placeholder='記事を検索'
             class='site-search'
             inputClass='site-search-input'
             resultsClass='site-search-results'
             resultClass='site-search-result'
             collections={['posts']}
           />
-          <div class='nav-links'>
-            {menu?.items.map((item) => (
-              <a href={item.url} target={item.target}>
-                {item.label}
-              </a>
-            ))}
-          </div>
+          {menu && menu.items.length > 0 && (
+            <div class='nav-links'>
+              {menu.items.map((item) => (
+                <a href={item.url} target={item.target}>
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          )}
         </div>
         {isLoggedIn && (
           <a href='/_emdash/admin' class='nav-admin'>
-            Admin
+            管理
           </a>
         )}
       </nav>
@@ -150,18 +153,18 @@ const isLoggedIn = !!Astro.locals.user;
             <p class='footer-tagline'>{siteTagline}</p>
           </div>
           <div class='footer-nav'>
-            <h4 class='footer-heading'>Navigate</h4>
+            <h4 class='footer-heading'>ページ</h4>
             <ul class='footer-links'>
               <li>
-                <a href='/'>Home</a>
+                <a href='/'>ホーム</a>
               </li>
               <li>
-                <a href='/posts'>All Posts</a>
+                <a href='/posts'>記事一覧</a>
               </li>
             </ul>
           </div>
           <div class='footer-nav'>
-            <h4 class='footer-heading'>Connect</h4>
+            <h4 class='footer-heading'>リンク</h4>
             <ul class='footer-links'>
               {socialMenu?.items.map((item) => (
                 <li>
@@ -179,7 +182,7 @@ const isLoggedIn = !!Astro.locals.user;
                 </li>
               ))}
               <li>
-                <a href='/rss.xml'>RSS Feed</a>
+                <a href='/rss.xml'>RSS</a>
               </li>
             </ul>
           </div>
@@ -188,15 +191,12 @@ const isLoggedIn = !!Astro.locals.user;
           </div>
         </div>
         <div class='footer-bottom'>
-          <p class='footer-copyright'>
-            Powered by <a href='https://emdashcms.com'>EmDash</a>
-          </p>
           <div class='theme-switcher'>
             <button
               type='button'
               class='theme-btn'
               data-theme='light'
-              aria-label='Light mode'
+              aria-label='ライトテーマ'
             >
               <svg
                 width='16'
@@ -223,7 +223,7 @@ const isLoggedIn = !!Astro.locals.user;
               type='button'
               class='theme-btn'
               data-theme='dark'
-              aria-label='Dark mode'
+              aria-label='ダークテーマ'
             >
               <svg
                 width='16'
@@ -242,7 +242,7 @@ const isLoggedIn = !!Astro.locals.user;
               type='button'
               class='theme-btn'
               data-theme='system'
-              aria-label='System theme'
+              aria-label='システム設定に合わせる'
             >
               <svg
                 width='16'
@@ -693,19 +693,10 @@ const isLoggedIn = !!Astro.locals.user;
 
       .footer-bottom {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-end;
         align-items: center;
         padding-top: var(--spacing-6);
         border-top: 1px solid var(--color-border);
-      }
-
-      .footer-copyright {
-        font-size: var(--font-size-sm);
-        color: var(--color-muted);
-      }
-
-      .footer-copyright a {
-        color: var(--color-text-secondary);
       }
 
       /* Theme switcher */
@@ -786,6 +777,9 @@ const isLoggedIn = !!Astro.locals.user;
           grid-row: 2;
           display: grid;
           row-gap: var(--spacing-2);
+          width: 100%;
+          min-width: 0;
+          margin-inline-start: 0;
         }
 
         .site-search {
@@ -796,7 +790,6 @@ const isLoggedIn = !!Astro.locals.user;
 
         :global(.site-search-input) {
           width: 100% !important;
-          padding: var(--spacing-1) var(--spacing-2) !important;
           font-size: var(--font-size-sm) !important;
         }
 

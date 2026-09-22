@@ -1,3 +1,4 @@
+import ArticleImage from './ArticleImage.astro';
 import Block from './Block.astro';
 import BlockquoteGroup from './BlockquoteGroup.astro';
 import CodeBlock from './CodeBlock.astro';
@@ -7,5 +8,6 @@ export const articlePortableTextComponents = {
   type: {
     blockquoteGroup: BlockquoteGroup,
     code: CodeBlock,
+    image: ArticleImage,
   },
 };

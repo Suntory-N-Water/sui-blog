@@ -16,7 +16,6 @@ const internalSlug =
     : null;
 
 let title = '';
-let description = '';
 let image = '';
 let internalImage: MediaValue | string | undefined;
 let hostname = '';
@@ -25,7 +24,6 @@ if (internalSlug) {
   const { entry } = await getEmDashEntry('posts', internalSlug);
   if (entry) {
     title = String(entry.data.title ?? '');
-    description = String(entry.data.excerpt ?? '');
     const featured = entry.data.featured_image;
     internalImage =
       typeof featured === 'string' ||
@@ -38,15 +36,11 @@ if (internalSlug) {
   const preview = await getLinkPreview(url);
   if (preview) {
     title = preview.title;
-    description = preview.description;
     image = preview.image;
   }
 }
 
-const faviconUrl = hostname
-  ? `https://www.google.com/s2/favicons?domain=${encodeURIComponent(hostname)}&sz=64`
-  : null;
-const label = hostname || 'このサイトの記事';
+const displayUrl = hostname || url;
 ---
 
 {title ? (
@@ -56,23 +50,8 @@ const label = hostname || 'このサイトの記事';
     {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
   >
     <span class='link-card-body'>
-      <span class='link-card-source'>
-        {faviconUrl ? (
-          <img
-            class='link-card-favicon'
-            src={faviconUrl}
-            alt=''
-            width='16'
-            height='16'
-            loading='lazy'
-          />
-        ) : (
-          <span class='link-card-badge'>B</span>
-        )}
-        <span class='link-card-host'>{label}</span>
-      </span>
       <span class='link-card-title'>{title}</span>
-      {description && <span class='link-card-description'>{description}</span>}
+      <span class='link-card-url'>{displayUrl}</span>
     </span>
     {internalImage ? (
       <span class='link-card-thumbnail'>
@@ -96,103 +75,55 @@ const label = hostname || 'このサイトの記事';
 )}
 
 <style>
-  .link-card:link,
-  .link-card:visited {
-    text-decoration: none;
-  }
-
   .link-card {
     display: flex;
-    align-items: stretch;
-    gap: var(--spacing-4);
-    margin: 1.5em 0;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
-    overflow: hidden;
+    align-items: center;
+    gap: 18px;
+    margin: 0 0 26px;
+    padding: 14px 0;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
     text-decoration: none;
     color: inherit;
-    transition:
-      border-color var(--transition-fast),
-      background var(--transition-fast);
-  }
-
-  .link-card:hover {
-    border-color: var(--color-brand);
   }
 
   .link-card-body {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-2);
-    flex: 1;
+    gap: 2px;
     min-width: 0;
-    padding: var(--spacing-4);
-  }
-
-  .link-card-source {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-2);
-    font-size: var(--font-size-xs);
-    color: var(--color-muted);
-  }
-
-  .link-card-favicon {
-    width: 16px;
-    height: 16px;
-    border-radius: var(--radius);
-  }
-
-  .link-card-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--color-brand);
-    color: var(--color-on-brand);
-    font-size: 10px;
-    font-weight: 700;
-  }
-
-  .link-card-host {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .link-card-title {
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-heading);
-    line-height: var(--leading-snug);
-    color: var(--color-text);
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: var(--color-heading);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    transition: color var(--transition-fast);
   }
 
   .link-card:hover .link-card-title {
     color: var(--color-brand);
   }
 
-  .link-card-description {
-    font-size: var(--font-size-sm);
-    line-height: var(--leading-normal);
-    color: var(--color-text-secondary);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+  .link-card-url {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--color-muted);
     overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .link-card-thumbnail {
-    flex-shrink: 0;
-    width: 160px;
-    background: var(--color-bg-subtle);
+    width: 84px;
+    height: 52px;
+    flex: none;
+    margin-left: auto;
+    border: 1px solid var(--color-border);
+    overflow: hidden;
   }
 
   .link-card-thumbnail img,

@@ -1,30 +1,87 @@
-/*
-  theme.css -- your theme overrides. This is the file to edit to
-  retheme the site.
-
-  Every design token lives in src/styles/tokens.css (colors, type
-  scale, spacing, layout, shadows) with its default value. Override any
-  of them here: declarations in this file are unlayered, so they always
-  beat the @layer base defaults in tokens.css.
-
-  Colors are defined with light-dark(). Overriding with a plain color
-  changes light and dark mode at once; use light-dark(<light>, <dark>)
-  to set different values per mode.
-
-  Webfonts are loaded in astro.config.mjs (--font-body, --font-mono).
-  Swap the loaded font there; use overrides here for system fonts or a
-  separate heading face.
-
-  Example:
-
-  :root {
-    --color-brand: light-dark(#0f766e, #2dd4bf);
-    --font-heading: "Iowan Old Style", Georgia, serif;
-    --radius: 8px;
-  }
-*/
-
 :root {
+	--font-body: var(--font-latin), var(--font-jp);
+	--font-mono: var(--font-mono-latin), var(--font-jp), monospace;
+
+	--color-bg: light-dark(#ffffff, #0b1220);
+	--color-bg-subtle: light-dark(#ffffff, #0b1220);
+	--color-text: light-dark(#162030, #dde5f0);
+	--color-heading: light-dark(#0d1826, #eef3f9);
+	--color-text-secondary: light-dark(#44536b, #9fadc2);
+	--color-muted: light-dark(#6a7584, #707f97);
+	--color-border: light-dark(#dbe3ec, #22314b);
+	--color-border-subtle: light-dark(#dbe3ec, #22314b);
+	--color-surface: light-dark(#f2f6fa, #131c2c);
+	--color-rule-strong: light-dark(#162030, #c9d6e6);
+	--color-brand: light-dark(#003b89, #8ecfff);
+	--color-brand-hover: light-dark(#002a63, #b3e0ff);
+	--color-brand-underline: light-dark(#7fb4e6, #35618f);
+	--color-mark: light-dark(#d5f2ff, #1d3d5e);
+	--color-code-bg: light-dark(#0d1826, #17243b);
+	--color-code-bar: light-dark(#050c16, #0e192a);
+	--color-code-text: light-dark(#dde6f1, #dbe5f2);
+	--color-code-label: light-dark(#9aa8bd, #a3b1c6);
+	--color-code-rule: light-dark(#243348, #2d3d59);
+
+	--radius: 0;
+	--radius-lg: 0;
+	--shadow-sm: none;
+	--shadow-lg: none;
+	--tag-padding-y: 0;
+	--tracking-wide: 0;
+	--tracking-wider: 0;
+	--leading-relaxed: 1.9;
+
+	--index-width: 860px;
+	--wide-width: 1100px;
+	--gutter-width: 180px;
+	--meta-col-width: 152px;
+	--search-input-width: 168px;
+}
+
+@supports not (color: light-dark(#000, #fff)) {
+	:root {
+		color-scheme: light;
+		--color-bg: #ffffff;
+		--color-bg-subtle: #ffffff;
+		--color-text: #162030;
+		--color-heading: #0d1826;
+		--color-text-secondary: #44536b;
+		--color-muted: #6a7584;
+		--color-border: #dbe3ec;
+		--color-border-subtle: #dbe3ec;
+		--color-surface: #f2f6fa;
+		--color-rule-strong: #162030;
+		--color-brand: #003b89;
+		--color-brand-hover: #002a63;
+		--color-brand-underline: #7fb4e6;
+		--color-mark: #d5f2ff;
+		--color-code-bg: #0d1826;
+		--color-code-bar: #050c16;
+		--color-code-text: #dde6f1;
+		--color-code-label: #9aa8bd;
+		--color-code-rule: #243348;
+	}
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	color: var(--color-heading);
+	line-height: 1.5;
+	text-wrap: balance;
+	word-break: auto-phrase;
+}
+
+p,
+li,
+dd,
+figcaption,
+blockquote {
+	text-wrap: pretty;
+	word-break: auto-phrase;
 }
 
 .nav-admin {

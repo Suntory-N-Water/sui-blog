@@ -21,5 +21,23 @@ const EmDashBlockquoteGroup = emdashComponents.type.blockquoteGroup;
 {kind ? (
   <Alert kind={kind} blocks={blocks.slice(1)} />
 ) : (
-  <EmDashBlockquoteGroup node={node} />
+  <div class='quote-frame'>
+    <EmDashBlockquoteGroup node={node} />
+  </div>
 )}
+
+<style>
+  .quote-frame :global(blockquote) {
+    margin: 0 0 26px;
+    padding: 0 0 0 20px;
+    border-left: 1px solid var(--color-rule-strong);
+    background: none;
+    border-radius: 0;
+    box-shadow: none;
+    color: var(--color-text-secondary);
+  }
+
+  .quote-frame :global(blockquote p:last-child) {
+    margin-bottom: 0;
+  }
+</style>
