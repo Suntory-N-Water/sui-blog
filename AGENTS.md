@@ -15,7 +15,6 @@ The admin UI is at `http://localhost:4321/_emdash/admin`.
 | ------------------------ | ---------------------------------------------------------------------------------- |
 | `astro.config.mjs`       | Astro config with `emdash()` integration, database, and storage                    |
 | `src/live.config.ts`     | EmDash loader registration (boilerplate -- don't modify)                           |
-| `seed/seed.json`         | Schema definition + demo content (collections, fields, taxonomies, menus, widgets) |
 | `emdash-env.d.ts`        | Generated types for collections (auto-regenerated on dev server start)             |
 | `src/layouts/Base.astro` | Base layout with EmDash wiring (menus, search, page contributions)                 |
 | `src/pages/`             | Astro pages -- all server-rendered                                                 |
