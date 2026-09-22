@@ -23,12 +23,12 @@ export function formatIndexDate(date: Date | null | undefined) {
   return `${year}.${month}.${day}`;
 }
 
-export function formatYearMonth(date: Date | null | undefined) {
+export function formatYearMonthJp(date: Date | null | undefined) {
   if (!date) {
     return null;
   }
   const { year, month } = partsOf(date);
-  return `${year}.${month}`;
+  return `${year}年${Number(month)}月`;
 }
 
 export function postDate(data: {

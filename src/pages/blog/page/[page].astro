@@ -1,11 +1,21 @@
 ---
 import { getEmDashCollection, getTermsForEntries } from 'emdash';
-import Base from '../../layouts/Base.astro';
-import PageShell from '../../components/PageShell.astro';
-import PostArchive from '../../components/PostArchive.astro';
+import Base from '../../../layouts/Base.astro';
+import PageShell from '../../../components/PageShell.astro';
+import PostArchive from '../../../components/PostArchive.astro';
 
 const PER_PAGE = 20;
-const page = 1;
+
+const pageParam = Astro.params.page ?? '';
+if (!/^[1-9]\d*$/.test(pageParam)) {
+  return Astro.redirect('/404');
+}
+
+const page = Number(pageParam);
+
+if (page === 1) {
+  return Astro.redirect('/blog', 301);
+}
 
 const {
   entries: posts,
@@ -22,6 +32,10 @@ if (error) {
   return new Response(null, { status: 500 });
 }
 
+if (posts.length === 0) {
+  return Astro.redirect('/404');
+}
+
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
 const tagsByEntry = await getTermsForEntries(
@@ -31,7 +45,10 @@ const tagsByEntry = await getTermsForEntries(
 );
 ---
 
-<Base title='記事一覧' description='すべての記事の一覧'>
+<Base
+  title={`記事一覧 - ${page} ページ目`}
+  description={`すべての記事の一覧(${page} ページ目)`}
+>
   <PageShell>
     <PostArchive
       posts={posts}
