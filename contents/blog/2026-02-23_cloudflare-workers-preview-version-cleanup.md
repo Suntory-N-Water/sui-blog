@@ -243,10 +243,6 @@ Cloudflare Access は Zero Trust の認証基盤で、プレビュー URL への
 PR デプロイ時(`deploy-preview` ジョブ)で `wrangler versions upload` の前に `previews_enabled` を `true` にし、本番デプロイ後に `false` に戻します。
 
 ```yaml
-- name: Enable preview URLs
-  run: |
-    SCRIPT_NAME="sui-tech-blog"
-    API_BASE="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers"
 
     curl -sf -X POST \
       "$API_BASE/scripts/$SCRIPT_NAME/subdomain" \
@@ -264,10 +260,6 @@ PR デプロイ時(`deploy-preview` ジョブ)で `wrangler versions upload` の
 
 ```yaml
 - name: Disable preview URLs
-  continue-on-error: true
-  run: |
-    SCRIPT_NAME="sui-tech-blog"
-    API_BASE="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers"
 
     HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
       "$API_BASE/scripts/$SCRIPT_NAME/subdomain" \

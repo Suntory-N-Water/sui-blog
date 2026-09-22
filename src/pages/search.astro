@@ -1,0 +1,157 @@
+---
+export const prerender = false;
+
+import { search } from 'emdash';
+import Base from '../layouts/Base.astro';
+import PageShell from '../components/PageShell.astro';
+import ArchiveHead from '../components/ArchiveHead.astro';
+
+const query = Astro.url.searchParams.get('q')?.trim() || '';
+
+const { items: results } = query
+  ? await search(query, { collections: ['posts'], limit: 30 })
+  : { items: [] };
+
+const sub = query ? `"${query}" の検索結果 ${results.length} 件` : null;
+---
+
+<Base
+  title={query ? `「${query}」の検索結果` : '記事を検索'}
+  description='ブログ記事を検索する'
+>
+  <PageShell>
+    <div class='search-col'>
+      <ArchiveHead title='記事を検索' sub={sub} />
+
+      <form method='get' action='/search' class='search-form'>
+        <input
+          type='search'
+          name='q'
+          value={query}
+          placeholder='キーワードで検索'
+          class='search-input'
+          autofocus
+        />
+        <button type='submit' class='search-button'>
+          検索
+        </button>
+      </form>
+
+      {results.length > 0 && (
+        <ul class='search-results'>
+          {results.map((result) => (
+            <li class='search-result'>
+              <a href={`/blog/${result.slug ?? result.id}`} class='result-link'>
+                <h2 class='result-title'>{result.title ?? '無題'}</h2>
+                {result.snippet && (
+                  <p class='result-snippet' set:html={result.snippet} />
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {query && results.length === 0 && (
+        <p class='search-empty'>
+          「{query}」に一致する記事が見つかりませんでした。
+        </p>
+      )}
+
+      {!query && (
+        <p class='search-hint'>キーワードを入力して記事を検索してください。</p>
+      )}
+    </div>
+  </PageShell>
+</Base>
+
+<style>
+  .search-col {
+    max-width: var(--index-width);
+  }
+
+  .search-form {
+    display: flex;
+    gap: 12px;
+    margin: 24px 0 8px;
+  }
+
+  .search-input {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-family: var(--font-body);
+    border: 1px solid var(--color-border);
+    border-radius: 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--color-brand);
+  }
+
+  .search-button {
+    padding: 8px 16px;
+    border: 1px solid var(--color-rule-strong);
+    color: var(--color-heading);
+    font-size: 13.5px;
+    font-family: var(--font-body);
+    background: none;
+    cursor: pointer;
+  }
+
+  .search-button:hover {
+    color: var(--color-brand);
+    border-color: var(--color-brand);
+  }
+
+  .search-empty,
+  .search-hint {
+    padding: 20px 0;
+    color: var(--color-muted);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .search-results {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .search-result {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .result-link {
+    display: block;
+    color: inherit;
+  }
+
+  .result-title {
+    font-size: 16.5px;
+    font-weight: var(--font-weight-heading);
+    line-height: 1.7;
+  }
+
+  .result-link:hover .result-title {
+    color: var(--color-brand);
+  }
+
+  .result-snippet {
+    margin-top: 4px;
+    font-size: 14px;
+    line-height: 1.85;
+    color: var(--color-text-secondary);
+  }
+
+  .result-snippet :global(mark) {
+    background: var(--color-mark);
+    color: inherit;
+    padding: 0 2px;
+    border-radius: 0;
+  }
+</style>

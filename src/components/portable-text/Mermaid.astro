@@ -1,0 +1,63 @@
+---
+import { renderMermaidSVGAsync } from 'beautiful-mermaid';
+
+export interface Props {
+  code: string;
+}
+
+const { code } = Astro.props;
+
+const themeOptions = {
+  bg: 'transparent',
+  fg: 'light-dark(#333333, #ededed)',
+  accent: 'light-dark(#0066cc, #64b5ff)',
+  muted: 'light-dark(#595959, #b3b3b3)',
+  surface: 'light-dark(#f5f5f7, #333333)',
+  border: 'light-dark(#dbdbdb, #474747)',
+  line: 'light-dark(#dbdbdb, #474747)',
+  font: 'var(--font-body)',
+  transparent: true,
+  padding: 8,
+};
+
+let svg: string | null = null;
+try {
+  svg = await renderMermaidSVGAsync(code, themeOptions);
+} catch {
+  svg = null;
+}
+---
+
+<figure class='mermaid-figure'>
+  {svg ? (
+    <Fragment set:html={svg} />
+  ) : (
+    <pre class='mermaid-source' set:text={code}></pre>
+  )}
+</figure>
+
+<style>
+  .mermaid-figure {
+    margin: 0 0 26px;
+    text-align: center;
+  }
+
+  .mermaid-figure :global(svg) {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .mermaid-source {
+    margin: 0;
+    padding: 16px 18px;
+    background: var(--color-code-bg);
+    color: var(--color-code-text);
+    border: 1px solid var(--color-border);
+    border-radius: 0;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.9;
+    text-align: left;
+  }
+</style>

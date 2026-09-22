@@ -1,300 +1,712 @@
 ---
-import '@/styles/markdown.css';
-import BaseLayout from '@/layouts/BaseLayout.astro';
 import {
-  getAllBlogPosts,
-  getBlogPostBySlug,
-  calculateReadingTime,
-} from '@/lib/markdown';
-import { getRelatedPosts } from '@/lib/recommend';
-import { extractTOC } from '@/lib/toc';
-import { getInlineIcon } from '@/lib/inline-icons';
-import { absoluteUrl, formatDate } from '@/lib/utils';
-import { siteConfig } from '@/config/site';
-import { getTagSlug } from '@/config/tag-slugs';
-import { BLOG_CONSTANTS, SITE_CONSTANTS } from '@/constants';
-import { compileMarkdown } from '@/components/feature/content/custom-markdown';
-import MarkdownContent from '@/components/feature/content/markdown-content.astro';
-import GitHubEditButton from '@/components/feature/content/github-edit-button.astro';
-import { MarkdownCopyButton } from '@/components/feature/content/markdown-copy-button';
-import RelatedArticles from '@/components/feature/content/related-articles.astro';
-import { SelfAssessment } from '@/components/feature/content/self-assessment';
-import TableOfContents from '@/components/feature/content/table-of-contents.astro';
+  getEmDashEntry,
+  getEmDashCollection,
+  getTermsForEntries,
+  getSeoMeta,
+  decodeSlug,
+  getSiteSettings,
+} from 'emdash';
+import { Image, PortableText } from 'emdash/ui';
+import { Comments, CommentForm } from 'emdash/ui/comments';
+import Base from '../../layouts/Base.astro';
+import PageShell from '../../components/PageShell.astro';
+import SectionBand from '../../components/SectionBand.astro';
+import PostIndex from '../../components/PostIndex.astro';
+import PostRow from '../../components/PostRow.astro';
+import { articlePortableTextComponents } from '../../components/portable-text/components';
+import { prefetchLinkPreviews } from '../../lib/link-card';
+import { withFootnoteBacklinks } from '../../lib/footnotes';
+import { getReadingTime } from '../../utils/reading-time';
+import { resolveBlogSiteIdentity } from '../../utils/site-identity';
+import { formatIndexDate, postDate } from '../../utils/format-date';
 
-import { Icons } from '@/components/icons';
-import { Badge } from '@/components/ui/badge';
-import { buttonVariants } from '@/components/ui/button';
-import { Image } from 'astro:assets';
+const slug = decodeSlug(Astro.params.slug);
 
-/**
- * @see https://docs.astro.build/en/guides/typescript/#infer-getstaticpaths-types
- */
-export async function getStaticPaths() {
-  const allPosts = await getAllBlogPosts();
-  return allPosts.map((post) => ({
-    params: { slug: post.id },
-    props: { allPosts }, // 全記事データをprops経由で渡す
-  }));
+if (!slug) {
+  return Astro.redirect('/404');
 }
 
-const { slug } = Astro.params;
-const { allPosts } = Astro.props; // props経由で受け取る
-const post = await getBlogPostBySlug(slug);
+const { entry: post, cacheHint } = await getEmDashEntry('posts', slug);
 
 if (!post) {
-  return Astro.redirect('/404/');
+  return Astro.redirect('/404');
 }
 
-const relatedPosts = getRelatedPosts({
-  currentSlug: slug,
-  allPosts,
-  count: BLOG_CONSTANTS.RELATED_POSTS_COUNT,
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const ogImageUrl = `${Astro.url.origin}/blog/ogp/${encodeURIComponent(slug)}.png`;
+const { siteTitle } = resolveBlogSiteIdentity(await getSiteSettings());
+
+const seo = getSeoMeta(post, {
+  siteTitle,
+  siteUrl: Astro.url.origin,
+  path: Astro.url.pathname.replace(/\/$/, ''),
+  defaultOgImage: ogImageUrl,
 });
 
-const tableOfContents = extractTOC(post.body);
-const displayUrl =
-  post.data.icon_url ||
-  (post.data.icon?.startsWith('https://') ? post.data.icon : null);
-const inlineSvg = displayUrl ? getInlineIcon(displayUrl) : undefined;
+const bylines = post.data.bylines ?? [];
+const authorNames = bylines
+  .map((credit) => credit.byline.displayName)
+  .join('、');
 
-const readingTime = calculateReadingTime(post.body);
+const readingTime = getReadingTime(post.data.content);
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BlogPosting',
-  headline: post.data.title,
-  datePublished: post.data.date.toISOString(),
-  ...(post.data.modified_time && {
-    dateModified: post.data.modified_time.toISOString(),
-  }),
-  description: post.data.description,
-  image: absoluteUrl(`/blog/ogp/${post.id}.png`),
-  url: absoluteUrl(`/blog/${post.id}`),
-  author: {
-    '@type': 'Person',
-    name: SITE_CONSTANTS.AUTHOR_NAME,
-    url: siteConfig.url,
-  },
-  publisher: {
-    '@type': 'Organization',
-    name: siteConfig.name,
-    logo: {
-      '@type': 'ImageObject',
-      url: absoluteUrl('/opengraph-image.png'),
-    },
-  },
-  mainEntityOfPage: {
-    '@type': 'WebPage',
-    '@id': absoluteUrl(`/blog/${post.id}`),
-  },
-};
+await prefetchLinkPreviews(post.data.content);
 
-const canonicalUrl = absoluteUrl(`/blog/${post.id}`);
+const content = withFootnoteBacklinks(post.data.content);
 
-const breadcrumbJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    {
-      '@type': 'ListItem',
-      position: 1,
-      name: 'ホーム',
-      item: absoluteUrl('/'),
-    },
-    {
-      '@type': 'ListItem',
-      position: 2,
-      name: 'ブログ',
-      item: absoluteUrl('/blog'),
-    },
-    { '@type': 'ListItem', position: 3, name: post.data.title },
-  ],
-};
+const tags = post.data.terms?.tag ?? [];
 
-// GitHubEditButton用のファイルパスを生成
-// フロントマターのdateとslugから元のファイル名を復元
-const dateStr = post.data.date.toISOString().split('T')[0]; // YYYY-MM-DD
-const githubFilePath = `contents/blog/${dateStr}_${post.id}.md`;
+const { entries: recentPosts } = await getEmDashCollection('posts', {
+  orderBy: { modified_time: 'desc' },
+  limit: 4,
+});
+const otherPosts = recentPosts.filter((p) => p.id !== post.id).slice(0, 3);
 
-// Content Collectionsでコンパイル(Astroが最適化)
-const compiledHtml = await compileMarkdown({ source: post.body });
+const otherTagsByEntry = await getTermsForEntries(
+  'posts',
+  otherPosts.map((p) => p.data.id),
+  'tag',
+);
+const otherPostsWithTags = otherPosts.map((p) => ({
+  post: p,
+  tags: otherTagsByEntry.get(p.data.id) ?? [],
+}));
+
+const articleDate = postDate(post.data);
+const publishDate = formatIndexDate(articleDate);
+const mobileMetaLine = [authorNames || null, publishDate, `${readingTime} 分`]
+  .filter(Boolean)
+  .join(' / ');
 ---
 
-<BaseLayout
-  title={post.data.title}
-  description={post.data.description}
-  ogImage={absoluteUrl(`/blog/ogp/${post.id}.png`)}
-  canonicalUrl={canonicalUrl}
-  ogType='article'
-  article={{
-    publishedTime: post.data.date.toISOString(),
-    modifiedTime: post.data.modified_time?.toISOString(),
-    author: SITE_CONSTANTS.AUTHOR_NAME,
-    section: post.data.tags?.[0],
-    tags: post.data.tags,
-  }}
+<Base
+  title={seo.title}
+  pageTitle={seo.ogTitle}
+  description={seo.description}
+  image={seo.ogImage}
+  canonical={seo.canonical}
+  robots={seo.robots}
+  type='article'
+  publishedTime={articleDate?.toISOString() ?? null}
+  modifiedTime={post.data.updatedAt.toISOString()}
+  content={{ collection: 'posts', id: post.data.id, slug }}
 >
-  <script
-    type='application/ld+json'
-    is:inline
-    set:html={JSON.stringify(jsonLd)}
-  />
-  <script
-    type='application/ld+json'
-    is:inline
-    set:html={JSON.stringify(breadcrumbJsonLd)}
-  />
-  <div>
-    <article class='min-h-125'>
-      <div class='mb-6 flex items-center justify-between'>
-        <a
-          href='/blog'
-          class={buttonVariants({ variant: 'ghost', size: 'sm' })}
-        >
-          <span class='group inline-flex items-center'>
-            <Icons.arrowLeft
-              client:load
-              className='mr-2 size-4 transition-transform group-hover:-translate-x-1'
-            />
-            ブログ一覧に戻る
-          </span>
-        </a>
-      </div>
-      {
-        (displayUrl || post.data.icon) && (
-          <div
-            class='mb-6 flex justify-center'
-            transition:name={`blog-icon-${slug}`}
-          >
-            {inlineSvg ? (
-              <span
-                class='h-20 w-20 [&>svg]:h-full [&>svg]:w-full [&>svg]:object-contain'
-                aria-hidden
-                set:html={inlineSvg}
-              />
-            ) : displayUrl ? (
-              <Image
-                src={displayUrl}
-                alt={`Icon for ${post.data.title}`}
-                width={80}
-                height={80}
-                priority
-              />
-            ) : (
-              <div class='text-6xl'>{post.data.icon}</div>
-            )}
-          </div>
-        )
-      }
-      <div
-        class='mb-6 flex flex-wrap items-center justify-between text-sm text-muted-foreground'
-      >
-        <div class='inline-flex flex-wrap items-center gap-3'>
-          <address class='inline-flex items-center gap-1 not-italic'>
-            <Icons.User client:load className='size-4' />
-            <a rel='author' href='/about' class='hover:text-primary'
-              >{siteConfig.name}</a
-            >
-          </address>
-          {
-            post.data.date && (
-              <div
-                class='inline-flex items-center gap-1'
-                transition:name={`blog-date-${slug}`}
-              >
-                <Icons.Calendar client:load className='size-4' />
-                <time
-                  datetime={post.data.date.toISOString()}
-                  itemprop='datePublished'
-                >
-                  {formatDate(post.data.date.getTime())}
-                </time>
+  <PageShell>
+    <div class='article-head'>
+      {post.data.featured_image && (
+        <Image
+          image={post.data.featured_image}
+          alt=''
+          width={40}
+          height={40}
+          class='head-icon'
+          {...post.edit.featured_image}
+        />
+      )}
+      <h1 class='title' {...post.edit.title}>
+        {post.data.title}
+      </h1>
+      {post.data.excerpt && (
+        <p class='summary' {...post.edit.excerpt}>
+          {post.data.excerpt}
+        </p>
+      )}
+    </div>
+
+    <div class='article-grid'>
+      <aside class='meta-col'>
+        <div class='sticky'>
+          <dl class='meta-list'>
+            {authorNames && (
+              <div class='meta-row'>
+                <dt>著者</dt>
+                <dd class='nm'>{authorNames}</dd>
               </div>
-            )
-          }
-          <span class='inline-flex items-center gap-1'>
-            <Icons.Clock client:load className='size-4' />
-            <span>{readingTime}分で読めます</span>
-          </span>
-        </div>
-        {
-          post.data.tags && post.data.tags.length > 0 && (
-            <div class='inline-flex flex-wrap gap-2'>
-              {post.data.tags.map((tag) => (
-                <a href={`/tags/${getTagSlug(tag)}`}>
-                  <Badge client:load className='px-2 py-0.5 text-xs'>
-                    {tag}
-                  </Badge>
+            )}
+            {publishDate && (
+              <div class='meta-row'>
+                <dt>公開</dt>
+                <dd>{publishDate}</dd>
+              </div>
+            )}
+            <div class='meta-row'>
+              <dt>読了</dt>
+              <dd>{readingTime} 分</dd>
+            </div>
+          </dl>
+          {tags.length > 0 && (
+            <div class='meta-tags'>
+              {tags.map((t) => (
+                <a href={`/tags/${t.slug}`} class='tag'>
+                  #{t.label}
                 </a>
               ))}
             </div>
-          )
-        }
-      </div>
-      <div
-        class='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'
-      >
-        <h1
-          class='text-2xl font-bold leading-snug tracking-normal'
-          transition:name={`blog-title-${slug}`}
-        >
-          {post.data.title}
-        </h1>
-        <div class='self-start sm:self-auto'>
-          <MarkdownCopyButton client:visible content={post.body} />
+          )}
         </div>
-      </div>
-      {
-        post.data.description && (
-          <p class='mt-4 text-foreground/80'>{post.data.description}</p>
-        )
-      }
-      {
-        post.data.diagram && (
-          <div class='mt-4'>
-            <a
-              href={`/blog/diagram/${post.id}`}
-              class={buttonVariants({ variant: 'outline', size: 'sm' })}
-            >
-              <span class='inline-flex items-center gap-1.5'>
-                <Icons.Image client:load className='size-4' />
-                図解ページはこちら
-              </span>
-            </a>
-          </div>
-        )
-      }
-      {
-        tableOfContents.length > 0 && (
-          <TableOfContents items={tableOfContents} />
-        )
-      }
-      <div class='mt-8'>
-        <MarkdownContent html={compiledHtml} />
-      </div>
-      {
-        post.data.selfAssessment && (
-          <SelfAssessment
-            client:load
-            selfAssessment={post.data.selfAssessment}
+      </aside>
+
+      <div class='article-main'>
+        <div class='article-mobile'>
+          <div class='mobile-meta'>{mobileMetaLine}</div>
+          <details class='mobile-toc' id='mobile-toc'>
+            <summary>目次</summary>
+            <nav class='toc' aria-label='目次'>
+              <ul id='mobile-toc-list'></ul>
+            </nav>
+          </details>
+        </div>
+
+        <div class='prose'>
+          <PortableText
+            value={content}
+            components={articlePortableTextComponents}
           />
-        )
-      }
-      <footer
-        class='mt-10 flex flex-wrap items-center justify-between gap-4 border-t pt-8'
-      >
-        <div class='flex items-center space-x-2'>
-          <a
-            href={`/blog/${slug}.md`}
-            class='inline-flex items-center gap-1.5 px-2 py-1 text-sm text-muted-foreground hover:text-primary'
-          >
-            <Icons.FileText client:load className='size-4' />
-            <span>Markdown ver</span>
-          </a>
-          <GitHubEditButton filePath={githubFilePath} />
         </div>
-      </footer>
-    </article>
-    <RelatedArticles relatedPosts={relatedPosts} />
-  </div>
-</BaseLayout>
+
+        <div class='article-foot'>
+          {tags.length > 0 && (
+            <div class='foot-tags'>
+              {tags.map((t) => (
+                <a href={`/tags/${t.slug}`} class='tag'>
+                  #{t.label}
+                </a>
+              ))}
+            </div>
+          )}
+          <a href={`/blog/${post.id}.md`} class='btn'>
+            この記事を Markdown で取得
+          </a>
+        </div>
+
+        {otherPostsWithTags.length > 0 && (
+          <div class='more'>
+            <SectionBand title='関連する記事' flush />
+            <PostIndex>
+              {otherPostsWithTags.map(({ post: p, tags: postTags }) => (
+                <PostRow
+                  title={p.data.title}
+                  href={`/blog/${p.id}`}
+                  date={postDate(p.data)}
+                  readingTime={getReadingTime(p.data.content)}
+                  icon={p.data.featured_image}
+                  tags={postTags.map((t) => ({ slug: t.slug, label: t.label }))}
+                />
+              ))}
+            </PostIndex>
+          </div>
+        )}
+
+        <div class='article-comments'>
+          <Comments collection='posts' contentId={post.data.id} threaded />
+          <CommentForm collection='posts' contentId={post.data.id} />
+        </div>
+      </div>
+
+      <aside class='toc-col' id='toc-col'>
+        <div class='sticky'>
+          <nav class='toc' aria-label='目次'>
+            <div class='lbl'>目次</div>
+            <ul id='toc-list'></ul>
+          </nav>
+        </div>
+      </aside>
+    </div>
+  </PageShell>
+
+  <script>
+    function buildToc() {
+      const content = document.querySelector('.prose');
+      const desktopList = document.getElementById('toc-list');
+      const mobileList = document.getElementById('mobile-toc-list');
+      const tocCol = document.getElementById('toc-col');
+      const mobileToc = document.getElementById('mobile-toc');
+      if (!content || !desktopList || !mobileList) return;
+
+      const headings = content.querySelectorAll('h2, h3');
+      if (headings.length === 0) {
+        if (tocCol) tocCol.style.display = 'none';
+        if (mobileToc) mobileToc.style.display = 'none';
+        return;
+      }
+
+      headings.forEach((heading, index) => {
+        if (!heading.id) {
+          heading.id = `heading-${index}`;
+        }
+
+        const nest = heading.tagName === 'H3';
+        const li = document.createElement('li');
+        if (nest) li.className = 'nest';
+
+        const link = document.createElement('a');
+        link.href = `#${heading.id}`;
+        link.textContent = heading.textContent;
+
+        li.appendChild(link);
+        desktopList.appendChild(li);
+        mobileList.appendChild(li.cloneNode(true));
+      });
+
+      const links = document.querySelectorAll('.toc a');
+      let currentId = '';
+
+      function syncActive() {
+        let activeId = headings[0].id;
+        for (const heading of headings) {
+          if (heading.getBoundingClientRect().top > 100) {
+            break;
+          }
+          activeId = heading.id;
+        }
+        if (activeId === currentId) {
+          return;
+        }
+        currentId = activeId;
+        links.forEach((a) => {
+          a.classList.toggle(
+            'active',
+            a.getAttribute('href') === `#${activeId}`,
+          );
+        });
+      }
+
+      let queued = false;
+      window.addEventListener(
+        'scroll',
+        () => {
+          if (queued) {
+            return;
+          }
+          queued = true;
+          requestAnimationFrame(() => {
+            queued = false;
+            syncActive();
+          });
+        },
+        { passive: true },
+      );
+      syncActive();
+    }
+
+    buildToc();
+  </script>
+</Base>
+
+<style>
+  .article-head {
+    display: grid;
+    grid-template-columns:
+      var(--meta-col-width) minmax(0, var(--content-width))
+      var(--gutter-width);
+    gap: 0 48px;
+    padding: 52px 0 30px;
+    border-bottom: 1px solid var(--color-rule-strong);
+  }
+
+  .article-head :global(.head-icon) {
+    grid-column: 2;
+    justify-self: start;
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    margin-bottom: 18px;
+  }
+
+  .article-head .title {
+    grid-column: 2 / -1;
+    font-size: 30px;
+    font-weight: var(--font-weight-display);
+    line-height: 1.6;
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-heading);
+  }
+
+  .article-head .summary {
+    grid-column: 2;
+    margin-top: 18px;
+    font-size: 15px;
+    line-height: 1.95;
+    color: var(--color-text-secondary);
+  }
+
+  .article-grid {
+    display: grid;
+    grid-template-columns:
+      var(--meta-col-width) minmax(0, var(--content-width))
+      var(--gutter-width);
+    gap: 48px;
+    padding: 40px 0 0;
+  }
+
+  .sticky {
+    position: sticky;
+    top: 128px;
+  }
+
+  .meta-list {
+    margin: 0;
+  }
+
+  .meta-row {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 13px;
+  }
+
+  .meta-row dt {
+    margin: 0;
+    color: var(--color-muted);
+  }
+
+  .meta-row dd {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--color-text-secondary);
+  }
+
+  .meta-row dd.nm {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--color-heading);
+  }
+
+  .meta-tags {
+    padding-top: 12px;
+  }
+
+  .meta-tags .tag,
+  .foot-tags .tag {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-brand);
+  }
+
+  .meta-tags .tag {
+    display: block;
+    padding: 2px 0;
+  }
+
+  .article-main {
+    min-width: 0;
+  }
+
+  .article-mobile {
+    display: none;
+    margin-bottom: 32px;
+  }
+
+  .mobile-meta {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--color-text-secondary);
+  }
+
+  .mobile-toc summary {
+    font-size: 13.5px;
+    color: var(--color-heading);
+    cursor: pointer;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .mobile-toc .toc {
+    margin-top: 10px;
+  }
+
+  .prose {
+    font-size: 16px;
+    line-height: 2.05;
+  }
+
+  .prose > :global(p) {
+    margin-bottom: 26px;
+  }
+
+  .prose :global(h2) {
+    font-size: 19px;
+    font-weight: var(--font-weight-heading);
+    margin: 52px 0 20px;
+    padding-top: 14px;
+    border-top: 1px solid var(--color-rule-strong);
+    scroll-margin-top: 24px;
+  }
+
+  .prose :global(h3) {
+    font-size: 16.5px;
+    font-weight: var(--font-weight-heading);
+    margin: 36px 0 14px;
+    scroll-margin-top: 24px;
+  }
+
+  .prose :global(a) {
+    color: var(--color-brand);
+    border-bottom: 1px solid var(--color-brand-underline);
+    text-decoration: none;
+  }
+
+  .prose :global(mark) {
+    background: var(--color-mark);
+    color: inherit;
+    padding: 0 2px;
+  }
+
+  .prose :global(code) {
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    color: var(--color-brand);
+    border: 1px solid var(--color-border);
+    padding: 0 5px;
+    overflow-wrap: anywhere;
+  }
+
+  .prose :global(pre code) {
+    border: none;
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
+    overflow-wrap: normal;
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin: 0 0 26px;
+    padding-left: 20px;
+  }
+
+  .prose :global(li) {
+    margin-bottom: 4px;
+  }
+
+  .prose :global(blockquote) {
+    margin: 0 0 26px;
+    padding-left: 20px;
+    border-left: 1px solid var(--color-rule-strong);
+    color: var(--color-text-secondary);
+  }
+
+  .prose :global(blockquote p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .prose :global(img) {
+    margin: 26px 0;
+  }
+
+  .prose :global(hr) {
+    margin: 40px 0;
+    border: none;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .prose :global(sup) {
+    font-size: 0.7em;
+    line-height: 0;
+  }
+
+  .prose :global(.footnotes) {
+    margin-top: 52px;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-rule-strong);
+    font-size: 14px;
+    color: var(--color-text-secondary);
+  }
+
+  .prose :global(.footnotes h2) {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .prose :global(.footnotes li) {
+    scroll-margin-top: 96px;
+  }
+
+  .prose :global(.footnotes li:target),
+  .prose :global(.footnote-ref:target) {
+    background: var(--color-mark);
+  }
+
+  .prose :global(.footnote-ref) {
+    scroll-margin-top: 96px;
+  }
+
+  .prose :global(.footnote-back) {
+    margin-left: 6px;
+    border-bottom: none;
+  }
+
+  .prose :global(.footnote-back-index) {
+    font-size: 0.8em;
+    vertical-align: super;
+    line-height: 0;
+  }
+
+  .prose :global(.footnote-back-label) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .article-foot {
+    max-width: var(--content-width);
+    margin: 60px 0 0;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-rule-strong);
+  }
+
+  .foot-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin-bottom: 20px;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 8px 16px;
+    border: 1px solid var(--color-rule-strong);
+    color: var(--color-heading);
+    font-size: 13.5px;
+    border-radius: 0;
+  }
+
+  .btn:hover {
+    color: var(--color-brand);
+    border-color: var(--color-brand);
+  }
+
+  .more {
+    padding: 56px 0 0;
+  }
+
+  .toc {
+    font-size: 13px;
+  }
+
+  .toc .lbl {
+    font-size: 12px;
+    color: var(--color-muted);
+    padding-bottom: 7px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .toc :global(ul) {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+  }
+
+  .toc :global(a) {
+    display: block;
+    padding: 5px 0 5px 12px;
+    color: var(--color-heading);
+    line-height: 1.65;
+    border-left: 1px solid var(--color-border);
+  }
+
+  .toc :global(li.nest a) {
+    padding-left: 26px;
+    font-size: 12.5px;
+    color: var(--color-text-secondary);
+  }
+
+  .toc :global(a:hover) {
+    background: var(--color-surface);
+    border-left-color: var(--color-rule-strong);
+  }
+
+  .toc :global(a.active) {
+    background: var(--color-surface);
+    color: var(--color-brand);
+    border-left-color: var(--color-brand);
+  }
+
+  .article-comments {
+    max-width: var(--content-width);
+    margin-top: 60px;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-rule-strong);
+  }
+
+  .article-comments :global(.ec-comments) {
+    --ec-comment-border: 1px solid var(--color-border);
+  }
+
+  .article-comments :global(.ec-comments-heading) {
+    font-size: 19px;
+    font-weight: var(--font-weight-heading);
+    margin-bottom: 24px;
+  }
+
+  .article-comments :global(.ec-comment-author) {
+    color: var(--color-heading);
+  }
+
+  .article-comments :global(.ec-comment-date) {
+    font-family: var(--font-mono);
+    color: var(--color-muted);
+  }
+
+  .article-comments :global(.ec-comment-body) {
+    color: var(--color-text);
+  }
+
+  .article-comments :global(.ec-comment-form-field input),
+  .article-comments :global(.ec-comment-form-field textarea) {
+    background: var(--color-bg) !important;
+    border-color: var(--color-border) !important;
+    color: var(--color-text) !important;
+    border-radius: 0 !important;
+  }
+
+  .article-comments :global(.ec-comment-user-info) {
+    background: var(--color-bg) !important;
+    border-color: var(--color-border) !important;
+  }
+
+  .article-comments :global(.ec-comment-form-submit) {
+    background: transparent !important;
+    border: 1px solid var(--color-rule-strong) !important;
+    color: var(--color-heading) !important;
+    border-radius: 0 !important;
+  }
+
+  @media (max-width: 1060px) {
+    .article-head,
+    .article-grid {
+      grid-template-columns: minmax(0, var(--content-width));
+      gap: 0;
+    }
+
+    .article-head :global(.head-icon),
+    .article-head .title,
+    .article-head .summary {
+      grid-column: 1;
+    }
+
+    .meta-col,
+    .toc-col {
+      display: none;
+    }
+
+    .article-mobile {
+      display: block;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .article-head .title {
+      font-size: 24px;
+    }
+  }
+</style>

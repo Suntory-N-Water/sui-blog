@@ -1,120 +1,279 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getAllBlogPosts, calculateReadingTime } from '@/lib/markdown';
-import { paginateItems } from '@/lib/pagination';
-import { getInlineIcon } from '@/lib/inline-icons';
-import { BLOG_CONSTANTS } from '@/constants';
-import BlogCard from '@/components/feature/content/blog-card.astro';
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/components/icons';
+import {
+  getEmDashCollection,
+  getTermsForEntries,
+  getTaxonomyTermsWithCacheHint,
+  getSiteSettings,
+} from 'emdash';
+import { Image } from 'emdash/ui';
+import Base from '../layouts/Base.astro';
+import PageShell from '../components/PageShell.astro';
+import SectionBand from '../components/SectionBand.astro';
+import PostIndex from '../components/PostIndex.astro';
+import PostRow from '../components/PostRow.astro';
+import TagIndex from '../components/TagIndex.astro';
+import { getReadingTime } from '../utils/reading-time';
+import { formatIndexDate, postDate } from '../utils/format-date';
+import { resolveBlogSiteIdentity } from '../utils/site-identity';
 
-import { absoluteUrl } from '@/lib/utils';
+const HOME_POST_LIMIT = 6;
+const HOME_TAG_LIMIT = 12;
 
-const allPosts = await getAllBlogPosts();
-const { items: paginatedPosts } = paginateItems({
-  items: allPosts,
-  page: 1,
-  pageSize: BLOG_CONSTANTS.TOP_PAGE_POSTS_COUNT,
-});
+const [
+  { entries: posts, cacheHint: postsCacheHint },
+  { data: tags, cacheHint: tagsCacheHint },
+  settings,
+] = await Promise.all([
+  getEmDashCollection('posts', {
+    orderBy: { modified_time: 'desc' },
+    limit: HOME_POST_LIMIT,
+  }),
+  getTaxonomyTermsWithCacheHint('tag', { includeCounts: true }),
+  getSiteSettings(),
+]);
+const { siteTitle, siteTagline } = resolveBlogSiteIdentity(settings);
 
-// アイコンを事前取得
-const postsWithIcons = paginatedPosts.map((blog) => {
-  const displayUrl =
-    blog.data.icon_url ||
-    (blog.data.icon?.startsWith('https://') ? blog.data.icon : null);
-  const inlineSvg = displayUrl ? getInlineIcon(displayUrl) : undefined;
-  const readingTime = calculateReadingTime(blog.body);
-  return { blog, inlineSvg, readingTime };
-});
+if (Astro.cache?.enabled) {
+  Astro.cache.set(postsCacheHint);
+  Astro.cache.set(tagsCacheHint);
+}
 
-const canonicalUrl = absoluteUrl('/');
+const leadPost = posts[0] ?? null;
+const listPosts = posts.slice(1);
+
+const tagsByEntry = await getTermsForEntries(
+  'posts',
+  posts.map((p) => p.data.id),
+  'tag',
+);
+
+const leadTags = leadPost
+  ? (tagsByEntry.get(leadPost.data.id) ?? []).map((t) => ({
+      slug: t.slug,
+      label: t.label,
+    }))
+  : [];
+
+const topTags = tags
+  .slice()
+  .sort((a, b) => (b.count ?? 0) - (a.count ?? 0))
+  .slice(0, HOME_TAG_LIMIT);
 ---
 
-<BaseLayout canonicalUrl={canonicalUrl}>
-  <section data-pagefind-ignore class='space-y-16 pt-16'>
-    <!-- Hero -->
-    <div class='relative max-w-2xl animate-fade-in-bottom'>
-      <h1
-        class='text-4xl font-bold leading-tight tracking-tight md:text-5xl font-mono'
-      >
-        <span class='block'>Welcome to the</span>
-        <span
-          class='block leading-[1.25] bg-linear-to-r from-primary to-accent-vivid bg-clip-text text-transparent'
-        >
-          sui Tech Blog!
-        </span>
-      </h1>
-      <p class='mt-6 text-base font-semibold text-muted-foreground md:text-lg'>
-        日々の開発で得た知見や、実験的な実装を記録する技術ブログです。
-        <br />
-        TypeScript に関する記事が中心です。
-      </p>
-      <div class='mt-8 flex flex-col items-start gap-4 sm:flex-row sm:gap-6'>
-        <Button client:load asChild className='h-11 rounded-full px-8'>
-          <a
-            href='/blog'
-            class='group inline-flex items-center gap-2 text-sm font-bold'
-          >
-            ブログを読む
-            <Icons.ChevronRight
-              client:load
-              className='size-4 transition-transform group-hover:translate-x-1'
-            />
-          </a>
-        </Button>
-        <Button
-          client:load
-          variant='outline'
-          asChild
-          className='h-11 rounded-full px-8'
-        >
-          <a href='/about' class='text-sm font-bold'> About me </a>
-        </Button>
-      </div>
-    </div>
+<Base title={siteTitle} description={siteTagline}>
+  <PageShell>
+    <section class='home-intro'>
+      <p>{siteTagline}</p>
+    </section>
 
-    <!-- Articles -->
-    <div id='articles' class='space-y-8'>
-      <div
-        class='flex items-baseline justify-between border-b border-border/60 pb-3'
-      >
-        <h2 class='text-2xl font-bold tracking-tight border-b-0 mb-0 pb-0'>
-          最新記事
-        </h2>
-        <a
-          href='/blog'
-          class='hidden items-center gap-1 text-sm font-bold text-primary transition-colors hover:underline md:flex'
-        >
-          すべての記事を見る
-          <Icons.ChevronRight
-            client:load
-            className='size-4 transition-transform group-hover:translate-x-1'
+    {posts.length === 0 ? (
+      <section class='empty-state'>
+        <p>まだ記事がありません。</p>
+        <a href='/_emdash/admin/content/posts/new' class='btn'>
+          記事を作成
+        </a>
+      </section>
+    ) : (
+      <Fragment>
+        {leadPost && (
+          <article class='lead'>
+            {leadPost.data.featured_image && (
+              <Image
+                image={leadPost.data.featured_image}
+                alt=''
+                width={34}
+                height={34}
+                class='lead-icon'
+              />
+            )}
+            <div class='lead-date'>
+              {formatIndexDate(postDate(leadPost.data))}
+            </div>
+            <h2>
+              <a href={`/blog/${leadPost.id}`}>{leadPost.data.title}</a>
+            </h2>
+            {leadPost.data.excerpt && (
+              <p class='lead-excerpt'>{leadPost.data.excerpt}</p>
+            )}
+            <div class='lead-foot'>
+              <span class='lead-readtime'>
+                {getReadingTime(leadPost.data.content)} 分
+              </span>
+              {leadTags.length > 0 && (
+                <div class='lead-tags'>
+                  {leadTags.map((tag) => (
+                    <a href={`/tags/${tag.slug}`} class='tag'>
+                      #{tag.label}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          </article>
+        )}
+
+        {listPosts.length > 0 && (
+          <Fragment>
+            <SectionBand title='最近の記事' href='/blog' linkLabel='記事一覧' />
+            <div class='index-wrap'>
+              <PostIndex>
+                {listPosts.map((post) => (
+                  <PostRow
+                    title={post.data.title}
+                    href={`/blog/${post.id}`}
+                    date={postDate(post.data)}
+                    readingTime={getReadingTime(post.data.content)}
+                    excerpt={post.data.excerpt}
+                    icon={post.data.featured_image}
+                    tags={(tagsByEntry.get(post.data.id) ?? []).map((t) => ({
+                      slug: t.slug,
+                      label: t.label,
+                    }))}
+                  />
+                ))}
+              </PostIndex>
+            </div>
+          </Fragment>
+        )}
+      </Fragment>
+    )}
+
+    {topTags.length > 0 && (
+      <Fragment>
+        <SectionBand
+          title='タグから探す'
+          href='/tags'
+          linkLabel='すべてのタグ'
+        />
+        <div class='index-wrap'>
+          <TagIndex
+            tags={topTags.map((tag) => ({
+              slug: tag.slug,
+              label: tag.label,
+              count: tag.count,
+            }))}
           />
-        </a>
-      </div>
+        </div>
+      </Fragment>
+    )}
+  </PageShell>
+</Base>
 
-      <div class='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
-        {
-          postsWithIcons.map(({ blog, inlineSvg, readingTime }, index) => (
-            <BlogCard
-              data={blog}
-              priority={index < 6}
-              inlineSvg={inlineSvg}
-              readingTime={readingTime}
-            />
-          ))
-        }
-      </div>
+<style>
+  .home-intro {
+    padding: 64px 0 40px;
+    max-width: 640px;
+  }
 
-      <div class='text-center md:hidden'>
-        <a
-          href='/blog'
-          class='inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-6 py-3 text-sm font-bold text-secondary-foreground transition-colors hover:bg-accent hover:text-accent-foreground'
-        >
-          すべての記事を見る
-          <Icons.ChevronRight client:load className='size-4' />
-        </a>
-      </div>
-    </div>
-  </section>
-</BaseLayout>
+  .home-intro p {
+    font-size: 16px;
+    line-height: 1.95;
+    color: var(--color-text-secondary);
+  }
+
+  .index-wrap {
+    max-width: var(--index-width);
+  }
+
+  .lead {
+    max-width: var(--index-width);
+    padding: 30px 0 34px;
+    border-top: 1px solid var(--color-rule-strong);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .lead :global(.lead-icon) {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+    margin-bottom: 14px;
+  }
+
+  .lead-date {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--color-text-secondary);
+    margin-bottom: 8px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lead h2 {
+    font-size: 28px;
+    font-weight: var(--font-weight-display);
+    line-height: 1.6;
+    letter-spacing: var(--tracking-tight);
+    max-width: 660px;
+  }
+
+  .lead h2 a {
+    color: inherit;
+  }
+
+  .lead h2 a:hover {
+    color: var(--color-brand);
+  }
+
+  .lead-excerpt {
+    margin: 14px 0 0;
+    font-size: 15px;
+    line-height: 1.95;
+    color: var(--color-text-secondary);
+    max-width: 660px;
+  }
+
+  .lead-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 14px;
+    margin-top: 14px;
+  }
+
+  .lead-readtime {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lead-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+  }
+
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-brand);
+  }
+
+  .tag:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .empty-state {
+    max-width: var(--index-width);
+    padding: 40px 0 64px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .empty-state p {
+    color: var(--color-text-secondary);
+    margin-bottom: 16px;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 8px 16px;
+    border: 1px solid var(--color-rule-strong);
+    color: var(--color-heading);
+    font-size: 13.5px;
+  }
+
+  .btn:hover {
+    color: var(--color-brand);
+    border-color: var(--color-brand);
+  }
+</style>

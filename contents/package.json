@@ -1,9 +1,10 @@
 {
   "name": "contents",
   "type": "module",
+  "packageManager": "pnpm@10.28.0",
   "scripts": {
-    "lint": "bun run lint:textlint",
-    "lint:fix": "bun run lint:textlint:fix",
+    "lint": "pnpm run lint:textlint",
+    "lint:fix": "pnpm run lint:textlint:fix",
     "lint:textlint": "textlint blog/ --quiet",
     "lint:textlint:fix": "textlint --fix blog/"
   },

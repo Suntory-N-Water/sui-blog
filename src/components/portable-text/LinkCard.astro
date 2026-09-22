@@ -1,0 +1,152 @@
+---
+import { getEmDashEntry, type MediaValue } from 'emdash';
+import { Image } from 'emdash/ui';
+import { getLinkPreview } from '../../lib/link-card';
+
+interface Props {
+  url: string;
+}
+
+const { url } = Astro.props;
+
+const isExternal = /^https?:\/\//u.test(url);
+const internalSlug =
+  !isExternal && url.startsWith('/blog/')
+    ? decodeURIComponent(url.slice('/blog/'.length).split(/[?#]/u)[0])
+    : null;
+
+let title = '';
+let image = '';
+let internalImage: MediaValue | string | undefined;
+let hostname = '';
+
+if (internalSlug) {
+  const { entry } = await getEmDashEntry('posts', internalSlug);
+  if (entry) {
+    title = String(entry.data.title ?? '');
+    const featured = entry.data.featured_image;
+    internalImage =
+      typeof featured === 'string' ||
+      (typeof featured === 'object' && featured !== null)
+        ? (featured as MediaValue | string)
+        : undefined;
+  }
+} else if (isExternal) {
+  hostname = new URL(url).hostname.replace(/^www\./u, '');
+  const preview = await getLinkPreview(url);
+  if (preview) {
+    title = preview.title;
+    image = preview.image;
+  }
+}
+
+const displayUrl = hostname || url;
+---
+
+{title ? (
+  <a
+    class='link-card'
+    href={url}
+    {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+  >
+    <span class='link-card-body'>
+      <span class='link-card-title'>{title}</span>
+      <span class='link-card-url'>{displayUrl}</span>
+    </span>
+    {internalImage ? (
+      <span class='link-card-thumbnail'>
+        <Image image={internalImage} />
+      </span>
+    ) : image ? (
+      <span class='link-card-thumbnail'>
+        <img src={image} alt='' loading='lazy' />
+      </span>
+    ) : null}
+  </a>
+) : (
+  <p class='link-card-fallback'>
+    <a
+      href={url}
+      {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+    >
+      {url}
+    </a>
+  </p>
+)}
+
+<style>
+  .link-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin: 0 0 26px;
+    padding: 14px 0;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .link-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .link-card-title {
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: var(--color-heading);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .link-card:hover .link-card-title {
+    color: var(--color-brand);
+  }
+
+  .link-card-url {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--color-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .link-card-thumbnail {
+    width: 84px;
+    height: 52px;
+    flex: none;
+    margin-left: auto;
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+  }
+
+  .link-card-thumbnail img,
+  .link-card-thumbnail :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    object-fit: cover;
+  }
+
+  .link-card-thumbnail :global(figure) {
+    height: 100%;
+    margin: 0;
+  }
+
+  .link-card-fallback {
+    word-break: break-all;
+  }
+
+  @media (max-width: 640px) {
+    .link-card-thumbnail {
+      display: none;
+    }
+  }
+</style>

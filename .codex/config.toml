@@ -1,9 +1,0 @@
-#:schema https://developers.openai.com/codex/config-schema.json
-
-[tui]
-status_line = [
-    "model-with-reasoning",
-    "context-remaining",
-    "git-branch",
-    "current-dir",
-]

@@ -1,0 +1,136 @@
+# EmDash 移行時の注意事項
+
+変換不能な本文を削除せず、Portable Text の `code` / `htmlBlock` またはレポートに残している。
+
+- rough-summary-important-parts-readable-code: thematic break: raw HTML was kept in htmlBlock
+- rough-summary-important-parts-readable-code: thematic break: raw HTML was kept in htmlBlock
+- rough-summary-important-parts-readable-code: thematic break: raw HTML was kept in htmlBlock
+- rough-summary-important-parts-readable-code: thematic break: raw HTML was kept in htmlBlock
+- rough-summary-important-parts-readable-code: thematic break: raw HTML was kept in htmlBlock
+- rough-summary-important-parts-readable-code: thematic break: raw HTML was kept in htmlBlock
+- rough-summary-important-parts-readable-code: thematic break: raw HTML was kept in htmlBlock
+- rough-summary-important-parts-readable-code: thematic break: raw HTML was kept in htmlBlock
+- rough-summary-important-parts-readable-code: thematic break: raw HTML was kept in htmlBlock
+- rough-summary-important-parts-readable-code: thematic break: raw HTML was kept in htmlBlock
+- rough-summary-important-parts-readable-code: thematic break: raw HTML was kept in htmlBlock
+- rough-summary-important-parts-readable-code: thematic break: raw HTML was kept in htmlBlock
+- rough-summary-important-parts-readable-code: thematic break: raw HTML was kept in htmlBlock
+- rough-summary-important-parts-readable-code: thematic break: raw HTML was kept in htmlBlock
+- rough-summary-important-parts-readable-code: thematic break: raw HTML was kept in htmlBlock
+- rough-summary-important-parts-readable-code: thematic break: raw HTML was kept in htmlBlock
+- rough-summary-important-parts-readable-code: thematic break: raw HTML was kept in htmlBlock
+- rough-summary-important-parts-readable-code: thematic break: raw HTML was kept in htmlBlock
+- rough-summary-important-parts-readable-code: thematic break: raw HTML was kept in htmlBlock
+- rough-summary-important-parts-readable-code: thematic break: raw HTML was kept in htmlBlock
+- rough-summary-important-parts-readable-code: thematic break: raw HTML was kept in htmlBlock
+- lets-integrate-react-flask: HTML: raw HTML was kept in htmlBlock
+- lets-integrate-react-flask: HTML: raw HTML was kept in htmlBlock
+- lets-integrate-react-flask: HTML: raw HTML was kept in htmlBlock
+- lets-integrate-react-flask: HTML: raw HTML was kept in htmlBlock
+- learn-about-callback-functions-typescript: thematic break: raw HTML was kept in htmlBlock
+- learn-about-callback-functions-typescript: thematic break: raw HTML was kept in htmlBlock
+- asking-gpt-sensei-good-algorithm-learn: HTML: raw HTML was kept in htmlBlock
+- asking-gpt-sensei-good-algorithm-learn: HTML: raw HTML was kept in htmlBlock
+- asking-gpt-sensei-good-algorithm-learn: thematic break: raw HTML was kept in htmlBlock
+- asking-gpt-sensei-good-algorithm-learn: HTML: raw HTML was kept in htmlBlock
+- asking-gpt-sensei-good-algorithm-learn: HTML: raw HTML was kept in htmlBlock
+- asking-gpt-sensei-good-algorithm-learn: HTML: raw HTML was kept in htmlBlock
+- asking-gpt-sensei-good-algorithm-learn: HTML: raw HTML was kept in htmlBlock
+- asking-gpt-sensei-good-algorithm-learn: HTML: raw HTML was kept in htmlBlock
+- asking-gpt-sensei-good-algorithm-learn: HTML: raw HTML was kept in htmlBlock
+- asking-gpt-sensei-good-algorithm-learn: thematic break: raw HTML was kept in htmlBlock
+- try-using-real-estate-information-library: HTML: raw HTML was kept in htmlBlock
+- try-using-real-estate-information-library: HTML: raw HTML was kept in htmlBlock
+- branded-type-learn-doing: thematic break: raw HTML was kept in htmlBlock
+- branded-type-learn-doing: thematic break: raw HTML was kept in htmlBlock
+- branded-type-learn-doing: thematic break: raw HTML was kept in htmlBlock
+- branded-type-learn-doing: thematic break: raw HTML was kept in htmlBlock
+- branded-type-learn-doing: thematic break: raw HTML was kept in htmlBlock
+- 2025-all-you-need-do-make: thematic break: raw HTML was kept in htmlBlock
+- 2025-all-you-need-do-make: thematic break: raw HTML was kept in htmlBlock
+- 2025-all-you-need-do-make: thematic break: raw HTML was kept in htmlBlock
+- honox-ssr-hydration-issue: thematic break: raw HTML was kept in htmlBlock
+- did-you-know-you-can-easily: frontmatter:diagram
+- i-tried-running-code-using-official: thematic break: raw HTML was kept in htmlBlock
+- blog-new-architecture: frontmatter:diagram
+- annoying-flickering-blog-svg-icon-fix: HTML: raw HTML was kept in htmlBlock
+- annoying-flickering-blog-svg-icon-fix: HTML: raw HTML was kept in htmlBlock
+- cloudflare-browser-rendering-markdown-example: HTML: raw HTML was kept in htmlBlock
+- cloudflare-browser-rendering-markdown-example: HTML: raw HTML was kept in htmlBlock
+- enforce-rules-with-stop-hooks-and-biome-v2: frontmatter:selfAssessment
+- enforce-rules-with-stop-hooks-and-biome-v2: HTML: raw HTML was kept in htmlBlock
+- enforce-rules-with-stop-hooks-and-biome-v2: HTML: raw HTML was kept in htmlBlock
+- migrating-nextjs-to-astro: frontmatter:diagram
+- automate-dependency-updates-with-renovate: frontmatter:diagram
+- claude-code-dynamic-skill-loading: frontmatter:diagram
+- cognitive-load-management-with-diagrams: frontmatter:diagram
+- cognitive-load-management-with-diagrams: HTML: raw HTML was kept in htmlBlock
+- cognitive-load-management-with-diagrams: HTML: raw HTML was kept in htmlBlock
+- i-tried-using-agent-browser: frontmatter:diagram
+- i-tried-using-agent-browser: frontmatter:selfAssessment
+- i-tried-using-agent-browser: HTML: raw HTML was kept in htmlBlock
+- i-tried-using-agent-browser: HTML: raw HTML was kept in htmlBlock
+- i-tried-using-agent-browser: HTML: raw HTML was kept in htmlBlock
+- i-tried-using-agent-browser: HTML: raw HTML was kept in htmlBlock
+- my-playwright-was-wrong: frontmatter:diagram
+- my-playwright-was-wrong: frontmatter:selfAssessment
+- playwright-cli-vs-agent-browser-token-comparison: frontmatter:diagram
+- playwright-cli-vs-agent-browser-token-comparison: frontmatter:selfAssessment
+- playwright-cli-vs-agent-browser-token-comparison: HTML: raw HTML was kept in htmlBlock
+- playwright-cli-vs-agent-browser-token-comparison: HTML: raw HTML was kept in htmlBlock
+- playwright-cli-vs-agent-browser-token-comparison: HTML: raw HTML was kept in htmlBlock
+- playwright-cli-vs-agent-browser-token-comparison: HTML: raw HTML was kept in htmlBlock
+- playwright-cli-vs-agent-browser-token-comparison: HTML: raw HTML was kept in htmlBlock
+- playwright-cli-vs-agent-browser-token-comparison: HTML: raw HTML was kept in htmlBlock
+- visceral-aversion-to-ai-generated-text: frontmatter:diagram
+- visceral-aversion-to-ai-generated-text: frontmatter:selfAssessment
+- built-claude-code-changelog-viewer: frontmatter:diagram
+- built-claude-code-changelog-viewer: frontmatter:selfAssessment
+- github-agentic-workflows-ci-doctor: frontmatter:diagram
+- github-agentic-workflows-ci-doctor: frontmatter:selfAssessment
+- cloudflare-workers-preview-version-cleanup: frontmatter:diagram
+- cloudflare-workers-preview-version-cleanup: frontmatter:selfAssessment
+- cloudflare-workers-preview-version-cleanup: HTML: raw HTML was kept in htmlBlock
+- cloudflare-workers-preview-version-cleanup: HTML: raw HTML was kept in htmlBlock
+- cloudflare-workers-preview-version-cleanup: HTML: raw HTML was kept in htmlBlock
+- cloudflare-workers-preview-version-cleanup: HTML: raw HTML was kept in htmlBlock
+- cloudflare-workers-preview-version-cleanup: HTML: raw HTML was kept in htmlBlock
+- cloudflare-workers-preview-version-cleanup: HTML: raw HTML was kept in htmlBlock
+- claude-code-pro-to-max-one-month-review: frontmatter:diagram
+- claude-code-pro-to-max-one-month-review: frontmatter:selfAssessment
+- cc-spinner-customize-claude-code-spinner-verbs: frontmatter:diagram
+- cc-spinner-customize-claude-code-spinner-verbs: frontmatter:selfAssessment
+- agent-browser-vs-playwright-cli-revisit: frontmatter:diagram
+- agent-browser-vs-playwright-cli-revisit: frontmatter:selfAssessment
+- agent-browser-vs-playwright-cli-revisit: HTML: raw HTML was kept in htmlBlock
+- agent-browser-vs-playwright-cli-revisit: HTML: raw HTML was kept in htmlBlock
+- agent-browser-vs-playwright-cli-revisit: HTML: raw HTML was kept in htmlBlock
+- agent-browser-vs-playwright-cli-revisit: HTML: raw HTML was kept in htmlBlock
+- agent-browser-vs-playwright-cli-revisit: HTML: raw HTML was kept in htmlBlock
+- agent-browser-vs-playwright-cli-revisit: HTML: raw HTML was kept in htmlBlock
+- built-a-blog-site-with-cloudflare-emdash-and-access-control: frontmatter:diagram
+- built-a-blog-site-with-cloudflare-emdash-and-access-control: frontmatter:selfAssessment
+- built-a-blog-site-with-cloudflare-emdash-and-access-control: HTML: raw HTML was kept in htmlBlock
+- built-a-blog-site-with-cloudflare-emdash-and-access-control: HTML: raw HTML was kept in htmlBlock
+- no-smartphone-trip: frontmatter:diagram
+- no-smartphone-trip: frontmatter:selfAssessment
+- no-smartphone-trip: HTML: raw HTML was kept in htmlBlock
+- no-smartphone-trip: HTML: raw HTML was kept in htmlBlock
+- no-smartphone-trip: HTML: raw HTML was kept in htmlBlock
+- cloudflare-waf-free-plan-reality: frontmatter:diagram
+- cloudflare-waf-free-plan-reality: frontmatter:selfAssessment
+- cloudflare-waf-free-plan-reality: footnote managed-rules: defined without a reference
+- github-actions-agent-browser-cache-strategy: frontmatter:diagram
+- github-actions-agent-browser-cache-strategy: frontmatter:selfAssessment
+- claude-code-usage-otel-cloudflare-d1: frontmatter:diagram
+- claude-code-usage-otel-cloudflare-d1: frontmatter:selfAssessment
+- obsidian-semantic-search-cloudflare-vectorize: frontmatter:selfAssessment
+- claude-code-hooks-plan-readability: HTML: raw HTML was kept in htmlBlock
+- claude-code-hooks-plan-readability: HTML: raw HTML was kept in htmlBlock
+- claude-code-subagent-model-inheritance: frontmatter:selfAssessment
+- pnpm-setup-migration: HTML: raw HTML was kept in htmlBlock
+- pnpm-setup-migration: HTML: raw HTML was kept in htmlBlock
+- cloudflare-workers-builds-preview-trigger-build-variables: HTML: raw HTML was kept in htmlBlock
+- cloudflare-workers-builds-preview-trigger-build-variables: HTML: raw HTML was kept in htmlBlock
+- cloudflare-workers-builds-preview-trigger-build-variables: HTML: raw HTML was kept in htmlBlock
+- cloudflare-workers-builds-preview-trigger-build-variables: HTML: raw HTML was kept in htmlBlock

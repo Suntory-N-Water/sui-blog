@@ -1,44 +1,28 @@
-import { siteConfig } from '@/config/site';
-import type { BlogPost } from '@/lib/markdown';
-import { getAllBlogPosts } from '@/lib/markdown';
+import type { APIRoute } from 'astro';
+import { getEmDashCollection, getSiteSettings } from 'emdash';
+import { resolveBlogSiteIdentity } from '../utils/site-identity';
 
-/**
- * llms.txt の内容を生成する関数
- *
- * @param posts - ブログ記事の配列
- * @returns llms.txt形式のMarkdown文字列
- */
-function renderLlmsTxt(posts: BlogPost[]): string {
-  return `# ${siteConfig.name}
-
-> ${siteConfig.description}
-
-${
-  posts.length > 0
-    ? `## ブログ記事
-
-${posts
-  .map(
-    (post) =>
-      `- [${post.data.title}](${siteConfig.url}/blog/${post.id}.md): ${post.data.description || ''}`,
-  )
-  .join('\n')}
-`
-    : ''
-}
-`;
-}
-
-export async function GET() {
-  const posts = await getAllBlogPosts();
-  const markdownContent = renderLlmsTxt(posts);
-
-  const headers = new Headers({
-    'Content-Type': 'text/plain; charset=utf-8',
+export const GET: APIRoute = async ({ site, url }) => {
+  const origin = site?.toString().replace(/\/$/u, '') || url.origin;
+  const { siteTitle, siteTagline } = resolveBlogSiteIdentity(
+    await getSiteSettings(),
+  );
+  const { entries: posts } = await getEmDashCollection('posts', {
+    orderBy: { modified_time: 'desc' },
+    limit: 1000,
   });
 
-  return new Response(markdownContent, {
-    status: 200,
-    headers,
+  const lines = [`# ${siteTitle}`, '', siteTagline, '', '## Posts', ''];
+  for (const post of posts) {
+    const title = post.data.title || 'Untitled';
+    const excerpt = post.data.excerpt ? `: ${post.data.excerpt}` : '';
+    lines.push(`- [${title}](${origin}/blog/${post.id})${excerpt}`);
+  }
+
+  return new Response(`${lines.join('\n')}\n`, {
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Cache-Control': 'public, max-age=3600',
+    },
   });
-}
+};

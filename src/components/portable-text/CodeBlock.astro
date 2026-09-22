@@ -1,0 +1,186 @@
+---
+import { Code } from 'astro:components';
+import type { ComponentProps } from 'astro/types';
+import { bundledLanguagesInfo } from 'shiki/langs';
+import Mermaid from './Mermaid.astro';
+
+const SUPPORTED_LANGUAGES = new Set([
+  'plaintext',
+  'plain',
+  'text',
+  'txt',
+  'ansi',
+  ...bundledLanguagesInfo.flatMap((info) => [info.id, ...(info.aliases ?? [])]),
+]);
+
+export interface Props {
+  node: {
+    _type: 'code';
+    _key: string;
+    code: string;
+    language?: string;
+    filename?: string;
+  };
+}
+
+const { node } = Astro.props;
+
+const code = node?.code ?? '';
+const language = node?.language?.toLowerCase();
+const filename = node?.filename;
+
+const isMermaid = language === 'mermaid';
+
+const lang = (
+  language && SUPPORTED_LANGUAGES.has(language) ? language : 'plaintext'
+) as ComponentProps<typeof Code>['lang'];
+---
+
+{code &&
+  (isMermaid ? (
+    <Mermaid code={code} />
+  ) : (
+    <div class='code-block'>
+      {filename && <div class='code-block-filename'>{filename}</div>}
+      <div class='code-block-body'>
+        <Code code={code} lang={lang} theme='dark-plus' />
+        <button type='button' class='code-copy' aria-label='コードをコピー'>
+          <svg
+            class='code-copy-icon copy'
+            width='15'
+            height='15'
+            viewBox='0 0 24 24'
+            fill='none'
+            stroke='currentColor'
+            stroke-width='2'
+            stroke-linecap='round'
+            stroke-linejoin='round'
+            aria-hidden='true'
+          >
+            <rect x='9' y='9' width='13' height='13' rx='2' ry='2'></rect>
+            <path d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'></path>
+          </svg>
+          <svg
+            class='code-copy-icon done'
+            width='15'
+            height='15'
+            viewBox='0 0 24 24'
+            fill='none'
+            stroke='currentColor'
+            stroke-width='2'
+            stroke-linecap='round'
+            stroke-linejoin='round'
+            aria-hidden='true'
+          >
+            <path d='M20 6 9 17l-5-5'></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  ))}
+
+<script>
+  const COPIED_DURATION = 2000;
+
+  document.addEventListener('click', async (event) => {
+    const target = event.target as HTMLElement | null;
+    const button = target?.closest<HTMLButtonElement>('.code-copy');
+    if (!button) return;
+
+    const pre = button.parentElement?.querySelector('pre');
+    if (!pre) return;
+
+    try {
+      await navigator.clipboard.writeText(pre.textContent ?? '');
+    } catch {
+      return;
+    }
+
+    button.classList.add('copied');
+    button.setAttribute('aria-label', 'コピーしました');
+    window.setTimeout(() => {
+      button.classList.remove('copied');
+      button.setAttribute('aria-label', 'コードをコピー');
+    }, COPIED_DURATION);
+  });
+</script>
+
+<style>
+  .code-block {
+    margin: 0 0 26px;
+  }
+
+  .code-block-body {
+    position: relative;
+  }
+
+  .code-copy {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    background: var(--color-code-bar);
+    border: 1px solid var(--color-code-rule);
+    border-radius: var(--radius);
+    color: var(--color-code-label);
+    cursor: pointer;
+    opacity: 0.7;
+    transition:
+      opacity var(--transition-fast),
+      color var(--transition-fast);
+  }
+
+  .code-copy:hover,
+  .code-copy:focus-visible,
+  .code-copy.copied {
+    opacity: 1;
+  }
+
+  .code-copy:hover {
+    color: var(--color-code-text);
+  }
+
+  .code-copy.copied {
+    color: var(--color-code-accent);
+  }
+
+  .code-copy .done,
+  .code-copy.copied .copy {
+    display: none;
+  }
+
+  .code-copy.copied .done {
+    display: block;
+  }
+
+  .code-block-filename {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 8px 18px;
+    background: var(--color-code-bar);
+    color: var(--color-code-label);
+    border-bottom: 1px solid var(--color-code-rule);
+  }
+
+  .code-block :global(pre.astro-code) {
+    margin: 0;
+    padding: 16px 18px;
+    background: var(--color-code-bg) !important;
+    border-radius: 0;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.9;
+  }
+
+  .code-block :global(pre.astro-code code) {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+  }
+</style>

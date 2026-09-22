@@ -1,0 +1,25 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div class:list={['shell', className]}>
+  <slot />
+</div>
+
+<style>
+  .shell {
+    max-width: var(--wide-width);
+    margin: 0 auto;
+    padding: 0 var(--spacing-6);
+  }
+
+  @media (max-width: 640px) {
+    .shell {
+      padding: 0 var(--spacing-4);
+    }
+  }
+</style>

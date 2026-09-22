@@ -1,23 +1,40 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
+import Base from '../layouts/Base.astro';
+import PageShell from '../components/PageShell.astro';
 ---
 
-<BaseLayout
-  title='404 - ページが見つかりませんでした'
-  description='お探しのページは存在しないか、移動した可能性があります。'
->
-  <div class='flex flex-col items-center justify-center py-20'>
-    <h1 class='mb-4 text-4xl font-bold'>404 - ページが見つかりませんでした</h1>
-    <p class='mb-8 text-muted-foreground'>
-      お探しのページは存在しないか、移動した可能性があります。
-    </p>
-    <div class='flex gap-4'>
-      <a
-        href='/'
-        class='rounded border border-primary px-6 py-2 text-primary transition-colors hover:bg-primary/10'
-      >
-        トップページへ
+<Base title='ページが見つかりません'>
+  <PageShell>
+    <div class='not-found'>
+      <p class='not-found-code'>404</p>
+      <p class='not-found-desc'>お探しのページは見つかりませんでした。</p>
+      <a href='/' class='not-found-link'>
+        ホームに戻る
       </a>
     </div>
-  </div>
-</BaseLayout>
+  </PageShell>
+</Base>
+
+<style>
+  .not-found {
+    padding: 96px 0;
+  }
+
+  .not-found-code {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--color-muted);
+    margin-bottom: 16px;
+  }
+
+  .not-found-desc {
+    font-size: 16px;
+    color: var(--color-text-secondary);
+    margin-bottom: 24px;
+  }
+
+  .not-found-link {
+    color: var(--color-brand);
+    border-bottom: 1px solid var(--color-brand-underline);
+  }
+</style>

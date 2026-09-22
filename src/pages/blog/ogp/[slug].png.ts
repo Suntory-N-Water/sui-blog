@@ -1,68 +1,71 @@
-import type { APIContext } from 'astro';
-import { getAllBlogPosts, getBlogPostBySlug } from '@/lib/markdown';
-import { generateFallbackOgpImage, generateOgpImage } from '@/lib/ogp';
+import type { APIRoute } from 'astro';
+import { waitUntil } from 'cloudflare:workers';
+import { decodeSlug, getEmDashEntry } from 'emdash';
+import {
+  fetchFallbackOgpImage,
+  OGP_CACHE_NAME,
+  renderOgpImage,
+} from '../../../lib/ogp';
+import { asPost } from '../../../lib/emdash-types';
 
-/**
- * 静的生成用のパスを生成
- * ビルド時に全ブログ記事のOGP画像を事前生成
- */
-export async function getStaticPaths() {
-  const posts = await getAllBlogPosts();
-  return posts.map((post) => ({
-    params: { slug: post.id },
-  }));
+const CACHE_CONTROL =
+  'public, max-age=86400, s-maxage=2592000, stale-while-revalidate=86400';
+
+async function fallbackResponse(origin: string): Promise<Response> {
+  try {
+    const asset = await fetchFallbackOgpImage(origin);
+    return new Response(asset.body, {
+      headers: {
+        'Content-Type': 'image/png',
+        'Cache-Control': 'public, max-age=300',
+      },
+    });
+  } catch {
+    return new Response('Failed to render image', { status: 500 });
+  }
 }
 
-/**
- * ブログ記事のOGP画像を動的に生成するAPIルートハンドラ
- *
- * @param context - Astro APIContext
- * @returns 1200x630のOGP画像を含むResponse
- */
-export async function GET({ params }: APIContext) {
-  const { slug } = params;
+export const GET: APIRoute = async ({ params, request }) => {
+  const origin = new URL(request.url).origin;
 
-  if (!slug) {
-    return new Response(null, {
-      status: 404,
-      statusText: 'Not Found',
-    });
+  const cache = await caches.open(OGP_CACHE_NAME);
+  const cached = await cache.match(request);
+  if (cached) {
+    return cached;
   }
 
   try {
-    // 記事データ取得
-    const post = await getBlogPostBySlug(slug);
-
-    if (!post) {
-      return new Response(null, {
-        status: 404,
-        statusText: 'Not Found',
-      });
+    const slug = decodeSlug(params.slug);
+    if (!slug) {
+      return new Response('Not found', { status: 404 });
     }
 
-    const title = post.data.title;
-    const tags = post.data.tags || [];
-    const iconPath = post.data.icon_url;
+    const { entry } = await getEmDashEntry('posts', slug);
+    if (!entry) {
+      return new Response('Not found', { status: 404 });
+    }
 
-    // OGP画像生成
-    const png = await generateOgpImage({ title, tags, iconPath });
+    const post = asPost(entry);
+    const image = await renderOgpImage({
+      title: post.data.title,
+      tags: (post.data.terms?.tag ?? []).map((term) => term.label),
+      iconFilename:
+        typeof post.data.featured_image === 'object'
+          ? post.data.featured_image.filename
+          : undefined,
+      origin,
+    });
 
-    return new Response(Buffer.from(png), {
+    const response = new Response(image as unknown as BodyInit, {
       headers: {
         'Content-Type': 'image/png',
+        'Cache-Control': CACHE_CONTROL,
       },
     });
+    waitUntil(cache.put(request, response.clone()));
+    return response;
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error(`Error generating OG image: ${message}`);
-
-    // エラー時はフォールバック画像を返す
-    const fallbackPng = await generateFallbackOgpImage();
-
-    return new Response(Buffer.from(fallbackPng), {
-      headers: {
-        'Content-Type': 'image/png',
-      },
-    });
+    console.error('OGP render failed', error);
+    return fallbackResponse(origin);
   }
-}
+};

@@ -1,0 +1,77 @@
+---
+interface Props {
+  node: {
+    _type: 'image';
+    _key: string;
+    asset?: {
+      _ref?: string;
+      id?: string;
+      url?: string;
+      width?: number;
+      height?: number;
+      alt?: string;
+      meta?: { storageKey?: string };
+    } | null;
+    alt?: string;
+    caption?: string;
+    width?: number;
+    height?: number;
+  };
+}
+
+const { node } = Astro.props;
+const asset = node?.asset;
+
+const storageKey = asset?.meta?.storageKey;
+const resolve = Astro.locals.emdash?.getPublicMediaUrl;
+const mediaId = asset?.id ?? asset?._ref;
+
+let src = '';
+if (storageKey) {
+  src = resolve ? resolve(storageKey) : `/_emdash/api/media/file/${storageKey}`;
+} else if (asset?.url) {
+  src = asset.url;
+} else if (mediaId) {
+  src = `/_emdash/api/media/file/${mediaId}`;
+}
+
+const alt = node?.alt ?? asset?.alt ?? '';
+const width = node?.width ?? asset?.width;
+const height = node?.height ?? asset?.height;
+const caption = node?.caption;
+---
+
+{src && (
+  <figure class='article-image'>
+    <img
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      loading='lazy'
+      decoding='async'
+    />
+    {caption && <figcaption>{caption}</figcaption>}
+  </figure>
+)}
+
+<style>
+  .article-image {
+    margin: 0 0 26px;
+  }
+
+  .article-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--color-border);
+  }
+
+  .article-image figcaption {
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--color-muted);
+  }
+</style>

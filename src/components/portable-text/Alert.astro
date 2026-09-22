@@ -1,0 +1,107 @@
+---
+import { PortableText } from 'emdash/ui';
+import { ALERT_ICON_PATH, type AlertKind } from '../../lib/github-alert';
+import CodeBlock from './CodeBlock.astro';
+
+interface Props {
+  kind: AlertKind;
+  blocks: unknown[];
+}
+
+const { kind, blocks } = Astro.props;
+
+const ALERT_LABEL_JA: Record<AlertKind, string> = {
+  note: 'メモ',
+  tip: 'ヒント',
+  important: '重要',
+  warning: '警告',
+  caution: '注意',
+};
+
+const body = (blocks as Array<Record<string, unknown>>).map((block) => ({
+  ...block,
+  style: 'normal',
+}));
+---
+
+<div class={`markdown-alert markdown-alert-${kind}`} dir='auto'>
+  <p class='markdown-alert-title'>
+    <svg viewBox='0 0 16 16' width='14' height='14' aria-hidden='true'>
+      <path d={ALERT_ICON_PATH[kind]}></path>
+    </svg>
+    {ALERT_LABEL_JA[kind]}
+  </p>
+  {body.length > 0 && (
+    <PortableText value={body} components={{ type: { code: CodeBlock } }} />
+  )}
+</div>
+
+<style>
+  .markdown-alert {
+    margin: 0 0 26px;
+    padding-left: 18px;
+    border-left: 2px solid var(--alert-fg);
+  }
+
+  .markdown-alert :global(> :last-child) {
+    margin-bottom: 0;
+  }
+
+  .markdown-alert-note {
+    --alert-fg: var(--color-brand);
+  }
+
+  .markdown-alert-tip {
+    --alert-fg: light-dark(#1a6b3c, #62c98d);
+  }
+
+  .markdown-alert-important {
+    --alert-fg: light-dark(#5b3fa8, #b39bf0);
+  }
+
+  .markdown-alert-warning {
+    --alert-fg: light-dark(#8a5a00, #e0b25c);
+  }
+
+  .markdown-alert-caution {
+    --alert-fg: light-dark(#a3242c, #f09088);
+  }
+
+  .markdown-alert-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--alert-fg);
+    margin-bottom: 2px;
+  }
+
+  .markdown-alert-title svg {
+    flex-shrink: 0;
+    fill: currentColor;
+  }
+
+  .markdown-alert :global(p) {
+    font-size: 15px;
+    line-height: 1.9;
+  }
+
+  @supports not (color: light-dark(#000, #fff)) {
+    .markdown-alert-tip {
+      --alert-fg: #1a6b3c;
+    }
+
+    .markdown-alert-important {
+      --alert-fg: #5b3fa8;
+    }
+
+    .markdown-alert-warning {
+      --alert-fg: #8a5a00;
+    }
+
+    .markdown-alert-caution {
+      --alert-fg: #a3242c;
+    }
+  }
+</style>
