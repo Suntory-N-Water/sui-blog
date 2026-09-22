@@ -1,4 +1,4 @@
-:root {
+:root:where(.site-root) {
 	--font-body: var(--font-latin), var(--font-jp);
 	--font-mono: var(--font-mono-latin), var(--font-jp), monospace;
 
@@ -40,7 +40,7 @@
 }
 
 @supports not (color: light-dark(#000, #fff)) {
-	:root {
+	:root:where(.site-root) {
 		color-scheme: light;
 		--color-bg: #ffffff;
 		--color-bg-subtle: #ffffff;
@@ -65,23 +65,14 @@
 	}
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+:where(.site-root) :is(h1, h2, h3, h4, h5, h6) {
 	color: var(--color-heading);
 	line-height: 1.5;
 	text-wrap: balance;
 	word-break: auto-phrase;
 }
 
-p,
-li,
-dd,
-figcaption,
-blockquote {
+:where(.site-root) :is(p, li, dd, figcaption, blockquote) {
 	text-wrap: pretty;
 	word-break: auto-phrase;
 }
