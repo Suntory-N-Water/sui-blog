@@ -4,12 +4,10 @@
   "private": true,
   "type": "module",
   "emdash": {
-    "label": "Blog",
-    "seed": "seed/seed.json"
+    "label": "Blog"
   },
   "scripts": {
     "dev": "astro dev",
-    "seed:validate": "emdash seed seed/seed.json --validate",
     "seed:local": "rm -rf .wrangler/state/v3/d1 .wrangler/state/v3/r2 && astro dev",
     "build": "astro build",
     "preview": "astro preview",
@@ -21,8 +19,7 @@
     "lint": "biome lint .",
     "lint:fix": "biome lint --write .",
     "type-check": "astro check",
-    "knip": "knip",
-    "normalize:media": "node scripts/normalize-image-assets.ts"
+    "knip": "knip"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.3.2",
@@ -35,14 +32,8 @@
     "astro-portabletext": "^0.11.4",
     "beautiful-mermaid": "^1.1.3",
     "emdash": "^0.38.0",
-    "gray-matter": "^4.0.3",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "rehype-stringify": "^10.0.1",
-    "remark": "^15.0.1",
-    "remark-gfm": "^4.0.1",
-    "remark-github-blockquote-alert": "^2.1.0",
-    "remark-rehype": "^11.1.2",
     "shiki": "^4.4.3"
   },
   "devDependencies": {
