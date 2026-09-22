@@ -17,7 +17,7 @@
 */
 
 @layer base {
-	:root {
+	:root:where(.site-root) {
 		color-scheme: light dark;
 
 		/* Colors */
@@ -129,7 +129,7 @@
 	 * Chrome < 123). Must mirror the light values above.
 	 */
 	@supports not (color: light-dark(#000, #fff)) {
-		:root {
+		:root:where(.site-root) {
 			color-scheme: light;
 			--color-bg: #ffffff;
 			--color-bg-subtle: #fafafa;

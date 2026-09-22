@@ -69,7 +69,7 @@ const isLoggedIn = !!Astro.locals.user;
 ---
 
 <!doctype html>
-<html lang='ja'>
+<html lang='ja' class='site-root'>
   <head>
     <meta charset='UTF-8' />
     <meta name='viewport' content='width=device-width, initial-scale=1.0' />
@@ -320,48 +320,52 @@ const isLoggedIn = !!Astro.locals.user;
       @layer base;
 
       @layer base {
-        *:where(:not([class*='emdash']):not([class*='ec-'])),
-        *:where(:not([class*='emdash']):not([class*='ec-']))::before,
-        *:where(:not([class*='emdash']):not([class*='ec-']))::after {
+        :where(.site-root) *:where(:not([class*='emdash']):not([class*='ec-'])),
+        :where(.site-root)
+          *:where(:not([class*='emdash']):not([class*='ec-']))::before,
+        :where(.site-root)
+          *:where(:not([class*='emdash']):not([class*='ec-']))::after {
           box-sizing: border-box;
         }
 
-        body,
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6,
-        p,
-        ul,
-        ol,
-        figure,
-        blockquote,
-        dl,
-        dd {
+        :where(.site-root)
+          :is(
+            body,
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6,
+            p,
+            ul,
+            ol,
+            figure,
+            blockquote,
+            dl,
+            dd
+          ) {
           margin: 0;
         }
 
-        ul,
-        ol {
+        :where(.site-root) :is(ul, ol) {
           padding: 0;
         }
         @supports (color: light-dark(#000, #fff)) {
-          :root.light {
+          :root:where(.site-root).light {
             color-scheme: light;
           }
 
-          :root.dark {
+          :root:where(.site-root).dark {
             color-scheme: dark;
           }
         }
 
-        html {
+        :where(.site-root) {
           scroll-behavior: smooth;
         }
 
-        body {
+        :where(.site-root) body {
           font-family: var(--font-body);
           font-size: var(--font-size-base);
           line-height: var(--leading-relaxed);
@@ -372,40 +376,37 @@ const isLoggedIn = !!Astro.locals.user;
           min-height: 100vh;
         }
 
-        a:where(:not([class*='emdash']):not([class*='ec-'])) {
+        :where(.site-root)
+          a:where(:not([class*='emdash']):not([class*='ec-'])) {
           color: var(--color-brand);
           text-decoration: none;
           transition: color var(--transition-fast);
         }
 
-        a:where(:not([class*='emdash']):not([class*='ec-'])):hover {
+        :where(.site-root)
+          a:where(:not([class*='emdash']):not([class*='ec-'])):hover {
           color: var(--color-brand-hover);
         }
 
-        img {
+        :where(.site-root) img {
           max-width: 100%;
           height: auto;
           display: block;
         }
 
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
+        :where(.site-root) :is(h1, h2, h3, h4, h5, h6) {
           font-family: var(--font-heading);
           line-height: var(--leading-tight);
           font-weight: var(--font-weight-heading);
           letter-spacing: var(--tracking-snug);
         }
 
-        h1 {
+        :where(.site-root) h1 {
           font-weight: var(--font-weight-display);
           letter-spacing: var(--tracking-tight);
         }
 
-        ::selection {
+        :where(.site-root) ::selection {
           background: var(--color-brand);
           color: var(--color-on-brand);
         }

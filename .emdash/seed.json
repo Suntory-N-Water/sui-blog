@@ -1,0 +1,879 @@
+{
+	"$schema": "https://emdashcms.com/seed.schema.json",
+	"version": "1",
+	"meta": {
+		"name": "Exported Seed",
+		"description": "Exported from existing EmDash database"
+	},
+	"settings": {
+		"title": "sui Blog",
+		"tagline": "日々の開発で得た知見や、実験的な実装、日常を記録するブログです。"
+	},
+	"collections": [
+		{
+			"slug": "posts",
+			"label": "Posts",
+			"labelSingular": "Post",
+			"supports": [
+				"drafts",
+				"revisions",
+				"search"
+			],
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Title",
+					"type": "string",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "excerpt",
+					"label": "Excerpt",
+					"type": "text"
+				},
+				{
+					"slug": "featured_image",
+					"label": "Featured Image",
+					"type": "image"
+				},
+				{
+					"slug": "content",
+					"label": "Content",
+					"type": "portableText",
+					"searchable": true
+				}
+			]
+		}
+	],
+	"defaultLocale": "en",
+	"taxonomies": [
+		{
+			"id": "tax:category",
+			"name": "category",
+			"label": "Categories",
+			"labelSingular": "Category",
+			"hierarchical": true,
+			"collections": [
+				"posts"
+			]
+		},
+		{
+			"id": "tax:tag",
+			"name": "tag",
+			"label": "Tags",
+			"labelSingular": "Tag",
+			"hierarchical": false,
+			"collections": [
+				"posts"
+			],
+			"terms": [
+				{
+					"id": "term:tag:blog",
+					"slug": "blog",
+					"label": "ブログ"
+				}
+			]
+		}
+	],
+	"menus": [],
+	"widgetAreas": [],
+	"content": {
+		"posts": [
+			{
+				"id": "posts:sample-markup",
+				"slug": "sample-markup",
+				"status": "published",
+				"data": {
+					"title": "記法サンプル記事",
+					"featured_image": {
+						"$media": {
+							"url": "https://suntory-n-water.com/opengraph-image.png",
+							"filename": "sample-image.png"
+						}
+					},
+					"content": [
+						{
+							"_type": "block",
+							"_key": "k1",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k0",
+									"text": "この記事は、ローカルの開発サーバーで記事の表示を確認するためのサンプルです。本文で使う記法を一通り並べています。"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k3",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k2",
+									"text": "見出し 2"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kc",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k4",
+									"text": "段落の例です。"
+								},
+								{
+									"_type": "span",
+									"_key": "k5",
+									"text": "強調",
+									"marks": [
+										"strong"
+									]
+								},
+								{
+									"_type": "span",
+									"_key": "k6a",
+									"text": "、"
+								},
+								{
+									"_type": "span",
+									"_key": "k6b",
+									"text": "斜体",
+									"marks": [
+										"em"
+									]
+								},
+								{
+									"_type": "span",
+									"_key": "k6c",
+									"text": "、",
+									"marks": []
+								},
+								{
+									"_type": "span",
+									"_key": "k7",
+									"text": "インラインコード",
+									"marks": [
+										"code"
+									]
+								},
+								{
+									"_type": "span",
+									"_key": "k8",
+									"text": "、"
+								},
+								{
+									"_type": "span",
+									"_key": "ka",
+									"text": "外部リンク",
+									"marks": [
+										"k9"
+									]
+								},
+								{
+									"_type": "span",
+									"_key": "kb",
+									"text": "、脚注"
+								},
+								{
+									"_type": "span",
+									"_key": "fnref-span-1",
+									"text": "[^1]",
+									"marks": []
+								},
+								{
+									"_type": "span",
+									"_key": "fnref-span-2",
+									"text": " を含みます。"
+								}
+							],
+							"markDefs": [
+								{
+									"_key": "k9",
+									"_type": "link",
+									"href": "https://example.com"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "ke",
+							"style": "h3",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kd",
+									"text": "見出し 3"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kg",
+							"style": "normal",
+							"listItem": "bullet",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kf",
+									"text": "箇条書きの 1 行目"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "ki",
+							"style": "normal",
+							"listItem": "bullet",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kh",
+									"text": "箇条書きの 2 行目"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kk",
+							"style": "normal",
+							"listItem": "bullet",
+							"level": 2,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kj",
+									"text": "入れ子の項目"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "km",
+							"style": "normal",
+							"listItem": "number",
+							"level": 1,
+							"listId": "legacy:root:7:km",
+							"listStart": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kl",
+									"text": "番号付きリストの 1 行目"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "ko",
+							"style": "normal",
+							"listItem": "number",
+							"level": 1,
+							"listId": "legacy:root:7:km",
+							"listStart": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kn",
+									"text": "番号付きリストの 2 行目"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kq",
+							"style": "h4",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kp",
+									"text": "見出し 4"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "ks",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kr",
+									"text": "見出し 4 の下の段落です。"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "ll1mgo4di",
+							"style": "h5",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "jckd75tnf",
+									"text": "見出し5"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "oe8u7ay30",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "3ua18fdv7",
+									"text": "あまり使わないですが一応あります。"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "ku",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kt",
+									"text": "コードブロック"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kw",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kv",
+									"text": "TypeScript のコードブロックです。"
+								}
+							]
+						},
+						{
+							"_type": "code",
+							"_key": "kx",
+							"code": "type Post = { title: string; tags: string[] };\n\nconst toSlug = (title: string): string =>\n  title.trim().toLowerCase().replace(/\\s+/gu, '-');",
+							"language": "ts"
+						},
+						{
+							"_type": "block",
+							"_key": "kz",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ky",
+									"text": "シェルのコードブロックです。"
+								}
+							]
+						},
+						{
+							"_type": "code",
+							"_key": "k10",
+							"code": "npx emdash content list posts --json --url http://localhost:4321",
+							"language": "bash"
+						},
+						{
+							"_type": "block",
+							"_key": "k12",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k11",
+									"text": "Mermaid"
+								}
+							]
+						},
+						{
+							"_type": "code",
+							"_key": "k13",
+							"code": "flowchart LR\n  A[Markdown] --> B[Portable Text]\n  B --> C[Astro でレンダリング]\n  C --> D[seed へ書き出し]",
+							"language": "mermaid"
+						},
+						{
+							"_type": "block",
+							"_key": "k15",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k14",
+									"text": "GitHub の Alert"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k17",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k16",
+									"text": "メモの例です。"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k19",
+							"style": "blockquote",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k18",
+									"text": "Note",
+									"marks": [
+										"strong"
+									]
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1b",
+							"style": "blockquote",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1a",
+									"text": "補足として読んでほしい内容を書きます。"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1d",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1c",
+									"text": "ヒントの例です。"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1f",
+							"style": "blockquote",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1e",
+									"text": "Tip",
+									"marks": [
+										"strong"
+									]
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1h",
+							"style": "blockquote",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1g",
+									"text": "知っていると作業が楽になる内容を書きます。"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1j",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1i",
+									"text": "重要の例です。"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1l",
+							"style": "blockquote",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1k",
+									"text": "Important",
+									"marks": [
+										"strong"
+									]
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1n",
+							"style": "blockquote",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1m",
+									"text": "省略すると困る内容を書きます。"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1p",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1o",
+									"text": "警告の例です。"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1r",
+							"style": "blockquote",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1q",
+									"text": "Warning",
+									"marks": [
+										"strong"
+									]
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1t",
+							"style": "blockquote",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1s",
+									"text": "注意が必要な内容を書きます。"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1v",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1u",
+									"text": "注意の例です。"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1x",
+							"style": "blockquote",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1w",
+									"text": "Caution",
+									"marks": [
+										"strong"
+									]
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1z",
+							"style": "blockquote",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1y",
+									"text": "取り返しがつかない操作の前に書きます。"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k21",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k20",
+									"text": "引用"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k23",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k22",
+									"text": "ラベルを付けない場合は通常の引用になります。"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k25",
+							"style": "blockquote",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k24",
+									"text": "ラベルの付かない引用です。"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k27",
+							"style": "blockquote",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k26",
+									"text": "2 行目もこのまま続きます。"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k29",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k28",
+									"text": "画像"
+								}
+							]
+						},
+						{
+							"_type": "image",
+							"_key": "k2a",
+							"asset": {
+								"_ref": "",
+								"url": "https://suntory-n-water.com/opengraph-image.png"
+							},
+							"alt": "サンプル画像"
+						},
+						{
+							"_type": "block",
+							"_key": "k2c",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k2b",
+									"text": "リンクカード"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k2f",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k2e",
+									"text": "https://github.com/emdash-cms/emdash",
+									"marks": [
+										"k2d"
+									]
+								}
+							],
+							"markDefs": [
+								{
+									"_key": "k2d",
+									"_type": "link",
+									"href": "https://github.com/emdash-cms/emdash"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "table-heading",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "table-heading-span",
+									"text": "表"
+								}
+							]
+						},
+						{
+							"_type": "table",
+							"_key": "sample-table",
+							"rows": [
+								{
+									"_type": "tableRow",
+									"_key": "row-head",
+									"cells": [
+										{
+											"_type": "tableCell",
+											"_key": "cell-項目",
+											"content": [
+												{
+													"_type": "span",
+													"_key": "span-項目",
+													"text": "項目"
+												}
+											],
+											"isHeader": true
+										},
+										{
+											"_type": "tableCell",
+											"_key": "cell-値",
+											"content": [
+												{
+													"_type": "span",
+													"_key": "span-値",
+													"text": "値"
+												}
+											],
+											"isHeader": true
+										}
+									]
+								},
+								{
+									"_type": "tableRow",
+									"_key": "row-1",
+									"cells": [
+										{
+											"_type": "tableCell",
+											"_key": "cell-emdash",
+											"content": [
+												{
+													"_type": "span",
+													"_key": "span-emdash",
+													"text": "emdash"
+												}
+											],
+											"isHeader": false
+										},
+										{
+											"_type": "tableCell",
+											"_key": "cell-0.38.0",
+											"content": [
+												{
+													"_type": "span",
+													"_key": "span-0.38.0",
+													"text": "0.38.0"
+												}
+											],
+											"isHeader": false
+										}
+									]
+								},
+								{
+									"_type": "tableRow",
+									"_key": "row-2",
+									"cells": [
+										{
+											"_type": "tableCell",
+											"_key": "cell-astro",
+											"content": [
+												{
+													"_type": "span",
+													"_key": "span-astro",
+													"text": "astro"
+												}
+											],
+											"isHeader": false
+										},
+										{
+											"_type": "tableCell",
+											"_key": "cell-7.3.3",
+											"content": [
+												{
+													"_type": "span",
+													"_key": "span-7.3.3",
+													"text": "7.3.3"
+												}
+											],
+											"isHeader": false
+										}
+									]
+								}
+							],
+							"hasHeaderRow": true
+						},
+						{
+							"_type": "block",
+							"_key": "k2h",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k2g",
+									"text": "取り消し線"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k2k",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k2i",
+									"text": "取り消し線",
+									"marks": [
+										"strike-through"
+									]
+								},
+								{
+									"_type": "span",
+									"_key": "k2j",
+									"text": " と通常の文字を並べた段落です。"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "fwx37j5mv",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "fn-def-1",
+									"text": "[^1]: 脚注の内容です。本文の下部に集まります。",
+									"marks": []
+								}
+							]
+						}
+					],
+					"excerpt": "見出し、コードブロック、Mermaid、Alert、画像、リンクカード、表、脚注の表示をまとめて確認するためのサンプルです。"
+				},
+				"taxonomies": {
+					"tag": [
+						"blog"
+					]
+				}
+			}
+		]
+	}
+}
