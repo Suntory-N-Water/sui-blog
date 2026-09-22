@@ -4,8 +4,9 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://suntory-n-water.com/sitemap-index.xml
+Sitemap: https://suntory-n-water.com/sitemap.xml
 
 # Block common non-content paths
 Disallow: /api/
 Disallow: /_astro/
+Disallow: /_emdash/

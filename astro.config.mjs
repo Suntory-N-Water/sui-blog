@@ -10,6 +10,9 @@ export default defineConfig({
 	output: "server",
 	site: "https://suntory-n-water.com",
 	adapter: cloudflare(),
+	redirects: {
+		"/sitemap-index.xml": { status: 301, destination: "/sitemap.xml" },
+	},
 	image: {
 		layout: "constrained",
 		responsiveStyles: true,
