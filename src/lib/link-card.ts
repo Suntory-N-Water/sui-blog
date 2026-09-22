@@ -1,3 +1,5 @@
+import { env, waitUntil } from 'cloudflare:workers';
+
 const TEXT_MARKS = new Set([
   'strong',
   'em',
@@ -13,6 +15,10 @@ const FETCH_TIMEOUT_MS = 5000;
 const CACHE_TTL_SECONDS = 60 * 60 * 24 * 7;
 const MAX_HEAD_LENGTH = 128 * 1024;
 const MAX_CACHED_PREVIEWS = 500;
+const FAILURE_TTL_SECONDS = 60 * 60;
+const KV_KEY_PREFIX = 'linkcard:v1:';
+const KV_READ_TIMEOUT_MS = 300;
+const KV_BATCH_SIZE = 100;
 const USER_AGENT =
   'Mozilla/5.0 (compatible; sui-blog-linkcard/1.0; +https://suntory-n-water.com)';
 
@@ -109,18 +115,18 @@ function textOf(child: Child): string {
 
 const previews = new Map<string, LinkPreview | null>();
 
+type StoredPreview = {
+  preview: LinkPreview | null;
+};
+
 export async function getLinkPreview(url: string): Promise<LinkPreview | null> {
   const cached = previews.get(url);
   if (cached !== undefined) {
     return cached;
   }
 
-  const preview = await fetchLinkPreview(url);
-  if (previews.size >= MAX_CACHED_PREVIEWS) {
-    previews.clear();
-  }
-  previews.set(url, preview);
-  return preview;
+  await loadPreviews([url]);
+  return previews.get(url) ?? null;
 }
 
 export async function prefetchLinkPreviews(blocks: unknown): Promise<void> {
@@ -136,7 +142,98 @@ export async function prefetchLinkPreviews(blocks: unknown): Promise<void> {
     }
   }
 
-  await Promise.all([...urls].map((url) => getLinkPreview(url)));
+  await loadPreviews([...urls].filter((url) => !previews.has(url)));
+}
+
+async function loadPreviews(urls: string[]): Promise<void> {
+  if (urls.length === 0) {
+    return;
+  }
+
+  const entries = await Promise.all(
+    urls.map(async (url) => ({ url, key: await storageKey(url) })),
+  );
+  const stored = await readStoredPreviews(entries.map(({ key }) => key));
+
+  await Promise.all(
+    entries.map(async ({ url, key }) => {
+      const hit = stored.get(key);
+      if (hit) {
+        rememberPreview(url, hit.preview);
+        return;
+      }
+
+      const preview = await fetchLinkPreview(url);
+      rememberPreview(url, preview);
+      storePreview(key, preview);
+    }),
+  );
+}
+
+function rememberPreview(url: string, preview: LinkPreview | null): void {
+  if (previews.size >= MAX_CACHED_PREVIEWS) {
+    previews.clear();
+  }
+  previews.set(url, preview);
+}
+
+async function storageKey(url: string): Promise<string> {
+  const digest = await crypto.subtle.digest(
+    'SHA-256',
+    new TextEncoder().encode(url),
+  );
+  const hex = [...new Uint8Array(digest)]
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
+  return `${KV_KEY_PREFIX}${hex}`;
+}
+
+async function readStoredPreviews(
+  keys: string[],
+): Promise<Map<string, StoredPreview>> {
+  const batches: string[][] = [];
+  for (let index = 0; index < keys.length; index += KV_BATCH_SIZE) {
+    batches.push(keys.slice(index, index + KV_BATCH_SIZE));
+  }
+
+  const found = new Map<string, StoredPreview>();
+  const results = await Promise.all(batches.map(readStoredBatch));
+  for (const result of results) {
+    for (const [key, value] of result) {
+      if (value) {
+        found.set(key, value);
+      }
+    }
+  }
+  return found;
+}
+
+async function readStoredBatch(
+  keys: string[],
+): Promise<Map<string, StoredPreview | null>> {
+  try {
+    return await Promise.race([
+      env.CACHE.get<StoredPreview>(keys, 'json'),
+      rejectAfter(KV_READ_TIMEOUT_MS),
+    ]);
+  } catch {
+    return new Map();
+  }
+}
+
+function rejectAfter(ms: number): Promise<never> {
+  return new Promise((_, reject) => {
+    setTimeout(() => reject(new Error('timeout')), ms);
+  });
+}
+
+function storePreview(key: string, preview: LinkPreview | null): void {
+  const value: StoredPreview = { preview };
+  waitUntil(
+    env.CACHE.put(key, JSON.stringify(value), {
+      expirationTtl: preview ? CACHE_TTL_SECONDS : FAILURE_TTL_SECONDS,
+    }).catch(() => undefined),
+  );
 }
 
 async function fetchLinkPreview(url: string): Promise<LinkPreview | null> {
