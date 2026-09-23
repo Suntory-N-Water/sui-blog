@@ -31,7 +31,7 @@ export function formatYearMonthJp(date: Date | null | undefined) {
   return `${year}年${Number(month)}月`;
 }
 
-export function postDate(data: {
+export function blogDate(data: {
   modified_time?: string | Date;
   publishedAt?: Date | null;
 }): Date | null {

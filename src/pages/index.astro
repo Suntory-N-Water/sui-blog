@@ -9,24 +9,24 @@ import { Image } from 'emdash/ui';
 import Base from '../layouts/Base.astro';
 import PageShell from '../components/PageShell.astro';
 import SectionBand from '../components/SectionBand.astro';
-import PostIndex from '../components/PostIndex.astro';
-import PostRow from '../components/PostRow.astro';
+import BlogIndex from '../components/BlogIndex.astro';
+import BlogRow from '../components/BlogRow.astro';
 import TagIndex from '../components/TagIndex.astro';
 import { getReadingTime } from '../utils/reading-time';
-import { formatIndexDate, postDate } from '../utils/format-date';
+import { formatIndexDate, blogDate } from '../utils/format-date';
 import { resolveBlogSiteIdentity } from '../utils/site-identity';
 
-const HOME_POST_LIMIT = 6;
+const HOME_BLOG_LIMIT = 6;
 const HOME_TAG_LIMIT = 12;
 
 const [
-  { entries: posts, cacheHint: postsCacheHint },
+  { entries: blogs, cacheHint: blogsCacheHint },
   { data: tags, cacheHint: tagsCacheHint },
   settings,
 ] = await Promise.all([
-  getEmDashCollection('posts', {
+  getEmDashCollection('blogs', {
     orderBy: { modified_time: 'desc' },
-    limit: HOME_POST_LIMIT,
+    limit: HOME_BLOG_LIMIT,
   }),
   getTaxonomyTermsWithCacheHint('tag', { includeCounts: true }),
   getSiteSettings(),
@@ -34,21 +34,21 @@ const [
 const { siteTitle, siteTagline } = resolveBlogSiteIdentity(settings);
 
 if (Astro.cache?.enabled) {
-  Astro.cache.set(postsCacheHint);
+  Astro.cache.set(blogsCacheHint);
   Astro.cache.set(tagsCacheHint);
 }
 
-const leadPost = posts[0] ?? null;
-const listPosts = posts.slice(1);
+const leadBlog = blogs[0] ?? null;
+const listBlogs = blogs.slice(1);
 
 const tagsByEntry = await getTermsForEntries(
-  'posts',
-  posts.map((p) => p.data.id),
+  'blogs',
+  blogs.map((p) => p.data.id),
   'tag',
 );
 
-const leadTags = leadPost
-  ? (tagsByEntry.get(leadPost.data.id) ?? []).map((t) => ({
+const leadTags = leadBlog
+  ? (tagsByEntry.get(leadBlog.data.id) ?? []).map((t) => ({
       slug: t.slug,
       label: t.label,
     }))
@@ -67,20 +67,20 @@ const topTags = tags
       <p>{siteTagline}</p>
     </header>
 
-    {posts.length === 0 ? (
+    {blogs.length === 0 ? (
       <div class='empty-state'>
         <p>まだ記事がありません。</p>
-        <a href='/_emdash/admin/content/posts/new' class='btn'>
+        <a href='/_emdash/admin/content/blogs/new' class='btn'>
           記事を作成
         </a>
       </div>
     ) : (
       <Fragment>
-        {leadPost && (
+        {leadBlog && (
           <article class='lead'>
-            {leadPost.data.featured_image && (
+            {leadBlog.data.featured_image && (
               <Image
-                image={leadPost.data.featured_image}
+                image={leadBlog.data.featured_image}
                 alt=''
                 width={34}
                 height={34}
@@ -88,19 +88,19 @@ const topTags = tags
               />
             )}
             <div class='lead-date'>
-              <time datetime={postDate(leadPost.data)?.toISOString()}>
-                {formatIndexDate(postDate(leadPost.data))}
+              <time datetime={blogDate(leadBlog.data)?.toISOString()}>
+                {formatIndexDate(blogDate(leadBlog.data))}
               </time>
             </div>
             <h2>
-              <a href={`/blog/${leadPost.id}`}>{leadPost.data.title}</a>
+              <a href={`/blog/${leadBlog.id}`}>{leadBlog.data.title}</a>
             </h2>
-            {leadPost.data.excerpt && (
-              <p class='lead-excerpt'>{leadPost.data.excerpt}</p>
+            {leadBlog.data.excerpt && (
+              <p class='lead-excerpt'>{leadBlog.data.excerpt}</p>
             )}
             <footer class='lead-foot'>
               <span class='lead-readtime'>
-                {getReadingTime(leadPost.data.content)} 分
+                {getReadingTime(leadBlog.data.content)} 分
               </span>
               {leadTags.length > 0 && (
                 <ul class='lead-tags' aria-label='タグ'>
@@ -117,26 +117,26 @@ const topTags = tags
           </article>
         )}
 
-        {listPosts.length > 0 && (
+        {listBlogs.length > 0 && (
           <section aria-label='最近の記事'>
             <SectionBand title='最近の記事' href='/blog' linkLabel='記事一覧' />
             <div class='index-wrap'>
-              <PostIndex>
-                {listPosts.map((post) => (
-                  <PostRow
-                    title={post.data.title}
-                    href={`/blog/${post.id}`}
-                    date={postDate(post.data)}
-                    readingTime={getReadingTime(post.data.content)}
-                    excerpt={post.data.excerpt}
-                    icon={post.data.featured_image}
-                    tags={(tagsByEntry.get(post.data.id) ?? []).map((t) => ({
+              <BlogIndex>
+                {listBlogs.map((blog) => (
+                  <BlogRow
+                    title={blog.data.title}
+                    href={`/blog/${blog.id}`}
+                    date={blogDate(blog.data)}
+                    readingTime={getReadingTime(blog.data.content)}
+                    excerpt={blog.data.excerpt}
+                    icon={blog.data.featured_image}
+                    tags={(tagsByEntry.get(blog.data.id) ?? []).map((t) => ({
                       slug: t.slug,
                       label: t.label,
                     }))}
                   />
                 ))}
-              </PostIndex>
+              </BlogIndex>
             </div>
           </section>
         )}

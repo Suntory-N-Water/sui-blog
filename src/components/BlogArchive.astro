@@ -1,40 +1,40 @@
 ---
 import { getEmDashCollection, getTermsForEntries } from 'emdash';
 import ArchiveHead from './ArchiveHead.astro';
-import PostIndex from './PostIndex.astro';
-import PostRow from './PostRow.astro';
+import BlogIndex from './BlogIndex.astro';
+import BlogRow from './BlogRow.astro';
 import Pagination from './Pagination.astro';
 import { getReadingTime } from '../utils/reading-time';
-import { formatYearMonthJp, getYear, postDate } from '../utils/format-date';
+import { formatYearMonthJp, getYear, blogDate } from '../utils/format-date';
 
-type PostsResult = Awaited<ReturnType<typeof getEmDashCollection<'posts'>>>;
-type ArchivePost = PostsResult['entries'][number];
+type BlogsResult = Awaited<ReturnType<typeof getEmDashCollection<'blogs'>>>;
+type ArchiveBlog = BlogsResult['entries'][number];
 type TagsByEntry = Awaited<ReturnType<typeof getTermsForEntries>>;
 
 interface Props {
-  posts: ArchivePost[];
+  blogs: ArchiveBlog[];
   tagsByEntry: TagsByEntry;
   page: number;
   totalPages: number;
 }
 
-const { posts, tagsByEntry, page, totalPages } = Astro.props;
+const { blogs, tagsByEntry, page, totalPages } = Astro.props;
 
-const yearGroups = new Map<string, ArchivePost[]>();
-for (const post of posts) {
-  const year = getYear(postDate(post.data)) ?? '不明';
+const yearGroups = new Map<string, ArchiveBlog[]>();
+for (const blog of blogs) {
+  const year = getYear(blogDate(blog.data)) ?? '不明';
   const group = yearGroups.get(year);
   if (group) {
-    group.push(post);
+    group.push(blog);
   } else {
-    yearGroups.set(year, [post]);
+    yearGroups.set(year, [blog]);
   }
 }
 
-const firstPost = posts[0];
-const lastPost = posts.at(-1);
-const newest = firstPost ? formatYearMonthJp(postDate(firstPost.data)) : null;
-const oldest = lastPost ? formatYearMonthJp(postDate(lastPost.data)) : null;
+const firstBlog = blogs[0];
+const lastBlog = blogs.at(-1);
+const newest = firstBlog ? formatYearMonthJp(blogDate(firstBlog.data)) : null;
+const oldest = lastBlog ? formatYearMonthJp(blogDate(lastBlog.data)) : null;
 const dateRange =
   newest && oldest
     ? newest === oldest
@@ -46,30 +46,30 @@ const sub = dateRange ? `${dateRange} / ${page} ページ目` : `${page} ペー�
 
 <ArchiveHead title='記事一覧' sub={sub} />
 
-{posts.length === 0 ? (
+{blogs.length === 0 ? (
   <p class='empty'>まだ記事がありません。</p>
 ) : (
-  Array.from(yearGroups.entries()).map(([year, yearPosts]) => (
+  Array.from(yearGroups.entries()).map(([year, yearBlogs]) => (
     <section class='year-group'>
       <header class='year'>
         <h2>{year}</h2>
-        <span>{yearPosts.length} 件</span>
+        <span>{yearBlogs.length} 件</span>
       </header>
-      <PostIndex topRule={false}>
-        {yearPosts.map((post) => (
-          <PostRow
-            title={post.data.title}
-            href={`/blog/${post.id}`}
-            date={postDate(post.data)}
-            readingTime={getReadingTime(post.data.content)}
-            icon={post.data.featured_image}
-            tags={(tagsByEntry.get(post.data.id) ?? []).map((t) => ({
+      <BlogIndex topRule={false}>
+        {yearBlogs.map((blog) => (
+          <BlogRow
+            title={blog.data.title}
+            href={`/blog/${blog.id}`}
+            date={blogDate(blog.data)}
+            readingTime={getReadingTime(blog.data.content)}
+            icon={blog.data.featured_image}
+            tags={(tagsByEntry.get(blog.data.id) ?? []).map((t) => ({
               slug: t.slug,
               label: t.label,
             }))}
           />
         ))}
-      </PostIndex>
+      </BlogIndex>
     </section>
   ))
 )}

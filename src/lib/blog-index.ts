@@ -1,30 +1,30 @@
 import { env } from 'cloudflare:workers';
 
-type PostTagRow = {
+type BlogTagRow = {
   id: string;
   slug: string;
   tag: string | null;
 };
 
-export async function countPublishedPosts(): Promise<number> {
+export async function countPublishedBlogs(): Promise<number> {
   const row = await env.DB.prepare(
-    `SELECT COUNT(*) AS total FROM ec_posts WHERE status = 'published' AND deleted_at IS NULL`,
+    `SELECT COUNT(*) AS total FROM ec_blogs WHERE status = 'published' AND deleted_at IS NULL`,
   ).first<{ total: number }>();
   return row?.total ?? 0;
 }
 
-export async function findRelatedPostSlugs(
+export async function findRelatedBlogSlugs(
   currentId: string,
   count: number,
 ): Promise<string[]> {
   const { results } = await env.DB.prepare(
     `SELECT p.id AS id, p.slug AS slug, t.slug AS tag
-     FROM ec_posts p
-     LEFT JOIN content_taxonomies ct ON ct.collection = 'posts' AND ct.entry_id = p.id
+     FROM ec_blogs p
+     LEFT JOIN content_taxonomies ct ON ct.collection = 'blogs' AND ct.entry_id = p.id
      LEFT JOIN taxonomies t ON t.id = ct.taxonomy_id AND t.name = 'tag'
      WHERE p.status = 'published' AND p.deleted_at IS NULL
      ORDER BY p.modified_time DESC, p.id`,
-  ).all<PostTagRow>();
+  ).all<BlogTagRow>();
 
   const documents = new Map<string, { slug: string; tags: Set<string> }>();
   for (const row of results) {

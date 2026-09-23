@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { getEmDashCollection, getSiteSettings } from 'emdash';
 
 import { resolveBlogSiteIdentity } from '../utils/site-identity';
-import { postDate } from '../utils/format-date';
+import { blogDate } from '../utils/format-date';
 
 export const GET: APIRoute = async ({ site, url }) => {
   const siteUrl = site?.toString().replace(/\/+$/u, '') || url.origin;
@@ -10,27 +10,27 @@ export const GET: APIRoute = async ({ site, url }) => {
     await getSiteSettings(),
   );
 
-  const { entries: posts } = await getEmDashCollection('posts', {
+  const { entries: blogs } = await getEmDashCollection('blogs', {
     orderBy: { modified_time: 'desc' },
     limit: 20,
   });
 
-  const items = posts
-    .map((post) => {
-      const published = postDate(post.data);
+  const items = blogs
+    .map((blog) => {
+      const published = blogDate(blog.data);
       if (!published) {
         return null;
       }
       const pubDate = published.toUTCString();
 
-      const postUrl = `${siteUrl}/blog/${post.id}`;
-      const title = escapeXml(post.data.title || 'Untitled');
-      const description = escapeXml(post.data.excerpt || '');
+      const blogUrl = `${siteUrl}/blog/${blog.id}`;
+      const title = escapeXml(blog.data.title || 'Untitled');
+      const description = escapeXml(blog.data.excerpt || '');
 
       return `    <item>
       <title>${title}</title>
-      <link>${postUrl}</link>
-      <guid isPermaLink="true">${postUrl}</guid>
+      <link>${blogUrl}</link>
+      <guid isPermaLink="true">${blogUrl}</guid>
       <pubDate>${pubDate}</pubDate>
       <description>${description}</description>
     </item>`;

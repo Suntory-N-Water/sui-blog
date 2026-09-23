@@ -7,16 +7,16 @@ export const GET: APIRoute = async ({ site, url }) => {
   const { siteTitle, siteTagline } = resolveBlogSiteIdentity(
     await getSiteSettings(),
   );
-  const { entries: posts } = await getEmDashCollection('posts', {
+  const { entries: blogs } = await getEmDashCollection('blogs', {
     orderBy: { modified_time: 'desc' },
     limit: 1000,
   });
 
-  const lines = [`# ${siteTitle}`, '', siteTagline, '', '## Posts', ''];
-  for (const post of posts) {
-    const title = post.data.title || 'Untitled';
-    const excerpt = post.data.excerpt ? `: ${post.data.excerpt}` : '';
-    lines.push(`- [${title}](${origin}/blog/${post.id})${excerpt}`);
+  const lines = [`# ${siteTitle}`, '', siteTagline, '', '## Blogs', ''];
+  for (const blog of blogs) {
+    const title = blog.data.title || 'Untitled';
+    const excerpt = blog.data.excerpt ? `: ${blog.data.excerpt}` : '';
+    lines.push(`- [${title}](${origin}/blog/${blog.id})${excerpt}`);
   }
 
   return new Response(`${lines.join('\n')}\n`, {

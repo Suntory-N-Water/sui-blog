@@ -606,7 +606,7 @@ function main() {
   );
 
   const existing = d1(
-    `SELECT id, status, deleted_at FROM ec_posts WHERE slug=${sqlString(slug)} AND locale='ja'`,
+    `SELECT id, status, deleted_at FROM ec_blogs WHERE slug=${sqlString(slug)} AND locale='ja'`,
   );
 
   const report = {
