@@ -40,7 +40,7 @@ export const GET: APIRoute = async ({ params, request }) => {
       return new Response('Not found', { status: 404 });
     }
 
-    const { entry } = await getEmDashEntry('posts', slug);
+    const { entry } = await getEmDashEntry('blogs', slug);
     if (!entry) {
       return new Response('Not found', { status: 404 });
     }

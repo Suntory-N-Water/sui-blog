@@ -10,7 +10,7 @@ const page = 1;
 
 const [{ entries: posts, hasMore, cacheHint, error }, total] =
   await Promise.all([
-    getEmDashCollection('posts', {
+    getEmDashCollection('blogs', {
       limit: PER_PAGE,
       offset: (page - 1) * PER_PAGE,
       orderBy: { modified_time: 'desc' },
@@ -30,7 +30,7 @@ const totalPages = Math.max(
 );
 
 const tagsByEntry = await getTermsForEntries(
-  'posts',
+  'blogs',
   posts.map((p) => p.data.id),
   'tag',
 );

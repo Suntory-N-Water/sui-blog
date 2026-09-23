@@ -12,7 +12,7 @@ type SitemapEntry = {
 export const GET: APIRoute = async ({ site, url }) => {
   const origin = site?.toString().replace(/\/+$/u, '') || url.origin;
 
-  const { entries: posts } = await getEmDashCollection('posts', {
+  const { entries: posts } = await getEmDashCollection('blogs', {
     orderBy: { modified_time: 'desc' },
     limit: 1000,
   });

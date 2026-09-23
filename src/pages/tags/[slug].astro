@@ -20,7 +20,7 @@ if (!term) {
   return Astro.redirect('/404');
 }
 
-const { entries: posts, cacheHint } = await getEmDashCollection('posts', {
+const { entries: posts, cacheHint } = await getEmDashCollection('blogs', {
   where: { tag: term.slug },
   orderBy: { modified_time: 'desc' },
 });
@@ -28,7 +28,7 @@ const { entries: posts, cacheHint } = await getEmDashCollection('posts', {
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
 const tagsByEntry = await getTermsForEntries(
-  'posts',
+  'blogs',
   posts.map((p) => p.data.id),
   'tag',
 );

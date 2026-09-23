@@ -10,7 +10,7 @@ function yamlString(value: string): string {
 
 export const GET: APIRoute = async ({ params, redirect }) => {
   const slug = params.slug ?? '';
-  const { entry: post } = await getEmDashEntry('posts', slug);
+  const { entry: post } = await getEmDashEntry('blogs', slug);
   if (!post) {
     return redirect('/404');
   }

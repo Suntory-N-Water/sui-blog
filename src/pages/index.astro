@@ -24,7 +24,7 @@ const [
   { data: tags, cacheHint: tagsCacheHint },
   settings,
 ] = await Promise.all([
-  getEmDashCollection('posts', {
+  getEmDashCollection('blogs', {
     orderBy: { modified_time: 'desc' },
     limit: HOME_POST_LIMIT,
   }),
@@ -42,7 +42,7 @@ const leadPost = posts[0] ?? null;
 const listPosts = posts.slice(1);
 
 const tagsByEntry = await getTermsForEntries(
-  'posts',
+  'blogs',
   posts.map((p) => p.data.id),
   'tag',
 );
@@ -70,7 +70,7 @@ const topTags = tags
     {posts.length === 0 ? (
       <div class='empty-state'>
         <p>まだ記事がありません。</p>
-        <a href='/_emdash/admin/content/posts/new' class='btn'>
+        <a href='/_emdash/admin/content/blogs/new' class='btn'>
           記事を作成
         </a>
       </div>

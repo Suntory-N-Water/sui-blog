@@ -7,7 +7,7 @@ import Pagination from './Pagination.astro';
 import { getReadingTime } from '../utils/reading-time';
 import { formatYearMonthJp, getYear, postDate } from '../utils/format-date';
 
-type PostsResult = Awaited<ReturnType<typeof getEmDashCollection<'posts'>>>;
+type PostsResult = Awaited<ReturnType<typeof getEmDashCollection<'blogs'>>>;
 type ArchivePost = PostsResult['entries'][number];
 type TagsByEntry = Awaited<ReturnType<typeof getTermsForEntries>>;
 

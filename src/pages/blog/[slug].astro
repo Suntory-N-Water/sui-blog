@@ -34,7 +34,7 @@ if (!slug) {
   return Astro.redirect('/404');
 }
 
-const { entry: post, cacheHint } = await getEmDashEntry('posts', slug);
+const { entry: post, cacheHint } = await getEmDashEntry('blogs', slug);
 
 if (!post) {
   return Astro.redirect('/404');
@@ -45,7 +45,7 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 const RELATED_POSTS_COUNT = 3;
 
 const loadRecentPosts = async () => {
-  const { entries: recentPosts } = await getEmDashCollection('posts', {
+  const { entries: recentPosts } = await getEmDashCollection('blogs', {
     orderBy: { modified_time: 'desc' },
     limit: RELATED_POSTS_COUNT + 1,
     offset: 0,
@@ -67,7 +67,7 @@ const loadRelatedPosts = async () => {
     return loadRecentPosts();
   }
   const results = await Promise.all(
-    slugs.map((relatedSlug) => getEmDashEntry('posts', relatedSlug)),
+    slugs.map((relatedSlug) => getEmDashEntry('blogs', relatedSlug)),
   );
   return results.flatMap(({ entry }) => (entry ? [entry] : []));
 };
@@ -75,7 +75,7 @@ const loadRelatedPosts = async () => {
 const loadOtherPosts = async () => {
   const otherPosts = await loadRelatedPosts();
   const otherTagsByEntry = await getTermsForEntries(
-    'posts',
+    'blogs',
     otherPosts.map((p) => p.data.id),
     'tag',
   );
@@ -130,7 +130,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
   type='article'
   publishedTime={articleDate?.toISOString() ?? null}
   modifiedTime={post.data.updatedAt.toISOString()}
-  content={{ collection: 'posts', id: post.data.id, slug }}
+  content={{ collection: 'blogs', id: post.data.id, slug }}
 >
   <PageShell>
     <article>
@@ -260,8 +260,8 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
           )}
 
           <section class='article-comments' aria-label='コメント'>
-            <Comments collection='posts' contentId={post.data.id} threaded />
-            <CommentForm collection='posts' contentId={post.data.id} />
+            <Comments collection='blogs' contentId={post.data.id} threaded />
+            <CommentForm collection='blogs' contentId={post.data.id} />
           </section>
         </div>
 

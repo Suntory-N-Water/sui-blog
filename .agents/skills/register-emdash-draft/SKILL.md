@@ -68,7 +68,7 @@ wrangler が `Authentication error [code: 10000]` で失敗することがあり
 `ready` が false のときは、原因ごとに次のとおり対応し、手順 1 をやり直します。
 
 - **missingImages**: 画像ごとに `media_upload` を `url`・`filename` (報告の `filename` と同じ値)・`alt` を指定して呼ぶ。`prepare.ts` は本番のメディアをファイル名で探すため、ファイル名を変えない。取得に失敗した画像 (403 など) は利用者に報告し、登録を中断する
-- **missingIcon**: 次のコマンドで `public/icons/<ファイル名>` を登録する。MCP の `media_upload` と CLI の `emdash media upload` は SVG を拒否する。このスクリプトは posts の `featured_image` 項目の ID を付けて REST API に送るため、項目に設定された SVG の許可が使われる。認証は `npx emdash login` の保存内容か、環境変数 `EMDASH_TOKEN` を使う
+- **missingIcon**: 次のコマンドで `public/icons/<ファイル名>` を登録する。MCP の `media_upload` と CLI の `emdash media upload` は SVG を拒否する。このスクリプトは blogs の `featured_image` 項目の ID を付けて REST API に送るため、項目に設定された SVG の許可が使われる。認証は `npx emdash login` の保存内容か、環境変数 `EMDASH_TOKEN` を使う
 
   ```bash
   bun .agents/skills/register-emdash-draft/scripts/upload-icon.ts <ファイル名> --alt "<記事タイトル>"
@@ -95,7 +95,7 @@ wrangler が `Authentication error [code: 10000]` で失敗することがあり
 
 `content_create` を次の引数で呼びます。
 
-- `collection`: `"posts"`
+- `collection`: `"blogs"`
 - `slug`: payload.json の `slug`
 - `data`: payload.json の `data` に、`content` として content.md の全文を加えたもの
 - `taxonomies`: payload.json の `taxonomies`
