@@ -37,8 +37,10 @@ const cacheKey = code && !isMermaid ? await codeCacheKey(code, language) : '';
   (isMermaid ? (
     <Mermaid code={code} />
   ) : (
-    <div class='code-block'>
-      {filename && <div class='code-block-filename'>{filename}</div>}
+    <figure class='code-block'>
+      {filename && (
+        <figcaption class='code-block-filename'>{filename}</figcaption>
+      )}
       <div class='code-block-body'>
         <CachedHtml cacheKey={cacheKey} ttlSeconds={RENDER_CACHE_TTL_SECONDS}>
           <Code code={code} lang={lang} theme={CODE_THEME} />
@@ -75,7 +77,7 @@ const cacheKey = code && !isMermaid ? await codeCacheKey(code, language) : '';
           </svg>
         </button>
       </div>
-    </div>
+    </figure>
   ))}
 
 <script>

@@ -9,7 +9,7 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
   <PageShell>
     <div class='not-found'>
       <p class='not-found-code'>404</p>
-      <p class='not-found-desc'>お探しのページは見つかりませんでした。</p>
+      <h1 class='not-found-desc'>お探しのページは見つかりませんでした。</h1>
       <a href='/' class='not-found-link'>
         ホームに戻る
       </a>
@@ -30,7 +30,11 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
   }
 
   .not-found-desc {
+    font-family: var(--font-body);
     font-size: 16px;
+    font-weight: normal;
+    letter-spacing: normal;
+    line-height: inherit;
     color: var(--color-text-secondary);
     margin-bottom: 24px;
   }

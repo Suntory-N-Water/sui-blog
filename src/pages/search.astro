@@ -25,19 +25,22 @@ const sub = query ? `"${query}" の検索結果 ${results.length} 件` : null;
     <div class='search-col'>
       <ArchiveHead title='記事を検索' sub={sub} />
 
-      <form method='get' action='/search' class='search-form'>
-        <input
-          type='search'
-          name='q'
-          value={query}
-          placeholder='キーワードで検索'
-          class='search-input'
-          autofocus
-        />
-        <button type='submit' class='search-button'>
-          検索
-        </button>
-      </form>
+      <search>
+        <form method='get' action='/search' class='search-form'>
+          <input
+            type='search'
+            name='q'
+            value={query}
+            placeholder='キーワードで検索'
+            aria-label='検索キーワード'
+            class='search-input'
+            autofocus
+          />
+          <button type='submit' class='search-button'>
+            検索
+          </button>
+        </form>
+      </search>
 
       {results.length > 0 && (
         <ul class='search-results'>

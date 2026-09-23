@@ -90,7 +90,7 @@ const isLoggedIn = !!Astro.locals.user;
   <body>
     <EmDashBodyStart page={pageCtx} />
     <header class='site-header'>
-      <nav class='nav'>
+      <nav class='nav' aria-label='サイト'>
         <a href='/' class='site-title'>
           {siteLogo ? (
             <img
@@ -103,22 +103,26 @@ const isLoggedIn = !!Astro.locals.user;
           )}
         </a>
         <div class='nav-right'>
-          <LiveSearch
-            placeholder='記事を検索'
-            class='site-search'
-            inputClass='site-search-input'
-            resultsClass='site-search-results'
-            resultClass='site-search-result'
-            collections={['posts']}
-          />
+          <search class='site-search-area'>
+            <LiveSearch
+              placeholder='記事を検索'
+              class='site-search'
+              inputClass='site-search-input'
+              resultsClass='site-search-results'
+              resultClass='site-search-result'
+              collections={['posts']}
+            />
+          </search>
           {menu && menu.items.length > 0 && (
-            <div class='nav-links'>
+            <ul class='nav-links'>
               {menu.items.map((item) => (
-                <a href={item.url} target={item.target}>
-                  {item.label}
-                </a>
+                <li>
+                  <a href={item.url} target={item.target}>
+                    {item.label}
+                  </a>
+                </li>
               ))}
-            </div>
+            </ul>
           )}
         </div>
         {isLoggedIn && (
@@ -150,8 +154,10 @@ const isLoggedIn = !!Astro.locals.user;
             </a>
             <p class='footer-tagline'>{siteTagline}</p>
           </div>
-          <div class='footer-nav'>
-            <h4 class='footer-heading'>ページ</h4>
+          <nav class='footer-nav' aria-labelledby='footer-pages-heading'>
+            <h2 class='footer-heading' id='footer-pages-heading'>
+              ページ
+            </h2>
             <ul class='footer-links'>
               <li>
                 <a href='/'>ホーム</a>
@@ -160,9 +166,11 @@ const isLoggedIn = !!Astro.locals.user;
                 <a href='/blog'>記事一覧</a>
               </li>
             </ul>
-          </div>
-          <div class='footer-nav'>
-            <h4 class='footer-heading'>リンク</h4>
+          </nav>
+          <nav class='footer-nav' aria-labelledby='footer-links-heading'>
+            <h2 class='footer-heading' id='footer-links-heading'>
+              リンク
+            </h2>
             <ul class='footer-links'>
               {socialMenu?.items.map((item) => (
                 <li>
@@ -183,13 +191,13 @@ const isLoggedIn = !!Astro.locals.user;
                 <a href='/rss.xml'>RSS</a>
               </li>
             </ul>
-          </div>
+          </nav>
           <div class='footer-widgets-section'>
             <WidgetArea name='footer' />
           </div>
         </div>
         <div class='footer-bottom'>
-          <div class='theme-switcher'>
+          <div class='theme-switcher' role='group' aria-label='表示テーマ'>
             <button
               type='button'
               class='theme-btn'
@@ -197,6 +205,7 @@ const isLoggedIn = !!Astro.locals.user;
               aria-label='ライトテーマ'
             >
               <svg
+                aria-hidden='true'
                 width='16'
                 height='16'
                 viewBox='0 0 24 24'
@@ -224,6 +233,7 @@ const isLoggedIn = !!Astro.locals.user;
               aria-label='ダークテーマ'
             >
               <svg
+                aria-hidden='true'
                 width='16'
                 height='16'
                 viewBox='0 0 24 24'
@@ -243,6 +253,7 @@ const isLoggedIn = !!Astro.locals.user;
               aria-label='システム設定に合わせる'
             >
               <svg
+                aria-hidden='true'
                 width='16'
                 height='16'
                 viewBox='0 0 24 24'
@@ -296,7 +307,9 @@ const isLoggedIn = !!Astro.locals.user;
 
       function updateActiveBtn(theme: string) {
         themeBtns.forEach((btn) => {
-          btn.classList.toggle('active', btn.dataset.theme === theme);
+          const active = btn.dataset.theme === theme;
+          btn.classList.toggle('active', active);
+          btn.setAttribute('aria-pressed', String(active));
         });
       }
 
@@ -461,6 +474,7 @@ const isLoggedIn = !!Astro.locals.user;
         display: flex;
         gap: var(--spacing-5);
         font-size: var(--font-size-sm);
+        list-style: none;
       }
 
       .nav-links a {

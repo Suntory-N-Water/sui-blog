@@ -58,6 +58,7 @@ const filteredPosts = posts.map((post) => ({
             excerpt={post.data.excerpt}
             icon={post.data.featured_image}
             tags={tags.map((t) => ({ slug: t.slug, label: t.label }))}
+            headingLevel={2}
           />
         ))}
       </PostIndex>

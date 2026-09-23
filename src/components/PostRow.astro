@@ -11,41 +11,56 @@ interface Props {
   excerpt?: string | null;
   icon?: ImageValue | string | null;
   tags?: Array<{ slug: string; label: string }>;
+  headingLevel?: 2 | 3;
 }
 
-const { title, href, date, readingTime, excerpt, icon, tags } = Astro.props;
+const {
+  title,
+  href,
+  date,
+  readingTime,
+  excerpt,
+  icon,
+  tags,
+  headingLevel = 3,
+} = Astro.props;
 const displayDate = formatIndexDate(date);
+const Heading = `h${headingLevel}` as const;
 ---
 
-<li class='row'>
-  <div class='row-date'>
-    {displayDate && <time datetime={date?.toISOString()}>{displayDate}</time>}
-  </div>
-  <div class='row-icon-cell'>
-    {icon && (
-      <Image image={icon} alt='' width={20} height={20} class='row-icon' />
-    )}
-  </div>
-  <div class='row-main'>
-    <h3 class='row-title'>
-      <a href={href}>{title}</a>
-    </h3>
-    {excerpt && <p class='row-excerpt'>{excerpt}</p>}
-    {(readingTime || (tags && tags.length > 0)) && (
-      <div class='row-foot'>
-        {readingTime && <span class='row-readtime'>{readingTime} 分</span>}
-        {tags && tags.length > 0 && (
-          <div class='row-tags'>
-            {tags.map((tag) => (
-              <a href={`/tags/${tag.slug}`} class='tag'>
-                #{tag.label}
-              </a>
-            ))}
-          </div>
-        )}
-      </div>
-    )}
-  </div>
+<li>
+  <article class='row'>
+    <div class='row-date'>
+      {displayDate && <time datetime={date?.toISOString()}>{displayDate}</time>}
+    </div>
+    <div class='row-icon-cell'>
+      {icon && (
+        <Image image={icon} alt='' width={20} height={20} class='row-icon' />
+      )}
+    </div>
+    <div class='row-main'>
+      <Heading class='row-title'>
+        <a href={href}>{title}</a>
+      </Heading>
+      {excerpt && <p class='row-excerpt'>{excerpt}</p>}
+      {(readingTime || (tags && tags.length > 0)) && (
+        <footer class='row-foot'>
+          {readingTime && <span class='row-readtime'>{readingTime} 分</span>}
+          {tags && tags.length > 0 && (
+            <ul class='row-tags' aria-label='タグ'>
+              {tags.map((tag) => (
+                <li>
+                  <a href={`/tags/${tag.slug}`} class='tag'>
+                    #{tag.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </footer>
+      )}
+    </div>
+  </article>
 </li>
 
 <style>
@@ -55,7 +70,6 @@ const displayDate = formatIndexDate(date);
     gap: 0 14px;
     padding: 20px 0;
     border-bottom: 1px solid var(--color-border);
-    list-style: none;
   }
 
   .row-icon-cell {
@@ -122,6 +136,7 @@ const displayDate = formatIndexDate(date);
     display: flex;
     flex-wrap: wrap;
     gap: 4px 12px;
+    list-style: none;
   }
 
   .tag {

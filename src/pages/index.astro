@@ -62,17 +62,18 @@ const topTags = tags
 
 <Base title={siteTitle} description={siteTagline}>
   <PageShell>
-    <section class='home-intro'>
+    <header class='home-intro'>
+      <h1 class='visually-hidden'>{siteTitle}</h1>
       <p>{siteTagline}</p>
-    </section>
+    </header>
 
     {posts.length === 0 ? (
-      <section class='empty-state'>
+      <div class='empty-state'>
         <p>まだ記事がありません。</p>
         <a href='/_emdash/admin/content/posts/new' class='btn'>
           記事を作成
         </a>
-      </section>
+      </div>
     ) : (
       <Fragment>
         {leadPost && (
@@ -87,7 +88,9 @@ const topTags = tags
               />
             )}
             <div class='lead-date'>
-              {formatIndexDate(postDate(leadPost.data))}
+              <time datetime={postDate(leadPost.data)?.toISOString()}>
+                {formatIndexDate(postDate(leadPost.data))}
+              </time>
             </div>
             <h2>
               <a href={`/blog/${leadPost.id}`}>{leadPost.data.title}</a>
@@ -95,25 +98,27 @@ const topTags = tags
             {leadPost.data.excerpt && (
               <p class='lead-excerpt'>{leadPost.data.excerpt}</p>
             )}
-            <div class='lead-foot'>
+            <footer class='lead-foot'>
               <span class='lead-readtime'>
                 {getReadingTime(leadPost.data.content)} 分
               </span>
               {leadTags.length > 0 && (
-                <div class='lead-tags'>
+                <ul class='lead-tags' aria-label='タグ'>
                   {leadTags.map((tag) => (
-                    <a href={`/tags/${tag.slug}`} class='tag'>
-                      #{tag.label}
-                    </a>
+                    <li>
+                      <a href={`/tags/${tag.slug}`} class='tag'>
+                        #{tag.label}
+                      </a>
+                    </li>
                   ))}
-                </div>
+                </ul>
               )}
-            </div>
+            </footer>
           </article>
         )}
 
         {listPosts.length > 0 && (
-          <Fragment>
+          <section aria-label='最近の記事'>
             <SectionBand title='最近の記事' href='/blog' linkLabel='記事一覧' />
             <div class='index-wrap'>
               <PostIndex>
@@ -133,13 +138,13 @@ const topTags = tags
                 ))}
               </PostIndex>
             </div>
-          </Fragment>
+          </section>
         )}
       </Fragment>
     )}
 
     {topTags.length > 0 && (
-      <Fragment>
+      <section aria-label='タグから探す'>
         <SectionBand
           title='タグから探す'
           href='/tags'
@@ -154,7 +159,7 @@ const topTags = tags
             }))}
           />
         </div>
-      </Fragment>
+      </section>
     )}
   </PageShell>
 </Base>
@@ -240,6 +245,16 @@ const topTags = tags
     display: flex;
     flex-wrap: wrap;
     gap: 4px 12px;
+    list-style: none;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
   .tag {

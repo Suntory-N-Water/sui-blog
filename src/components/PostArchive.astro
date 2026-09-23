@@ -54,10 +54,10 @@ const nextHref = hasMore ? `/blog/page/${page + 1}` : null;
 ) : (
   Array.from(yearGroups.entries()).map(([year, yearPosts]) => (
     <section class='year-group'>
-      <div class='year'>
+      <header class='year'>
         <h2>{year}</h2>
         <span>{yearPosts.length} 件</span>
-      </div>
+      </header>
       <PostIndex topRule={false}>
         {yearPosts.map((post) => (
           <PostRow

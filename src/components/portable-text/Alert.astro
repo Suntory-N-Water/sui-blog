@@ -24,7 +24,7 @@ const body = (blocks as Array<Record<string, unknown>>).map((block) => ({
 }));
 ---
 
-<div class={`markdown-alert markdown-alert-${kind}`} dir='auto'>
+<div class={`markdown-alert markdown-alert-${kind}`} role='note' dir='auto'>
   <p class='markdown-alert-title'>
     <svg viewBox='0 0 16 16' width='14' height='14' aria-hidden='true'>
       <path d={ALERT_ICON_PATH[kind]}></path>

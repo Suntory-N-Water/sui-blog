@@ -88,9 +88,7 @@ const tags = post.data.terms?.tag ?? [];
 
 const articleDate = postDate(post.data);
 const publishDate = formatIndexDate(articleDate);
-const mobileMetaLine = [authorNames || null, publishDate, `${readingTime} 分`]
-  .filter(Boolean)
-  .join(' / ');
+const publishDateTime = articleDate?.toISOString();
 ---
 
 <Base
@@ -106,126 +104,147 @@ const mobileMetaLine = [authorNames || null, publishDate, `${readingTime} 分`]
   content={{ collection: 'posts', id: post.data.id, slug }}
 >
   <PageShell>
-    <div class='article-head'>
-      {post.data.featured_image && (
-        <Image
-          image={post.data.featured_image}
-          alt=''
-          width={40}
-          height={40}
-          class='head-icon'
-          {...post.edit.featured_image}
-        />
-      )}
-      <h1 class='title' {...post.edit.title}>
-        {post.data.title}
-      </h1>
-      {post.data.excerpt && (
-        <p class='summary' {...post.edit.excerpt}>
-          {post.data.excerpt}
-        </p>
-      )}
-    </div>
-
-    <div class='article-grid'>
-      <aside class='meta-col'>
-        <div class='sticky'>
-          <dl class='meta-list'>
-            {authorNames && (
-              <div class='meta-row'>
-                <dt>著者</dt>
-                <dd class='nm'>{authorNames}</dd>
-              </div>
-            )}
-            {publishDate && (
-              <div class='meta-row'>
-                <dt>公開</dt>
-                <dd>{publishDate}</dd>
-              </div>
-            )}
-            <div class='meta-row'>
-              <dt>読了</dt>
-              <dd>{readingTime} 分</dd>
-            </div>
-          </dl>
-          {tags.length > 0 && (
-            <div class='meta-tags'>
-              {tags.map((t) => (
-                <a href={`/tags/${t.slug}`} class='tag'>
-                  #{t.label}
-                </a>
-              ))}
-            </div>
-          )}
-        </div>
-      </aside>
-
-      <div class='article-main'>
-        <div class='article-mobile'>
-          <div class='mobile-meta'>{mobileMetaLine}</div>
-          <details class='mobile-toc' id='mobile-toc'>
-            <summary>目次</summary>
-            <nav class='toc' aria-label='目次'>
-              <ul id='mobile-toc-list'></ul>
-            </nav>
-          </details>
-        </div>
-
-        <div class='prose'>
-          <PortableText
-            value={content}
-            components={articlePortableTextComponents}
+    <article>
+      <header class='article-head'>
+        {post.data.featured_image && (
+          <Image
+            image={post.data.featured_image}
+            alt=''
+            width={40}
+            height={40}
+            class='head-icon'
+            {...post.edit.featured_image}
           />
-        </div>
-
-        <div class='article-foot'>
-          {tags.length > 0 && (
-            <div class='foot-tags'>
-              {tags.map((t) => (
-                <a href={`/tags/${t.slug}`} class='tag'>
-                  #{t.label}
-                </a>
-              ))}
-            </div>
-          )}
-          <a href={`/blog/${post.id}.md`} class='btn'>
-            この記事を Markdown で取得
-          </a>
-        </div>
-
-        {otherPostsWithTags.length > 0 && (
-          <div class='more'>
-            <SectionBand title='関連する記事' flush />
-            <PostIndex>
-              {otherPostsWithTags.map(({ post: p, tags: postTags }) => (
-                <PostRow
-                  title={p.data.title}
-                  href={`/blog/${p.id}`}
-                  date={postDate(p.data)}
-                  readingTime={getReadingTime(p.data.content)}
-                  icon={p.data.featured_image}
-                  tags={postTags.map((t) => ({ slug: t.slug, label: t.label }))}
-                />
-              ))}
-            </PostIndex>
-          </div>
         )}
+        <h1 class='title' {...post.edit.title}>
+          {post.data.title}
+        </h1>
+        {post.data.excerpt && (
+          <p class='summary' {...post.edit.excerpt}>
+            {post.data.excerpt}
+          </p>
+        )}
+      </header>
 
-        <div class='article-comments'>
-          <Comments collection='posts' contentId={post.data.id} threaded />
-          <CommentForm collection='posts' contentId={post.data.id} />
+      <div class='article-grid'>
+        <div class='meta-col'>
+          <div class='sticky'>
+            <dl class='meta-list'>
+              {authorNames && (
+                <div class='meta-row'>
+                  <dt>著者</dt>
+                  <dd class='nm'>{authorNames}</dd>
+                </div>
+              )}
+              {publishDate && (
+                <div class='meta-row'>
+                  <dt>公開</dt>
+                  <dd>
+                    <time datetime={publishDateTime}>{publishDate}</time>
+                  </dd>
+                </div>
+              )}
+              <div class='meta-row'>
+                <dt>読了</dt>
+                <dd>{readingTime} 分</dd>
+              </div>
+            </dl>
+            {tags.length > 0 && (
+              <ul class='meta-tags' aria-label='タグ'>
+                {tags.map((t) => (
+                  <li>
+                    <a href={`/tags/${t.slug}`} class='tag'>
+                      #{t.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
+
+        <div class='article-main'>
+          <div class='article-mobile'>
+            <p class='mobile-meta'>
+              {authorNames && <Fragment>{authorNames} / </Fragment>}
+              {publishDate && (
+                <Fragment>
+                  <time datetime={publishDateTime}>{publishDate}</time> /{' '}
+                </Fragment>
+              )}
+              {readingTime} 分
+            </p>
+            <details class='mobile-toc' id='mobile-toc'>
+              <summary>目次</summary>
+              <nav class='toc' aria-label='目次'>
+                <ul id='mobile-toc-list'></ul>
+              </nav>
+            </details>
+          </div>
+
+          <div class='prose'>
+            <PortableText
+              value={content}
+              components={articlePortableTextComponents}
+            />
+          </div>
+
+          <footer class='article-foot'>
+            {tags.length > 0 && (
+              <ul class='foot-tags' aria-label='タグ'>
+                {tags.map((t) => (
+                  <li>
+                    <a href={`/tags/${t.slug}`} class='tag'>
+                      #{t.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <a href={`/blog/${post.id}.md`} class='btn'>
+              この記事を Markdown で取得
+            </a>
+          </footer>
+
+          {otherPostsWithTags.length > 0 && (
+            <aside class='more' aria-label='関連する記事'>
+              <SectionBand title='関連する記事' flush />
+              <PostIndex>
+                {otherPostsWithTags.map(({ post: p, tags: postTags }) => (
+                  <PostRow
+                    title={p.data.title}
+                    href={`/blog/${p.id}`}
+                    date={postDate(p.data)}
+                    readingTime={getReadingTime(p.data.content)}
+                    icon={p.data.featured_image}
+                    tags={postTags.map((t) => ({
+                      slug: t.slug,
+                      label: t.label,
+                    }))}
+                  />
+                ))}
+              </PostIndex>
+            </aside>
+          )}
+
+          <section class='article-comments' aria-label='コメント'>
+            <Comments collection='posts' contentId={post.data.id} threaded />
+            <CommentForm collection='posts' contentId={post.data.id} />
+          </section>
+        </div>
+
+        <aside class='toc-col' id='toc-col'>
+          <div class='sticky'>
+            <nav class='toc' aria-label='目次'>
+              <div class='lbl' aria-hidden='true'>
+                目次
+              </div>
+              <ul id='toc-list'></ul>
+            </nav>
+          </div>
+        </aside>
       </div>
-
-      <aside class='toc-col' id='toc-col'>
-        <div class='sticky'>
-          <nav class='toc' aria-label='目次'>
-            <div class='lbl'>目次</div>
-            <ul id='toc-list'></ul>
-          </nav>
-        </div>
-      </aside>
-    </div>
+    </article>
   </PageShell>
 
   <script>
@@ -391,6 +410,7 @@ const mobileMetaLine = [authorNames || null, publishDate, `${readingTime} 分`]
 
   .meta-tags {
     padding-top: 12px;
+    list-style: none;
   }
 
   .meta-tags .tag,
@@ -581,6 +601,7 @@ const mobileMetaLine = [authorNames || null, publishDate, `${readingTime} 分`]
     flex-wrap: wrap;
     gap: 4px 12px;
     margin-bottom: 20px;
+    list-style: none;
   }
 
   .btn {
