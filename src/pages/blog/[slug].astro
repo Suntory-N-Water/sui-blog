@@ -44,6 +44,7 @@ const loadOtherPosts = async () => {
   const { entries: recentPosts } = await getEmDashCollection('posts', {
     orderBy: { modified_time: 'desc' },
     limit: 4,
+    offset: 0,
   });
   const otherPosts = recentPosts.filter((p) => p.id !== post.id).slice(0, 3);
   const otherTagsByEntry = await getTermsForEntries(
