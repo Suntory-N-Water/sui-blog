@@ -22,6 +22,7 @@ import {
   withFootnoteBacklinks,
   withMarkdownFootnotes,
 } from '../../lib/footnotes';
+import { findRelatedPostSlugs } from '../../lib/post-index';
 import { getReadingTime } from '../../utils/reading-time';
 import { resolveBlogSiteIdentity } from '../../utils/site-identity';
 import { formatIndexDate, postDate } from '../../utils/format-date';
@@ -40,13 +41,38 @@ if (!post) {
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
-const loadOtherPosts = async () => {
+const RELATED_POSTS_COUNT = 3;
+
+const loadRecentPosts = async () => {
   const { entries: recentPosts } = await getEmDashCollection('posts', {
     orderBy: { modified_time: 'desc' },
-    limit: 4,
+    limit: RELATED_POSTS_COUNT + 1,
     offset: 0,
   });
-  const otherPosts = recentPosts.filter((p) => p.id !== post.id).slice(0, 3);
+  return recentPosts
+    .filter((p) => p.id !== post.id)
+    .slice(0, RELATED_POSTS_COUNT);
+};
+
+const loadRelatedPosts = async () => {
+  const slugs: string[] = await findRelatedPostSlugs(
+    post.data.id,
+    RELATED_POSTS_COUNT,
+  ).catch((error: unknown) => {
+    console.error('関連記事の算出に失敗しました', error);
+    return [];
+  });
+  if (slugs.length === 0) {
+    return loadRecentPosts();
+  }
+  const results = await Promise.all(
+    slugs.map((relatedSlug) => getEmDashEntry('posts', relatedSlug)),
+  );
+  return results.flatMap(({ entry }) => (entry ? [entry] : []));
+};
+
+const loadOtherPosts = async () => {
+  const otherPosts = await loadRelatedPosts();
   const otherTagsByEntry = await getTermsForEntries(
     'posts',
     otherPosts.map((p) => p.data.id),
