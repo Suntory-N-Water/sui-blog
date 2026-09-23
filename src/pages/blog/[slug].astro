@@ -15,7 +15,9 @@ import SectionBand from '../../components/SectionBand.astro';
 import PostIndex from '../../components/PostIndex.astro';
 import PostRow from '../../components/PostRow.astro';
 import { articlePortableTextComponents } from '../../components/portable-text/components';
+import { codeRenderCacheKeys } from '../../lib/code-render';
 import { prefetchLinkPreviews } from '../../lib/link-card';
+import { prefetchRenderCache } from '../../lib/render-cache';
 import {
   withFootnoteBacklinks,
   withMarkdownFootnotes,
@@ -55,7 +57,10 @@ const authorNames = bylines
 
 const readingTime = getReadingTime(post.data.content);
 
-await prefetchLinkPreviews(post.data.content);
+await Promise.all([
+  prefetchLinkPreviews(post.data.content),
+  codeRenderCacheKeys(post.data.content).then(prefetchRenderCache),
+]);
 
 const content = withFootnoteBacklinks(withMarkdownFootnotes(post.data.content));
 

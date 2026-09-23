@@ -1,17 +1,15 @@
 ---
 import { Code } from 'astro:components';
 import type { ComponentProps } from 'astro/types';
-import { bundledLanguagesInfo } from 'shiki/langs';
+import {
+  CODE_THEME,
+  RENDER_CACHE_TTL_SECONDS,
+  codeCacheKey,
+  codeLanguage,
+  isMermaid as isMermaidLanguage,
+} from '../../lib/code-render';
+import CachedHtml from './CachedHtml.astro';
 import Mermaid from './Mermaid.astro';
-
-const SUPPORTED_LANGUAGES = new Set([
-  'plaintext',
-  'plain',
-  'text',
-  'txt',
-  'ansi',
-  ...bundledLanguagesInfo.flatMap((info) => [info.id, ...(info.aliases ?? [])]),
-]);
 
 export interface Props {
   node: {
@@ -26,14 +24,13 @@ export interface Props {
 const { node } = Astro.props;
 
 const code = node?.code ?? '';
-const language = node?.language?.toLowerCase();
 const filename = node?.filename;
 
-const isMermaid = language === 'mermaid';
+const isMermaid = isMermaidLanguage(node?.language);
 
-const lang = (
-  language && SUPPORTED_LANGUAGES.has(language) ? language : 'plaintext'
-) as ComponentProps<typeof Code>['lang'];
+const language = codeLanguage(node?.language);
+const lang = language as ComponentProps<typeof Code>['lang'];
+const cacheKey = code && !isMermaid ? await codeCacheKey(code, language) : '';
 ---
 
 {code &&
@@ -43,7 +40,9 @@ const lang = (
     <div class='code-block'>
       {filename && <div class='code-block-filename'>{filename}</div>}
       <div class='code-block-body'>
-        <Code code={code} lang={lang} theme='dark-plus' />
+        <CachedHtml cacheKey={cacheKey} ttlSeconds={RENDER_CACHE_TTL_SECONDS}>
+          <Code code={code} lang={lang} theme={CODE_THEME} />
+        </CachedHtml>
         <button type='button' class='code-copy' aria-label='コードをコピー'>
           <svg
             class='code-copy-icon copy'

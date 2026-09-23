@@ -1,0 +1,18 @@
+---
+import { getRenderCache, setRenderCache } from '../../lib/render-cache';
+
+interface Props {
+  cacheKey: string;
+  ttlSeconds: number;
+}
+
+const { cacheKey, ttlSeconds } = Astro.props;
+
+let html = getRenderCache(cacheKey);
+if (html === undefined) {
+  html = await Astro.slots.render('default');
+  setRenderCache(cacheKey, html, ttlSeconds);
+}
+---
+
+<Fragment set:html={html} />

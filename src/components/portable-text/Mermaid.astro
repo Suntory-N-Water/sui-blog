@@ -1,5 +1,9 @@
 ---
-import { renderMermaidSVGAsync } from 'beautiful-mermaid';
+import {
+  RENDER_CACHE_TTL_SECONDS,
+  mermaidCacheKey,
+} from '../../lib/code-render';
+import { getRenderCache, setRenderCache } from '../../lib/render-cache';
 
 export interface Props {
   code: string;
@@ -22,18 +26,27 @@ const themeOptions = {
   padding: 8,
 };
 
-let svg: string | null = null;
-try {
-  const rendered = await renderMermaidSVGAsync(code, themeOptions);
-  svg = rendered
-    .replace(
-      /[ \t]*@import url\('https:\/\/fonts\.googleapis\.com[^']*'\);\n?/g,
-      '',
-    )
-    .replaceAll(`'${FONT_TOKEN}'`, 'var(--font-body)')
-    .replaceAll("'JetBrains Mono'", 'var(--font-mono)');
-} catch {
-  svg = null;
+async function renderSvg(): Promise<string> {
+  try {
+    const { renderMermaidSVGAsync } = await import('beautiful-mermaid');
+    const rendered = await renderMermaidSVGAsync(code, themeOptions);
+    return rendered
+      .replace(
+        /[ \t]*@import url\('https:\/\/fonts\.googleapis\.com[^']*'\);\n?/g,
+        '',
+      )
+      .replaceAll(`'${FONT_TOKEN}'`, 'var(--font-body)')
+      .replaceAll("'JetBrains Mono'", 'var(--font-mono)');
+  } catch {
+    return '';
+  }
+}
+
+const cacheKey = await mermaidCacheKey(code);
+let svg = getRenderCache(cacheKey);
+if (svg === undefined) {
+  svg = await renderSvg();
+  setRenderCache(cacheKey, svg, RENDER_CACHE_TTL_SECONDS);
 }
 ---
 
