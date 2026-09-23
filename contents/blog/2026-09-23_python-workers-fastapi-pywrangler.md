@@ -12,7 +12,7 @@ tags:
   - FastAPI
 ---
 
-Cloudflare は 2026 年 9 月 21 日に、Cloudflare Workers で Python を動かす機能（Python Workers）を正式版にしました。FastAPI のアプリは、Python Workers の SDK に含まれる `workers.asgi` の関数に渡すだけで Worker として公開できます。
+Cloudflare は 2026 年 9 月 21 日に、Cloudflare Workers で Python を動かす機能(Python Workers)を正式版にしました。FastAPI のアプリは、Python Workers の SDK に含まれる `workers.asgi` の関数に渡すだけで Worker として公開できます。
 
 pywrangler でひな形を作り、`uv add fastapi` で依存を追加し、`uv run pywrangler dev` で起動したところ、FastAPI のルーティングと Pydantic による入力チェックがそのまま動きました。`uv run pywrangler deploy` で Cloudflare へ公開した Worker も、ローカルと同じ JSON を返却しました。
 
@@ -34,7 +34,7 @@ FastAPI が自動で生成する API ドキュメントの `/docs` も、その�
 
 Python Workers は、[Pyodide](https://pyodide.org/) の上で動きます。Pyodide は、CPython を WebAssembly 向けにコンパイルした Python の実行環境です。Cloudflare Workers の実行環境は WebAssembly を動かせるため、その中で Python のコードを実行できます。
 
-FastAPI は ASGI という取り決めに沿って作られています。ASGI は、Python の Web アプリと Web サーバーの間で、リクエストとレスポンスをどう受け渡すかを定めた仕様です。FastAPI 自身はソケットを読み書きせず、通常は uvicorn などの ASGI サーバーがその役割を担います。
+FastAPI は、ASGI[^asgi] に沿って作られた Web フレームワークです。ASGI は、Python の Web アプリと Web サーバーの間で、リクエストとレスポンスをどう受け渡すかを定めた仕様です。FastAPI のアプリをサーバーで動かすには、通常は uvicorn などの ASGI サーバーを別に用意します。
 
 Python Workers では、Workers の実行環境そのものがサーバーの役割を担います。SDK の `workers.asgi` は、Workers が受け取ったリクエストを ASGI の形式に変換して FastAPI に渡し、FastAPI の応答を Workers のレスポンスに戻します。[正式版の発表記事](https://blog.cloudflare.com/python-workers-ga/)では、この変換層を「thin, optimized bridge」と説明しています。
 
@@ -95,7 +95,7 @@ fastapi-worker/
     └── submodule.py
 ```
 
-`wrangler.jsonc` の設定項目は次の内容です（生成時のコメントは省略しています）。
+`wrangler.jsonc` の設定項目は次の内容です(生成時のコメントは省略しています)。
 
 ```jsonc wrangler.jsonc
 {
@@ -114,9 +114,9 @@ fastapi-worker/
 
 `compatibility_flags` の `python_workers` が、この Worker を Python Workers として実行する指定です。`main` には、リクエストを受けたときに最初に読み込まれる Python ファイルを指定します。
 
-`compatibility_date` は、Workers の実行環境をどの日付時点の挙動で動かすかを指定する設定で、ひな形には作成時点の日付が入ります。`compatibility_flags` は互換フラグと呼ばれ、日付とは別に個別の挙動を有効にする設定です。
+`compatibility_date` は、Workers の実行環境をどの日付時点の挙動で動かすかを指定する設定で、ひな形には作成時点の日付が入ります。`compatibility_flags` は互換フラグと呼ばれ、日付とは別に個別の挙動を有効または無効にする設定です。
 
-`pyproject.toml` には、開発用の依存として `workers-py`（pywrangler）と `workers-runtime-sdk`（`workers` モジュール）が入っています。`package.json` の `dev` と `deploy` のスクリプトは、どちらも `uv run pywrangler` を呼び出す内容です。
+`pyproject.toml` には、開発用の依存として `workers-py`(pywrangler)と `workers-runtime-sdk`(`workers` モジュール)が入っています。`package.json` の `dev` と `deploy` のスクリプトは、どちらも `uv run pywrangler` を呼び出す内容です。
 
 ## FastAPI アプリを workers.asgi で公開する
 
@@ -188,7 +188,7 @@ Default = asgi.entrypoint(app)
 uv run pywrangler dev
 ```
 
-初回の起動では、pywrangler が Worker 用の Python（Pyodide）を取得し、依存を Pyodide 向けに解決します。解決した結果は `pylock.toml` に書き出され、パッケージは `python_modules/` に配置されます。その後に `wrangler dev` が呼び出され、次の出力で待ち受けを開始します。
+初回の起動では、pywrangler が Worker 用の Python(Pyodide)を取得し、依存を Pyodide 向けに解決します。解決した結果は `pylock.toml` に書き出され、パッケージは `python_modules/` に配置されます。その後に `wrangler dev` が呼び出され、次の出力で待ち受けを開始します。
 
 ```text
 INFO     Passing command to npx wrangler: npx --yes wrangler dev
@@ -219,7 +219,7 @@ curl -X POST http://localhost:8787/items -H 'Content-Type: application/json' -d 
 curl -X POST http://localhost:8787/items -H 'Content-Type: application/json' -d '{"name":"soba","price":0}'
 ```
 
-それぞれの応答は次のとおりです（`GET /` の Python のバージョン文字列は途中で省略しています）。
+それぞれの応答は次のとおりです(`GET /` の Python のバージョン文字列は途中で省略しています)。
 
 ```text
 {"message":"Hello from FastAPI on Workers","python":"3.14.2 (main, Aug 25 2026, 05:50:55) [Clang 23.0.0git ..."}
@@ -263,28 +263,28 @@ Python Workers で使えるパッケージは、Cloudflare のドキュメント
 - PyPI で公開されている PyEmscripten 向けの wheel
 - Pyodide が配布しているパッケージ
 
-PyEmscripten は、WebAssembly 上の Python 向けのビルド対象を定めた規格で、[PEP 783](https://peps.python.org/pep-0783/) として受理されています。C や Rust の拡張を含むパッケージは、この形式か Pyodide 向けにビルドされたものでないと Worker で読み込めません。
+PyEmscripten は、Pyodide 向けにビルドした wheel に付けるプラットフォームタグで、[PEP 783](https://peps.python.org/pep-0783/) で定められています。PEP 783 は 2026 年 4 月 6 日に承認されました。C や Rust の拡張を含むパッケージは、この形式か Pyodide 向けにビルドされたものでないと Worker で読み込めません。
 
 ### Worker に同梱される pydantic-core の版
 
 FastAPI が依存する Pydantic は、中核の処理を Rust で書いた pydantic-core を使います。2026 年 9 月 23 日に `uv add fastapi` と `uv run pywrangler dev` で依存を解決し、手元の `uv.lock` に記録された版と、Worker 用の `pylock.toml` に記録された版を比べました。
 
-| パッケージ | `uv.lock`（手元の Python 用） | `pylock.toml`（Worker 用） | Worker 用の取得元 |
+| パッケージ | `uv.lock`(手元の Python 用) | `pylock.toml`(Worker 用) | Worker 用の取得元 |
 |---|---|---|---|
 | fastapi | 0.141.1 | 0.141.1 | PyPI |
 | starlette | 1.6.0 | 1.6.0 | PyPI |
 | **pydantic** | **2.13.5** | **2.12.5** | Pyodide の配布元 |
 | **pydantic-core** | **2.46.5** | **2.41.5** | Pyodide の配布元 |
 
-太字の 2 行は、手元と Worker で版が異なります。Worker 用の pydantic-core は、Pyodide の配布元にある `pydantic_core-2.41.5-cp314-cp314-pyemscripten_2026_0_wasm32.whl` でした。PyPI の pydantic-core には、2.46.5 と 2.41.5 のどちらにも WebAssembly 向けの wheel が公開されていません。uv は、Worker 向けの wheel がある pydantic-core として、Pyodide の配布元にある 2.41.5 を選びました。
+太字にした pydantic と pydantic-core の 2 行は、手元と Worker で版が異なります。pydantic は 2.13.5 と 2.12.5、pydantic-core は 2.46.5 と 2.41.5 です。Worker 用の pydantic-core は、Pyodide の配布元にある `pydantic_core-2.41.5-cp314-cp314-pyemscripten_2026_0_wasm32.whl` でした。PyPI の pydantic-core には、2.46.5 と 2.41.5 のどちらにも WebAssembly 向けの wheel が公開されていません。uv は、Worker 向けの wheel がある pydantic-core として、Pyodide の配布元にある 2.41.5 を選びました。
 
 pydantic 2.12.5 は、依存として `pydantic-core==2.41.5` を指定しています。pydantic は pydantic-core の版を 1 つに固定しているため、pydantic-core に合わせて pydantic も 2.12.5 に解決されます。
 
-手元でテストが通っても、Worker では Pydantic のマイナーバージョンが 1 つ古い状態で動きます。2.13 で追加された機能に依存するコードは、Worker では動かない可能性があります。デプロイ前に `pylock.toml` の版を確認します。
+そのため、手元でテストが通っても、Worker では Pydantic のマイナーバージョンが 1 つ古い状態で動きます。たとえば 2.13 で追加された機能に依存するコードは、Worker では動かない可能性があります。こうした版の違いは、デプロイ前に `pylock.toml` と `uv.lock` の版を見比べると確認できます。
 
 ### Worker 向けの wheel がないパッケージを追加したときの動作
 
-uvloop は、asyncio のイベントループを C 拡張で置き換えるライブラリで、`uvicorn[standard]` を入れると一緒に入ります。Pyodide にも含まれていない uvloop を `uv add uvloop` で追加し、`uv run pywrangler dev` を実行しました。wrangler が起動する前に、次のエラーで停止しました（一時ファイルのパスは省略しています）。
+uvloop は、asyncio のイベントループを C 拡張で置き換えるライブラリで、Windows 以外の環境で `uvicorn[standard]` を入れると一緒に入ります。Pyodide にも含まれていない uvloop を `uv add uvloop` で追加し、`uv run pywrangler dev` を実行しました。wrangler が起動する前に、次のエラーで停止しました(一時ファイルのパスは省略しています)。
 
 ```text
 ERROR    Error running command: uv pip compile pyproject.toml ...
@@ -302,7 +302,7 @@ ERROR    Error running command: uv pip compile pyproject.toml ...
          disabled for all packages (i.e., with `--no-build`)
 ```
 
-このエラーから、pywrangler が依存を解決する方法が読み取れます。pywrangler は `uv pip compile` を、WebAssembly 向けの Python（`cpython-3.14.2-emscripten-wasm32-musl`）を対象にして実行します。取得元には PyPI に加えて Pyodide のパッケージの配布元を指定し、`--no-build` でソースからのビルドを禁止しています。そのため、WebAssembly 向けの wheel がないパッケージは、ここで解決に失敗します。
+このエラーから、pywrangler が依存を解決する方法が読み取れます。pywrangler は `uv pip compile` を、WebAssembly 向けの Python(`cpython-3.14.2-emscripten-wasm32-musl`)を対象にして実行します。取得元には PyPI に加えて Pyodide のパッケージの配布元を指定し、`--no-build` でソースからのビルドを禁止しています。そのため、WebAssembly 向けの wheel がないパッケージは、ここで解決に失敗します。
 
 使いたいパッケージに Worker 向けの wheel があるかは、`pyproject.toml` に追加して `uv run pywrangler dev` を実行すれば、デプロイ前に確認できます。
 
@@ -356,7 +356,12 @@ https://developers.cloudflare.com/workers/languages/python/
 https://developers.cloudflare.com/workers/languages/python/packages/fastapi/
 https://developers.cloudflare.com/workers/languages/python/packages/
 https://github.com/cloudflare/workers-py
+https://github.com/cloudflare/workers-py/blob/main/packages/cli/src/pywrangler/utils.py
 https://github.com/cloudflare/workers-py/blob/main/packages/cli/src/pywrangler/metadata.py
 https://github.com/cloudflare/workers-py/blob/main/packages/cli/src/pywrangler/sync.py
 https://peps.python.org/pep-0783/
 https://pyodide.org/en/stable/usage/packages-in-pyodide.html
+https://asgi.readthedocs.io/en/latest/introduction.html
+https://fastapi.tiangolo.com/deployment/manually/
+
+[^asgi]: ASGI（Asynchronous Server Gateway Interface）は、同期処理を前提とした WSGI の後継として作られた仕様です。アプリは `scope`、`receive`、`send` の 3 つを受け取る非同期の呼び出し可能なオブジェクトとして書き、サーバーとの間ではイベントを表す辞書を受け渡します。FastAPI のドキュメントでは、FastAPI を ASGI の Web フレームワークと説明しています。
