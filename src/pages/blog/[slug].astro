@@ -24,12 +24,6 @@ import { getReadingTime } from '../../utils/reading-time';
 import { resolveBlogSiteIdentity } from '../../utils/site-identity';
 import { formatIndexDate, postDate } from '../../utils/format-date';
 
-const timingStart = performance.now();
-const timings: Record<string, number> = {};
-const mark = (name: string) => {
-  timings[name] = Math.round(performance.now() - timingStart);
-};
-
 const slug = decodeSlug(Astro.params.slug);
 
 if (!slug) {
@@ -37,7 +31,6 @@ if (!slug) {
 }
 
 const { entry: post, cacheHint } = await getEmDashEntry('posts', slug);
-mark('entry');
 
 if (!post) {
   return Astro.redirect('/404');
@@ -47,7 +40,6 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
 const ogImageUrl = `${Astro.url.origin}/blog/ogp/${encodeURIComponent(slug)}.png`;
 const { siteTitle } = resolveBlogSiteIdentity(await getSiteSettings());
-mark('settings');
 
 const seo = getSeoMeta(post, {
   siteTitle,
@@ -64,7 +56,6 @@ const authorNames = bylines
 const readingTime = getReadingTime(post.data.content);
 
 await prefetchLinkPreviews(post.data.content);
-mark('linkcards');
 
 const content = withFootnoteBacklinks(withMarkdownFootnotes(post.data.content));
 
@@ -74,7 +65,6 @@ const { entries: recentPosts } = await getEmDashCollection('posts', {
   orderBy: { modified_time: 'desc' },
   limit: 4,
 });
-mark('recent');
 const otherPosts = recentPosts.filter((p) => p.id !== post.id).slice(0, 3);
 
 const otherTagsByEntry = await getTermsForEntries(
@@ -82,8 +72,6 @@ const otherTagsByEntry = await getTermsForEntries(
   otherPosts.map((p) => p.data.id),
   'tag',
 );
-mark('terms');
-console.log(`[slug-timing] ${JSON.stringify({ slug, ...timings })}`);
 const otherPostsWithTags = otherPosts.map((p) => ({
   post: p,
   tags: otherTagsByEntry.get(p.data.id) ?? [],
