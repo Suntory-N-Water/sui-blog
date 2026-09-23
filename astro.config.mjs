@@ -2,8 +2,6 @@ import cloudflare from '@astrojs/cloudflare';
 import { cacheCloudflare } from '@astrojs/cloudflare/cache';
 import react from '@astrojs/react';
 import { d1, r2, sandbox } from '@emdash-cms/cloudflare';
-import { formsPlugin } from '@emdash-cms/plugin-forms';
-import webhookNotifier from '@emdash-cms/plugin-webhook-notifier';
 import { defineConfig, fontProviders } from 'astro/config';
 import emdash from 'emdash/astro';
 
@@ -45,8 +43,6 @@ export default defineConfig({
       database: d1({ binding: 'DB', session: 'auto' }),
       storage: r2({ binding: 'MEDIA' }),
       middleware: { outer: './src/middleware/outer.ts' },
-      plugins: [formsPlugin()],
-      sandboxed: [webhookNotifier],
       sandboxRunner: sandbox(),
       marketplace: 'https://marketplace.emdashcms.com',
     }),
