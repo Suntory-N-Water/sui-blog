@@ -560,7 +560,9 @@ function main() {
     else
       unknownTags.push({
         label: tag,
-        suggestedSlug: lower.replace(/[^a-z0-9]+/gu, '-').replace(/^-|-$/gu, ''),
+        suggestedSlug: lower
+          .replace(/[^a-z0-9]+/gu, '-')
+          .replace(/^-|-$/gu, ''),
       });
   }
 

@@ -51,7 +51,11 @@ async function main() {
   const altIndex = args.indexOf('--alt');
   const alt = altIndex >= 0 ? args[altIndex + 1] : undefined;
   const filename = args.find((arg, i) => i !== altIndex && i !== altIndex + 1);
-  if (!filename || basename(filename) !== filename || !filename.endsWith('.svg'))
+  if (
+    !filename ||
+    basename(filename) !== filename ||
+    !filename.endsWith('.svg')
+  )
     throw new Error(
       '使い方: bun upload-icon.ts <public/icons 内の SVG ファイル名> [--alt <代替テキスト>]',
     );
@@ -64,7 +68,11 @@ async function main() {
   );
   if (existing[0]) {
     console.log(
-      JSON.stringify({ uploaded: false, id: existing[0].id, filename }, null, 2),
+      JSON.stringify(
+        { uploaded: false, id: existing[0].id, filename },
+        null,
+        2,
+      ),
     );
     return;
   }
