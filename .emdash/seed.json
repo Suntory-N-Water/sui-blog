@@ -12,8 +12,8 @@
 	"collections": [
 		{
 			"slug": "posts",
-			"label": "Blogs",
-			"labelSingular": "Blog",
+			"label": "ブログ",
+			"labelSingular": "ブログ",
 			"supports": [
 				"drafts",
 				"revisions",
@@ -99,8 +99,8 @@
 		{
 			"id": "tax:category",
 			"name": "category",
-			"label": "Categories",
-			"labelSingular": "Category",
+			"label": "カテゴリー",
+			"labelSingular": "カテゴリー",
 			"hierarchical": true,
 			"collections": [
 				"posts"
@@ -109,8 +109,8 @@
 		{
 			"id": "tax:tag",
 			"name": "tag",
-			"label": "Tags",
-			"labelSingular": "Tag",
+			"label": "タグ",
+			"labelSingular": "タグ",
 			"hierarchical": false,
 			"collections": [
 				"posts"
