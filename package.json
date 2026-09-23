@@ -7,7 +7,7 @@
     "label": "Blog"
   },
   "scripts": {
-    "dev": "astro dev",
+    "dev": "astro dev --force --host",
     "seed:local": "rm -rf .wrangler/state/v3/d1 .wrangler/state/v3/r2 && astro dev",
     "build": "astro build",
     "preview": "astro preview",

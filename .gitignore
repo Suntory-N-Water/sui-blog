@@ -93,3 +93,4 @@ examples/**
 !examples/.gitkeep
 
 CLAUDE.local.md
+__pycache__

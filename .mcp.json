@@ -7,6 +7,10 @@
     "emdash-site": {
       "type": "http",
       "url": "https://suntory-n-water.com/_emdash/api/mcp"
+    },
+    "mdn": {
+      "type": "http",
+      "url": "https://mcp.mdn.mozilla.net/"
     }
   }
 }
