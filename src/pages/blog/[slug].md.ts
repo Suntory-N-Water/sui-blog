@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getEmDashEntry } from 'emdash';
-import { asPost } from '../../lib/emdash-types';
+import { asBlog } from '../../lib/emdash-types';
 import { portableTextToMarkdown } from '../../lib/portable-text-markdown';
 
 function yamlString(value: string): string {
@@ -9,19 +9,19 @@ function yamlString(value: string): string {
 
 export const GET: APIRoute = async ({ params, redirect }) => {
   const slug = params.slug ?? '';
-  const { entry: post } = await getEmDashEntry('blogs', slug);
-  if (!post) {
+  const { entry: blog } = await getEmDashEntry('blogs', slug);
+  if (!blog) {
     return redirect('/404');
   }
-  const normalizedPost = asPost(post);
-  const tags = normalizedPost.data.terms?.tag ?? [];
+  const normalizedBlog = asBlog(blog);
+  const tags = normalizedBlog.data.terms?.tag ?? [];
   const createdAt =
-    normalizedPost.data.createdAt?.toISOString().slice(0, 10) ?? '';
-  const markdown = `---\ntitle: ${yamlString(normalizedPost.data.title)}\ndescription: ${yamlString(normalizedPost.data.excerpt ?? '')}\ndate: ${createdAt}\ntags:\n${tags.map((tag) => `  - ${yamlString(tag.label)}`).join('\n')}\n---\n\n${portableTextToMarkdown(normalizedPost.data.content)}`;
+    normalizedBlog.data.createdAt?.toISOString().slice(0, 10) ?? '';
+  const markdown = `---\ntitle: ${yamlString(normalizedBlog.data.title)}\ndescription: ${yamlString(normalizedBlog.data.excerpt ?? '')}\ndate: ${createdAt}\ntags:\n${tags.map((tag) => `  - ${yamlString(tag.label)}`).join('\n')}\n---\n\n${portableTextToMarkdown(normalizedBlog.data.content)}`;
   return new Response(markdown, {
     headers: {
       'Content-Type': 'text/markdown; charset=utf-8',
-      'Content-Disposition': `inline; filename="${normalizedPost.id}.md"`,
+      'Content-Disposition': `inline; filename="${normalizedBlog.id}.md"`,
     },
   });
 };

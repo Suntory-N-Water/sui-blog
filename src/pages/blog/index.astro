@@ -2,20 +2,20 @@
 import { getEmDashCollection, getTermsForEntries } from 'emdash';
 import Base from '../../layouts/Base.astro';
 import PageShell from '../../components/PageShell.astro';
-import { countPublishedPosts } from '../../lib/post-index';
-import PostArchive from '../../components/PostArchive.astro';
+import { countPublishedBlogs } from '../../lib/blog-index';
+import BlogArchive from '../../components/BlogArchive.astro';
 
 const PER_PAGE = 10;
 const page = 1;
 
-const [{ entries: posts, hasMore, cacheHint, error }, total] =
+const [{ entries: blogs, hasMore, cacheHint, error }, total] =
   await Promise.all([
     getEmDashCollection('blogs', {
       limit: PER_PAGE,
       offset: (page - 1) * PER_PAGE,
       orderBy: { modified_time: 'desc' },
     }),
-    countPublishedPosts(),
+    countPublishedBlogs(),
   ]);
 
 if (error) {
@@ -31,15 +31,15 @@ const totalPages = Math.max(
 
 const tagsByEntry = await getTermsForEntries(
   'blogs',
-  posts.map((p) => p.data.id),
+  blogs.map((p) => p.data.id),
   'tag',
 );
 ---
 
 <Base title='記事一覧' description='すべての記事の一覧'>
   <PageShell>
-    <PostArchive
-      posts={posts}
+    <BlogArchive
+      blogs={blogs}
       tagsByEntry={tagsByEntry}
       page={page}
       totalPages={totalPages}

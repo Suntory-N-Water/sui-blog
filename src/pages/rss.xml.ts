@@ -9,23 +9,23 @@ export const GET: APIRoute = async ({ site, url }) => {
     await getSiteSettings(),
   );
 
-  const { entries: posts } = await getEmDashCollection('blogs', {
+  const { entries: blogs } = await getEmDashCollection('blogs', {
     orderBy: { modified_time: 'desc' },
     limit: 20,
   });
 
-  const items = posts
-    .map((post) => {
-      const pubDate = post.data.createdAt.toUTCString();
+  const items = blogs
+    .map((blog) => {
+      const pubDate = blog.data.createdAt.toUTCString();
 
-      const postUrl = `${siteUrl}/blog/${post.id}`;
-      const title = escapeXml(post.data.title || 'Untitled');
-      const description = escapeXml(post.data.excerpt || '');
+      const blogUrl = `${siteUrl}/blog/${blog.id}`;
+      const title = escapeXml(blog.data.title || 'Untitled');
+      const description = escapeXml(blog.data.excerpt || '');
 
       return `    <item>
       <title>${title}</title>
-      <link>${postUrl}</link>
-      <guid isPermaLink="true">${postUrl}</guid>
+      <link>${blogUrl}</link>
+      <guid isPermaLink="true">${blogUrl}</guid>
       <pubDate>${pubDate}</pubDate>
       <description>${description}</description>
     </item>`;
