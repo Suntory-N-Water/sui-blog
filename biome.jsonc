@@ -8,7 +8,7 @@
   "files": {
     "ignoreUnknown": false,
     "includes": [
-      "**/*.{js,jsx,ts,tsx}",
+      "**/*.{js,jsx,mjs,ts,tsx,mts}",
       "**/*.json",
       "**/*.jsonc",
       "**/*.html",
@@ -36,7 +36,7 @@
     "indentWidth": 2,
     "lineWidth": 80,
     "includes": [
-      "**/*.{js,jsx,ts,tsx}",
+      "**/*.{js,jsx,mjs,ts,tsx,mts}",
       "**/*.json",
       "**/*.jsonc",
       "**/*.html",
@@ -82,7 +82,7 @@
         "noUnnecessaryConditions": "error"
       }
     },
-    "includes": ["src/**/*.{js,jsx,ts,tsx}"]
+    "includes": ["src/**/*.{js,jsx,ts,tsx}", "astro.config.mjs"]
   },
   "javascript": {
     "formatter": {
@@ -109,6 +109,16 @@
     }
   },
   "overrides": [
+    {
+      "includes": ["astro.config.mjs"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUndeclaredVariables": "error"
+          }
+        }
+      }
+    },
     {
       "includes": ["**/*.css"],
       "formatter": {
