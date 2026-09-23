@@ -1,0 +1,175 @@
+---
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  basePath: string;
+}
+
+const { currentPage, totalPages, basePath } = Astro.props;
+
+const pageHref = (page: number) =>
+  page === 1 ? basePath : `${basePath}/page/${page}`;
+
+const prevHref = currentPage > 1 ? pageHref(currentPage - 1) : null;
+const nextHref = currentPage < totalPages ? pageHref(currentPage + 1) : null;
+const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+---
+
+<nav class='pagination' aria-label='ページ送り'>
+  {prevHref ? (
+    <a href={prevHref} class='step' rel='prev'>
+      <span class='sr-only'>前のページへ</span>
+      <svg viewBox='0 0 24 24' aria-hidden='true'>
+        <path d='m15 18-6-6 6-6' />
+      </svg>
+    </a>
+  ) : (
+    <span class='step is-disabled' aria-hidden='true'>
+      <svg viewBox='0 0 24 24'>
+        <path d='m15 18-6-6 6-6' />
+      </svg>
+    </span>
+  )}
+
+  <div class='picker'>
+    <label for='pagination-select' class='sr-only'>
+      表示するページ
+    </label>
+    <select id='pagination-select' data-pagination-select>
+      {pages.map((page) => (
+        <option value={pageHref(page)} selected={page === currentPage}>
+          {page} / {totalPages} ページ
+        </option>
+      ))}
+    </select>
+    <svg class='chevron' viewBox='0 0 24 24' aria-hidden='true'>
+      <path d='m6 9 6 6 6-6' />
+    </svg>
+  </div>
+
+  {nextHref ? (
+    <a href={nextHref} class='step' rel='next'>
+      <span class='sr-only'>次のページへ</span>
+      <svg viewBox='0 0 24 24' aria-hidden='true'>
+        <path d='m9 18 6-6-6-6' />
+      </svg>
+    </a>
+  ) : (
+    <span class='step is-disabled' aria-hidden='true'>
+      <svg viewBox='0 0 24 24'>
+        <path d='m9 18 6-6-6-6' />
+      </svg>
+    </span>
+  )}
+</nav>
+
+<script>
+  document.addEventListener('change', (event) => {
+    const target = event.target;
+    if (
+      target instanceof HTMLSelectElement &&
+      target.matches('[data-pagination-select]') &&
+      target.value
+    ) {
+      window.location.href = target.value;
+    }
+  });
+</script>
+
+<style>
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    max-width: var(--index-width);
+    padding: 48px 0 96px;
+  }
+
+  .step {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    transition:
+      color var(--transition-fast),
+      border-color var(--transition-fast);
+  }
+
+  .step:hover {
+    color: var(--color-brand);
+    border-color: var(--color-brand);
+  }
+
+  .step:focus-visible,
+  .picker select:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+
+  .step.is-disabled {
+    opacity: 0.35;
+  }
+
+  .step.is-disabled:hover {
+    color: var(--color-text-secondary);
+    border-color: var(--color-border);
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .picker {
+    position: relative;
+  }
+
+  .picker select {
+    width: 160px;
+    height: 44px;
+    padding: 0 36px 0 16px;
+    appearance: none;
+    border: 1px solid var(--color-border);
+    border-radius: 0;
+    background: var(--color-bg);
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color var(--transition-fast);
+  }
+
+  .picker select:hover {
+    border-color: var(--color-rule-strong);
+  }
+
+  .chevron {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    color: var(--color-muted);
+    pointer-events: none;
+    transform: translateY(-50%);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+</style>

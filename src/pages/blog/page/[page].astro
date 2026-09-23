@@ -2,9 +2,10 @@
 import { getEmDashCollection, getTermsForEntries } from 'emdash';
 import Base from '../../../layouts/Base.astro';
 import PageShell from '../../../components/PageShell.astro';
+import { countPublishedPosts } from '../../../lib/post-index';
 import PostArchive from '../../../components/PostArchive.astro';
 
-const PER_PAGE = 20;
+const PER_PAGE = 10;
 
 const pageParam = Astro.params.page ?? '';
 if (!/^[1-9]\d*$/.test(pageParam)) {
@@ -17,16 +18,15 @@ if (page === 1) {
   return Astro.redirect('/blog', 301);
 }
 
-const {
-  entries: posts,
-  hasMore,
-  cacheHint,
-  error,
-} = await getEmDashCollection('posts', {
-  limit: PER_PAGE,
-  offset: (page - 1) * PER_PAGE,
-  orderBy: { modified_time: 'desc' },
-});
+const [{ entries: posts, hasMore, cacheHint, error }, total] =
+  await Promise.all([
+    getEmDashCollection('posts', {
+      limit: PER_PAGE,
+      offset: (page - 1) * PER_PAGE,
+      orderBy: { modified_time: 'desc' },
+    }),
+    countPublishedPosts(),
+  ]);
 
 if (error) {
   return new Response(null, { status: 500 });
@@ -37,6 +37,11 @@ if (posts.length === 0) {
 }
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const totalPages = Math.max(
+  Math.ceil(total / PER_PAGE),
+  hasMore ? page + 1 : page,
+);
 
 const tagsByEntry = await getTermsForEntries(
   'posts',
@@ -54,7 +59,7 @@ const tagsByEntry = await getTermsForEntries(
       posts={posts}
       tagsByEntry={tagsByEntry}
       page={page}
-      hasMore={!!hasMore}
+      totalPages={totalPages}
     />
   </PageShell>
 </Base>

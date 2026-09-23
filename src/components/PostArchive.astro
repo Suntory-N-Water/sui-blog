@@ -3,6 +3,7 @@ import { getEmDashCollection, getTermsForEntries } from 'emdash';
 import ArchiveHead from './ArchiveHead.astro';
 import PostIndex from './PostIndex.astro';
 import PostRow from './PostRow.astro';
+import Pagination from './Pagination.astro';
 import { getReadingTime } from '../utils/reading-time';
 import { formatYearMonthJp, getYear, postDate } from '../utils/format-date';
 
@@ -14,10 +15,10 @@ interface Props {
   posts: ArchivePost[];
   tagsByEntry: TagsByEntry;
   page: number;
-  hasMore: boolean;
+  totalPages: number;
 }
 
-const { posts, tagsByEntry, page, hasMore } = Astro.props;
+const { posts, tagsByEntry, page, totalPages } = Astro.props;
 
 const yearGroups = new Map<string, ArchivePost[]>();
 for (const post of posts) {
@@ -41,10 +42,6 @@ const dateRange =
       : `${newest} — ${oldest}`
     : null;
 const sub = dateRange ? `${dateRange} / ${page} ページ目` : `${page} ページ目`;
-
-const prevHref =
-  page > 1 ? (page === 2 ? '/blog' : `/blog/page/${page - 1}`) : null;
-const nextHref = hasMore ? `/blog/page/${page + 1}` : null;
 ---
 
 <ArchiveHead title='記事一覧' sub={sub} />
@@ -77,16 +74,8 @@ const nextHref = hasMore ? `/blog/page/${page + 1}` : null;
   ))
 )}
 
-{(prevHref || nextHref) && (
-  <nav class='pager' aria-label='ページ送り'>
-    <span class='pager-link pager-prev'>
-      {prevHref && <a href={prevHref}>← 前のページ</a>}
-    </span>
-    <span class='pager-current'>{page}</span>
-    <span class='pager-link pager-next'>
-      {nextHref && <a href={nextHref}>次のページ →</a>}
-    </span>
-  </nav>
+{totalPages > 1 && (
+  <Pagination currentPage={page} totalPages={totalPages} basePath='/blog' />
 )}
 
 <style>
@@ -120,38 +109,5 @@ const nextHref = hasMore ? `/blog/page/${page + 1}` : null;
     padding: 40px 0;
     color: var(--color-text-secondary);
     border-top: 1px solid var(--color-border);
-  }
-
-  .pager {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    max-width: var(--index-width);
-    margin-top: 32px;
-    padding-top: 20px;
-    border-top: 1px solid var(--color-rule-strong);
-    font-family: var(--font-mono);
-    font-size: 13px;
-  }
-
-  .pager-link {
-    min-width: 96px;
-  }
-
-  .pager-next {
-    text-align: right;
-  }
-
-  .pager-link a {
-    color: var(--color-text-secondary);
-  }
-
-  .pager-link a:hover {
-    color: var(--color-brand);
-  }
-
-  .pager-current {
-    color: var(--color-muted);
-    font-variant-numeric: tabular-nums;
   }
 </style>
