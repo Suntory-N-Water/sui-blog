@@ -352,16 +352,27 @@ Python Workers では、`compatibility_date` が実行環境の挙動に加え�
 ## 参考
 
 https://blog.cloudflare.com/python-workers-ga/
+
 https://developers.cloudflare.com/workers/languages/python/
+
 https://developers.cloudflare.com/workers/languages/python/packages/fastapi/
+
 https://developers.cloudflare.com/workers/languages/python/packages/
+
 https://github.com/cloudflare/workers-py
+
 https://github.com/cloudflare/workers-py/blob/main/packages/cli/src/pywrangler/utils.py
+
 https://github.com/cloudflare/workers-py/blob/main/packages/cli/src/pywrangler/metadata.py
+
 https://github.com/cloudflare/workers-py/blob/main/packages/cli/src/pywrangler/sync.py
+
 https://peps.python.org/pep-0783/
+
 https://pyodide.org/en/stable/usage/packages-in-pyodide.html
+
 https://asgi.readthedocs.io/en/latest/introduction.html
+
 https://fastapi.tiangolo.com/deployment/manually/
 
-[^asgi]: ASGI（Asynchronous Server Gateway Interface）は、同期処理を前提とした WSGI の後継として作られた仕様です。アプリは `scope`、`receive`、`send` の 3 つを受け取る非同期の呼び出し可能なオブジェクトとして書き、サーバーとの間ではイベントを表す辞書を受け渡します。FastAPI のドキュメントでは、FastAPI を ASGI の Web フレームワークと説明しています。
+[^asgi]: ASGI(Asynchronous Server Gateway Interface)は、同期処理を前提とした WSGI の後継として作られた仕様です。アプリは `scope`、`receive`、`send` の 3 つを受け取る非同期の呼び出し可能なオブジェクトとして書き、サーバーとの間ではイベントを表す辞書を受け渡します。FastAPI のドキュメントでは、FastAPI を ASGI の Web フレームワークと説明しています。
