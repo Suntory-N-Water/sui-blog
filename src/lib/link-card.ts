@@ -17,7 +17,8 @@ const MAX_HEAD_LENGTH = 128 * 1024;
 const MAX_CACHED_PREVIEWS = 500;
 const FAILURE_TTL_SECONDS = 60 * 60;
 const KV_KEY_PREFIX = 'linkcard:v1:';
-const KV_READ_TIMEOUT_MS = 300;
+const KV_READ_TIMEOUT_MS = 2000;
+const KV_EDGE_CACHE_TTL_SECONDS = 60 * 60 * 24;
 const KV_BATCH_SIZE = 100;
 const USER_AGENT =
   'Mozilla/5.0 (compatible; sui-blog-linkcard/1.0; +https://suntory-n-water.com)';
@@ -213,7 +214,10 @@ async function readStoredBatch(
 ): Promise<Map<string, StoredPreview | null>> {
   try {
     return await Promise.race([
-      env.CACHE.get<StoredPreview>(keys, 'json'),
+      env.CACHE.get<StoredPreview>(keys, {
+        type: 'json',
+        cacheTtl: KV_EDGE_CACHE_TTL_SECONDS,
+      }),
       rejectAfter(KV_READ_TIMEOUT_MS),
     ]);
   } catch {
