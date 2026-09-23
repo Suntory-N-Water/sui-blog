@@ -395,7 +395,7 @@ const publishDateTime = articleDate?.toISOString();
       var(--meta-col-width) minmax(0, var(--content-width))
       var(--gutter-width);
     gap: 48px;
-    padding: 40px 0 0;
+    padding: 40px 0 96px;
   }
 
   .sticky {
@@ -695,6 +695,10 @@ const publishDateTime = articleDate?.toISOString();
     margin-top: 60px;
     padding-top: 24px;
     border-top: 1px solid var(--color-rule-strong);
+  }
+
+  .article-comments:not(:has(> :not(script))) {
+    display: none;
   }
 
   .article-comments :global(.ec-comments) {
