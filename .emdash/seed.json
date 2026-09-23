@@ -45,6 +45,53 @@
 					"searchable": true
 				}
 			]
+		},
+		{
+			"slug": "ideas",
+			"label": "記事の題材",
+			"labelSingular": "記事の題材",
+			"description": "材料が足りず、まだ記事にしていない題材",
+			"supports": ["drafts", "revisions", "search"],
+			"routable": false,
+			"titleField": "title",
+			"admin": {
+				"listColumns": ["stage"]
+			},
+			"fields": [
+				{
+					"slug": "title",
+					"label": "タイトル",
+					"type": "string",
+					"required": true,
+					"searchable": true,
+					"validation": {
+						"maxLength": 40
+					}
+				},
+				{
+					"slug": "question",
+					"label": "記事の問い",
+					"type": "text",
+					"searchable": true
+				},
+				{
+					"slug": "stage",
+					"label": "状態",
+					"type": "select",
+					"required": true,
+					"indexed": true,
+					"defaultValue": "未着手",
+					"validation": {
+						"options": ["未着手", "完了", "ボツ"]
+					}
+				},
+				{
+					"slug": "body",
+					"label": "本文",
+					"type": "portableText",
+					"searchable": true
+				}
+			]
 		}
 	],
 	"defaultLocale": "ja",

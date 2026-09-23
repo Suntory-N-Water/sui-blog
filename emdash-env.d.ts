@@ -5,6 +5,21 @@
 
 import type { ContentBylineCredit, TaxonomyTerm, PortableTextBlock } from "emdash";
 
+export interface Idea {
+  id: string;
+  slug: string | null;
+  status: string;
+  title: string;
+  question?: string;
+  stage: "未着手" | "完了" | "ボツ";
+  body?: PortableTextBlock[];
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  bylines?: ContentBylineCredit[];
+  terms?: Record<string, TaxonomyTerm[]>;
+}
+
 export interface Post {
   id: string;
   slug: string | null;
@@ -22,6 +37,7 @@ export interface Post {
 
 declare module "emdash" {
   interface EmDashCollections {
+    ideas: Idea;
     posts: Post;
   }
 }
