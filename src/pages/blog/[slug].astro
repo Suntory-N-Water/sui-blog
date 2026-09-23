@@ -509,6 +509,20 @@ const publishDateTime = articleDate?.toISOString();
     text-decoration: none;
   }
 
+  .prose :global(a:has(> .link-favicon)) {
+    overflow-wrap: anywhere;
+  }
+
+  .prose :global(img.link-favicon) {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    margin: 0 0.3em 0 0;
+    vertical-align: -0.125em;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
   .prose :global(mark) {
     background: var(--color-mark);
     color: inherit;

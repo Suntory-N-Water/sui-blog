@@ -1,6 +1,8 @@
 ---
 import { Link } from 'emdash/ui';
 
+const FAVICON_SIZE = 16;
+
 const props = Astro.props as {
   node: {
     markDef: {
@@ -14,6 +16,20 @@ const props = Astro.props as {
 };
 const markDef = props.node?.markDef;
 const refId = typeof markDef?.refId === 'string' ? markDef.refId : null;
+
+function faviconUrl(href: unknown): string | null {
+  if (typeof href !== 'string' || !/^https?:\/\//u.test(href)) {
+    return null;
+  }
+  try {
+    const { hostname } = new URL(href);
+    return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(hostname)}&sz=${FAVICON_SIZE * 2}`;
+  } catch {
+    return null;
+  }
+}
+
+const favicon = refId ? null : faviconUrl(markDef?.href);
 ---
 
 {refId ? (
@@ -22,6 +38,17 @@ const refId = typeof markDef?.refId === 'string' ? markDef.refId : null;
   </a>
 ) : (
   <Link {...props}>
+    {favicon && (
+      <img
+        class='link-favicon'
+        src={favicon}
+        width={FAVICON_SIZE}
+        height={FAVICON_SIZE}
+        alt=''
+        loading='lazy'
+        decoding='async'
+      />
+    )}
     <slot />
   </Link>
 )}
