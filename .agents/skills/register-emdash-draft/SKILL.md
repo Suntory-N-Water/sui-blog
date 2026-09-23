@@ -11,6 +11,7 @@ description: contents/blog/ の Markdown 記事を、本番の EmDash サイト 
 
 - `.mcp.json` に本番サイトの MCP サーバー `emdash-site` (`https://suntory-n-water.com/_emdash/api/mcp`) が登録され、ログイン済みである
 - `wrangler` が本番の Cloudflare アカウントにログイン済みである。一致確認で本番 D1 を読むために使う
+- `npx emdash login --url https://suntory-n-water.com` でログイン済みである。SVG アイコンの登録に使う。未ログインなら利用者に `! npx emdash login --url https://suntory-n-water.com` の実行を依頼する
 - `bun` で TypeScript のスクリプトを実行できる
 
 ## 仕組み
@@ -26,7 +27,7 @@ MCP の `content_create` は本文に Markdown を受け付けますが、変換
 
 - `content_publish`・`content_unpublish`・`content_schedule`・削除系・`schema_*` のツールは呼ばない。公開・削除・スキーマ変更は取り消しが難しく、利用者が判断するため
 - `content_create` と `content_update` に `status` と `locale` を渡さない。渡さなければサーバー側で下書き (draft) と日本語 (ja) になる
-- 画像を base64 で送らない。`media_upload` は `url` を指定する方法だけを使う
+- 画像を base64 で送らない。`media_upload` は `url` を指定する方法だけを使う。SVG アイコンは `scripts/upload-icon.ts` で登録する
 - `content.md` の中身は一字も変えずに `data.content` へ渡す。要約・整形・改行の調整をすると一致確認で不一致になる
 - 本番 D1 に書き込む SQL は実行しない。`wrangler d1 execute` は一致確認のための SELECT だけに使う
 
@@ -56,7 +57,7 @@ bun .agents/skills/register-emdash-draft/scripts/prepare.ts contents/blog/<フ�
 | `existingPost` | 同じ slug の記事が本番にあれば、その id と状態 (draft か published) |
 | `missingImages` | 本文の画像のうち、本番のメディアに同じファイル名のものがない画像 |
 | `missingIcon` | frontmatter の `icon_url` に対応するメディアが本番にない |
-| `unknownTags` | 本番のタグ一覧にないタグ |
+| `unknownTags` | 本番のタグ一覧にないタグの表示名 (`label`) と slug の候補 (`suggestedSlug`) |
 | `errors` | 変換できなかった箇所 |
 | `warnings` | 変換はできたが、表示が崩れる可能性がある箇所 |
 
@@ -67,8 +68,19 @@ wrangler が `Authentication error [code: 10000]` で失敗することがあり
 `ready` が false のときは、原因ごとに次のとおり対応し、手順 1 をやり直します。
 
 - **missingImages**: 画像ごとに `media_upload` を `url`・`filename` (報告の `filename` と同じ値)・`alt` を指定して呼ぶ。`prepare.ts` は本番のメディアをファイル名で探すため、ファイル名を変えない。取得に失敗した画像 (403 など) は利用者に報告し、登録を中断する
-- **missingIcon**: アイコンは SVG で、MCP からは登録できない。利用者に「管理画面の記事編集画面で、OGP画像 に `<ファイル名>` をアップロードしてください」と依頼し、完了を待つ
-- **unknownTags**: タグは作らない。似た既存タグがあれば候補として示し、記事の frontmatter をどう直すか利用者に確認する
+- **missingIcon**: 次のコマンドで `public/icons/<ファイル名>` を登録する。MCP の `media_upload` と CLI の `emdash media upload` は SVG を拒否する。このスクリプトは posts の `featured_image` 項目の ID を付けて REST API に送るため、項目に設定された SVG の許可が使われる。認証は `npx emdash login` の保存内容か、環境変数 `EMDASH_TOKEN` を使う
+
+  ```bash
+  bun .agents/skills/register-emdash-draft/scripts/upload-icon.ts <ファイル名> --alt "<記事タイトル>"
+  ```
+
+  `public/icons/` にファイルがないときや、認証エラーで失敗したときは、内容を利用者に報告して登録を中断する
+- **unknownTags**: タグごとに AskUserQuestion で、表示名と slug を利用者に確認する。選択肢には次の 3 つを入れる
+  - `suggestedSlug` のまま作る
+  - 名前の近い既存タグに置き換える。候補は `taxonomy_list_terms` を `taxonomy: "tag"` で呼んで探す
+  - タグを外す
+
+  既存タグの slug は、表示名を小文字にして単語を `-` でつないだ形が多い。ただし例外もある (`GitHubActions` は `github-actions`、`OpenNext.js` は `opennextjs`)。そのため、slug は利用者が決めた値を使う。作ると決まったタグは、`taxonomy_create_term` を `taxonomy: "tag"`・`label`・`slug`・`locale: "ja"` を指定して呼ぶ。置き換えるときと外すときは、記事の frontmatter の `tags` を直す
 - **errors**: 内容を報告し、記事の書き方をどう直すか利用者に確認する
 
 ### 3. 既存記事の確認

@@ -550,14 +550,18 @@ function main() {
     label: string;
   }>;
   const tagSlugs: string[] = [];
-  const unknownTags: string[] = [];
+  const unknownTags: Array<{ label: string; suggestedSlug: string }> = [];
   for (const tag of rawTags) {
     const lower = tag.toLowerCase();
     const row = tagRows.find(
       (r) => r.label.toLowerCase() === lower || r.slug === lower,
     );
     if (row) tagSlugs.push(row.slug);
-    else unknownTags.push(tag);
+    else
+      unknownTags.push({
+        label: tag,
+        suggestedSlug: lower.replace(/[^a-z0-9]+/gu, '-').replace(/^-|-$/gu, ''),
+      });
   }
 
   const lines: string[] = [];
