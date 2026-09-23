@@ -154,7 +154,10 @@ async function loadPreviews(urls: string[]): Promise<void> {
   const entries = await Promise.all(
     urls.map(async (url) => ({ url, key: await storageKey(url) })),
   );
+  const kvStart = performance.now();
   const stored = await readStoredPreviews(entries.map(({ key }) => key));
+  const kvMs = Math.round(performance.now() - kvStart);
+  const fetchStart = performance.now();
 
   await Promise.all(
     entries.map(async ({ url, key }) => {
@@ -168,6 +171,16 @@ async function loadPreviews(urls: string[]): Promise<void> {
       rememberPreview(url, preview);
       storePreview(key, preview);
     }),
+  );
+
+  console.log(
+    `[linkcard-timing] ${JSON.stringify({
+      urls: urls.length,
+      kvHits: stored.size,
+      kvMs,
+      fetched: urls.length - stored.size,
+      fetchMs: Math.round(performance.now() - fetchStart),
+    })}`,
   );
 }
 
