@@ -91,3 +91,5 @@ temp/**
 # blog article verification projects (see blog-writing-skills / write-blog-article)
 examples/**
 !examples/.gitkeep
+
+CLAUDE.local.md
