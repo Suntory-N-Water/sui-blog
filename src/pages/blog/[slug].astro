@@ -12,6 +12,7 @@ import { Comments, CommentForm } from 'emdash/ui/comments';
 import Base from '../../layouts/Base.astro';
 import PageShell from '../../components/PageShell.astro';
 import SectionBand from '../../components/SectionBand.astro';
+import ShareLinks from '../../components/ShareLinks.astro';
 import PostIndex from '../../components/PostIndex.astro';
 import PostRow from '../../components/PostRow.astro';
 import { articlePortableTextComponents } from '../../components/portable-text/components';
@@ -115,6 +116,8 @@ const tags = post.data.terms?.tag ?? [];
 const articleDate = postDate(post.data);
 const publishDate = formatIndexDate(articleDate);
 const publishDateTime = articleDate?.toISOString();
+
+const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
 ---
 
 <Base
@@ -227,9 +230,12 @@ const publishDateTime = articleDate?.toISOString();
                 ))}
               </ul>
             )}
-            <a href={`/blog/${post.id}.md`} class='btn'>
-              この記事を Markdown で取得
-            </a>
+            <div class='foot-actions'>
+              <ShareLinks url={shareUrl} title={post.data.title} />
+              <a href={`/blog/${post.id}.md`} class='btn'>
+                この記事を Markdown で取得
+              </a>
+            </div>
           </footer>
 
           {otherPostsWithTags.length > 0 && (
@@ -651,6 +657,14 @@ const publishDateTime = articleDate?.toISOString();
     gap: 4px 12px;
     margin-bottom: 20px;
     list-style: none;
+  }
+
+  .foot-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px 24px;
   }
 
   .btn {

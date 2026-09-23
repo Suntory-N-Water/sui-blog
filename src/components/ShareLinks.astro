@@ -1,0 +1,230 @@
+---
+interface Props {
+  url: string;
+  title: string;
+}
+
+const { url, title } = Astro.props;
+
+const xShareUrl = `https://x.com/intent/post?${new URLSearchParams({ url, text: title })}`;
+const hatenaShareUrl = `https://b.hatena.ne.jp/add?${new URLSearchParams({ mode: 'confirm', url, title })}`;
+---
+
+<div
+  class='share'
+  role='group'
+  aria-labelledby='share-lbl'
+  data-share
+  data-url={url}
+  data-title={title}
+>
+  <span class='lbl' id='share-lbl'>この記事を共有</span>
+  <ul class='items'>
+    <li>
+      <a
+        class='item'
+        href={xShareUrl}
+        target='_blank'
+        rel='noopener noreferrer'
+        aria-label='X でポスト'
+      >
+        <svg viewBox='0 0 24 24' aria-hidden='true'>
+          <path d='M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z' />
+        </svg>
+      </a>
+    </li>
+    <li>
+      <a
+        class='item hatena'
+        href={hatenaShareUrl}
+        target='_blank'
+        rel='noopener noreferrer'
+        aria-label='はてなブックマークに追加'
+      >
+        <svg viewBox='0 0 24 24' aria-hidden='true'>
+          <path d='M20.47 0C22.42 0 24 1.58 24 3.53v16.94c0 1.95-1.58 3.53-3.53 3.53H3.53C1.58 24 0 22.42 0 20.47V3.53C0 1.58 1.58 0 3.53 0h16.94zm-3.705 14.47c-.78 0-1.41.63-1.41 1.41s.63 1.414 1.41 1.414 1.41-.645 1.41-1.425-.63-1.41-1.41-1.41zM8.61 17.247c1.2 0 2.056-.042 2.58-.12.526-.084.976-.222 1.32-.412.45-.232.78-.564 1.02-.99s.36-.915.36-1.48c0-.78-.21-1.403-.63-1.87-.42-.48-.99-.734-1.74-.794.66-.18 1.156-.45 1.456-.81.315-.344.465-.824.465-1.424 0-.48-.103-.885-.3-1.26-.21-.36-.493-.645-.883-.87-.345-.195-.735-.315-1.215-.405-.464-.074-1.29-.12-2.474-.12H5.654v10.486H8.61zm.736-4.185c.705 0 1.185.088 1.44.262.27.18.39.495.39.93 0 .405-.135.69-.42.855-.27.18-.765.254-1.44.254H8.31v-2.297h1.05zm8.656.706v-7.06h-2.46v7.06H18zM8.925 9.08c.71 0 1.185.08 1.432.24.245.16.367.435.367.83 0 .38-.13.646-.39.804-.265.154-.747.232-1.452.232h-.57V9.08h.615z' />
+        </svg>
+      </a>
+    </li>
+    <li hidden data-share-copy-item>
+      <button
+        type='button'
+        class='item'
+        aria-label='リンクをコピー'
+        data-share-copy
+      >
+        <svg class='icon-default' viewBox='0 0 256 256' aria-hidden='true'>
+          <path d='M240,88.23a54.43,54.43,0,0,1-16,37L189.25,160a54.27,54.27,0,0,1-38.63,16h-.05A54.63,54.63,0,0,1,96,119.84a8,8,0,0,1,16,.45A38.62,38.62,0,0,0,150.58,160h0a38.39,38.39,0,0,0,27.31-11.31l34.75-34.75a38.63,38.63,0,0,0-54.63-54.63l-11,11A8,8,0,0,1,135.7,59l11-11A54.65,54.65,0,0,1,224,48,54.86,54.86,0,0,1,240,88.23ZM109,185.66l-11,11A38.41,38.41,0,0,1,70.6,208h0a38.63,38.63,0,0,1-27.29-65.94L78,107.31A38.63,38.63,0,0,1,144,135.71a8,8,0,0,0,16,.45A54.86,54.86,0,0,0,144,96a54.65,54.65,0,0,0-77.27,0L32,130.75A54.62,54.62,0,0,0,70.56,224h0a54.28,54.28,0,0,0,38.64-16l11-11A8,8,0,0,0,109,185.66Z' />
+        </svg>
+        <svg class='icon-done' viewBox='0 0 256 256' aria-hidden='true'>
+          <path d='M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z' />
+        </svg>
+      </button>
+    </li>
+    <li hidden data-share-native-item>
+      <button
+        type='button'
+        class='item'
+        aria-label='ほかのアプリで共有'
+        data-share-native
+      >
+        <svg viewBox='0 0 256 256' aria-hidden='true'>
+          <path d='M216,112v96a16,16,0,0,1-16,16H56a16,16,0,0,1-16-16V112A16,16,0,0,1,56,96H80a8,8,0,0,1,0,16H56v96H200V112H176a8,8,0,0,1,0-16h24A16,16,0,0,1,216,112ZM93.66,69.66,120,43.31V136a8,8,0,0,0,16,0V43.31l26.34,26.35a8,8,0,0,0,11.32-11.32l-40-40a8,8,0,0,0-11.32,0l-40,40A8,8,0,0,0,93.66,69.66Z' />
+        </svg>
+      </button>
+    </li>
+  </ul>
+  <span class='status' role='status' data-share-status></span>
+</div>
+
+<script>
+  const COPIED_RESET_MS = 2000;
+
+  function setupShare(root: HTMLElement) {
+    const data: ShareData = {
+      title: root.dataset.title,
+      url: root.dataset.url,
+    };
+    const status = root.querySelector<HTMLElement>('[data-share-status]');
+
+    const copyItem = root.querySelector<HTMLElement>('[data-share-copy-item]');
+    const copyButton = root.querySelector<HTMLButtonElement>('[data-share-copy]');
+    if (copyItem && copyButton && data.url && navigator.clipboard) {
+      copyItem.hidden = false;
+      let resetTimer: number | undefined;
+      copyButton.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(data.url ?? '');
+          copyButton.dataset.done = '';
+          if (status) status.textContent = 'リンクをコピーしました';
+        } catch {
+          if (status) status.textContent = 'コピーできませんでした。アドレスバーから URL をコピーしてください';
+          return;
+        }
+        window.clearTimeout(resetTimer);
+        resetTimer = window.setTimeout(() => {
+          delete copyButton.dataset.done;
+          if (status) status.textContent = '';
+        }, COPIED_RESET_MS);
+      });
+    }
+
+    const nativeItem = root.querySelector<HTMLElement>('[data-share-native-item]');
+    const nativeButton = root.querySelector<HTMLButtonElement>('[data-share-native]');
+    if (nativeItem && nativeButton && navigator.canShare?.(data)) {
+      nativeItem.hidden = false;
+      nativeButton.addEventListener('click', async () => {
+        try {
+          await navigator.share(data);
+        } catch (error) {
+          if (error instanceof DOMException && error.name === 'AbortError') {
+            return;
+          }
+          console.error('共有に失敗しました', error);
+        }
+      });
+    }
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-share]').forEach(setupShare);
+</script>
+
+<style>
+  .share {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 16px;
+  }
+
+  .lbl {
+    font-size: 12px;
+    color: var(--color-muted);
+  }
+
+  .items {
+    display: flex;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .items li[hidden] {
+    display: none;
+  }
+
+  .item {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    background: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      color 150ms ease,
+      border-color 150ms ease,
+      background-color 150ms ease;
+  }
+
+  .item svg {
+    width: 17px;
+    height: 17px;
+    fill: currentColor;
+  }
+
+  .item.hatena svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .item:hover {
+    color: var(--color-brand);
+    border-color: var(--color-brand);
+    background: var(--color-bg-subtle);
+  }
+
+  .item:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+
+  .icon-done {
+    display: none;
+  }
+
+  .item[data-done] {
+    color: var(--color-brand);
+    border-color: var(--color-brand);
+  }
+
+  .item[data-done] .icon-default {
+    display: none;
+  }
+
+  .item[data-done] .icon-done {
+    display: block;
+  }
+
+  .status {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    left: 0;
+    text-align: right;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .item {
+      transition: none;
+    }
+  }
+</style>
