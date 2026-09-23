@@ -18,7 +18,9 @@ const hatenaShareUrl = `https://b.hatena.ne.jp/add?${new URLSearchParams({ mode:
   data-url={url}
   data-title={title}
 >
-  <span class='lbl' id='share-lbl'>この記事を共有</span>
+  <span class='lbl' id='share-lbl'>
+    この記事を共有
+  </span>
   <ul class='items'>
     <li>
       <a
@@ -88,7 +90,8 @@ const hatenaShareUrl = `https://b.hatena.ne.jp/add?${new URLSearchParams({ mode:
     const status = root.querySelector<HTMLElement>('[data-share-status]');
 
     const copyItem = root.querySelector<HTMLElement>('[data-share-copy-item]');
-    const copyButton = root.querySelector<HTMLButtonElement>('[data-share-copy]');
+    const copyButton =
+      root.querySelector<HTMLButtonElement>('[data-share-copy]');
     if (copyItem && copyButton && data.url && navigator.clipboard) {
       copyItem.hidden = false;
       let resetTimer: number | undefined;
@@ -98,7 +101,9 @@ const hatenaShareUrl = `https://b.hatena.ne.jp/add?${new URLSearchParams({ mode:
           copyButton.dataset.done = '';
           if (status) status.textContent = 'リンクをコピーしました';
         } catch {
-          if (status) status.textContent = 'コピーできませんでした。アドレスバーから URL をコピーしてください';
+          if (status)
+            status.textContent =
+              'コピーできませんでした。アドレスバーから URL をコピーしてください';
           return;
         }
         window.clearTimeout(resetTimer);
@@ -109,8 +114,12 @@ const hatenaShareUrl = `https://b.hatena.ne.jp/add?${new URLSearchParams({ mode:
       });
     }
 
-    const nativeItem = root.querySelector<HTMLElement>('[data-share-native-item]');
-    const nativeButton = root.querySelector<HTMLButtonElement>('[data-share-native]');
+    const nativeItem = root.querySelector<HTMLElement>(
+      '[data-share-native-item]',
+    );
+    const nativeButton = root.querySelector<HTMLButtonElement>(
+      '[data-share-native]',
+    );
     if (nativeItem && nativeButton && navigator.canShare?.(data)) {
       nativeItem.hidden = false;
       nativeButton.addEventListener('click', async () => {
