@@ -41,15 +41,15 @@ const {
   author,
   content,
 } = Astro.props;
-const { siteTitle, siteTagline, siteLogo } = resolveBlogSiteIdentity(
-  await getSiteSettings(),
-);
+const [settings, menu, socialMenu] = await Promise.all([
+  getSiteSettings(),
+  getMenu('primary'),
+  getMenu('social'),
+]);
+const { siteTitle, siteTagline, siteLogo } = resolveBlogSiteIdentity(settings);
 const ogImage =
   image ?? new URL('/opengraph-image.png', Astro.url.origin).toString();
 const fullTitle = title.includes(siteTitle) ? title : `${title} — ${siteTitle}`;
-
-const menu = await getMenu('primary');
-const socialMenu = await getMenu('social');
 const pageCtx = createPublicPageContext({
   Astro,
   kind: content ? 'content' : 'custom',

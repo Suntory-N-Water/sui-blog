@@ -40,8 +40,32 @@ if (!post) {
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
+const loadOtherPosts = async () => {
+  const { entries: recentPosts } = await getEmDashCollection('posts', {
+    orderBy: { modified_time: 'desc' },
+    limit: 4,
+  });
+  const otherPosts = recentPosts.filter((p) => p.id !== post.id).slice(0, 3);
+  const otherTagsByEntry = await getTermsForEntries(
+    'posts',
+    otherPosts.map((p) => p.data.id),
+    'tag',
+  );
+  return otherPosts.map((p) => ({
+    post: p,
+    tags: otherTagsByEntry.get(p.data.id) ?? [],
+  }));
+};
+
+const [settings, otherPostsWithTags] = await Promise.all([
+  getSiteSettings(),
+  loadOtherPosts(),
+  prefetchLinkPreviews(post.data.content),
+  codeRenderCacheKeys(post.data.content).then(prefetchRenderCache),
+]);
+
 const ogImageUrl = `${Astro.url.origin}/blog/ogp/${encodeURIComponent(slug)}.png`;
-const { siteTitle } = resolveBlogSiteIdentity(await getSiteSettings());
+const { siteTitle } = resolveBlogSiteIdentity(settings);
 
 const seo = getSeoMeta(post, {
   siteTitle,
@@ -57,30 +81,9 @@ const authorNames = bylines
 
 const readingTime = getReadingTime(post.data.content);
 
-await Promise.all([
-  prefetchLinkPreviews(post.data.content),
-  codeRenderCacheKeys(post.data.content).then(prefetchRenderCache),
-]);
-
 const content = withFootnoteBacklinks(withMarkdownFootnotes(post.data.content));
 
 const tags = post.data.terms?.tag ?? [];
-
-const { entries: recentPosts } = await getEmDashCollection('posts', {
-  orderBy: { modified_time: 'desc' },
-  limit: 4,
-});
-const otherPosts = recentPosts.filter((p) => p.id !== post.id).slice(0, 3);
-
-const otherTagsByEntry = await getTermsForEntries(
-  'posts',
-  otherPosts.map((p) => p.data.id),
-  'tag',
-);
-const otherPostsWithTags = otherPosts.map((p) => ({
-  post: p,
-  tags: otherTagsByEntry.get(p.data.id) ?? [],
-}));
 
 const articleDate = postDate(post.data);
 const publishDate = formatIndexDate(articleDate);
