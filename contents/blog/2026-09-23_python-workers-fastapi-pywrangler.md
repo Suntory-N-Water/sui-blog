@@ -276,7 +276,7 @@ FastAPI が依存する Pydantic は、中核の処理を Rust で書いた pyda
 | **pydantic** | **2.13.5** | **2.12.5** | Pyodide の配布元 |
 | **pydantic-core** | **2.46.5** | **2.41.5** | Pyodide の配布元 |
 
-太字にした pydantic と pydantic-core の 2 行は、手元と Worker で版が異なります。pydantic は 2.13.5 と 2.12.5、pydantic-core は 2.46.5 と 2.41.5 です。Worker 用の pydantic-core は、Pyodide の配布元にある `pydantic_core-2.41.5-cp314-cp314-pyemscripten_2026_0_wasm32.whl` でした。PyPI の pydantic-core には、2.46.5 と 2.41.5 のどちらにも WebAssembly 向けの wheel が公開されていません。uv は、Worker 向けの wheel がある pydantic-core として、Pyodide の配布元にある 2.41.5 を選びました。
+太字にした pydantic と pydantic-core の 2 行は、手元と Worker で版が異なります。Worker 用の pydantic-core は、Pyodide の配布元にある `pydantic_core-2.41.5-cp314-cp314-pyemscripten_2026_0_wasm32.whl` でした。PyPI の pydantic-core には、2.46.5 と 2.41.5 のどちらにも WebAssembly 向けの wheel が公開されていません。uv は、Worker 向けの wheel がある pydantic-core として、Pyodide の配布元にある 2.41.5 を選びました。
 
 pydantic 2.12.5 は、依存として `pydantic-core==2.41.5` を指定しています。pydantic は pydantic-core の版を 1 つに固定しているため、pydantic-core に合わせて pydantic も 2.12.5 に解決されます。
 
