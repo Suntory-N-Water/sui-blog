@@ -8,10 +8,10 @@ import {
 import Base from '../../layouts/Base.astro';
 import PageShell from '../../components/PageShell.astro';
 import ArchiveHead from '../../components/ArchiveHead.astro';
-import PostIndex from '../../components/PostIndex.astro';
-import PostRow from '../../components/PostRow.astro';
+import BlogIndex from '../../components/BlogIndex.astro';
+import BlogRow from '../../components/BlogRow.astro';
 import { getReadingTime } from '../../utils/reading-time';
-import { postDate } from '../../utils/format-date';
+import { blogDate } from '../../utils/format-date';
 
 const slug = decodeSlug(Astro.params.slug);
 const term = slug ? await getTerm('tag', slug, { includeCounts: false }) : null;
@@ -20,7 +20,7 @@ if (!term) {
   return Astro.redirect('/404');
 }
 
-const { entries: posts, cacheHint } = await getEmDashCollection('blogs', {
+const { entries: blogs, cacheHint } = await getEmDashCollection('blogs', {
   where: { tag: term.slug },
   orderBy: { modified_time: 'desc' },
 });
@@ -29,12 +29,12 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
 const tagsByEntry = await getTermsForEntries(
   'blogs',
-  posts.map((p) => p.data.id),
+  blogs.map((p) => p.data.id),
   'tag',
 );
-const filteredPosts = posts.map((post) => ({
-  post,
-  tags: tagsByEntry.get(post.data.id) ?? [],
+const filteredBlogs = blogs.map((blog) => ({
+  blog,
+  tags: tagsByEntry.get(blog.data.id) ?? [],
 }));
 ---
 
@@ -43,31 +43,31 @@ const filteredPosts = posts.map((post) => ({
   description={`「${term.label}」タグが付いた記事の一覧`}
 >
   <PageShell>
-    <ArchiveHead title={`#${term.label}`} sub={`${filteredPosts.length} 件`} />
+    <ArchiveHead title={`#${term.label}`} sub={`${filteredBlogs.length} 件`} />
 
-    {filteredPosts.length === 0 ? (
-      <p class='no-posts'>このタグの記事はまだありません。</p>
+    {filteredBlogs.length === 0 ? (
+      <p class='no-blogs'>このタグの記事はまだありません。</p>
     ) : (
-      <PostIndex>
-        {filteredPosts.map(({ post, tags }) => (
-          <PostRow
-            title={post.data.title}
-            href={`/blog/${post.id}`}
-            date={postDate(post.data)}
-            readingTime={getReadingTime(post.data.content)}
-            excerpt={post.data.excerpt}
-            icon={post.data.featured_image}
+      <BlogIndex>
+        {filteredBlogs.map(({ blog, tags }) => (
+          <BlogRow
+            title={blog.data.title}
+            href={`/blog/${blog.id}`}
+            date={blogDate(blog.data)}
+            readingTime={getReadingTime(blog.data.content)}
+            excerpt={blog.data.excerpt}
+            icon={blog.data.featured_image}
             tags={tags.map((t) => ({ slug: t.slug, label: t.label }))}
             headingLevel={2}
           />
         ))}
-      </PostIndex>
+      </BlogIndex>
     )}
   </PageShell>
 </Base>
 
 <style>
-  .no-posts {
+  .no-blogs {
     max-width: var(--index-width);
     padding: var(--spacing-8) 0;
     color: var(--color-muted);

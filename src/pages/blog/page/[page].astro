@@ -2,8 +2,8 @@
 import { getEmDashCollection, getTermsForEntries } from 'emdash';
 import Base from '../../../layouts/Base.astro';
 import PageShell from '../../../components/PageShell.astro';
-import { countPublishedPosts } from '../../../lib/post-index';
-import PostArchive from '../../../components/PostArchive.astro';
+import { countPublishedBlogs } from '../../../lib/blog-index';
+import BlogArchive from '../../../components/BlogArchive.astro';
 
 const PER_PAGE = 10;
 
@@ -18,21 +18,21 @@ if (page === 1) {
   return Astro.redirect('/blog', 301);
 }
 
-const [{ entries: posts, hasMore, cacheHint, error }, total] =
+const [{ entries: blogs, hasMore, cacheHint, error }, total] =
   await Promise.all([
     getEmDashCollection('blogs', {
       limit: PER_PAGE,
       offset: (page - 1) * PER_PAGE,
       orderBy: { modified_time: 'desc' },
     }),
-    countPublishedPosts(),
+    countPublishedBlogs(),
   ]);
 
 if (error) {
   return new Response(null, { status: 500 });
 }
 
-if (posts.length === 0) {
+if (blogs.length === 0) {
   return Astro.redirect('/404');
 }
 
@@ -45,7 +45,7 @@ const totalPages = Math.max(
 
 const tagsByEntry = await getTermsForEntries(
   'blogs',
-  posts.map((p) => p.data.id),
+  blogs.map((p) => p.data.id),
   'tag',
 );
 ---
@@ -55,8 +55,8 @@ const tagsByEntry = await getTermsForEntries(
   description={`すべての記事の一覧(${page} ページ目)`}
 >
   <PageShell>
-    <PostArchive
-      posts={posts}
+    <BlogArchive
+      blogs={blogs}
       tagsByEntry={tagsByEntry}
       page={page}
       totalPages={totalPages}

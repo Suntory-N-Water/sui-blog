@@ -1,8 +1,8 @@
 import type { MediaValue } from 'emdash';
 
-export type PostTag = { slug: string; label: string };
+export type BlogTag = { slug: string; label: string };
 
-export type PublicPost = {
+export type PublicBlog = {
   id: string;
   data: {
     id: string;
@@ -13,7 +13,7 @@ export type PublicPost = {
     publishedAt?: Date;
     updatedAt?: Date;
     modified_time?: Date | string;
-    terms?: { tag: PostTag[] };
+    terms?: { tag: BlogTag[] };
   };
 };
 
@@ -34,7 +34,7 @@ function asDate(value: unknown): Date | undefined {
   return Number.isNaN(date.getTime()) ? undefined : date;
 }
 
-export function asPost(value: unknown): PublicPost {
+export function asBlog(value: unknown): PublicBlog {
   const root = asRecord(value);
   const raw = asRecord(root.data);
   const rawTerms = asRecord(raw.terms);

@@ -6,7 +6,7 @@ import {
   OGP_CACHE_NAME,
   renderOgpImage,
 } from '../../../lib/ogp';
-import { asPost } from '../../../lib/emdash-types';
+import { asBlog } from '../../../lib/emdash-types';
 
 const CACHE_CONTROL =
   'public, max-age=86400, s-maxage=2592000, stale-while-revalidate=86400';
@@ -45,13 +45,13 @@ export const GET: APIRoute = async ({ params, request }) => {
       return new Response('Not found', { status: 404 });
     }
 
-    const post = asPost(entry);
+    const blog = asBlog(entry);
     const image = await renderOgpImage({
-      title: post.data.title,
-      tags: (post.data.terms?.tag ?? []).map((term) => term.label),
+      title: blog.data.title,
+      tags: (blog.data.terms?.tag ?? []).map((term) => term.label),
       iconFilename:
-        typeof post.data.featured_image === 'object'
-          ? post.data.featured_image.filename
+        typeof blog.data.featured_image === 'object'
+          ? blog.data.featured_image.filename
           : undefined,
       origin,
     });

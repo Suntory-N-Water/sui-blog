@@ -6,12 +6,12 @@ interface Props {
 const { topRule = true } = Astro.props;
 ---
 
-<ul class:list={['post-index', topRule && 'has-top-rule']}>
+<ul class:list={['blog-index', topRule && 'has-top-rule']}>
   <slot />
 </ul>
 
 <style>
-  .post-index {
+  .blog-index {
     list-style: none;
     margin: 0;
     padding: 0;

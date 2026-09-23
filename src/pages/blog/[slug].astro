@@ -13,8 +13,8 @@ import Base from '../../layouts/Base.astro';
 import PageShell from '../../components/PageShell.astro';
 import SectionBand from '../../components/SectionBand.astro';
 import ShareLinks from '../../components/ShareLinks.astro';
-import PostIndex from '../../components/PostIndex.astro';
-import PostRow from '../../components/PostRow.astro';
+import BlogIndex from '../../components/BlogIndex.astro';
+import BlogRow from '../../components/BlogRow.astro';
 import { articlePortableTextComponents } from '../../components/portable-text/components';
 import { codeRenderCacheKeys } from '../../lib/code-render';
 import { prefetchLinkPreviews } from '../../lib/link-card';
@@ -23,10 +23,10 @@ import {
   withFootnoteBacklinks,
   withMarkdownFootnotes,
 } from '../../lib/footnotes';
-import { findRelatedPostSlugs } from '../../lib/post-index';
+import { findRelatedBlogSlugs } from '../../lib/blog-index';
 import { getReadingTime } from '../../utils/reading-time';
 import { resolveBlogSiteIdentity } from '../../utils/site-identity';
-import { formatIndexDate, postDate } from '../../utils/format-date';
+import { formatIndexDate, blogDate } from '../../utils/format-date';
 
 const slug = decodeSlug(Astro.params.slug);
 
@@ -34,37 +34,37 @@ if (!slug) {
   return Astro.redirect('/404');
 }
 
-const { entry: post, cacheHint } = await getEmDashEntry('blogs', slug);
+const { entry: blog, cacheHint } = await getEmDashEntry('blogs', slug);
 
-if (!post) {
+if (!blog) {
   return Astro.redirect('/404');
 }
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
-const RELATED_POSTS_COUNT = 3;
+const RELATED_BLOGS_COUNT = 3;
 
-const loadRecentPosts = async () => {
-  const { entries: recentPosts } = await getEmDashCollection('blogs', {
+const loadRecentBlogs = async () => {
+  const { entries: recentBlogs } = await getEmDashCollection('blogs', {
     orderBy: { modified_time: 'desc' },
-    limit: RELATED_POSTS_COUNT + 1,
+    limit: RELATED_BLOGS_COUNT + 1,
     offset: 0,
   });
-  return recentPosts
-    .filter((p) => p.id !== post.id)
-    .slice(0, RELATED_POSTS_COUNT);
+  return recentBlogs
+    .filter((p) => p.id !== blog.id)
+    .slice(0, RELATED_BLOGS_COUNT);
 };
 
-const loadRelatedPosts = async () => {
-  const slugs: string[] = await findRelatedPostSlugs(
-    post.data.id,
-    RELATED_POSTS_COUNT,
+const loadRelatedBlogs = async () => {
+  const slugs: string[] = await findRelatedBlogSlugs(
+    blog.data.id,
+    RELATED_BLOGS_COUNT,
   ).catch((error: unknown) => {
     console.error('関連記事の算出に失敗しました', error);
     return [];
   });
   if (slugs.length === 0) {
-    return loadRecentPosts();
+    return loadRecentBlogs();
   }
   const results = await Promise.all(
     slugs.map((relatedSlug) => getEmDashEntry('blogs', relatedSlug)),
@@ -72,48 +72,48 @@ const loadRelatedPosts = async () => {
   return results.flatMap(({ entry }) => (entry ? [entry] : []));
 };
 
-const loadOtherPosts = async () => {
-  const otherPosts = await loadRelatedPosts();
+const loadOtherBlogs = async () => {
+  const otherBlogs = await loadRelatedBlogs();
   const otherTagsByEntry = await getTermsForEntries(
     'blogs',
-    otherPosts.map((p) => p.data.id),
+    otherBlogs.map((p) => p.data.id),
     'tag',
   );
-  return otherPosts.map((p) => ({
-    post: p,
+  return otherBlogs.map((p) => ({
+    blog: p,
     tags: otherTagsByEntry.get(p.data.id) ?? [],
   }));
 };
 
-const [settings, otherPostsWithTags] = await Promise.all([
+const [settings, otherBlogsWithTags] = await Promise.all([
   getSiteSettings(),
-  loadOtherPosts(),
-  prefetchLinkPreviews(post.data.content),
-  codeRenderCacheKeys(post.data.content).then(prefetchRenderCache),
+  loadOtherBlogs(),
+  prefetchLinkPreviews(blog.data.content),
+  codeRenderCacheKeys(blog.data.content).then(prefetchRenderCache),
 ]);
 
 const ogImageUrl = `${Astro.url.origin}/blog/ogp/${encodeURIComponent(slug)}.png`;
 const { siteTitle } = resolveBlogSiteIdentity(settings);
 
-const seo = getSeoMeta(post, {
+const seo = getSeoMeta(blog, {
   siteTitle,
   siteUrl: Astro.url.origin,
   path: Astro.url.pathname.replace(/\/$/, ''),
   defaultOgImage: ogImageUrl,
 });
 
-const bylines = post.data.bylines ?? [];
+const bylines = blog.data.bylines ?? [];
 const authorNames = bylines
   .map((credit) => credit.byline.displayName)
   .join('、');
 
-const readingTime = getReadingTime(post.data.content);
+const readingTime = getReadingTime(blog.data.content);
 
-const content = withFootnoteBacklinks(withMarkdownFootnotes(post.data.content));
+const content = withFootnoteBacklinks(withMarkdownFootnotes(blog.data.content));
 
-const tags = post.data.terms?.tag ?? [];
+const tags = blog.data.terms?.tag ?? [];
 
-const articleDate = postDate(post.data);
+const articleDate = blogDate(blog.data);
 const publishDate = formatIndexDate(articleDate);
 const publishDateTime = articleDate?.toISOString();
 
@@ -129,28 +129,28 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
   robots={seo.robots}
   type='article'
   publishedTime={articleDate?.toISOString() ?? null}
-  modifiedTime={post.data.updatedAt.toISOString()}
-  content={{ collection: 'blogs', id: post.data.id, slug }}
+  modifiedTime={blog.data.updatedAt.toISOString()}
+  content={{ collection: 'blogs', id: blog.data.id, slug }}
 >
   <PageShell>
     <article>
       <header class='article-head'>
-        {post.data.featured_image && (
+        {blog.data.featured_image && (
           <Image
-            image={post.data.featured_image}
+            image={blog.data.featured_image}
             alt=''
             width={40}
             height={40}
             class='head-icon'
-            {...post.edit.featured_image}
+            {...blog.edit.featured_image}
           />
         )}
-        <h1 class='title' {...post.edit.title}>
-          {post.data.title}
+        <h1 class='title' {...blog.edit.title}>
+          {blog.data.title}
         </h1>
-        {post.data.excerpt && (
-          <p class='summary' {...post.edit.excerpt}>
-            {post.data.excerpt}
+        {blog.data.excerpt && (
+          <p class='summary' {...blog.edit.excerpt}>
+            {blog.data.excerpt}
           </p>
         )}
       </header>
@@ -231,37 +231,37 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
               </ul>
             )}
             <div class='foot-actions'>
-              <ShareLinks url={shareUrl} title={post.data.title} />
-              <a href={`/blog/${post.id}.md`} class='btn'>
+              <ShareLinks url={shareUrl} title={blog.data.title} />
+              <a href={`/blog/${blog.id}.md`} class='btn'>
                 この記事を Markdown で取得
               </a>
             </div>
           </footer>
 
-          {otherPostsWithTags.length > 0 && (
+          {otherBlogsWithTags.length > 0 && (
             <aside class='more' aria-label='関連する記事'>
               <SectionBand title='関連する記事' flush />
-              <PostIndex>
-                {otherPostsWithTags.map(({ post: p, tags: postTags }) => (
-                  <PostRow
+              <BlogIndex>
+                {otherBlogsWithTags.map(({ blog: p, tags: blogTags }) => (
+                  <BlogRow
                     title={p.data.title}
                     href={`/blog/${p.id}`}
-                    date={postDate(p.data)}
+                    date={blogDate(p.data)}
                     readingTime={getReadingTime(p.data.content)}
                     icon={p.data.featured_image}
-                    tags={postTags.map((t) => ({
+                    tags={blogTags.map((t) => ({
                       slug: t.slug,
                       label: t.label,
                     }))}
                   />
                 ))}
-              </PostIndex>
+              </BlogIndex>
             </aside>
           )}
 
           <section class='article-comments' aria-label='コメント'>
-            <Comments collection='blogs' contentId={post.data.id} threaded />
-            <CommentForm collection='blogs' contentId={post.data.id} />
+            <Comments collection='blogs' contentId={blog.data.id} threaded />
+            <CommentForm collection='blogs' contentId={blog.data.id} />
           </section>
         </div>
 
