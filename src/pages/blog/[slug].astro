@@ -557,6 +557,15 @@ const publishDateTime = articleDate?.toISOString();
     margin: 26px 0;
   }
 
+  .prose :global(.emdash-table th) {
+    white-space: nowrap;
+  }
+
+  .prose :global(.emdash-table td > p) {
+    min-inline-size: 6em;
+    max-inline-size: 22em;
+  }
+
   .prose :global(hr) {
     margin: 40px 0;
     border: none;
