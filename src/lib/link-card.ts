@@ -16,10 +16,8 @@ const CACHE_TTL_SECONDS = 60 * 60 * 24 * 7;
 const MAX_HEAD_LENGTH = 128 * 1024;
 const MAX_CACHED_PREVIEWS = 500;
 const FAILURE_TTL_SECONDS = 60 * 60;
-const KV_KEY_PREFIX = 'linkcard:v1:';
-const KV_READ_TIMEOUT_MS = 2000;
-const KV_EDGE_CACHE_TTL_SECONDS = 60 * 60 * 24;
-const KV_BATCH_SIZE = 100;
+const TABLE = 'linkcard_previews';
+const D1_BATCH_SIZE = 90;
 const USER_AGENT =
   'Mozilla/5.0 (compatible; sui-blog-linkcard/1.0; +https://suntory-n-water.com)';
 
@@ -151,14 +149,11 @@ async function loadPreviews(urls: string[]): Promise<void> {
     return;
   }
 
-  const entries = await Promise.all(
-    urls.map(async (url) => ({ url, key: await storageKey(url) })),
-  );
-  const stored = await readStoredPreviews(entries.map(({ key }) => key));
+  const stored = await readStoredPreviews(urls);
 
   await Promise.all(
-    entries.map(async ({ url, key }) => {
-      const hit = stored.get(key);
+    urls.map(async (url) => {
+      const hit = stored.get(url);
       if (hit) {
         rememberPreview(url, hit.preview);
         return;
@@ -166,7 +161,7 @@ async function loadPreviews(urls: string[]): Promise<void> {
 
       const preview = await fetchLinkPreview(url);
       rememberPreview(url, preview);
-      storePreview(key, preview);
+      storePreview(url, preview);
     }),
   );
 }
@@ -178,65 +173,54 @@ function rememberPreview(url: string, preview: LinkPreview | null): void {
   previews.set(url, preview);
 }
 
-async function storageKey(url: string): Promise<string> {
-  const digest = await crypto.subtle.digest(
-    'SHA-256',
-    new TextEncoder().encode(url),
-  );
-  const hex = [...new Uint8Array(digest)]
-    .map((byte) => byte.toString(16).padStart(2, '0'))
-    .join('');
-  return `${KV_KEY_PREFIX}${hex}`;
-}
-
 async function readStoredPreviews(
-  keys: string[],
+  urls: string[],
 ): Promise<Map<string, StoredPreview>> {
   const batches: string[][] = [];
-  for (let index = 0; index < keys.length; index += KV_BATCH_SIZE) {
-    batches.push(keys.slice(index, index + KV_BATCH_SIZE));
+  for (let index = 0; index < urls.length; index += D1_BATCH_SIZE) {
+    batches.push(urls.slice(index, index + D1_BATCH_SIZE));
   }
 
   const found = new Map<string, StoredPreview>();
   const results = await Promise.all(batches.map(readStoredBatch));
-  for (const result of results) {
-    for (const [key, value] of result) {
-      if (value) {
-        found.set(key, value);
-      }
+  for (const rows of results) {
+    for (const row of rows) {
+      found.set(row.url, JSON.parse(row.preview) as StoredPreview);
     }
   }
   return found;
 }
 
 async function readStoredBatch(
-  keys: string[],
-): Promise<Map<string, StoredPreview | null>> {
+  urls: string[],
+): Promise<{ url: string; preview: string }[]> {
   try {
-    return await Promise.race([
-      env.CACHE.get<StoredPreview>(keys, {
-        type: 'json',
-        cacheTtl: KV_EDGE_CACHE_TTL_SECONDS,
-      }),
-      rejectAfter(KV_READ_TIMEOUT_MS),
-    ]);
+    const placeholders = urls.map(() => '?').join(',');
+    const { results } = await env.DB.prepare(
+      `SELECT url, preview FROM ${TABLE} WHERE url IN (${placeholders}) AND expires_at > ?`,
+    )
+      .bind(...urls, Date.now())
+      .all<{ url: string; preview: string }>();
+    return results;
   } catch {
-    return new Map();
+    return [];
   }
 }
 
-function rejectAfter(ms: number): Promise<never> {
-  return new Promise((_, reject) => {
-    setTimeout(() => reject(new Error('timeout')), ms);
-  });
-}
-
-function storePreview(key: string, preview: LinkPreview | null): void {
+function storePreview(url: string, preview: LinkPreview | null): void {
   const value: StoredPreview = { preview };
+  const ttlSeconds = preview ? CACHE_TTL_SECONDS : FAILURE_TTL_SECONDS;
   waitUntil(
-    env.CACHE.put(key, JSON.stringify(value), {
-      expirationTtl: preview ? CACHE_TTL_SECONDS : FAILURE_TTL_SECONDS,
-    }).catch(() => undefined),
+    env.DB.batch([
+      env.DB.prepare(
+        `CREATE TABLE IF NOT EXISTS ${TABLE} (url TEXT PRIMARY KEY, preview TEXT NOT NULL, expires_at INTEGER NOT NULL)`,
+      ),
+      env.DB.prepare(
+        `INSERT INTO ${TABLE} (url, preview, expires_at) VALUES (?, ?, ?) ON CONFLICT(url) DO UPDATE SET preview = excluded.preview, expires_at = excluded.expires_at`,
+      ).bind(url, JSON.stringify(value), Date.now() + ttlSeconds * 1000),
+    ])
+      .then(() => undefined)
+      .catch(() => undefined),
   );
 }
 
