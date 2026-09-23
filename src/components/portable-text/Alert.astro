@@ -40,7 +40,7 @@ const body = (blocks as Array<Record<string, unknown>>).map((block) => ({
   .markdown-alert {
     margin: 0 0 26px;
     padding-left: 18px;
-    border-left: 2px solid var(--alert-fg);
+    border-left: var(--rule-width-accent) solid var(--alert-fg);
   }
 
   .markdown-alert :global(> :last-child) {

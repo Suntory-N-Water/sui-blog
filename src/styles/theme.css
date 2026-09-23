@@ -23,6 +23,8 @@
 	--color-code-rule: light-dark(#243348, #2d3d59);
 	--color-code-accent: #8ecfff;
 
+	--rule-width: 1px;
+	--rule-width-accent: 2px;
 	--radius: 0;
 	--radius-lg: 0;
 	--shadow-sm: none;

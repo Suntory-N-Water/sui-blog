@@ -366,7 +366,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
       var(--gutter-width);
     gap: 0 48px;
     padding: 52px 0 30px;
-    border-bottom: 1px solid var(--color-rule-strong);
+    border-bottom: var(--rule-width) solid var(--color-rule-strong);
   }
 
   .article-head :global(.head-icon) {
@@ -418,7 +418,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
     grid-template-columns: 56px 1fr;
     gap: 10px;
     padding: 7px 0;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: var(--rule-width) solid var(--color-border);
     font-size: 13px;
   }
 
@@ -477,7 +477,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
     color: var(--color-heading);
     cursor: pointer;
     padding: 8px 0;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: var(--rule-width) solid var(--color-border);
   }
 
   .mobile-toc .toc {
@@ -498,7 +498,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
     font-weight: var(--font-weight-heading);
     margin: 52px 0 20px;
     padding-top: 14px;
-    border-top: 1px solid var(--color-rule-strong);
+    border-top: var(--rule-width) solid var(--color-rule-strong);
     scroll-margin-top: 24px;
   }
 
@@ -565,7 +565,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
   .prose :global(blockquote) {
     margin: 0 0 26px;
     padding-left: 20px;
-    border-left: 1px solid var(--color-rule-strong);
+    border-left: var(--rule-width-accent) solid var(--color-rule-strong);
     color: var(--color-text-secondary);
   }
 
@@ -589,7 +589,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
   .prose :global(hr) {
     margin: 40px 0;
     border: none;
-    border-top: 1px solid var(--color-border);
+    border-top: var(--rule-width) solid var(--color-border);
   }
 
   .prose :global(sup) {
@@ -600,7 +600,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
   .prose :global(.footnotes) {
     margin-top: 52px;
     padding-top: 24px;
-    border-top: 1px solid var(--color-rule-strong);
+    border-top: var(--rule-width) solid var(--color-rule-strong);
     font-size: 14px;
     color: var(--color-text-secondary);
   }
@@ -648,7 +648,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
     max-width: var(--content-width);
     margin: 60px 0 0;
     padding-top: 24px;
-    border-top: 1px solid var(--color-rule-strong);
+    border-top: var(--rule-width) solid var(--color-rule-strong);
   }
 
   .foot-tags {
@@ -693,7 +693,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
     font-size: 12px;
     color: var(--color-muted);
     padding-bottom: 7px;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: var(--rule-width) solid var(--color-border);
   }
 
   .toc :global(ul) {
@@ -707,7 +707,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
     padding: 5px 0 5px 12px;
     color: var(--color-heading);
     line-height: 1.65;
-    border-left: 1px solid var(--color-border);
+    border-left: var(--rule-width-accent) solid var(--color-border);
   }
 
   .toc :global(li.nest a) {
@@ -731,7 +731,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
     max-width: var(--content-width);
     margin-top: 60px;
     padding-top: 24px;
-    border-top: 1px solid var(--color-rule-strong);
+    border-top: var(--rule-width) solid var(--color-rule-strong);
   }
 
   .article-comments:not(:has(> :not(script))) {

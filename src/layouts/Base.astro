@@ -431,7 +431,7 @@ const isLoggedIn = !!Astro.locals.user;
         background: color-mix(in srgb, var(--color-bg) 65%, transparent);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid var(--color-border-subtle);
+        border-bottom: var(--rule-width) solid var(--color-border-subtle);
       }
 
       .nav {
@@ -558,7 +558,7 @@ const isLoggedIn = !!Astro.locals.user;
         padding: var(--spacing-3) var(--spacing-4);
         text-decoration: none;
         color: var(--color-text);
-        border-bottom: 1px solid var(--color-border-subtle);
+        border-bottom: var(--rule-width) solid var(--color-border-subtle);
         transition: background var(--transition-fast);
       }
 
@@ -608,7 +608,7 @@ const isLoggedIn = !!Astro.locals.user;
       /* Footer */
       .site-footer {
         background: var(--color-bg-subtle);
-        border-top: 1px solid var(--color-border-subtle);
+        border-top: var(--rule-width) solid var(--color-border-subtle);
       }
 
       .footer-inner {
@@ -708,7 +708,7 @@ const isLoggedIn = !!Astro.locals.user;
         justify-content: flex-end;
         align-items: center;
         padding-top: var(--spacing-6);
-        border-top: 1px solid var(--color-border);
+        border-top: var(--rule-width) solid var(--color-border);
       }
 
       /* Theme switcher */
