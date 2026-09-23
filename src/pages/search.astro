@@ -11,7 +11,7 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
 const query = Astro.url.searchParams.get('q')?.trim() || '';
 
 const { items: results } = query
-  ? await search(query, { collections: ['posts'], limit: 30 })
+  ? await search(query, { collections: ['blogs'], limit: 30 })
   : { items: [] };
 
 const sub = query ? `"${query}" の検索結果 ${results.length} 件` : null;

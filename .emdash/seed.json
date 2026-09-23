@@ -11,7 +11,7 @@
 	},
 	"collections": [
 		{
-			"slug": "posts",
+			"slug": "blogs",
 			"label": "ブログ",
 			"labelSingular": "ブログ",
 			"supports": [
@@ -103,7 +103,7 @@
 			"labelSingular": "カテゴリー",
 			"hierarchical": true,
 			"collections": [
-				"posts"
+				"blogs"
 			]
 		},
 		{
@@ -113,7 +113,7 @@
 			"labelSingular": "タグ",
 			"hierarchical": false,
 			"collections": [
-				"posts"
+				"blogs"
 			],
 			"terms": [
 				{
@@ -127,9 +127,9 @@
 	"menus": [],
 	"widgetAreas": [],
 	"content": {
-		"posts": [
+		"blogs": [
 			{
-				"id": "posts:sample-markup",
+				"id": "blogs:sample-markup",
 				"slug": "sample-markup",
 				"status": "published",
 				"data": {

@@ -78,11 +78,11 @@ async function main() {
   }
 
   const field = d1(
-    "SELECT f.id FROM _emdash_fields f JOIN _emdash_collections c ON c.id = f.collection_id WHERE c.slug='posts' AND f.slug='featured_image'",
+    "SELECT f.id FROM _emdash_fields f JOIN _emdash_collections c ON c.id = f.collection_id WHERE c.slug='blogs' AND f.slug='featured_image'",
   );
   const fieldId = field[0]?.id;
   if (typeof fieldId !== 'string')
-    throw new Error('posts の featured_image 項目が本番にありません');
+    throw new Error('blogs の featured_image 項目が本番にありません');
 
   const form = new FormData();
   form.append(

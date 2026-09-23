@@ -30,7 +30,7 @@ function main() {
     ? `p.id=${sqlString(id)}`
     : `p.slug=${sqlString(slug)} AND p.locale='ja' AND p.deleted_at IS NULL`;
   const rows = d1(
-    `SELECT p.id, p.slug, p.status, p.locale, p.draft_revision_id, p.title, p.excerpt, p.featured_image, p.content, p.modified_time, r.data AS revision FROM ec_posts p LEFT JOIN revisions r ON r.id = p.draft_revision_id WHERE ${where} ORDER BY p.created_at DESC LIMIT 1`,
+    `SELECT p.id, p.slug, p.status, p.locale, p.draft_revision_id, p.title, p.excerpt, p.featured_image, p.content, p.modified_time, r.data AS revision FROM ec_blogs p LEFT JOIN revisions r ON r.id = p.draft_revision_id WHERE ${where} ORDER BY p.created_at DESC LIMIT 1`,
   );
   const row = rows[0];
   if (!row) {
@@ -95,7 +95,7 @@ function main() {
     );
 
   const tags = d1(
-    `SELECT t.slug FROM content_taxonomies ct JOIN taxonomies t ON t.id = ct.taxonomy_id WHERE ct.collection='posts' AND ct.entry_id=${sqlString(String(row.id))} AND t.name='tag' AND ct.deleted_at IS NULL`,
+    `SELECT t.slug FROM content_taxonomies ct JOIN taxonomies t ON t.id = ct.taxonomy_id WHERE ct.collection='blogs' AND ct.entry_id=${sqlString(String(row.id))} AND t.name='tag' AND ct.deleted_at IS NULL`,
   ).map((t) => String(t.slug));
   const wantTags = [...expected.taxonomies.tag].sort();
   if (JSON.stringify([...tags].sort()) !== JSON.stringify(wantTags))
@@ -111,7 +111,7 @@ function main() {
         status: row.status,
         storedIn: revision
           ? `revisions (${String(row.draft_revision_id)})`
-          : 'ec_posts',
+          : 'ec_blogs',
         blocks: content.length,
         errors,
       },

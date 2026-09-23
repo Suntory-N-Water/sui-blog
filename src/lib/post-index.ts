@@ -8,7 +8,7 @@ type PostTagRow = {
 
 export async function countPublishedPosts(): Promise<number> {
   const row = await env.DB.prepare(
-    `SELECT COUNT(*) AS total FROM ec_posts WHERE status = 'published' AND deleted_at IS NULL`,
+    `SELECT COUNT(*) AS total FROM ec_blogs WHERE status = 'published' AND deleted_at IS NULL`,
   ).first<{ total: number }>();
   return row?.total ?? 0;
 }
@@ -19,8 +19,8 @@ export async function findRelatedPostSlugs(
 ): Promise<string[]> {
   const { results } = await env.DB.prepare(
     `SELECT p.id AS id, p.slug AS slug, t.slug AS tag
-     FROM ec_posts p
-     LEFT JOIN content_taxonomies ct ON ct.collection = 'posts' AND ct.entry_id = p.id
+     FROM ec_blogs p
+     LEFT JOIN content_taxonomies ct ON ct.collection = 'blogs' AND ct.entry_id = p.id
      LEFT JOIN taxonomies t ON t.id = ct.taxonomy_id AND t.name = 'tag'
      WHERE p.status = 'published' AND p.deleted_at IS NULL
      ORDER BY p.modified_time DESC, p.id`,

@@ -21,7 +21,7 @@ let internalImage: MediaValue | string | undefined;
 let hostname = '';
 
 if (internalSlug) {
-  const { entry } = await getEmDashEntry('posts', internalSlug);
+  const { entry } = await getEmDashEntry('blogs', internalSlug);
   if (entry) {
     title = String(entry.data.title ?? '');
     const featured = entry.data.featured_image;
