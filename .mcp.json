@@ -3,6 +3,10 @@
     "emdash-docs": {
       "type": "http",
       "url": "https://docs.emdashcms.com/mcp"
+    },
+    "emdash-site": {
+      "type": "http",
+      "url": "https://suntory-n-water.com/_emdash/api/mcp"
     }
   }
 }

@@ -3,9 +3,10 @@
   "entry": [
     "src/pages/**/*.{astro,ts}",
     "src/live.config.ts",
-    "src/middleware/outer.ts"
+    "src/middleware/outer.ts",
+    ".agents/skills/*/scripts/*.ts"
   ],
-  "project": ["src/**/*.{ts,tsx,astro}"],
+  "project": ["src/**/*.{ts,tsx,astro}", ".agents/skills/*/scripts/*.ts"],
   "ignoreDependencies": ["cloudflare"],
   "ignoreExportsUsedInFile": true
 }

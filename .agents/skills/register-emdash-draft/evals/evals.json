@@ -1,0 +1,33 @@
+{
+  "skill_name": "register-emdash-draft",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "contents/blog/2026-09-19_css-selector-repair-with-jev.md を本番に下書き登録して。テストなので slug は eval-register-draft-1 にして",
+      "expected_output": "slug eval-register-draft-1 の下書きが本番に作られ、verify.ts が ok: true を出す。公開されていない",
+      "files": ["contents/blog/2026-09-19_css-selector-repair-with-jev.md"],
+      "assertions": [
+        "prepare.ts を --slug eval-register-draft-1 付きで実行した",
+        "content_create に status と locale を渡していない",
+        "content_publish を呼んでいない",
+        "verify.ts の結果が ok: true",
+        "報告に記事の id と warnings の内容が含まれる"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "gas-lockservice-exclusive-control の記事、EmDash に入れといて。slug は eval-register-draft-2 で",
+      "expected_output": "slug eval-register-draft-2 の下書きが本番に作られ、verify.ts が ok: true を出す。公開されていない",
+      "files": [
+        "contents/blog/2026-09-21_gas-lockservice-exclusive-control.md"
+      ],
+      "assertions": [
+        "prepare.ts を --slug eval-register-draft-2 付きで実行した",
+        "content_create に status と locale を渡していない",
+        "content_publish を呼んでいない",
+        "verify.ts の結果が ok: true",
+        "報告に記事の id と warnings の内容が含まれる"
+      ]
+    }
+  ]
+}
