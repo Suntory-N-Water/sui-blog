@@ -5,7 +5,7 @@ import PostIndex from './PostIndex.astro';
 import PostRow from './PostRow.astro';
 import Pagination from './Pagination.astro';
 import { getReadingTime } from '../utils/reading-time';
-import { formatYearMonthJp, getYear, postDate } from '../utils/format-date';
+import { formatYearMonthJp, getYear } from '../utils/format-date';
 
 type PostsResult = Awaited<ReturnType<typeof getEmDashCollection<'posts'>>>;
 type ArchivePost = PostsResult['entries'][number];
@@ -22,7 +22,7 @@ const { posts, tagsByEntry, page, totalPages } = Astro.props;
 
 const yearGroups = new Map<string, ArchivePost[]>();
 for (const post of posts) {
-  const year = getYear(postDate(post.data)) ?? '不明';
+  const year = getYear(post.data.createdAt) ?? '不明';
   const group = yearGroups.get(year);
   if (group) {
     group.push(post);
@@ -33,8 +33,8 @@ for (const post of posts) {
 
 const firstPost = posts[0];
 const lastPost = posts.at(-1);
-const newest = firstPost ? formatYearMonthJp(postDate(firstPost.data)) : null;
-const oldest = lastPost ? formatYearMonthJp(postDate(lastPost.data)) : null;
+const newest = formatYearMonthJp(firstPost?.data.createdAt);
+const oldest = formatYearMonthJp(lastPost?.data.createdAt);
 const dateRange =
   newest && oldest
     ? newest === oldest
@@ -60,7 +60,7 @@ const sub = dateRange ? `${dateRange} / ${page} ページ目` : `${page} ペー�
           <PostRow
             title={post.data.title}
             href={`/blog/${post.id}`}
-            date={postDate(post.data)}
+            date={post.data.createdAt}
             readingTime={getReadingTime(post.data.content)}
             icon={post.data.featured_image}
             tags={(tagsByEntry.get(post.data.id) ?? []).map((t) => ({

@@ -1,6 +1,5 @@
 import type { APIRoute } from 'astro';
 import { getEmDashCollection, getTaxonomyTerms } from 'emdash';
-import { postDate } from '../utils/format-date';
 
 type SitemapEntry = {
   path: string;
@@ -18,7 +17,7 @@ export const GET: APIRoute = async ({ site, url }) => {
   });
   const tags = await getTaxonomyTerms('tag', { includeCounts: false });
 
-  const newest = posts[0] ? postDate(posts[0].data) : null;
+  const newest = posts[0]?.data.createdAt;
 
   const entries: SitemapEntry[] = [
     { path: '/', lastmod: newest, changefreq: 'daily', priority: '1.0' },
@@ -27,7 +26,7 @@ export const GET: APIRoute = async ({ site, url }) => {
     { path: '/search', changefreq: 'monthly', priority: '0.3' },
     ...posts.map((post) => ({
       path: `/blog/${post.id}`,
-      lastmod: post.data.updatedAt ?? postDate(post.data),
+      lastmod: post.data.updatedAt,
       changefreq: 'monthly',
       priority: '0.8',
     })),

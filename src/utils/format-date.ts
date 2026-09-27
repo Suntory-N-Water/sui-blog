@@ -31,22 +31,6 @@ export function formatYearMonthJp(date: Date | null | undefined) {
   return `${year}年${Number(month)}月`;
 }
 
-export function postDate(data: {
-  modified_time?: string | Date;
-  publishedAt?: Date | null;
-}): Date | null {
-  if (data.modified_time) {
-    const parsed =
-      data.modified_time instanceof Date
-        ? data.modified_time
-        : new Date(data.modified_time);
-    if (!Number.isNaN(parsed.getTime())) {
-      return parsed;
-    }
-  }
-  return data.publishedAt ?? null;
-}
-
 export function getYear(date: Date | null | undefined) {
   if (!date) {
     return null;

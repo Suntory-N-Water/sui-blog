@@ -26,7 +26,7 @@ import {
 import { findRelatedPostSlugs } from '../../lib/post-index';
 import { getReadingTime } from '../../utils/reading-time';
 import { resolveBlogSiteIdentity } from '../../utils/site-identity';
-import { formatIndexDate, postDate } from '../../utils/format-date';
+import { formatIndexDate } from '../../utils/format-date';
 
 const slug = decodeSlug(Astro.params.slug);
 
@@ -113,9 +113,8 @@ const content = withFootnoteBacklinks(withMarkdownFootnotes(post.data.content));
 
 const tags = post.data.terms?.tag ?? [];
 
-const articleDate = postDate(post.data);
-const publishDate = formatIndexDate(articleDate);
-const publishDateTime = articleDate?.toISOString();
+const publishDate = formatIndexDate(post.data.createdAt);
+const publishDateTime = post.data.createdAt.toISOString();
 
 const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
 ---
@@ -128,7 +127,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
   canonical={seo.canonical}
   robots={seo.robots}
   type='article'
-  publishedTime={articleDate?.toISOString() ?? null}
+  publishedTime={publishDateTime}
   modifiedTime={post.data.updatedAt.toISOString()}
   content={{ collection: 'posts', id: post.data.id, slug }}
 >
@@ -246,7 +245,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
                   <PostRow
                     title={p.data.title}
                     href={`/blog/${p.id}`}
-                    date={postDate(p.data)}
+                    date={p.data.createdAt}
                     readingTime={getReadingTime(p.data.content)}
                     icon={p.data.featured_image}
                     tags={postTags.map((t) => ({

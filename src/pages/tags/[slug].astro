@@ -11,7 +11,6 @@ import ArchiveHead from '../../components/ArchiveHead.astro';
 import PostIndex from '../../components/PostIndex.astro';
 import PostRow from '../../components/PostRow.astro';
 import { getReadingTime } from '../../utils/reading-time';
-import { postDate } from '../../utils/format-date';
 
 const slug = decodeSlug(Astro.params.slug);
 const term = slug ? await getTerm('tag', slug, { includeCounts: false }) : null;
@@ -53,7 +52,7 @@ const filteredPosts = posts.map((post) => ({
           <PostRow
             title={post.data.title}
             href={`/blog/${post.id}`}
-            date={postDate(post.data)}
+            date={post.data.createdAt}
             readingTime={getReadingTime(post.data.content)}
             excerpt={post.data.excerpt}
             icon={post.data.featured_image}

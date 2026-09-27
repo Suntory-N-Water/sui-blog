@@ -10,9 +10,9 @@ export type PublicPost = {
     excerpt?: string;
     content: unknown;
     featured_image?: MediaValue | string;
+    createdAt?: Date;
     publishedAt?: Date;
     updatedAt?: Date;
-    modified_time?: Date | string;
     terms?: { tag: PostTag[] };
   };
 };
@@ -64,11 +64,9 @@ export function asPost(value: unknown): PublicPost {
         (typeof raw.featured_image === 'object' && raw.featured_image !== null)
           ? (raw.featured_image as MediaValue | string)
           : undefined,
+      createdAt: asDate(raw.createdAt),
       publishedAt: asDate(raw.publishedAt),
       updatedAt: asDate(raw.updatedAt),
-      modified_time:
-        asDate(raw.modified_time) ??
-        (typeof raw.modified_time === 'string' ? raw.modified_time : undefined),
       terms: { tag: tags },
     },
   };

@@ -13,7 +13,7 @@ import PostIndex from '../components/PostIndex.astro';
 import PostRow from '../components/PostRow.astro';
 import TagIndex from '../components/TagIndex.astro';
 import { getReadingTime } from '../utils/reading-time';
-import { formatIndexDate, postDate } from '../utils/format-date';
+import { formatIndexDate } from '../utils/format-date';
 import { resolveBlogSiteIdentity } from '../utils/site-identity';
 
 const HOME_POST_LIMIT = 6;
@@ -88,8 +88,8 @@ const topTags = tags
               />
             )}
             <div class='lead-date'>
-              <time datetime={postDate(leadPost.data)?.toISOString()}>
-                {formatIndexDate(postDate(leadPost.data))}
+              <time datetime={leadPost.data.createdAt.toISOString()}>
+                {formatIndexDate(leadPost.data.createdAt)}
               </time>
             </div>
             <h2>
@@ -126,7 +126,7 @@ const topTags = tags
                   <PostRow
                     title={post.data.title}
                     href={`/blog/${post.id}`}
-                    date={postDate(post.data)}
+                    date={post.data.createdAt}
                     readingTime={getReadingTime(post.data.content)}
                     excerpt={post.data.excerpt}
                     icon={post.data.featured_image}
