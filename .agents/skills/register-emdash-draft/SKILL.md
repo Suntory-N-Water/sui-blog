@@ -27,7 +27,7 @@ MCP の `content_create` は本文に Markdown を受け付けますが、変換
 
 - `content_publish`・`content_unpublish`・`content_schedule`・削除系・`schema_*` のツールは呼ばない。公開・削除・スキーマ変更は取り消しが難しく、利用者が判断するため
 - `content_create` と `content_update` に `status` と `locale` を渡さない。渡さなければサーバー側で下書き (draft) と日本語 (ja) になる
-- 画像を base64 で送らない。`media_upload` は `url` を指定する方法だけを使う。SVG アイコンは `scripts/upload-icon.ts` で登録する
+- 画像を base64 で送らない。`media_upload` は `url` を指定する方法だけを使う。SVG アイコンは `scripts/download-icon.ts` で作り、`scripts/upload-icon.ts` で登録する
 - `content.md` の中身は一字も変えずに `data.content` へ渡す。要約・整形・改行の調整をすると一致確認で不一致になる
 - 本番 D1 に書き込む SQL は実行しない。`wrangler d1 execute` は一致確認のための SELECT だけに使う
 
@@ -74,7 +74,13 @@ wrangler が `Authentication error [code: 10000]` で失敗することがあり
   bun .agents/skills/register-emdash-draft/scripts/upload-icon.ts <ファイル名> --alt "<記事タイトル>"
   ```
 
-  `public/icons/` にファイルがないときや、認証エラーで失敗したときは、内容を利用者に報告して登録を中断する
+  `public/icons/` にファイルがないときは、frontmatter の `icon` の絵文字から作る。Fluent Emoji Flat の SVG を `public/icons/` に保存し、`icon_url` に書く値を出力する。同じアイコンがすでにあれば、保存せずにそのパスを出力する
+
+  ```bash
+  bun .agents/skills/register-emdash-draft/scripts/download-icon.ts <絵文字>
+  ```
+
+  `icon` が空のとき、対応するアイコンがないとき、認証エラーで失敗したときは、内容を利用者に報告して登録を中断する
 - **unknownTags**: タグごとに AskUserQuestion で、表示名と slug を利用者に確認する。選択肢には次の 3 つを入れる
   - `suggestedSlug` のまま作る
   - 名前の近い既存タグに置き換える。候補は `taxonomy_list_terms` を `taxonomy: "tag"` で呼んで探す
