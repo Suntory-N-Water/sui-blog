@@ -43,7 +43,7 @@ export async function codeRenderCacheKeys(blocks: unknown): Promise<string[]> {
   }
 
   const keys: Promise<string>[] = [];
-  for (const block of blocks as CodeNode[]) {
+  for (const block of blocks as (CodeNode | null)[]) {
     if (block?._type !== 'code' || !block.code) {
       continue;
     }

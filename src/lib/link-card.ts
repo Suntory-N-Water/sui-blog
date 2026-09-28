@@ -58,7 +58,7 @@ type Block = {
 
 export function bareLinkHref(node: unknown): string | null {
   const block = node as Block | null;
-  if (!block || block._type !== 'block') {
+  if (block?._type !== 'block') {
     return null;
   }
   if (block.style && block.style !== 'normal') {
@@ -99,7 +99,7 @@ function spanHref(child: Child, markDefs: MarkDef[]): string | null {
   }
 
   const def = markDefs.find((mark) => mark._key === linkKey);
-  if (!def || def._type !== 'link' || typeof def.href !== 'string') {
+  if (def?._type !== 'link' || typeof def.href !== 'string') {
     return null;
   }
   return def.href;
@@ -286,23 +286,25 @@ async function readDocumentHead(response: Response): Promise<string> {
 }
 
 function metaContent(html: string, property: string): string | undefined {
-  const tag = new RegExp(
+  const tagMatch: RegExpExecArray | null = new RegExp(
     `<meta[^>]*(?:property|name)\\s*=\\s*["']?${property}["']?[^>]*>`,
     'iu',
-  ).exec(html)?.[0];
+  ).exec(html);
+  const tag = tagMatch?.[0];
   if (!tag) {
     return undefined;
   }
 
-  const content = /content\s*=\s*(?:["']([^"']*)["']|([^\s>]+))/iu.exec(tag);
+  const content: RegExpExecArray | null =
+    /content\s*=\s*(?:["']([^"']*)["']|([^\s>]+))/iu.exec(tag);
   const value = (content?.[1] ?? content?.[2] ?? '').trim();
   return value || undefined;
 }
 
 function titleTag(html: string): string | undefined {
-  return (
-    /<title[^>]*>([\s\S]*?)<\/title>/iu.exec(html)?.[1]?.trim() || undefined
-  );
+  const match: RegExpExecArray | null =
+    /<title[^>]*>([\s\S]*?)<\/title>/iu.exec(html);
+  return match?.[1]?.trim() || undefined;
 }
 
 function absoluteUrl(value: string | undefined, base: string): string {

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.15/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.14/schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
@@ -54,7 +54,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "security": {
         "noDangerouslySetInnerHtml": "off"
       },
@@ -62,7 +62,8 @@
         // any 関連
         "noExplicitAny": "error",
         "noImplicitAnyLet": "error",
-        "noEvolvingTypes": "error"
+        "noEvolvingTypes": "error",
+        "noUnnecessaryConditions": "error"
       },
       "style": {
         // Interface じゃなくて type を使う
@@ -77,9 +78,6 @@
         "useArrayLiterals": "error",
         // if 文でブロックを強制する
         "useBlockStatements": "error"
-      },
-      "nursery": {
-        "noUnnecessaryConditions": "error"
       }
     },
     "includes": ["src/**/*.{js,jsx,ts,tsx}", "astro.config.mjs"]

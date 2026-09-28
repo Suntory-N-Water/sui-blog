@@ -75,7 +75,7 @@ function definitionOf(
     : [];
   const [first] = children;
   const text = typeof first?.text === 'string' ? first.text : '';
-  const match = DEFINITION_MARKER.exec(text);
+  const match: RegExpExecArray | null = DEFINITION_MARKER.exec(text);
   if (!match) {
     return null;
   }
@@ -125,7 +125,7 @@ function linkReferences(
     let cursor = 0;
     REFERENCE_MARKER.lastIndex = 0;
     for (
-      let match = REFERENCE_MARKER.exec(text);
+      let match: RegExpExecArray | null = REFERENCE_MARKER.exec(text);
       match;
       match = REFERENCE_MARKER.exec(text)
     ) {
