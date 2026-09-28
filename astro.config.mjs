@@ -44,7 +44,6 @@ export default defineConfig({
       storage: r2({ binding: 'MEDIA' }),
       middleware: { outer: './src/middleware/outer.ts' },
       sandboxRunner: sandbox(),
-      marketplace: 'https://marketplace.emdashcms.com',
     }),
   ],
   fonts: [

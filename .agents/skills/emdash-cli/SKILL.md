@@ -7,7 +7,7 @@ description: Use the EmDash CLI to manage content, schema, media, and more. Use 
 
 The EmDash CLI (`emdash` or `ec`) manages EmDash CMS instances. Commands fall into two categories:
 
-- **Local commands** — work directly on a SQLite file, no running server needed: `init`, `dev`, `seed`, `export-seed`, `auth secret`
+- **Local commands** — work directly on a SQLite file, no running server needed: `init`, `seed`, `export-seed`, `secrets generate`
 - **Remote commands** — talk to a running EmDash instance via HTTP: `types`, `login`, `logout`, `whoami`, `content`, `schema`, `media`, `search`, `taxonomy`, `menu`
 
 ## Authentication
@@ -111,8 +111,8 @@ npx emdash whoami
 # Logout
 npx emdash logout
 
-# Generate auth secret for deployment
-npx emdash auth secret
+# Generate EMDASH_ENCRYPTION_KEY for encrypting plugin secrets
+npx emdash secrets generate
 ```
 
 ### Content CRUD
