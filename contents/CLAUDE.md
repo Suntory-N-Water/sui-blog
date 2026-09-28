@@ -11,7 +11,7 @@ pnpm run lint       # 文章の構成(textlint)をチェック
 pnpm run lint:fix   # textlint の自動修正
 ```
 
-記事本文は移行前の履歴として保存する。記事の移行はリポジトリルートの `pnpm run migrate:emdash` で行い、対応できない表現を削除しない。
+記事本文は移行前の履歴として保存する。
 
 ## 文章ガイド
 
