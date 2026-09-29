@@ -43,7 +43,7 @@ const RELATED_BLOGS_COUNT = 3;
 
 const loadRecentBlogs = async () => {
   const { entries: recentBlogs } = await getEmDashCollection('blogs', {
-    orderBy: { modified_time: 'desc' },
+    orderBy: { created_at: 'desc' },
     limit: RELATED_BLOGS_COUNT + 1,
     offset: 0,
   });

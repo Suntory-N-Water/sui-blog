@@ -28,7 +28,7 @@ function main() {
     ? `p.id=${sqlString(id)}`
     : `p.slug=${sqlString(slug)} AND p.locale='ja' AND p.deleted_at IS NULL`;
   const rows = d1(
-    `SELECT p.id, p.slug, p.status, p.locale, p.draft_revision_id, p.title, p.excerpt, p.featured_image, p.content, p.modified_time, r.data AS revision FROM ec_blogs p LEFT JOIN revisions r ON r.id = p.draft_revision_id WHERE ${where} ORDER BY p.created_at DESC LIMIT 1`,
+    `SELECT p.id, p.slug, p.status, p.locale, p.draft_revision_id, p.title, p.excerpt, p.featured_image, p.content, r.data AS revision FROM ec_blogs p LEFT JOIN revisions r ON r.id = p.draft_revision_id WHERE ${where} ORDER BY p.created_at DESC LIMIT 1`,
   );
   const row = rows[0];
   if (!row) {
@@ -45,21 +45,16 @@ function main() {
     excerpt: row.excerpt,
     featured_image: parseJson(row.featured_image),
     content: parseJson(row.content),
-    modified_time: row.modified_time,
   };
 
   const errors: string[] = [];
   if (row.status !== 'draft') errors.push(`status が draft ではありません: ${String(row.status)}`);
   if (row.locale !== 'ja') errors.push(`locale が ja ではありません: ${String(row.locale)}`);
-  for (const field of ['title', 'excerpt', 'modified_time']) {
+  for (const field of ['title', 'excerpt']) {
     const want = expected.data[field];
     if (want === undefined) continue;
     const got = source[field];
-    const same =
-      field === 'modified_time'
-        ? new Date(String(got)).getTime() === new Date(String(want)).getTime()
-        : got === want;
-    if (!same)
+    if (got !== want)
       errors.push(
         `${field} が一致しません: 期待 ${JSON.stringify(want)} / 実際 ${JSON.stringify(got)}`,
       );

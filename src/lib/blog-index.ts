@@ -20,7 +20,7 @@ export async function findRelatedBlogSlugs(currentId: string, count: number): Pr
      LEFT JOIN content_taxonomies ct ON ct.collection = 'blogs' AND ct.entry_id = p.id
      LEFT JOIN taxonomies t ON t.id = ct.taxonomy_id AND t.name = 'tag'
      WHERE p.status = 'published' AND p.deleted_at IS NULL
-     ORDER BY p.modified_time DESC, p.id`,
+     ORDER BY p.created_at DESC, p.id`,
   ).all<BlogTagRow>();
 
   const documents = new Map<string, { slug: string; tags: Set<string> }>();

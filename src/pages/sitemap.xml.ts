@@ -12,7 +12,7 @@ export const GET: APIRoute = async ({ site, url }) => {
   const origin = site?.toString().replace(/\/+$/u, '') || url.origin;
 
   const { entries: blogs } = await getEmDashCollection('blogs', {
-    orderBy: { modified_time: 'desc' },
+    orderBy: { created_at: 'desc' },
     limit: 1000,
   });
   const tags = await getTaxonomyTerms('tag', { includeCounts: false });
