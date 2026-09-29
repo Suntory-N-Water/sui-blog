@@ -13,10 +13,7 @@ export async function countPublishedBlogs(): Promise<number> {
   return row?.total ?? 0;
 }
 
-export async function findRelatedBlogSlugs(
-  currentId: string,
-  count: number,
-): Promise<string[]> {
+export async function findRelatedBlogSlugs(currentId: string, count: number): Promise<string[]> {
   const { results } = await env.DB.prepare(
     `SELECT p.id AS id, p.slug AS slug, t.slug AS tag
      FROM ec_blogs p

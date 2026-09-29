@@ -1,8 +1,5 @@
 ---
-import {
-  RENDER_CACHE_TTL_SECONDS,
-  mermaidCacheKey,
-} from '../../lib/code-render';
+import { RENDER_CACHE_TTL_SECONDS, mermaidCacheKey } from '../../lib/code-render';
 import { getRenderCache, setRenderCache } from '../../lib/render-cache';
 
 export interface Props {
@@ -31,10 +28,7 @@ async function renderSvg(): Promise<string> {
     const { renderMermaidSVGAsync } = await import('beautiful-mermaid');
     const rendered = await renderMermaidSVGAsync(code, themeOptions);
     return rendered
-      .replace(
-        /[ \t]*@import url\('https:\/\/fonts\.googleapis\.com[^']*'\);\n?/g,
-        '',
-      )
+      .replace(/[ \t]*@import url\('https:\/\/fonts\.googleapis\.com[^']*'\);\n?/g, '')
       .replaceAll(`'${FONT_TOKEN}'`, 'var(--font-body)')
       .replaceAll("'JetBrains Mono'", 'var(--font-mono)');
   } catch {
@@ -51,11 +45,7 @@ if (svg === undefined) {
 ---
 
 <figure class='mermaid-figure'>
-  {svg ? (
-    <Fragment set:html={svg} />
-  ) : (
-    <pre class='mermaid-source' set:text={code}></pre>
-  )}
+  {svg ? <Fragment set:html={svg} /> : <pre class='mermaid-source' set:text={code}></pre>}
 </figure>
 
 <style>

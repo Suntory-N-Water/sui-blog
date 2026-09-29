@@ -18,9 +18,7 @@
       "id": 2,
       "prompt": "gas-lockservice-exclusive-control の記事、EmDash に入れといて。slug は eval-register-draft-2 で",
       "expected_output": "slug eval-register-draft-2 の下書きが本番に作られ、verify.ts が ok: true を出す。公開されていない",
-      "files": [
-        "contents/blog/2026-09-21_gas-lockservice-exclusive-control.md"
-      ],
+      "files": ["contents/blog/2026-09-21_gas-lockservice-exclusive-control.md"],
       "assertions": [
         "prepare.ts を --slug eval-register-draft-2 付きで実行した",
         "content_create に status と locale を渡していない",

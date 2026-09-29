@@ -18,13 +18,9 @@ const MAX_CACHED_PREVIEWS = 500;
 const FAILURE_TTL_SECONDS = 60 * 60;
 const TABLE = 'linkcard_previews';
 const D1_BATCH_SIZE = 90;
-const USER_AGENT =
-  'Mozilla/5.0 (compatible; sui-blog-linkcard/1.0; +https://suntory-n-water.com)';
+const USER_AGENT = 'Mozilla/5.0 (compatible; sui-blog-linkcard/1.0; +https://suntory-n-water.com)';
 
-const BLOCKED_TITLES = new Set([
-  'Just a moment...',
-  'Attention Required! | Cloudflare',
-]);
+const BLOCKED_TITLES = new Set(['Just a moment...', 'Attention Required! | Cloudflare']);
 
 export type LinkPreview = {
   url: string;
@@ -65,18 +61,14 @@ export function bareLinkHref(node: unknown): string | null {
     return null;
   }
 
-  const children = (block.children ?? []).filter(
-    (child) => textOf(child).trim() !== '',
-  );
+  const children = (block.children ?? []).filter((child) => textOf(child).trim() !== '');
   if (children.length !== 1) {
     return null;
   }
 
   const [child] = children;
   const href =
-    child._type === '@span'
-      ? markTreeHref(child)
-      : spanHref(child, block.markDefs ?? []);
+    child._type === '@span' ? markTreeHref(child) : spanHref(child, block.markDefs ?? []);
 
   return href && textOf(child).trim() === href ? href : null;
 }
@@ -173,9 +165,7 @@ function rememberPreview(url: string, preview: LinkPreview | null): void {
   previews.set(url, preview);
 }
 
-async function readStoredPreviews(
-  urls: string[],
-): Promise<Map<string, StoredPreview>> {
+async function readStoredPreviews(urls: string[]): Promise<Map<string, StoredPreview>> {
   const batches: string[][] = [];
   for (let index = 0; index < urls.length; index += D1_BATCH_SIZE) {
     batches.push(urls.slice(index, index + D1_BATCH_SIZE));
@@ -191,9 +181,7 @@ async function readStoredPreviews(
   return found;
 }
 
-async function readStoredBatch(
-  urls: string[],
-): Promise<{ url: string; preview: string }[]> {
+async function readStoredBatch(urls: string[]): Promise<{ url: string; preview: string }[]> {
   try {
     const placeholders = urls.map(() => '?').join(',');
     const { results } = await env.DB.prepare(
@@ -249,9 +237,7 @@ async function fetchLinkPreview(url: string): Promise<LinkPreview | null> {
       url,
       title: decodeEntities(title),
       description: decodeEntities(
-        metaContent(html, 'og:description') ??
-          metaContent(html, 'description') ??
-          '',
+        metaContent(html, 'og:description') ?? metaContent(html, 'description') ?? '',
       ),
       image: absoluteUrl(metaContent(html, 'og:image'), url),
     };
@@ -295,15 +281,15 @@ function metaContent(html: string, property: string): string | undefined {
     return undefined;
   }
 
-  const content: RegExpExecArray | null =
-    /content\s*=\s*(?:["']([^"']*)["']|([^\s>]+))/iu.exec(tag);
+  const content: RegExpExecArray | null = /content\s*=\s*(?:["']([^"']*)["']|([^\s>]+))/iu.exec(
+    tag,
+  );
   const value = (content?.[1] ?? content?.[2] ?? '').trim();
   return value || undefined;
 }
 
 function titleTag(html: string): string | undefined {
-  const match: RegExpExecArray | null =
-    /<title[^>]*>([\s\S]*?)<\/title>/iu.exec(html);
+  const match: RegExpExecArray | null = /<title[^>]*>([\s\S]*?)<\/title>/iu.exec(html);
   return match?.[1]?.trim() || undefined;
 }
 
@@ -328,17 +314,14 @@ const NAMED_ENTITIES: Record<string, string> = {
 };
 
 function decodeEntities(value: string): string {
-  return value.replace(
-    /&(#x?[0-9a-f]+|[a-z]+);/giu,
-    (match, entity: string) => {
-      const lower = entity.toLowerCase();
-      if (lower.startsWith('#x')) {
-        return String.fromCodePoint(Number.parseInt(entity.slice(2), 16));
-      }
-      if (lower.startsWith('#')) {
-        return String.fromCodePoint(Number.parseInt(entity.slice(1), 10));
-      }
-      return NAMED_ENTITIES[lower] ?? match;
-    },
-  );
+  return value.replace(/&(#x?[0-9a-f]+|[a-z]+);/giu, (match, entity: string) => {
+    const lower = entity.toLowerCase();
+    if (lower.startsWith('#x')) {
+      return String.fromCodePoint(Number.parseInt(entity.slice(2), 16));
+    }
+    if (lower.startsWith('#')) {
+      return String.fromCodePoint(Number.parseInt(entity.slice(1), 10));
+    }
+    return NAMED_ENTITIES[lower] ?? match;
+  });
 }

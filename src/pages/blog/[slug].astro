@@ -19,10 +19,7 @@ import { articlePortableTextComponents } from '../../components/portable-text/co
 import { codeRenderCacheKeys } from '../../lib/code-render';
 import { prefetchLinkPreviews } from '../../lib/link-card';
 import { prefetchRenderCache } from '../../lib/render-cache';
-import {
-  withFootnoteBacklinks,
-  withMarkdownFootnotes,
-} from '../../lib/footnotes';
+import { withFootnoteBacklinks, withMarkdownFootnotes } from '../../lib/footnotes';
 import { findRelatedBlogSlugs } from '../../lib/blog-index';
 import { getReadingTime } from '../../utils/reading-time';
 import { resolveBlogSiteIdentity } from '../../utils/site-identity';
@@ -50,19 +47,16 @@ const loadRecentBlogs = async () => {
     limit: RELATED_BLOGS_COUNT + 1,
     offset: 0,
   });
-  return recentBlogs
-    .filter((p) => p.id !== blog.id)
-    .slice(0, RELATED_BLOGS_COUNT);
+  return recentBlogs.filter((p) => p.id !== blog.id).slice(0, RELATED_BLOGS_COUNT);
 };
 
 const loadRelatedBlogs = async () => {
-  const slugs: string[] = await findRelatedBlogSlugs(
-    blog.data.id,
-    RELATED_BLOGS_COUNT,
-  ).catch((error: unknown) => {
-    console.error('関連記事の算出に失敗しました', error);
-    return [];
-  });
+  const slugs: string[] = await findRelatedBlogSlugs(blog.data.id, RELATED_BLOGS_COUNT).catch(
+    (error: unknown) => {
+      console.error('関連記事の算出に失敗しました', error);
+      return [];
+    },
+  );
   if (slugs.length === 0) {
     return loadRecentBlogs();
   }
@@ -103,9 +97,7 @@ const seo = getSeoMeta(blog, {
 });
 
 const bylines = blog.data.bylines ?? [];
-const authorNames = bylines
-  .map((credit) => credit.byline.displayName)
-  .join('、');
+const authorNames = bylines.map((credit) => credit.byline.displayName).join('、');
 
 const readingTime = getReadingTime(blog.data.content);
 
@@ -211,10 +203,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
           </div>
 
           <div class='prose'>
-            <PortableText
-              value={content}
-              components={articlePortableTextComponents}
-            />
+            <PortableText value={content} components={articlePortableTextComponents} />
           </div>
 
           <footer class='article-foot'>
@@ -328,10 +317,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
         }
         currentId = activeId;
         links.forEach((a) => {
-          a.classList.toggle(
-            'active',
-            a.getAttribute('href') === `#${activeId}`,
-          );
+          a.classList.toggle('active', a.getAttribute('href') === `#${activeId}`);
         });
       }
 

@@ -50,9 +50,7 @@ export function withMarkdownFootnotes<T>(content: T): T {
   const order: string[] = [];
   let keyIndex = 0;
   const nextKey = () => `fnauto-${keyIndex++}`;
-  const linked = body.map((item) =>
-    linkReferences(item, definitions, order, nextKey),
-  );
+  const linked = body.map((item) => linkReferences(item, definitions, order, nextKey));
   if (order.length === 0) {
     return content;
   }
@@ -60,9 +58,7 @@ export function withMarkdownFootnotes<T>(content: T): T {
   return [...linked, footnoteSection(order, definitions)] as T;
 }
 
-function definitionOf(
-  item: unknown,
-): { identifier: string; value: Definition } | null {
+function definitionOf(item: unknown): { identifier: string; value: Definition } | null {
   if (!isPlainObject(item) || item._type !== 'block' || item.listItem) {
     return null;
   }
@@ -70,9 +66,7 @@ function definitionOf(
   if (typeof style === 'string' && style !== 'normal') {
     return null;
   }
-  const children = Array.isArray(item.children)
-    ? (item.children as Span[])
-    : [];
+  const children = Array.isArray(item.children) ? (item.children as Span[]) : [];
   const [first] = children;
   const text = typeof first?.text === 'string' ? first.text : '';
   const match: RegExpExecArray | null = DEFINITION_MARKER.exec(text);
@@ -80,17 +74,12 @@ function definitionOf(
     return null;
   }
   const rest = text.slice(match[0].length);
-  const body = [
-    ...(rest ? [{ ...first, text: rest }] : []),
-    ...children.slice(1),
-  ];
+  const body = [...(rest ? [{ ...first, text: rest }] : []), ...children.slice(1)];
   return {
     identifier: match[1],
     value: {
       children: body,
-      markDefs: Array.isArray(item.markDefs)
-        ? (item.markDefs as MarkDef[])
-        : [],
+      markDefs: Array.isArray(item.markDefs) ? (item.markDefs as MarkDef[]) : [],
     },
   };
 }
@@ -104,12 +93,8 @@ function linkReferences(
   if (!isPlainObject(item) || item._type !== 'block') {
     return item;
   }
-  const children = Array.isArray(item.children)
-    ? (item.children as Span[])
-    : [];
-  const markDefs = Array.isArray(item.markDefs)
-    ? [...(item.markDefs as MarkDef[])]
-    : [];
+  const children = Array.isArray(item.children) ? (item.children as Span[]) : [];
+  const markDefs = Array.isArray(item.markDefs) ? [...(item.markDefs as MarkDef[])] : [];
   let changed = false;
   const next: Span[] = [];
 
@@ -179,10 +164,7 @@ function numberOf(identifier: string, order: string[]): number {
   return order.length;
 }
 
-function footnoteSection(
-  order: string[],
-  definitions: Map<string, Definition>,
-): Json {
+function footnoteSection(order: string[], definitions: Map<string, Definition>): Json {
   const items = order
     .map((identifier, index) => {
       const definition = definitions.get(identifier);
@@ -246,9 +228,7 @@ export function withFootnoteBacklinks<T>(content: T): T {
 
 function isPlainObject(value: unknown): value is Json {
   return (
-    typeof value === 'object' &&
-    value !== null &&
-    Object.getPrototypeOf(value) === Object.prototype
+    typeof value === 'object' && value !== null && Object.getPrototypeOf(value) === Object.prototype
   );
 }
 
@@ -262,17 +242,12 @@ function annotate(value: unknown, references: Map<string, string[]>): unknown {
   const next: Json = {};
   for (const [key, item] of Object.entries(value)) {
     next[key] =
-      key === 'markDefs'
-        ? annotateMarkDefs(item, references)
-        : annotate(item, references);
+      key === 'markDefs' ? annotateMarkDefs(item, references) : annotate(item, references);
   }
   return next;
 }
 
-function annotateMarkDefs(
-  value: unknown,
-  references: Map<string, string[]>,
-): unknown {
+function annotateMarkDefs(value: unknown, references: Map<string, string[]>): unknown {
   if (!Array.isArray(value)) {
     return value;
   }
@@ -297,10 +272,7 @@ function annotateMarkDefs(
   });
 }
 
-function injectBacklinks(
-  block: unknown,
-  references: Map<string, string[]>,
-): unknown {
+function injectBacklinks(block: unknown, references: Map<string, string[]>): unknown {
   if (
     !isPlainObject(block) ||
     block._type !== 'htmlBlock' ||
@@ -309,27 +281,23 @@ function injectBacklinks(
   ) {
     return block;
   }
-  const html = block.html.replace(
-    FOOTNOTE_ITEM,
-    (match, anchor: string, body: string) => {
-      const backlinks = (references.get(anchor) ?? [])
-        .map((refId, index) => backlink(refId, index))
-        .join(' ');
-      if (!backlinks) {
-        return match;
-      }
-      const inner = body.endsWith('</p>')
-        ? `${body.slice(0, -'</p>'.length)} ${backlinks}</p>`
-        : `${body} ${backlinks}`;
-      return `<li id="${anchor}">${inner}</li>`;
-    },
-  );
+  const html = block.html.replace(FOOTNOTE_ITEM, (match, anchor: string, body: string) => {
+    const backlinks = (references.get(anchor) ?? [])
+      .map((refId, index) => backlink(refId, index))
+      .join(' ');
+    if (!backlinks) {
+      return match;
+    }
+    const inner = body.endsWith('</p>')
+      ? `${body.slice(0, -'</p>'.length)} ${backlinks}</p>`
+      : `${body} ${backlinks}`;
+    return `<li id="${anchor}">${inner}</li>`;
+  });
   return { ...block, html };
 }
 
 function backlink(refId: string, index: number): string {
-  const ordinal =
-    index === 0 ? '' : `<span class="footnote-back-index">${index + 1}</span>`;
+  const ordinal = index === 0 ? '' : `<span class="footnote-back-index">${index + 1}</span>`;
   const label = index === 0 ? '本文へ戻る' : `本文へ戻る (${index + 1} 箇所目)`;
   return `<a class="footnote-back" href="#${refId}">↩${ordinal}<span class="footnote-back-label">${label}</span></a>`;
 }

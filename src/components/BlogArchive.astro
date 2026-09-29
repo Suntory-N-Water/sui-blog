@@ -35,12 +35,7 @@ const firstBlog = blogs[0];
 const lastBlog = blogs.at(-1);
 const newest = formatYearMonthJp(firstBlog?.data.createdAt);
 const oldest = formatYearMonthJp(lastBlog?.data.createdAt);
-const dateRange =
-  newest && oldest
-    ? newest === oldest
-      ? newest
-      : `${newest} — ${oldest}`
-    : null;
+const dateRange = newest && oldest ? (newest === oldest ? newest : `${newest} — ${oldest}`) : null;
 const sub = dateRange ? `${dateRange} / ${page} ページ目` : `${page} ページ目`;
 ---
 
@@ -74,9 +69,7 @@ const sub = dateRange ? `${dateRange} / ${page} ページ目` : `${page} ペー�
   ))
 )}
 
-{totalPages > 1 && (
-  <Pagination currentPage={page} totalPages={totalPages} basePath='/blog' />
-)}
+{totalPages > 1 && <Pagination currentPage={page} totalPages={totalPages} basePath='/blog' />}
 
 <style>
   .year-group {

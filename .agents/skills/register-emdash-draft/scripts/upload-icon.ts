@@ -51,11 +51,7 @@ async function main() {
   const altIndex = args.indexOf('--alt');
   const alt = altIndex >= 0 ? args[altIndex + 1] : undefined;
   const filename = args.find((arg, i) => i !== altIndex && i !== altIndex + 1);
-  if (
-    !filename ||
-    basename(filename) !== filename ||
-    !filename.endsWith('.svg')
-  )
+  if (!filename || basename(filename) !== filename || !filename.endsWith('.svg'))
     throw new Error(
       '使い方: bun upload-icon.ts <public/icons 内の SVG ファイル名> [--alt <代替テキスト>]',
     );
@@ -67,13 +63,7 @@ async function main() {
     `SELECT id FROM media WHERE status='ready' AND filename=${sqlString(filename)} LIMIT 1`,
   );
   if (existing[0]) {
-    console.log(
-      JSON.stringify(
-        { uploaded: false, id: existing[0].id, filename },
-        null,
-        2,
-      ),
-    );
+    console.log(JSON.stringify({ uploaded: false, id: existing[0].id, filename }, null, 2));
     return;
   }
 
@@ -85,11 +75,7 @@ async function main() {
     throw new Error('blogs の featured_image 項目が本番にありません');
 
   const form = new FormData();
-  form.append(
-    'file',
-    new Blob([readFileSync(filePath)], { type: 'image/svg+xml' }),
-    filename,
-  );
+  form.append('file', new Blob([readFileSync(filePath)], { type: 'image/svg+xml' }), filename);
   form.append('fieldId', fieldId);
   if (alt) form.append('alt', alt);
 
@@ -110,11 +96,7 @@ async function main() {
     );
   const { id, mimeType } = body.data.item;
   console.log(
-    JSON.stringify(
-      { uploaded: true, id, filename: body.data.item.filename, mimeType },
-      null,
-      2,
-    ),
+    JSON.stringify({ uploaded: true, id, filename: body.data.item.filename, mimeType }, null, 2),
   );
 }
 

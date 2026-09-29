@@ -16,5 +16,5 @@ export default {
   trailingComma: 'all',
   tabWidth: 2,
   useTabs: false,
-  printWidth: 80,
+  printWidth: 100,
 };

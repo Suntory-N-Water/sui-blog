@@ -15,8 +15,7 @@ export const GET: APIRoute = async ({ params, redirect }) => {
   }
   const normalizedBlog = asBlog(blog);
   const tags = normalizedBlog.data.terms?.tag ?? [];
-  const createdAt =
-    normalizedBlog.data.createdAt?.toISOString().slice(0, 10) ?? '';
+  const createdAt = normalizedBlog.data.createdAt?.toISOString().slice(0, 10) ?? '';
   const markdown = `---\ntitle: ${yamlString(normalizedBlog.data.title)}\ndescription: ${yamlString(normalizedBlog.data.excerpt ?? '')}\ndate: ${createdAt}\ntags:\n${tags.map((tag) => `  - ${yamlString(tag.label)}`).join('\n')}\n---\n\n${portableTextToMarkdown(normalizedBlog.data.content)}`;
   return new Response(markdown, {
     headers: {

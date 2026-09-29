@@ -12,16 +12,7 @@ export function sqlString(value: string): string {
 export function d1(sql: string): Json[] {
   const output = execFileSync(
     'npx',
-    [
-      'wrangler',
-      'd1',
-      'execute',
-      'sui-blog',
-      '--remote',
-      '--json',
-      '--command',
-      sql,
-    ],
+    ['wrangler', 'd1', 'execute', 'sui-blog', '--remote', '--json', '--command', sql],
     { cwd: PROJECT_ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] },
   );
   const parsed = JSON.parse(output) as Array<{ results?: Json[] }>;
@@ -33,9 +24,7 @@ function isObject(value: unknown): value is Json {
 }
 
 function normalizeTextBlock(block: Json): Json {
-  const markDefs = Array.isArray(block.markDefs)
-    ? (block.markDefs as Json[])
-    : [];
+  const markDefs = Array.isArray(block.markDefs) ? (block.markDefs as Json[]) : [];
   const hrefByKey = new Map(
     markDefs
       .filter((def) => def._type === 'link')
@@ -48,9 +37,7 @@ function normalizeTextBlock(block: Json): Json {
         Object.keys(def).some((k) => !['_key', '_type', 'href'].includes(k)),
     )
     .map((def) => normalize(def));
-  const children = Array.isArray(block.children)
-    ? (block.children as Json[])
-    : [];
+  const children = Array.isArray(block.children) ? (block.children as Json[]) : [];
   const result: Json = {};
   for (const [key, value] of Object.entries(block)) {
     if (key === '_key' || key === 'markDefs' || key === 'children') continue;
@@ -64,8 +51,7 @@ function normalizeTextBlock(block: Json): Json {
       if (key === '_key' || key === 'marks' || value === undefined) continue;
       normalized[key] = normalize(value);
     }
-    if (marks.length)
-      normalized.marks = marks.map((mark) => hrefByKey.get(mark) ?? mark);
+    if (marks.length) normalized.marks = marks.map((mark) => hrefByKey.get(mark) ?? mark);
     return normalized;
   });
   if (extraDefs.length) result.markDefs = extraDefs;
@@ -75,20 +61,13 @@ function normalizeTextBlock(block: Json): Json {
 export function normalize(value: unknown): unknown {
   if (Array.isArray(value)) return value.map((item) => normalize(item));
   if (!isObject(value)) return value;
-  if (
-    value._type === 'block' ||
-    (Array.isArray(value.markDefs) && Array.isArray(value.children))
-  )
+  if (value._type === 'block' || (Array.isArray(value.markDefs) && Array.isArray(value.children)))
     return normalizeTextBlock(value);
   const result: Json = {};
   for (const key of Object.keys(value).sort()) {
     const item = value[key];
     if (key === '_key' || item === undefined) continue;
-    if (
-      (key === 'marks' || key === 'markDefs') &&
-      Array.isArray(item) &&
-      item.length === 0
-    )
+    if ((key === 'marks' || key === 'markDefs') && Array.isArray(item) && item.length === 0)
       continue;
     result[key] = normalize(item);
   }

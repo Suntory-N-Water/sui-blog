@@ -8,15 +8,14 @@ import BlogArchive from '../../components/BlogArchive.astro';
 const PER_PAGE = 10;
 const page = 1;
 
-const [{ entries: blogs, hasMore, cacheHint, error }, total] =
-  await Promise.all([
-    getEmDashCollection('blogs', {
-      limit: PER_PAGE,
-      offset: (page - 1) * PER_PAGE,
-      orderBy: { modified_time: 'desc' },
-    }),
-    countPublishedBlogs(),
-  ]);
+const [{ entries: blogs, hasMore, cacheHint, error }, total] = await Promise.all([
+  getEmDashCollection('blogs', {
+    limit: PER_PAGE,
+    offset: (page - 1) * PER_PAGE,
+    orderBy: { modified_time: 'desc' },
+  }),
+  countPublishedBlogs(),
+]);
 
 if (error) {
   return new Response(null, { status: 500 });
@@ -24,10 +23,7 @@ if (error) {
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
-const totalPages = Math.max(
-  Math.ceil(total / PER_PAGE),
-  hasMore ? page + 1 : page,
-);
+const totalPages = Math.max(Math.ceil(total / PER_PAGE), hasMore ? page + 1 : page);
 
 const tagsByEntry = await getTermsForEntries(
   'blogs',
@@ -38,11 +34,6 @@ const tagsByEntry = await getTermsForEntries(
 
 <Base title='記事一覧' description='すべての記事の一覧'>
   <PageShell>
-    <BlogArchive
-      blogs={blogs}
-      tagsByEntry={tagsByEntry}
-      page={page}
-      totalPages={totalPages}
-    />
+    <BlogArchive blogs={blogs} tagsByEntry={tagsByEntry} page={page} totalPages={totalPages} />
   </PageShell>
 </Base>

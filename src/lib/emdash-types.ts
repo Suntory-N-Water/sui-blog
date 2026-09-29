@@ -18,9 +18,7 @@ export type PublicBlog = {
 };
 
 function asRecord(value: unknown): Record<string, unknown> {
-  return typeof value === 'object' && value !== null
-    ? (value as Record<string, unknown>)
-    : {};
+  return typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : {};
 }
 
 function asDate(value: unknown): Date | undefined {
@@ -46,12 +44,7 @@ export function asBlog(value: unknown): PublicBlog {
           : [];
       })
     : [];
-  const id =
-    typeof root.id === 'string'
-      ? root.id
-      : typeof raw.id === 'string'
-        ? raw.id
-        : '';
+  const id = typeof root.id === 'string' ? root.id : typeof raw.id === 'string' ? raw.id : '';
   return {
     id,
     data: {

@@ -23,17 +23,13 @@ function blockText(block: PortableTextTextBlock): string {
   return block.children
     .filter(
       (child) =>
-        child._type === 'span' &&
-        typeof child.text === 'string' &&
-        !child.marks?.includes('code'),
+        child._type === 'span' && typeof child.text === 'string' && !child.marks?.includes('code'),
     )
     .map((span) => span.text)
     .join('');
 }
 
-export function getReadingTime(
-  content: PortableTextBlock[] | undefined,
-): number {
+export function getReadingTime(content: PortableTextBlock[] | undefined): number {
   if (!Array.isArray(content)) {
     return 1;
   }

@@ -43,9 +43,7 @@
         "400i": { "thickness": 5, "slant": 4, "width": 7, "lineHeight": 1.2 },
         "500": { "thickness": 6, "slant": 1, "width": 7, "lineHeight": 1.2 }
       },
-      "axes": [
-        { "tag": "wght", "min": 100.0, "max": 900.0, "defaultValue": 400.0 }
-      ],
+      "axes": [{ "tag": "wght", "min": 100.0, "max": 900.0, "defaultValue": 400.0 }],
       "designers": ["Ada Type", "Binh Fonts"],
       "lastModified": "2025-01-03",
       "dateAdded": "2020-02-20",

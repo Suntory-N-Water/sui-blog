@@ -55,9 +55,7 @@
       "mode": "domain",
       "query": "frosted glass transparent blurred layered UI",
       "domain": "style",
-      "judgments": [
-        { "identity": { "Style Category": "Glassmorphism" }, "grade": 2 }
-      ],
+      "judgments": [{ "identity": { "Style Category": "Glassmorphism" }, "grade": 2 }],
       "tags": ["exact-intent", "domain-positive"],
       "notes": "Canonical visual treatment, expressed through its descriptive attributes."
     },
@@ -98,9 +96,7 @@
       "mode": "domain",
       "query": "cybersecurty threat dashboard matrix green dark pallete",
       "domain": "color",
-      "judgments": [
-        { "identity": { "Product Type": "Cybersecurity Platform" }, "grade": 2 }
-      ],
+      "judgments": [{ "identity": { "Product Type": "Cybersecurity Platform" }, "grade": 2 }],
       "tags": ["typo", "domain-positive"],
       "notes": "Deliberately misspells cybersecurity and palette."
     },
@@ -190,9 +186,7 @@
       "mode": "domain",
       "query": "platform for monitoring digital threats and protecting systems",
       "domain": "product",
-      "judgments": [
-        { "identity": { "Product Type": "Cybersecurity Platform" }, "grade": 2 }
-      ],
+      "judgments": [{ "identity": { "Product Type": "Cybersecurity Platform" }, "grade": 2 }],
       "tags": ["paraphrase", "domain-positive"],
       "notes": "Avoids the exact keyword cyber."
     },
@@ -1549,9 +1543,7 @@
       "split": "calibration",
       "mode": "design-system",
       "query": "cybersecurity threat monitoring platform dark mode",
-      "judgments": [
-        { "identity": { "Product Type": "Cybersecurity Platform" }, "grade": 2 }
-      ],
+      "judgments": [{ "identity": { "Product Type": "Cybersecurity Platform" }, "grade": 2 }],
       "coherence": {
         "productCategory": "Cybersecurity Platform",
         "styleNames": ["Cyberpunk UI", "Dark Mode (OLED)", "HUD / Sci-Fi FUI"],
@@ -1624,9 +1616,7 @@
       "split": "held_out",
       "mode": "design-system",
       "query": "creative portfolio website with dark mode and scroll storytelling",
-      "judgments": [
-        { "identity": { "Product Type": "Portfolio/Personal" }, "grade": 2 }
-      ],
+      "judgments": [{ "identity": { "Product Type": "Portfolio/Personal" }, "grade": 2 }],
       "coherence": {
         "productCategory": "Portfolio/Personal",
         "styleNames": [
@@ -1695,12 +1685,7 @@
       ],
       "coherence": {
         "productCategory": "Beauty/Spa/Wellness Service",
-        "styleNames": [
-          "Soft UI Evolution",
-          "Neumorphism",
-          "Organic Biophilic",
-          "Nature Distilled"
-        ],
+        "styleNames": ["Soft UI Evolution", "Neumorphism", "Organic Biophilic", "Nature Distilled"],
         "patternNames": [
           "Hero-Centric + Social Proof",
           "Hero-Centric Design",
@@ -1716,9 +1701,7 @@
       "split": "held_out",
       "mode": "design-system",
       "query": "cybersecurty operatons center with live threat alerts and OLED UI",
-      "judgments": [
-        { "identity": { "Product Type": "Cybersecurity Platform" }, "grade": 2 }
-      ],
+      "judgments": [{ "identity": { "Product Type": "Cybersecurity Platform" }, "grade": 2 }],
       "coherence": {
         "productCategory": "Cybersecurity Platform",
         "styleNames": ["Cyberpunk UI", "Dark Mode (OLED)", "HUD / Sci-Fi FUI"],

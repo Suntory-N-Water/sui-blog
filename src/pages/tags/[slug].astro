@@ -1,10 +1,5 @@
 ---
-import {
-  getTerm,
-  getEmDashCollection,
-  getTermsForEntries,
-  decodeSlug,
-} from 'emdash';
+import { getTerm, getEmDashCollection, getTermsForEntries, decodeSlug } from 'emdash';
 import Base from '../../layouts/Base.astro';
 import PageShell from '../../components/PageShell.astro';
 import ArchiveHead from '../../components/ArchiveHead.astro';
@@ -37,10 +32,7 @@ const filteredBlogs = blogs.map((blog) => ({
 }));
 ---
 
-<Base
-  title={`#${term.label} の記事`}
-  description={`「${term.label}」タグが付いた記事の一覧`}
->
+<Base title={`#${term.label} の記事`} description={`「${term.label}」タグが付いた記事の一覧`}>
   <PageShell>
     <ArchiveHead title={`#${term.label}`} sub={`${filteredBlogs.length} 件`} />
 

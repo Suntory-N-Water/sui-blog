@@ -1,9 +1,7 @@
 type RecordValue = Record<string, unknown>;
 
 function record(value: unknown): RecordValue {
-  return typeof value === 'object' && value !== null
-    ? (value as RecordValue)
-    : {};
+  return typeof value === 'object' && value !== null ? (value as RecordValue) : {};
 }
 
 function mediaUrl(value: unknown): string | null {
@@ -37,10 +35,7 @@ function inlineToMarkdown({
         : [];
       for (const mark of marks) {
         const definition = defs.find((def) => def._key === mark);
-        if (
-          definition?._type === 'link' &&
-          typeof definition.href === 'string'
-        ) {
+        if (definition?._type === 'link' && typeof definition.href === 'string') {
           text = `[${text}](${definition.href})`;
         } else if (mark === 'strong') {
           text = `**${text}**`;
@@ -84,8 +79,7 @@ function blockToMarkdown(block: RecordValue): string {
   }
   if (type === 'code') {
     const language = typeof block.language === 'string' ? block.language : '';
-    const filename =
-      typeof block.filename === 'string' ? ` ${block.filename}` : '';
+    const filename = typeof block.filename === 'string' ? ` ${block.filename}` : '';
     return `\`\`\`${language}${filename}\n${typeof block.code === 'string' ? block.code : ''}\n\`\`\``;
   }
   if (type === 'image') {
@@ -107,11 +101,7 @@ function blockToMarkdown(block: RecordValue): string {
     });
     if (rendered.length > 0) {
       const columns = Array.isArray(rows[0]?.cells) ? rows[0].cells.length : 1;
-      rendered.splice(
-        1,
-        0,
-        `| ${Array.from({ length: columns }, () => '---').join(' | ')} |`,
-      );
+      rendered.splice(1, 0, `| ${Array.from({ length: columns }, () => '---').join(' | ')} |`);
     }
     return rendered.join('\n');
   }

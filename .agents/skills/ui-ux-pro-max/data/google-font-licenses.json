@@ -2425,11 +2425,7 @@
       "name": "Caprasimo",
       "license": "OFL",
       "date_added": "2023-06-14",
-      "designer": [
-        "The DocRepair Project",
-        "Phaedra Charles",
-        "Flavia Zimbardi"
-      ],
+      "designer": ["The DocRepair Project", "Phaedra Charles", "Flavia Zimbardi"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -2509,12 +2505,7 @@
       "name": "Cascadia Code",
       "license": "OFL",
       "date_added": "2025-04-17",
-      "designer": [
-        "Aaron Bell",
-        "Mohamad Dakak",
-        "Viktoriya Grabowska",
-        "Liron Lavi Turkenich"
-      ],
+      "designer": ["Aaron Bell", "Mohamad Dakak", "Viktoriya Grabowska", "Liron Lavi Turkenich"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -2522,12 +2513,7 @@
       "name": "Cascadia Mono",
       "license": "OFL",
       "date_added": "2025-04-17",
-      "designer": [
-        "Aaron Bell",
-        "Mohamad Dakak",
-        "Viktoriya Grabowska",
-        "Liron Lavi Turkenich"
-      ],
+      "designer": ["Aaron Bell", "Mohamad Dakak", "Viktoriya Grabowska", "Liron Lavi Turkenich"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -2535,12 +2521,7 @@
       "name": "Castoro",
       "license": "OFL",
       "date_added": "2020-11-03",
-      "designer": [
-        "Tiro Typeworks",
-        "John Hudson",
-        "Paul Hanslow",
-        "Kaja Słojewska"
-      ],
+      "designer": ["Tiro Typeworks", "John Hudson", "Paul Hanslow", "Kaja Słojewska"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -4132,11 +4113,7 @@
       "name": "Fira Code",
       "license": "OFL",
       "date_added": "2019-03-24",
-      "designer": [
-        "The Mozilla Foundation",
-        "Telefonica S.A.",
-        "Nikita Prokopov"
-      ],
+      "designer": ["The Mozilla Foundation", "Telefonica S.A.", "Nikita Prokopov"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -4416,11 +4393,7 @@
       "name": "Ga Maamli",
       "license": "OFL",
       "date_added": "2024-06-25",
-      "designer": [
-        "Afotey Clement Nii Odai",
-        "Ama Diaka",
-        "David Abbey-Thompson"
-      ],
+      "designer": ["Afotey Clement Nii Odai", "Ama Diaka", "David Abbey-Thompson"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -4428,12 +4401,7 @@
       "name": "Gabarito",
       "license": "OFL",
       "date_added": "2023-09-12",
-      "designer": [
-        "Naipe Foundry",
-        "Leandro Assis",
-        "Álvaro Franca",
-        "Felipe Casaprima"
-      ],
+      "designer": ["Naipe Foundry", "Leandro Assis", "Álvaro Franca", "Felipe Casaprima"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -4991,12 +4959,7 @@
       "name": "Gulzar",
       "license": "OFL",
       "date_added": "2022-05-13",
-      "designer": [
-        "Borna Izadpanah",
-        "Fiona Ross",
-        "Alice Savoie",
-        "Simon Cozens"
-      ],
+      "designer": ["Borna Izadpanah", "Fiona Ross", "Alice Savoie", "Simon Cozens"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -5316,12 +5279,7 @@
       "name": "Hubot Sans",
       "license": "OFL",
       "date_added": "2024-11-04",
-      "designer": [
-        "Tobias Bjerrome Ahlin",
-        "Github",
-        "Degarism Studio",
-        "Sebastian Carewe"
-      ],
+      "designer": ["Tobias Bjerrome Ahlin", "Github", "Degarism Studio", "Sebastian Carewe"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -5377,12 +5335,7 @@
       "name": "IBM Plex Sans Arabic",
       "license": "OFL",
       "date_added": "2021-06-17",
-      "designer": [
-        "Mike Abbink",
-        "Bold Monday",
-        "Khajag Apelian",
-        "Wael Morcos"
-      ],
+      "designer": ["Mike Abbink", "Bold Monday", "Khajag Apelian", "Wael Morcos"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -6988,12 +6941,7 @@
       "name": "Lilex",
       "license": "OFL",
       "date_added": "2025-12-08",
-      "designer": [
-        "Mike Abbink",
-        "Paul van der Laan",
-        "Pieter van Rosmalen",
-        "Mikhael Khrustik"
-      ],
+      "designer": ["Mike Abbink", "Paul van der Laan", "Pieter van Rosmalen", "Mikhael Khrustik"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -7969,12 +7917,7 @@
       "name": "Mona Sans",
       "license": "OFL",
       "date_added": "2024-11-04",
-      "designer": [
-        "Tobias Bjerrome Ahlin",
-        "Github",
-        "Degarism Studio",
-        "Sebastian Carewe"
-      ],
+      "designer": ["Tobias Bjerrome Ahlin", "Github", "Degarism Studio", "Sebastian Carewe"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -8070,12 +8013,7 @@
       "name": "Montserrat",
       "license": "OFL",
       "date_added": "2011-12-13",
-      "designer": [
-        "Julieta Ulanovsky",
-        "Sol Matas",
-        "Juan Pablo del Peral",
-        "Jacques Le Bailly"
-      ],
+      "designer": ["Julieta Ulanovsky", "Sol Matas", "Juan Pablo del Peral", "Jacques Le Bailly"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -8083,12 +8021,7 @@
       "name": "Montserrat Alternates",
       "license": "OFL",
       "date_added": "2012-10-01",
-      "designer": [
-        "Julieta Ulanovsky",
-        "Sol Matas",
-        "Juan Pablo del Peral",
-        "Jacques Le Bailly"
-      ],
+      "designer": ["Julieta Ulanovsky", "Sol Matas", "Juan Pablo del Peral", "Jacques Le Bailly"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -8096,12 +8029,7 @@
       "name": "Montserrat Underline",
       "license": "OFL",
       "date_added": "2024-12-02",
-      "designer": [
-        "Julieta Ulanovsky",
-        "Sol Matas",
-        "Juan Pablo del Peral",
-        "Jacques Le Bailly"
-      ],
+      "designer": ["Julieta Ulanovsky", "Sol Matas", "Juan Pablo del Peral", "Jacques Le Bailly"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -10333,12 +10261,7 @@
       "name": "Nunito Sans",
       "license": "OFL",
       "date_added": "2016-12-07",
-      "designer": [
-        "Vernon Adams",
-        "Jacques Le Bailly",
-        "Manvel Shmavonyan",
-        "Alexei Vanyashin"
-      ],
+      "designer": ["Vernon Adams", "Jacques Le Bailly", "Manvel Shmavonyan", "Alexei Vanyashin"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -10602,12 +10525,7 @@
       "name": "Pacifico",
       "license": "OFL",
       "date_added": "2011-03-09",
-      "designer": [
-        "Vernon Adams",
-        "Jacques Le Bailly",
-        "Botjo Nikoltchev",
-        "Ani Petrova"
-      ],
+      "designer": ["Vernon Adams", "Jacques Le Bailly", "Botjo Nikoltchev", "Ani Petrova"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -11913,12 +11831,7 @@
       "name": "Poltawski Nowy",
       "license": "OFL",
       "date_added": "2023-04-19",
-      "designer": [
-        "Adam Półtawski",
-        "Mateusz Machalski",
-        "Borys Kosmynka",
-        "Ania Wieluńska"
-      ],
+      "designer": ["Adam Półtawski", "Mateusz Machalski", "Borys Kosmynka", "Ania Wieluńska"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -12174,12 +12087,7 @@
       "name": "Public Sans",
       "license": "OFL",
       "date_added": "2019-06-07",
-      "designer": [
-        "USWDS",
-        "Dan Williams",
-        "Pablo Impallari",
-        "Rodrigo Fuenzalida"
-      ],
+      "designer": ["USWDS", "Dan Williams", "Pablo Impallari", "Rodrigo Fuenzalida"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -12352,12 +12260,7 @@
       "name": "Raleway Dots",
       "license": "OFL",
       "date_added": "2012-09-07",
-      "designer": [
-        "Matt McInerney",
-        "Pablo Impallari",
-        "Rodrigo Fuenzalida",
-        "Brenda Gallo"
-      ],
+      "designer": ["Matt McInerney", "Pablo Impallari", "Rodrigo Fuenzalida", "Brenda Gallo"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -12827,13 +12730,7 @@
       "name": "Rubik",
       "license": "OFL",
       "date_added": "2015-07-22",
-      "designer": [
-        "Hubert and Fischer",
-        "Meir Sadan",
-        "Cyreal",
-        "Daniel Grumer",
-        "Omaima Dajani"
-      ],
+      "designer": ["Hubert and Fischer", "Meir Sadan", "Cyreal", "Daniel Grumer", "Omaima Dajani"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -14201,12 +14098,7 @@
       "name": "STIX Two Math",
       "license": "OFL",
       "date_added": "2021-04-15",
-      "designer": [
-        "Tiro Typeworks",
-        "Ross Mills",
-        "John Hudson",
-        "Paul Hanslow"
-      ],
+      "designer": ["Tiro Typeworks", "Ross Mills", "John Hudson", "Paul Hanslow"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -14214,12 +14106,7 @@
       "name": "STIX Two Text",
       "license": "OFL",
       "date_added": "2021-04-15",
-      "designer": [
-        "Tiro Typeworks",
-        "Ross Mills",
-        "John Hudson",
-        "Paul Hanslow"
-      ],
+      "designer": ["Tiro Typeworks", "Ross Mills", "John Hudson", "Paul Hanslow"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -14673,12 +14560,7 @@
       "name": "Tiro Bangla",
       "license": "OFL",
       "date_added": "2022-05-25",
-      "designer": [
-        "Tiro Typeworks",
-        "John Hudson",
-        "Fiona Ross",
-        "Neelakash Kshetrimayum"
-      ],
+      "designer": ["Tiro Typeworks", "John Hudson", "Fiona Ross", "Neelakash Kshetrimayum"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -14686,12 +14568,7 @@
       "name": "Tiro Devanagari Hindi",
       "license": "OFL",
       "date_added": "2022-05-25",
-      "designer": [
-        "Tiro Typeworks",
-        "John Hudson",
-        "Fiona Ross",
-        "Paul Hanslow"
-      ],
+      "designer": ["Tiro Typeworks", "John Hudson", "Fiona Ross", "Paul Hanslow"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -14699,12 +14576,7 @@
       "name": "Tiro Devanagari Marathi",
       "license": "OFL",
       "date_added": "2022-05-25",
-      "designer": [
-        "Tiro Typeworks",
-        "John Hudson",
-        "Fiona Ross",
-        "Paul Hanslow"
-      ],
+      "designer": ["Tiro Typeworks", "John Hudson", "Fiona Ross", "Paul Hanslow"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -14712,12 +14584,7 @@
       "name": "Tiro Devanagari Sanskrit",
       "license": "OFL",
       "date_added": "2022-05-25",
-      "designer": [
-        "Tiro Typeworks",
-        "John Hudson",
-        "Fiona Ross",
-        "Paul Hanslow"
-      ],
+      "designer": ["Tiro Typeworks", "John Hudson", "Fiona Ross", "Paul Hanslow"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -14725,12 +14592,7 @@
       "name": "Tiro Gurmukhi",
       "license": "OFL",
       "date_added": "2022-05-25",
-      "designer": [
-        "Tiro Typeworks",
-        "John Hudson",
-        "Fiona Ross",
-        "Paul Hanslow"
-      ],
+      "designer": ["Tiro Typeworks", "John Hudson", "Fiona Ross", "Paul Hanslow"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -14738,12 +14600,7 @@
       "name": "Tiro Kannada",
       "license": "OFL",
       "date_added": "2022-05-25",
-      "designer": [
-        "Tiro Typeworks",
-        "John Hudson",
-        "Fiona Ross",
-        "Kaja Słojewska"
-      ],
+      "designer": ["Tiro Typeworks", "John Hudson", "Fiona Ross", "Kaja Słojewska"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -14751,12 +14608,7 @@
       "name": "Tiro Tamil",
       "license": "OFL",
       "date_added": "2022-05-25",
-      "designer": [
-        "Tiro Typeworks",
-        "Fernando Mello",
-        "Fiona Ross",
-        "Kaja Słojewska"
-      ],
+      "designer": ["Tiro Typeworks", "Fernando Mello", "Fiona Ross", "Kaja Słojewska"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },
@@ -14764,12 +14616,7 @@
       "name": "Tiro Telugu",
       "license": "OFL",
       "date_added": "2022-05-25",
-      "designer": [
-        "Tiro Typeworks",
-        "John Hudson",
-        "Fiona Ross",
-        "Kaja Słojewska"
-      ],
+      "designer": ["Tiro Typeworks", "John Hudson", "Fiona Ross", "Kaja Słojewska"],
       "status": "active",
       "verifiedAt": "2026-08-13"
     },

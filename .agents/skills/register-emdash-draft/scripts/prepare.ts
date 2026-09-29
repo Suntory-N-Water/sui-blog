@@ -41,15 +41,11 @@ const key = (_kind: string) => `p${(++counter).toString(36)}`;
 const warnings: string[] = [];
 const images: ImageRef[] = [];
 
-const children = (node: Node): Node[] =>
-  Array.isArray(node.children) ? node.children : [];
+const children = (node: Node): Node[] => (Array.isArray(node.children) ? node.children : []);
 const str = (value: unknown) => (typeof value === 'string' ? value : undefined);
 
 function rewriteLegacyUrl(value: string): string {
-  return value.replace(
-    /https:\/\/suntory-n-water\.com\/blog\/([\w-]+)/gu,
-    '/blog/$1',
-  );
+  return value.replace(/https:\/\/suntory-n-water\.com\/blog\/([\w-]+)/gu, '/blog/$1');
 }
 
 function filenameOf(url: string): string {
@@ -84,10 +80,7 @@ function span(text: string, marks: string[]): Span {
   };
 }
 
-function inline(
-  nodes: Node[],
-  marks: string[] = [],
-): { pieces: Piece[]; markDefs: Json[] } {
+function inline(nodes: Node[], marks: string[] = []): { pieces: Piece[]; markDefs: Json[] } {
   const pieces: Piece[] = [];
   const markDefs: Json[] = [];
   const push = (text: string, extra: string[] = []) =>
@@ -109,11 +102,7 @@ function inline(
       case 'emphasis':
       case 'delete': {
         const mark =
-          node.type === 'strong'
-            ? 'strong'
-            : node.type === 'emphasis'
-              ? 'em'
-              : 'strike-through';
+          node.type === 'strong' ? 'strong' : node.type === 'emphasis' ? 'em' : 'strike-through';
         const nested = inline(children(node), [...marks, mark]);
         pieces.push(...nested.pieces);
         markDefs.push(...nested.markDefs);
@@ -142,14 +131,12 @@ function inline(
       }
       case 'image': {
         const url = str(node.url);
-        if (url)
-          pieces.push({ kind: 'image', image: imageBlock(url, str(node.alt)) });
+        if (url) pieces.push({ kind: 'image', image: imageBlock(url, str(node.alt)) });
         break;
       }
       case 'footnoteReference': {
         const id = str(node.label) ?? str(node.identifier) ?? '?';
-        if (marks.includes('code'))
-          warnings.push(`脚注 [^${id}] がコード内にあります`);
+        if (marks.includes('code')) warnings.push(`脚注 [^${id}] がコード内にあります`);
         push(`[^${id}]`);
         break;
       }
@@ -162,9 +149,7 @@ function inline(
         } else if (/^\s*<br\s*\/?>\s*$/iu.test(raw)) {
           push('\n');
         } else {
-          warnings.push(
-            `行内の HTML を文字列として残しました: ${raw.slice(0, 80)}`,
-          );
+          warnings.push(`行内の HTML を文字列として残しました: ${raw.slice(0, 80)}`);
           push(raw);
         }
         break;
@@ -181,10 +166,7 @@ function mergeSpans(spans: Span[]): Span[] {
   const merged: Span[] = [];
   for (const current of spans) {
     const last = merged.at(-1);
-    if (
-      last &&
-      (last.marks ?? []).join('\0') === (current.marks ?? []).join('\0')
-    ) {
+    if (last && (last.marks ?? []).join('\0') === (current.marks ?? []).join('\0')) {
       last.text += current.text;
       continue;
     }
@@ -236,23 +218,17 @@ function tableBlock(node: Node): Block {
         warnings.push('表のセル内の画像は変換できないため省きました');
       if (
         children(cell).some(function hasFootnote(n: Node): boolean {
-          return (
-            n.type === 'footnoteReference' || children(n).some(hasFootnote)
-          );
+          return n.type === 'footnoteReference' || children(n).some(hasFootnote);
         })
       )
         warnings.push(
           '表のセル内の脚注参照は番号付きリンクにならず [^id] の文字のまま表示されます',
         );
-      const spans = mergeSpans(
-        pieces.flatMap((p) => (p.kind === 'span' ? [p.span] : [])),
-      );
+      const spans = mergeSpans(pieces.flatMap((p) => (p.kind === 'span' ? [p.span] : [])));
       return {
         _type: 'tableCell',
         _key: key('table-cell'),
-        content: spans.length
-          ? spans
-          : [{ _type: 'span', _key: key('span'), text: '' }],
+        content: spans.length ? spans : [{ _type: 'span', _key: key('span'), text: '' }],
         ...(markDefs.length ? { markDefs } : {}),
         ...(rowIndex === 0 ? { isHeader: true } : {}),
       };
@@ -267,15 +243,11 @@ function tableBlock(node: Node): Block {
 }
 
 function alertLabel(node: Node): string | null {
-  const className = (
-    (node.data as Json | undefined)?.hProperties as Json | undefined
-  )?.className;
+  const className = ((node.data as Json | undefined)?.hProperties as Json | undefined)?.className;
   if (!Array.isArray(className)) return null;
   for (const name of className) {
     const kind =
-      typeof name === 'string' && name.startsWith('markdown-alert-')
-        ? name.slice(15)
-        : null;
+      typeof name === 'string' && name.startsWith('markdown-alert-') ? name.slice(15) : null;
     if (kind && ALERT_LABELS[kind]) return ALERT_LABELS[kind];
   }
   return null;
@@ -284,9 +256,7 @@ function alertLabel(node: Node): string | null {
 function stripAlertTitle(nodes: Node[]): Node[] {
   const [first, ...rest] = nodes;
   if (!first) return nodes;
-  const className = (
-    (first.data as Json | undefined)?.hProperties as Json | undefined
-  )?.className;
+  const className = ((first.data as Json | undefined)?.hProperties as Json | undefined)?.className;
   const names = Array.isArray(className) ? className : [className];
   return names.includes('markdown-alert-title') ? rest : nodes;
 }
@@ -297,11 +267,8 @@ function listBlocks(node: Node, level: number): Block[] {
   for (const item of children(node)) {
     for (const child of children(item)) {
       if (child.type === 'paragraph')
-        result.push(
-          ...textBlocks(children(child), 'normal', { listItem, level }),
-        );
-      else if (child.type === 'list')
-        result.push(...listBlocks(child, level + 1));
+        result.push(...textBlocks(children(child), 'normal', { listItem, level }));
+      else if (child.type === 'list') result.push(...listBlocks(child, level + 1));
       else result.push(...flow([child]));
     }
   }
@@ -316,10 +283,7 @@ function flow(nodes: Node[]): Block[] {
     switch (node.type) {
       case 'heading':
         result.push(
-          ...textBlocks(
-            children(node),
-            `h${Math.min(Math.max(Number(node.depth), 1), 6)}`,
-          ),
+          ...textBlocks(children(node), `h${Math.min(Math.max(Number(node.depth), 1), 6)}`),
         );
         break;
       case 'paragraph':
@@ -349,10 +313,8 @@ function flow(nodes: Node[]): Block[] {
         const language = str(node.lang);
         const meta = str(node.meta)?.trim();
         const filename = meta
-          ? (/(?:^|\s)title=(?:"([^"]*)"|'([^']*)'|(\S+))/u
-              .exec(meta)
-              ?.slice(1)
-              .find(Boolean) ?? meta.split(/\s+/u)[0])
+          ? (/(?:^|\s)title=(?:"([^"]*)"|'([^']*)'|(\S+))/u.exec(meta)?.slice(1).find(Boolean) ??
+            meta.split(/\s+/u)[0])
           : undefined;
         result.push({
           _type: 'code',
@@ -376,9 +338,7 @@ function flow(nodes: Node[]): Block[] {
           const alt = raw.match(/\balt\s*=\s*["']([^"']*)["']/iu)?.[1];
           result.push(imageBlock(src, alt));
         } else if (raw.trim() && !/^<!--[\s\S]*-->$/u.test(raw.trim())) {
-          warnings.push(
-            `HTML をそのまま htmlBlock に入れました: ${raw.slice(0, 80)}`,
-          );
+          warnings.push(`HTML をそのまま htmlBlock に入れました: ${raw.slice(0, 80)}`);
           result.push({ _type: 'htmlBlock', _key: key('html'), html: raw });
         }
         break;
@@ -407,9 +367,7 @@ function flow(nodes: Node[]): Block[] {
 
 function footnoteBlocks(): Block[] {
   return footnoteDefinitions.map(({ id, node }) => {
-    const paragraphs = children(node).filter(
-      (child) => child.type === 'paragraph',
-    );
+    const paragraphs = children(node).filter((child) => child.type === 'paragraph');
     if (paragraphs.length !== children(node).length)
       warnings.push(`脚注 [^${id}] の段落以外の要素は省きました`);
     const nodes: Node[] = paragraphs.flatMap((p, index) =>
@@ -451,27 +409,20 @@ function mediaByFilename(filenames: string[]): Map<string, MediaRow> {
 
 function normalizeDate(value: unknown): string | undefined {
   if (value === undefined || value === null || value === '') return undefined;
-  const raw =
-    value instanceof Date
-      ? value.toISOString().slice(0, 10)
-      : String(value).trim();
+  const raw = value instanceof Date ? value.toISOString().slice(0, 10) : String(value).trim();
   if (/^\d{4}-\d{2}-\d{2}$/u.test(raw)) return `${raw}T00:00:00.000Z`;
   const parsed = new Date(raw);
-  if (Number.isNaN(parsed.getTime()))
-    throw new Error(`日付として読めません: ${raw}`);
+  if (Number.isNaN(parsed.getTime())) throw new Error(`日付として読めません: ${raw}`);
   return parsed.toISOString();
 }
 
 function main() {
   const args = process.argv.slice(2);
   const slugOption = args.indexOf('--slug');
-  const slugOverride =
-    slugOption >= 0 ? args.splice(slugOption, 2)[1] : undefined;
+  const slugOverride = slugOption >= 0 ? args.splice(slugOption, 2)[1] : undefined;
   const input = args[0];
   if (!input) {
-    console.error(
-      'usage: bun prepare.ts contents/blog/<YYYY-MM-DD>_<slug>.md [--slug <slug>]',
-    );
+    console.error('usage: bun prepare.ts contents/blog/<YYYY-MM-DD>_<slug>.md [--slug <slug>]');
     process.exit(2);
   }
   const sourcePath = resolve(input);
@@ -479,10 +430,7 @@ function main() {
   const data = parsed.data as Json;
   const slug =
     slugOverride ??
-    String(
-      data.slug ??
-        basename(sourcePath, '.md').replace(/^\d{4}-\d{2}-\d{2}_/u, ''),
-    );
+    String(data.slug ?? basename(sourcePath, '.md').replace(/^\d{4}-\d{2}-\d{2}_/u, ''));
   const title = String(data.title ?? '').trim();
   const excerpt = String(data.description ?? '').trim();
   const errors: string[] = [];
@@ -499,13 +447,9 @@ function main() {
   const tree = processor.runSync(processor.parse(body)) as unknown as Node;
   const blocks = [...flow(children(tree)), ...footnoteBlocks()];
 
-  const iconFilename =
-    typeof data.icon_url === 'string' ? filenameOf(data.icon_url) : undefined;
+  const iconFilename = typeof data.icon_url === 'string' ? filenameOf(data.icon_url) : undefined;
   const media = mediaByFilename([
-    ...new Set([
-      ...images.map((i) => i.filename),
-      ...(iconFilename ? [iconFilename] : []),
-    ]),
+    ...new Set([...images.map((i) => i.filename), ...(iconFilename ? [iconFilename] : [])]),
   ]);
 
   const missingImages: ImageRef[] = [];
@@ -515,8 +459,7 @@ function main() {
     delete block.$image;
     const row = media.get(ref.filename);
     if (!row) {
-      if (!missingImages.some((m) => m.filename === ref.filename))
-        missingImages.push(ref);
+      if (!missingImages.some((m) => m.filename === ref.filename)) missingImages.push(ref);
       continue;
     }
     block.asset = {
@@ -537,8 +480,7 @@ function main() {
     const row = media.get(iconFilename);
     if (row) featuredImage = { id: row.id, provider: 'local', alt: title };
     else missingIcon = iconFilename;
-  } else
-    warnings.push('frontmatter に icon_url がないため OGP画像 を設定しません');
+  } else warnings.push('frontmatter に icon_url がないため OGP画像 を設定しません');
 
   const rawTags = Array.isArray(data.tags)
     ? data.tags.map((t) => String(t).trim()).filter(Boolean)
@@ -553,16 +495,12 @@ function main() {
   const unknownTags: Array<{ label: string; suggestedSlug: string }> = [];
   for (const tag of rawTags) {
     const lower = tag.toLowerCase();
-    const row = tagRows.find(
-      (r) => r.label.toLowerCase() === lower || r.slug === lower,
-    );
+    const row = tagRows.find((r) => r.label.toLowerCase() === lower || r.slug === lower);
     if (row) tagSlugs.push(row.slug);
     else
       unknownTags.push({
         label: tag,
-        suggestedSlug: lower
-          .replace(/[^a-z0-9]+/gu, '-')
-          .replace(/^-|-$/gu, ''),
+        suggestedSlug: lower.replace(/[^a-z0-9]+/gu, '-').replace(/^-|-$/gu, ''),
       });
   }
 
@@ -575,9 +513,7 @@ function main() {
   }
   const contentMarkdown = `${lines.join('\n\n')}\n`;
 
-  const roundTrip = markdownToPortableText(
-    contentMarkdown,
-  ) as unknown as Block[];
+  const roundTrip = markdownToPortableText(contentMarkdown) as unknown as Block[];
   if (canonical(roundTrip) !== canonical(blocks))
     errors.push('Markdown に戻した本文を読み直すと元のブロックと一致しません');
 
@@ -596,10 +532,7 @@ function main() {
     taxonomies: { tag: tagSlugs },
   };
   writeFileSync(join(outDir, 'content.md'), contentMarkdown);
-  writeFileSync(
-    join(outDir, 'payload.json'),
-    `${JSON.stringify(payload, null, 2)}\n`,
-  );
+  writeFileSync(join(outDir, 'payload.json'), `${JSON.stringify(payload, null, 2)}\n`);
   writeFileSync(
     join(outDir, 'expected.json'),
     `${JSON.stringify({ ...payload, content: blocks }, null, 2)}\n`,
@@ -611,10 +544,7 @@ function main() {
 
   const report = {
     ready:
-      errors.length === 0 &&
-      missingImages.length === 0 &&
-      !missingIcon &&
-      unknownTags.length === 0,
+      errors.length === 0 && missingImages.length === 0 && !missingIcon && unknownTags.length === 0,
     slug,
     files: {
       content: join(outDir, 'content.md'),

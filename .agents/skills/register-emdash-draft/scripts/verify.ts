@@ -18,9 +18,7 @@ function main() {
     console.error('usage: bun verify.ts <slug> [content id]');
     process.exit(2);
   }
-  const expected = JSON.parse(
-    readFileSync(join(WORK_DIR, slug, 'expected.json'), 'utf8'),
-  ) as {
+  const expected = JSON.parse(readFileSync(join(WORK_DIR, slug, 'expected.json'), 'utf8')) as {
     data: Json;
     content: unknown[];
     taxonomies: { tag: string[] };
@@ -35,11 +33,7 @@ function main() {
   const row = rows[0];
   if (!row) {
     console.log(
-      JSON.stringify(
-        { ok: false, errors: ['本番の D1 に該当する記事がありません'] },
-        null,
-        2,
-      ),
+      JSON.stringify({ ok: false, errors: ['本番の D1 に該当する記事がありません'] }, null, 2),
     );
     process.exitCode = 1;
     return;
@@ -55,10 +49,8 @@ function main() {
   };
 
   const errors: string[] = [];
-  if (row.status !== 'draft')
-    errors.push(`status が draft ではありません: ${String(row.status)}`);
-  if (row.locale !== 'ja')
-    errors.push(`locale が ja ではありません: ${String(row.locale)}`);
+  if (row.status !== 'draft') errors.push(`status が draft ではありません: ${String(row.status)}`);
+  if (row.locale !== 'ja') errors.push(`locale が ja ではありません: ${String(row.locale)}`);
   for (const field of ['title', 'excerpt', 'modified_time']) {
     const want = expected.data[field];
     if (want === undefined) continue;
@@ -74,10 +66,7 @@ function main() {
   }
   const wantImage = expected.data.featured_image as Json | undefined;
   const gotImage = parseJson(source.featured_image) as Json | null;
-  if (
-    wantImage &&
-    (gotImage?.id !== wantImage.id || gotImage?.alt !== wantImage.alt)
-  )
+  if (wantImage && (gotImage?.id !== wantImage.id || gotImage?.alt !== wantImage.alt))
     errors.push(
       `featured_image が一致しません: 期待 ${JSON.stringify(wantImage)} / 実際 ${JSON.stringify(gotImage)}`,
     );
@@ -109,9 +98,7 @@ function main() {
         ok: errors.length === 0,
         id: row.id,
         status: row.status,
-        storedIn: revision
-          ? `revisions (${String(row.draft_revision_id)})`
-          : 'ec_blogs',
+        storedIn: revision ? `revisions (${String(row.draft_revision_id)})` : 'ec_blogs',
         blocks: content.length,
         errors,
       },
