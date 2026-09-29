@@ -1,11 +1,6 @@
 ---
 import { getMenu, getSiteSettings } from 'emdash';
-import {
-  WidgetArea,
-  EmDashHead,
-  EmDashBodyStart,
-  EmDashBodyEnd,
-} from 'emdash/ui';
+import { WidgetArea, EmDashHead, EmDashBodyStart, EmDashBodyEnd } from 'emdash/ui';
 import { createPublicPageContext } from 'emdash/page';
 import LiveSearch from 'emdash/ui/search';
 import { Font } from 'astro:assets';
@@ -47,8 +42,7 @@ const [settings, menu, socialMenu] = await Promise.all([
   getMenu('social'),
 ]);
 const { siteTitle, siteTagline, siteLogo } = resolveBlogSiteIdentity(settings);
-const ogImage =
-  image ?? new URL('/opengraph-image.png', Astro.url.origin).toString();
+const ogImage = image ?? new URL('/opengraph-image.png', Astro.url.origin).toString();
 const fullTitle = title.includes(siteTitle) ? title : `${title} — ${siteTitle}`;
 const pageCtx = createPublicPageContext({
   Astro,
@@ -93,11 +87,7 @@ const isLoggedIn = !!Astro.locals.user;
       <nav class='nav' aria-label='サイト'>
         <a href='/' class='site-title'>
           {siteLogo ? (
-            <img
-              src={siteLogo.url}
-              alt={siteLogo.alt || siteTitle}
-              class='site-logo-img'
-            />
+            <img src={siteLogo.url} alt={siteLogo.alt || siteTitle} class='site-logo-img' />
           ) : (
             siteTitle
           )}
@@ -143,11 +133,7 @@ const isLoggedIn = !!Astro.locals.user;
           <div class='footer-brand'>
             <a href='/' class='footer-logo'>
               {siteLogo ? (
-                <img
-                  src={siteLogo.url}
-                  alt={siteLogo.alt || siteTitle}
-                  class='footer-logo-img'
-                />
+                <img src={siteLogo.url} alt={siteLogo.alt || siteTitle} class='footer-logo-img' />
               ) : (
                 siteTitle
               )}
@@ -177,11 +163,7 @@ const isLoggedIn = !!Astro.locals.user;
                   <a
                     href={item.url}
                     target={item.target}
-                    rel={
-                      item.target === '_blank'
-                        ? 'noopener noreferrer'
-                        : undefined
-                    }
+                    rel={item.target === '_blank' ? 'noopener noreferrer' : undefined}
                   >
                     {item.label}
                   </a>
@@ -198,12 +180,7 @@ const isLoggedIn = !!Astro.locals.user;
         </div>
         <div class='footer-bottom'>
           <div class='theme-switcher' role='group' aria-label='表示テーマ'>
-            <button
-              type='button'
-              class='theme-btn'
-              data-theme='light'
-              aria-label='ライトテーマ'
-            >
+            <button type='button' class='theme-btn' data-theme='light' aria-label='ライトテーマ'>
               <svg
                 aria-hidden='true'
                 width='16'
@@ -226,12 +203,7 @@ const isLoggedIn = !!Astro.locals.user;
                 <line x1='18.36' y1='5.64' x2='19.78' y2='4.22'></line>
               </svg>
             </button>
-            <button
-              type='button'
-              class='theme-btn'
-              data-theme='dark'
-              aria-label='ダークテーマ'
-            >
+            <button type='button' class='theme-btn' data-theme='dark' aria-label='ダークテーマ'>
               <svg
                 aria-hidden='true'
                 width='16'
@@ -275,15 +247,10 @@ const isLoggedIn = !!Astro.locals.user;
 
     <script>
       const THEME_REGEX = /(?:^|;\s*)theme=([^;]*)/;
-      const themeBtns =
-        document.querySelectorAll<HTMLButtonElement>('.theme-btn');
+      const themeBtns = document.querySelectorAll<HTMLButtonElement>('.theme-btn');
       const root = document.documentElement;
 
-      function setCookie(
-        name: string,
-        value: string,
-        maxAge: number = 31536000,
-      ) {
+      function setCookie(name: string, value: string, maxAge: number = 31536000) {
         const secure = location.protocol === 'https:' ? '; Secure' : '';
         if (value === '') {
           document.cookie = `${name}=; path=/; max-age=0; SameSite=Lax${secure}`;
@@ -331,30 +298,13 @@ const isLoggedIn = !!Astro.locals.user;
 
       @layer base {
         :where(.site-root) *:where(:not([class*='emdash']):not([class*='ec-'])),
-        :where(.site-root)
-          *:where(:not([class*='emdash']):not([class*='ec-']))::before,
-        :where(.site-root)
-          *:where(:not([class*='emdash']):not([class*='ec-']))::after {
+        :where(.site-root) *:where(:not([class*='emdash']):not([class*='ec-']))::before,
+        :where(.site-root) *:where(:not([class*='emdash']):not([class*='ec-']))::after {
           box-sizing: border-box;
         }
 
         :where(.site-root)
-          :is(
-            body,
-            h1,
-            h2,
-            h3,
-            h4,
-            h5,
-            h6,
-            p,
-            ul,
-            ol,
-            figure,
-            blockquote,
-            dl,
-            dd
-          ) {
+          :is(body, h1, h2, h3, h4, h5, h6, p, ul, ol, figure, blockquote, dl, dd) {
           margin: 0;
         }
 
@@ -386,15 +336,13 @@ const isLoggedIn = !!Astro.locals.user;
           min-height: 100vh;
         }
 
-        :where(.site-root)
-          a:where(:not([class*='emdash']):not([class*='ec-'])) {
+        :where(.site-root) a:where(:not([class*='emdash']):not([class*='ec-'])) {
           color: var(--color-brand);
           text-decoration: none;
           transition: color var(--transition-fast);
         }
 
-        :where(.site-root)
-          a:where(:not([class*='emdash']):not([class*='ec-'])):hover {
+        :where(.site-root) a:where(:not([class*='emdash']):not([class*='ec-'])):hover {
           color: var(--color-brand-hover);
         }
 
@@ -851,9 +799,7 @@ const isLoggedIn = !!Astro.locals.user;
       document.addEventListener('keydown', (e) => {
         if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
           e.preventDefault();
-          const searchInput = document.querySelector(
-            '.site-search-input',
-          ) as HTMLInputElement;
+          const searchInput = document.querySelector('.site-search-input') as HTMLInputElement;
           if (searchInput) {
             searchInput.focus();
           }

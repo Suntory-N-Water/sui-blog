@@ -34,7 +34,7 @@
     "attributePosition": "auto",
     "indentStyle": "space",
     "indentWidth": 2,
-    "lineWidth": 80,
+    "lineWidth": 100,
     "includes": [
       "**/*.{js,jsx,mjs,ts,tsx,mts}",
       "**/*.json",
@@ -103,7 +103,7 @@
       "enabled": true,
       "indentStyle": "space",
       "indentWidth": 2,
-      "lineWidth": 80
+      "lineWidth": 100
     }
   },
   "overrides": [

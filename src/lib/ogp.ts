@@ -59,8 +59,7 @@ async function cached<T>(
       key,
       new Response(buffer, {
         headers: {
-          'Content-Type':
-            response.headers.get('Content-Type') ?? 'application/octet-stream',
+          'Content-Type': response.headers.get('Content-Type') ?? 'application/octet-stream',
           'Cache-Control': 'public, max-age=31536000, immutable',
         },
       }),
@@ -106,10 +105,7 @@ function loadAvatar(): Promise<string | null> {
   return avatarPromise;
 }
 
-async function loadIcon(
-  filename: string | undefined,
-  origin: string,
-): Promise<string | null> {
+async function loadIcon(filename: string | undefined, origin: string): Promise<string | null> {
   if (!filename) {
     return null;
   }
@@ -118,8 +114,7 @@ async function loadIcon(
     return await cached(
       new URL(path, origin).toString(),
       () => fetchSiteAsset(path, origin),
-      async (response) =>
-        `data:image/svg+xml;base64,${toBase64(await response.arrayBuffer())}`,
+      async (response) => `data:image/svg+xml;base64,${toBase64(await response.arrayBuffer())}`,
     );
   } catch {
     return null;
@@ -304,17 +299,14 @@ export async function renderOgpImage({
     loadAvatar(),
   ]);
 
-  const { image } = await render(
-    card({ title, tags, iconDataUrl, avatarDataUrl }),
-    {
-      width: 1200,
-      height: 630,
-      fonts: [
-        { name: FONT_FAMILY, data, weight: 400, style: 'normal' },
-        { name: FONT_FAMILY, data, weight: 600, style: 'normal' },
-      ],
-    },
-  ).asPng();
+  const { image } = await render(card({ title, tags, iconDataUrl, avatarDataUrl }), {
+    width: 1200,
+    height: 630,
+    fonts: [
+      { name: FONT_FAMILY, data, weight: 400, style: 'normal' },
+      { name: FONT_FAMILY, data, weight: 600, style: 'normal' },
+    ],
+  }).asPng();
   return image;
 }
 

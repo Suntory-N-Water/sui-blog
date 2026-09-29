@@ -40,9 +40,7 @@ export const GET: APIRoute = async ({ site, url }) => {
   const urls = entries
     .map(({ path, lastmod, changefreq, priority }) => {
       const loc = escapeXml(`${origin}${encodeURI(path)}`);
-      const lastmodTag = lastmod
-        ? `\n    <lastmod>${lastmod.toISOString()}</lastmod>`
-        : '';
+      const lastmodTag = lastmod ? `\n    <lastmod>${lastmod.toISOString()}</lastmod>` : '';
       return `  <url>
     <loc>${loc}</loc>${lastmodTag}
     <changefreq>${changefreq}</changefreq>

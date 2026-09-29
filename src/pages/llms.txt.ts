@@ -4,9 +4,7 @@ import { resolveBlogSiteIdentity } from '../utils/site-identity';
 
 export const GET: APIRoute = async ({ site, url }) => {
   const origin = site?.toString().replace(/\/$/u, '') || url.origin;
-  const { siteTitle, siteTagline } = resolveBlogSiteIdentity(
-    await getSiteSettings(),
-  );
+  const { siteTitle, siteTagline } = resolveBlogSiteIdentity(await getSiteSettings());
   const { entries: posts } = await getEmDashCollection('posts', {
     orderBy: { modified_time: 'desc' },
     limit: 1000,

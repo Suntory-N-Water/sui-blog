@@ -2834,12 +2834,7 @@
       "negativeChecks": 34
     },
     {
-      "falsePositiveTargets": [
-        "domain:ux",
-        "domain:google-fonts",
-        "stack:threejs",
-        "stack:winui"
-      ],
+      "falsePositiveTargets": ["domain:ux", "domain:google-fonts", "stack:threejs", "stack:winui"],
       "falsePositives": 4,
       "id": "negative-math-proof",
       "negativeChecks": 34

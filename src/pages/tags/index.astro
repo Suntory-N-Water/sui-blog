@@ -15,10 +15,7 @@ const sortedTags = tags.slice().sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
 
 <Base title='タグ一覧' description='記事のタグ一覧'>
   <PageShell>
-    <ArchiveHead
-      title='タグ一覧'
-      sub={`${sortedTags.length} タグ / 記事数の多い順`}
-    />
+    <ArchiveHead title='タグ一覧' sub={`${sortedTags.length} タグ / 記事数の多い順`} />
     <div class='tag-index-wrap'>
       <TagIndex
         tags={sortedTags.map((tag) => ({

@@ -6,14 +6,8 @@ const MAX_ENTRIES = 2000;
 
 const entries = new Map<string, string>();
 
-export async function renderCacheKey(
-  kind: string,
-  ...parts: string[]
-): Promise<string> {
-  const digest = await crypto.subtle.digest(
-    'SHA-256',
-    new TextEncoder().encode(parts.join('\0')),
-  );
+export async function renderCacheKey(kind: string, ...parts: string[]): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(parts.join('\0')));
   const hex = [...new Uint8Array(digest)]
     .map((byte) => byte.toString(16).padStart(2, '0'))
     .join('');
@@ -39,9 +33,7 @@ export async function prefetchRenderCache(keys: string[]): Promise<void> {
   }
 }
 
-async function readBatch(
-  keys: string[],
-): Promise<{ key: string; value: string }[]> {
+async function readBatch(keys: string[]): Promise<{ key: string; value: string }[]> {
   try {
     const placeholders = keys.map(() => '?').join(',');
     const { results } = await env.DB.prepare(
@@ -55,11 +47,7 @@ async function readBatch(
   }
 }
 
-export function setRenderCache(
-  key: string,
-  value: string,
-  ttlSeconds: number,
-): void {
+export function setRenderCache(key: string, value: string, ttlSeconds: number): void {
   remember(key, value);
   waitUntil(
     env.DB.batch([

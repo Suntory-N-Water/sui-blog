@@ -1,12 +1,8 @@
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { getIconData, iconToHTML, iconToSVG } from '@iconify/utils';
-import chars from '@iconify-json/fluent-emoji-flat/chars.json' with {
-  type: 'json',
-};
-import icons from '@iconify-json/fluent-emoji-flat/icons.json' with {
-  type: 'json',
-};
+import chars from '@iconify-json/fluent-emoji-flat/chars.json' with { type: 'json' };
+import icons from '@iconify-json/fluent-emoji-flat/icons.json' with { type: 'json' };
 import { PROJECT_ROOT } from './lib';
 
 // chars.json のキーは U+FE0F を除いたコードポイントを `-` でつないだ形。
@@ -23,10 +19,7 @@ function main() {
   if (!emoji) throw new Error('使い方: bun download-icon.ts <絵文字>');
 
   const name = (chars as Record<string, string>)[codepointsOf(emoji)];
-  if (!name)
-    throw new Error(
-      `${emoji} に対応する Fluent Emoji Flat のアイコンがありません`,
-    );
+  if (!name) throw new Error(`${emoji} に対応する Fluent Emoji Flat のアイコンがありません`);
 
   const iconsDir = join(PROJECT_ROOT, 'public', 'icons');
   const base = name.replaceAll('-', '_');
@@ -36,13 +29,7 @@ function main() {
     existsSync(join(iconsDir, f)),
   );
   if (existing) {
-    console.log(
-      JSON.stringify(
-        { downloaded: false, icon_url: `/icons/${existing}` },
-        null,
-        2,
-      ),
-    );
+    console.log(JSON.stringify({ downloaded: false, icon_url: `/icons/${existing}` }, null, 2));
     return;
   }
 
@@ -52,13 +39,7 @@ function main() {
   const filename = `${base}_flat.svg`;
   mkdirSync(iconsDir, { recursive: true });
   writeFileSync(join(iconsDir, filename), `${iconToHTML(body, attributes)}\n`);
-  console.log(
-    JSON.stringify(
-      { downloaded: true, icon_url: `/icons/${filename}` },
-      null,
-      2,
-    ),
-  );
+  console.log(JSON.stringify({ downloaded: true, icon_url: `/icons/${filename}` }, null, 2));
 }
 
 try {

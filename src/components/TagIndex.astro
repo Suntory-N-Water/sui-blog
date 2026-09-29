@@ -16,9 +16,7 @@ const { tags, currentSlug } = Astro.props;
       >
         <span class='tag-label'>#{tag.label}</span>
         <span class='tag-dots'></span>
-        {typeof tag.count === 'number' && (
-          <span class='tag-count'>{tag.count}</span>
-        )}
+        {typeof tag.count === 'number' && <span class='tag-count'>{tag.count}</span>}
       </a>
     </li>
   ))}

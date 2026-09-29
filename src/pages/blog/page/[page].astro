@@ -18,15 +18,14 @@ if (page === 1) {
   return Astro.redirect('/blog', 301);
 }
 
-const [{ entries: posts, hasMore, cacheHint, error }, total] =
-  await Promise.all([
-    getEmDashCollection('posts', {
-      limit: PER_PAGE,
-      offset: (page - 1) * PER_PAGE,
-      orderBy: { modified_time: 'desc' },
-    }),
-    countPublishedPosts(),
-  ]);
+const [{ entries: posts, hasMore, cacheHint, error }, total] = await Promise.all([
+  getEmDashCollection('posts', {
+    limit: PER_PAGE,
+    offset: (page - 1) * PER_PAGE,
+    orderBy: { modified_time: 'desc' },
+  }),
+  countPublishedPosts(),
+]);
 
 if (error) {
   return new Response(null, { status: 500 });
@@ -38,10 +37,7 @@ if (posts.length === 0) {
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
-const totalPages = Math.max(
-  Math.ceil(total / PER_PAGE),
-  hasMore ? page + 1 : page,
-);
+const totalPages = Math.max(Math.ceil(total / PER_PAGE), hasMore ? page + 1 : page);
 
 const tagsByEntry = await getTermsForEntries(
   'posts',
@@ -50,16 +46,8 @@ const tagsByEntry = await getTermsForEntries(
 );
 ---
 
-<Base
-  title={`記事一覧 - ${page} ページ目`}
-  description={`すべての記事の一覧(${page} ページ目)`}
->
+<Base title={`記事一覧 - ${page} ページ目`} description={`すべての記事の一覧(${page} ページ目)`}>
   <PageShell>
-    <PostArchive
-      posts={posts}
-      tagsByEntry={tagsByEntry}
-      page={page}
-      totalPages={totalPages}
-    />
+    <PostArchive posts={posts} tagsByEntry={tagsByEntry} page={page} totalPages={totalPages} />
   </PageShell>
 </Base>

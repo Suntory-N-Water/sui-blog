@@ -1,15 +1,10 @@
 import type { APIRoute } from 'astro';
 import { waitUntil } from 'cloudflare:workers';
 import { decodeSlug, getEmDashEntry } from 'emdash';
-import {
-  fetchFallbackOgpImage,
-  OGP_CACHE_NAME,
-  renderOgpImage,
-} from '../../../lib/ogp';
+import { fetchFallbackOgpImage, OGP_CACHE_NAME, renderOgpImage } from '../../../lib/ogp';
 import { asPost } from '../../../lib/emdash-types';
 
-const CACHE_CONTROL =
-  'public, max-age=86400, s-maxage=2592000, stale-while-revalidate=86400';
+const CACHE_CONTROL = 'public, max-age=86400, s-maxage=2592000, stale-while-revalidate=86400';
 
 async function fallbackResponse(origin: string): Promise<Response> {
   try {

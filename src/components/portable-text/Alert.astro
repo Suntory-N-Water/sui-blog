@@ -31,9 +31,7 @@ const body = (blocks as Array<Record<string, unknown>>).map((block) => ({
     </svg>
     {ALERT_LABEL_JA[kind]}
   </p>
-  {body.length > 0 && (
-    <PortableText value={body} components={{ type: { code: CodeBlock } }} />
-  )}
+  {body.length > 0 && <PortableText value={body} components={{ type: { code: CodeBlock } }} />}
 </div>
 
 <style>

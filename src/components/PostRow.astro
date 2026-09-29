@@ -14,16 +14,7 @@ interface Props {
   headingLevel?: 2 | 3;
 }
 
-const {
-  title,
-  href,
-  date,
-  readingTime,
-  excerpt,
-  icon,
-  tags,
-  headingLevel = 3,
-} = Astro.props;
+const { title, href, date, readingTime, excerpt, icon, tags, headingLevel = 3 } = Astro.props;
 const displayDate = formatIndexDate(date);
 const Heading = `h${headingLevel}` as const;
 ---
@@ -34,9 +25,7 @@ const Heading = `h${headingLevel}` as const;
       {displayDate && <time datetime={date?.toISOString()}>{displayDate}</time>}
     </div>
     <div class='row-icon-cell'>
-      {icon && (
-        <Image image={icon} alt='' width={20} height={20} class='row-icon' />
-      )}
+      {icon && <Image image={icon} alt='' width={20} height={20} class='row-icon' />}
     </div>
     <div class='row-main'>
       <Heading class='row-title'>

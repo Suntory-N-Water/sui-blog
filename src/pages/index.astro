@@ -95,13 +95,9 @@ const topTags = tags
             <h2>
               <a href={`/blog/${leadPost.id}`}>{leadPost.data.title}</a>
             </h2>
-            {leadPost.data.excerpt && (
-              <p class='lead-excerpt'>{leadPost.data.excerpt}</p>
-            )}
+            {leadPost.data.excerpt && <p class='lead-excerpt'>{leadPost.data.excerpt}</p>}
             <footer class='lead-foot'>
-              <span class='lead-readtime'>
-                {getReadingTime(leadPost.data.content)} 分
-              </span>
+              <span class='lead-readtime'>{getReadingTime(leadPost.data.content)} 分</span>
               {leadTags.length > 0 && (
                 <ul class='lead-tags' aria-label='タグ'>
                   {leadTags.map((tag) => (
@@ -145,11 +141,7 @@ const topTags = tags
 
     {topTags.length > 0 && (
       <section aria-label='タグから探す'>
-        <SectionBand
-          title='タグから探す'
-          href='/tags'
-          linkLabel='すべてのタグ'
-        />
+        <SectionBand title='タグから探す' href='/tags' linkLabel='すべてのタグ' />
         <div class='index-wrap'>
           <TagIndex
             tags={topTags.map((tag) => ({

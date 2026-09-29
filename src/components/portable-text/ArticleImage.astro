@@ -43,14 +43,7 @@ const caption = node?.caption;
 
 {src && (
   <figure class='article-image'>
-    <img
-      src={src}
-      alt={alt}
-      width={width}
-      height={height}
-      loading='lazy'
-      decoding='async'
-    />
+    <img src={src} alt={alt} width={width} height={height} loading='lazy' decoding='async' />
     {caption && <figcaption>{caption}</figcaption>}
   </figure>
 )}
