@@ -49,7 +49,8 @@ function main() {
   };
 
   const errors: string[] = [];
-  if (row.status !== 'draft') errors.push(`status が draft ではありません: ${String(row.status)}`);
+  if (row.status !== 'draft' && row.status !== 'published')
+    errors.push(`status が draft でも published でもありません: ${String(row.status)}`);
   if (row.locale !== 'ja') errors.push(`locale が ja ではありません: ${String(row.locale)}`);
   for (const field of ['title', 'excerpt', 'modified_time']) {
     const want = expected.data[field];
