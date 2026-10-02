@@ -25,7 +25,7 @@ const [
   settings,
 ] = await Promise.all([
   getEmDashCollection('posts', {
-    orderBy: { modified_time: 'desc' },
+    orderBy: { created_at: 'desc' },
     limit: HOME_POST_LIMIT,
   }),
   getTaxonomyTermsWithCacheHint('tag', { includeCounts: true }),

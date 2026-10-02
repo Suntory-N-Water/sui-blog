@@ -16,7 +16,7 @@ if (!term) {
 
 const { entries: posts, cacheHint } = await getEmDashCollection('posts', {
   where: { tag: term.slug },
-  orderBy: { modified_time: 'desc' },
+  orderBy: { created_at: 'desc' },
 });
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);

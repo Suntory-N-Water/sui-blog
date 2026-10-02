@@ -6,7 +6,7 @@ export const GET: APIRoute = async ({ site, url }) => {
   const origin = site?.toString().replace(/\/$/u, '') || url.origin;
   const { siteTitle, siteTagline } = resolveBlogSiteIdentity(await getSiteSettings());
   const { entries: posts } = await getEmDashCollection('posts', {
-    orderBy: { modified_time: 'desc' },
+    orderBy: { created_at: 'desc' },
     limit: 1000,
   });
 

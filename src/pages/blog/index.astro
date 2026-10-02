@@ -12,7 +12,7 @@ const [{ entries: posts, hasMore, cacheHint, error }, total] = await Promise.all
   getEmDashCollection('posts', {
     limit: PER_PAGE,
     offset: (page - 1) * PER_PAGE,
-    orderBy: { modified_time: 'desc' },
+    orderBy: { created_at: 'desc' },
   }),
   countPublishedPosts(),
 ]);

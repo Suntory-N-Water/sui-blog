@@ -43,7 +43,7 @@ const RELATED_POSTS_COUNT = 3;
 
 const loadRecentPosts = async () => {
   const { entries: recentPosts } = await getEmDashCollection('posts', {
-    orderBy: { modified_time: 'desc' },
+    orderBy: { created_at: 'desc' },
     limit: RELATED_POSTS_COUNT + 1,
     offset: 0,
   });
