@@ -16,7 +16,7 @@
   Cache-Control: public, max-age=31536000, immutable
 
 # Markdownエンドポイント: charset=utf-8を明示
-/blog/*.md
+/posts/*.md
   Content-Type: text/markdown; charset=utf-8
 
 # llms.txt: charset=utf-8を明示

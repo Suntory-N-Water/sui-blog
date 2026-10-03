@@ -93,7 +93,7 @@ const topTags = tags
               </time>
             </div>
             <h2>
-              <a href={`/blog/${leadPost.id}`}>{leadPost.data.title}</a>
+              <a href={`/posts/${leadPost.id}`}>{leadPost.data.title}</a>
             </h2>
             {leadPost.data.excerpt && <p class='lead-excerpt'>{leadPost.data.excerpt}</p>}
             <footer class='lead-foot'>
@@ -115,13 +115,13 @@ const topTags = tags
 
         {listPosts.length > 0 && (
           <section aria-label='最近の記事'>
-            <SectionBand title='最近の記事' href='/blog' linkLabel='記事一覧' />
+            <SectionBand title='最近の記事' href='/posts' linkLabel='記事一覧' />
             <div class='index-wrap'>
               <PostIndex>
                 {listPosts.map((post) => (
                   <PostRow
                     title={post.data.title}
-                    href={`/blog/${post.id}`}
+                    href={`/posts/${post.id}`}
                     date={post.data.createdAt}
                     readingTime={getReadingTime(post.data.content)}
                     excerpt={post.data.excerpt}

@@ -15,7 +15,7 @@ if (!/^[1-9]\d*$/.test(pageParam)) {
 const page = Number(pageParam);
 
 if (page === 1) {
-  return Astro.redirect('/blog', 301);
+  return Astro.redirect('/posts', 301);
 }
 
 const [{ entries: posts, hasMore, cacheHint, error }, total] = await Promise.all([

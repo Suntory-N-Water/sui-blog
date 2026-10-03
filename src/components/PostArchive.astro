@@ -54,7 +54,7 @@ const sub = dateRange ? `${dateRange} / ${page} ページ目` : `${page} ペー�
         {yearPosts.map((post) => (
           <PostRow
             title={post.data.title}
-            href={`/blog/${post.id}`}
+            href={`/posts/${post.id}`}
             date={post.data.createdAt}
             readingTime={getReadingTime(post.data.content)}
             icon={post.data.featured_image}
@@ -69,7 +69,7 @@ const sub = dateRange ? `${dateRange} / ${page} ページ目` : `${page} ペー�
   ))
 )}
 
-{totalPages > 1 && <Pagination currentPage={page} totalPages={totalPages} basePath='/blog' />}
+{totalPages > 1 && <Pagination currentPage={page} totalPages={totalPages} basePath='/posts' />}
 
 <style>
   .year-group {

@@ -21,11 +21,11 @@ export const GET: APIRoute = async ({ site, url }) => {
 
   const entries: SitemapEntry[] = [
     { path: '/', lastmod: newest, changefreq: 'daily', priority: '1.0' },
-    { path: '/blog', lastmod: newest, changefreq: 'daily', priority: '0.9' },
+    { path: '/posts', lastmod: newest, changefreq: 'daily', priority: '0.9' },
     { path: '/tags', lastmod: newest, changefreq: 'weekly', priority: '0.6' },
     { path: '/search', changefreq: 'monthly', priority: '0.3' },
     ...posts.map((post) => ({
-      path: `/blog/${post.id}`,
+      path: `/posts/${post.id}`,
       lastmod: post.data.updatedAt,
       changefreq: 'monthly',
       priority: '0.8',

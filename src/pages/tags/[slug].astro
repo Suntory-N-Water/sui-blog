@@ -43,7 +43,7 @@ const filteredPosts = posts.map((post) => ({
         {filteredPosts.map(({ post, tags }) => (
           <PostRow
             title={post.data.title}
-            href={`/blog/${post.id}`}
+            href={`/posts/${post.id}`}
             date={post.data.createdAt}
             readingTime={getReadingTime(post.data.content)}
             excerpt={post.data.excerpt}

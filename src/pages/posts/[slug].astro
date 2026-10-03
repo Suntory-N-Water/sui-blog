@@ -86,7 +86,7 @@ const [settings, otherPostsWithTags] = await Promise.all([
   codeRenderCacheKeys(post.data.content).then(prefetchRenderCache),
 ]);
 
-const ogImageUrl = `${Astro.url.origin}/blog/ogp/${encodeURIComponent(slug)}.png`;
+const ogImageUrl = `${Astro.url.origin}/posts/ogp/${encodeURIComponent(slug)}.png`;
 const { siteTitle } = resolveBlogSiteIdentity(settings);
 
 const seo = getSeoMeta(post, {
@@ -220,7 +220,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
             )}
             <div class='foot-actions'>
               <ShareLinks url={shareUrl} title={post.data.title} />
-              <a href={`/blog/${post.id}.md`} class='btn'>
+              <a href={`/posts/${post.id}.md`} class='btn'>
                 この記事を Markdown で取得
               </a>
             </div>
@@ -233,7 +233,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
                 {otherPostsWithTags.map(({ post: p, tags: postTags }) => (
                   <PostRow
                     title={p.data.title}
-                    href={`/blog/${p.id}`}
+                    href={`/posts/${p.id}`}
                     date={p.data.createdAt}
                     readingTime={getReadingTime(p.data.content)}
                     icon={p.data.featured_image}

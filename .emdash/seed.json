@@ -19,7 +19,7 @@
 				"revisions",
 				"search"
 			],
-			"urlPattern": "/blog/{slug}",
+			"urlPattern": "/posts/{slug}",
 			"fields": [
 				{
 					"slug": "title",
