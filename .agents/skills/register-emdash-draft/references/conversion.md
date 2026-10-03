@@ -27,9 +27,8 @@
 |---|---|
 | `title` | `title` |
 | `description` | `excerpt` |
-| `modified_time` | `modified_time` |
 | `icon_url` | `featured_image` |
 | `tags` | `taxonomies.tag` (本番タグの表示名か slug と一致させる。大文字と小文字は区別しない) |
 | `slug` | `slug` |
 
-`date` と `icon` は登録しません。公開日は、利用者が管理画面で公開した日時になります。
+`date`・`modified_time`・`icon` は登録しません。posts に更新日の項目はなく、記事の並び順は作成日時 (`created_at`) で決まります。公開日は、利用者が管理画面で公開した日時になります。

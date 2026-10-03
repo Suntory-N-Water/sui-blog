@@ -407,15 +407,6 @@ function mediaByFilename(filenames: string[]): Map<string, MediaRow> {
   return new Map(rows.map((row) => [row.filename, row]));
 }
 
-function normalizeDate(value: unknown): string | undefined {
-  if (value === undefined || value === null || value === '') return undefined;
-  const raw = value instanceof Date ? value.toISOString().slice(0, 10) : String(value).trim();
-  if (/^\d{4}-\d{2}-\d{2}$/u.test(raw)) return `${raw}T00:00:00.000Z`;
-  const parsed = new Date(raw);
-  if (Number.isNaN(parsed.getTime())) throw new Error(`日付として読めません: ${raw}`);
-  return parsed.toISOString();
-}
-
 function main() {
   const args = process.argv.slice(2);
   const slugOption = args.indexOf('--slug');
@@ -525,9 +516,6 @@ function main() {
       title,
       excerpt,
       ...(featuredImage ? { featured_image: featuredImage } : {}),
-      ...(normalizeDate(data.modified_time ?? data.date)
-        ? { modified_time: normalizeDate(data.modified_time ?? data.date) }
-        : {}),
     },
     taxonomies: { tag: tagSlugs },
   };

@@ -116,7 +116,7 @@ bun .agents/skills/register-emdash-draft/scripts/verify.ts <slug> <登録結果�
 
 長い記事では `content_create` の応答が大きすぎて表示されないことがあります。その場合は id を省いて `verify.ts <slug>` を実行します。slug で本番の記事を探し、出力に id が含まれます。
 
-`verify.ts` は、状態・言語・タイトル・概要・更新日・OGP 画像・本文の全ブロック・タグを `expected.json` と比べます。状態は draft と published のどちらも一致として扱います。公開済みの記事を更新した場合は、下書きの版があればその版を、なければ公開中の内容を比べます。`ok` が false なら、`errors` に出た最初の不一致ブロックから原因を調べます。多くの場合、content.md が一字違わずに渡されていないことが原因です。content.md を読み直して `content_update` で本文だけを送り直し、もう一度 `verify.ts` を実行します。
+`verify.ts` は、状態・言語・タイトル・概要・OGP 画像・本文の全ブロック・タグを `expected.json` と比べます。状態は draft と published のどちらも一致として扱います。公開済みの記事を更新した場合は、下書きの版があればその版を、なければ公開中の内容を比べます。`ok` が false なら、`errors` に出た最初の不一致ブロックから原因を調べます。多くの場合、content.md が一字違わずに渡されていないことが原因です。content.md を読み直して `content_update` で本文だけを送り直し、もう一度 `verify.ts` を実行します。
 
 ### 6. 報告
 
