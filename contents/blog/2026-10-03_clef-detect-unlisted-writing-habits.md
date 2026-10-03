@@ -4,8 +4,8 @@ slug: clef-detect-unlisted-writing-habits
 date: 2026-10-03
 modified_time: 2026-10-03
 description: textlint の辞書は、登録した語しか検出できません。Cloudflare の判断モデル Clef に癖の種類を質問として渡し、辞書にない AI 特有の癖をどの割合で検知できるかを、このブログの添削前後の文で測りました。結果をもとに、Claude Code の hook に Clef を組み込むかを判断します。
-icon:
-icon_url:
+icon: 🫏
+icon_url: /icons/donkey_flat.svg
 tags:
   - AI
   - Cloudflare
