@@ -45,7 +45,7 @@ const children = (node: Node): Node[] => (Array.isArray(node.children) ? node.ch
 const str = (value: unknown) => (typeof value === 'string' ? value : undefined);
 
 function rewriteLegacyUrl(value: string): string {
-  return value.replace(/https:\/\/suntory-n-water\.com\/blog\/([\w-]+)/gu, '/blog/$1');
+  return value.replace(/https:\/\/suntory-n-water\.com\/(?:blog|posts)\/([\w-]+)/gu, '/posts/$1');
 }
 
 function filenameOf(url: string): string {
