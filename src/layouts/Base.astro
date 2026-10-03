@@ -80,6 +80,19 @@ const isLoggedIn = !!Astro.locals.user;
         }
       })();
     </script>
+    {import.meta.env.PROD && (
+      <>
+        <script is:inline async src='https://www.googletagmanager.com/gtag/js?id=G-VJECTY2TM6'></script>
+        <script is:inline>
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-VJECTY2TM6');
+        </script>
+      </>
+    )}
   </head>
   <body>
     <EmDashBodyStart page={pageCtx} />
