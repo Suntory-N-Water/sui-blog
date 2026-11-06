@@ -11,6 +11,7 @@ import { Image, PortableText } from 'emdash/ui';
 import { Comments, CommentForm } from 'emdash/ui/comments';
 import Base from '../../layouts/Base.astro';
 import PageShell from '../../components/PageShell.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import SectionBand from '../../components/SectionBand.astro';
 import ShareLinks from '../../components/ShareLinks.astro';
 import PostIndex from '../../components/PostIndex.astro';
@@ -28,13 +29,13 @@ import { formatIndexDate } from '../../utils/format-date';
 const slug = decodeSlug(Astro.params.slug);
 
 if (!slug) {
-  return Astro.redirect('/404');
+  return Astro.rewrite('/404');
 }
 
 const { entry: post, cacheHint } = await getEmDashEntry('posts', slug);
 
 if (!post) {
-  return Astro.redirect('/404');
+  return Astro.rewrite('/404');
 }
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
@@ -124,6 +125,13 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
   content={{ collection: 'posts', id: post.data.id, slug }}
 >
   <PageShell>
+    <Breadcrumbs
+      items={[
+        { label: 'ホーム', href: '/' },
+        { label: '記事一覧', href: '/posts' },
+        { label: post.data.title, href: Astro.url.pathname },
+      ]}
+    />
     <article>
       <header class='article-head'>
         {post.data.featured_image && (

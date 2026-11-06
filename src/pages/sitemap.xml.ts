@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { getEmDashCollection, getTaxonomyTerms } from 'emdash';
+import { getEmDashCollection, getTaxonomyTerms, getTermsForEntries } from 'emdash';
 
 type SitemapEntry = {
   path: string;
@@ -15,7 +15,18 @@ export const GET: APIRoute = async ({ site, url }) => {
     orderBy: { created_at: 'desc' },
     limit: 1000,
   });
-  const tags = await getTaxonomyTerms('tag', { includeCounts: false });
+  const [allTags, tagsByPost] = await Promise.all([
+    getTaxonomyTerms('tag', { includeCounts: false }),
+    getTermsForEntries(
+      'posts',
+      posts.map((post) => post.data.id),
+      'tag',
+    ),
+  ]);
+  const publishedTagSlugs = new Set(
+    [...tagsByPost.values()].flatMap((terms) => terms.map((term) => term.slug)),
+  );
+  const tags = allTags.filter((tag) => publishedTagSlugs.has(tag.slug));
 
   const newest = posts[0]?.data.createdAt;
 
@@ -23,7 +34,6 @@ export const GET: APIRoute = async ({ site, url }) => {
     { path: '/', lastmod: newest, changefreq: 'daily', priority: '1.0' },
     { path: '/posts', lastmod: newest, changefreq: 'daily', priority: '0.9' },
     { path: '/tags', lastmod: newest, changefreq: 'weekly', priority: '0.6' },
-    { path: '/search', changefreq: 'monthly', priority: '0.3' },
     ...posts.map((post) => ({
       path: `/posts/${post.id}`,
       lastmod: post.data.updatedAt,

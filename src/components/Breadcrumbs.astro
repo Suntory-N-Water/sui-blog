@@ -1,0 +1,72 @@
+---
+interface Crumb {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  items: Crumb[];
+}
+
+const { items } = Astro.props;
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.label,
+    item: new URL(item.href, Astro.url.origin).toString(),
+  })),
+}).replace(/</gu, '\\u003c');
+---
+
+<nav class='breadcrumbs' aria-label='パンくずリスト'>
+  <ol>
+    {items.map((item, index) => (
+      <li>
+        {index === items.length - 1 ? (
+          <span aria-current='page'>{item.label}</span>
+        ) : (
+          <a href={item.href}>{item.label}</a>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>
+<script type='application/ld+json' set:html={jsonLd} />
+<style>
+  .breadcrumbs {
+    padding: 24px 0 0;
+    font-size: 12.5px;
+    color: var(--color-text-secondary);
+  }
+
+  .breadcrumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .breadcrumbs li:not(:last-child)::after {
+    content: '/';
+    margin-left: 8px;
+    color: var(--color-muted);
+  }
+
+  .breadcrumbs a {
+    color: var(--color-text-secondary);
+  }
+
+  .breadcrumbs a:hover {
+    color: var(--color-brand);
+  }
+
+  .breadcrumbs li:last-child {
+    overflow-wrap: anywhere;
+  }
+</style>

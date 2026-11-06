@@ -7,11 +7,11 @@ function yamlString(value: string): string {
   return JSON.stringify(value);
 }
 
-export const GET: APIRoute = async ({ params, redirect }) => {
+export const GET: APIRoute = async ({ params }) => {
   const slug = params.slug ?? '';
   const { entry: post } = await getEmDashEntry('posts', slug);
   if (!post) {
-    return redirect('/404');
+    return new Response('Not found', { status: 404 });
   }
   const normalizedPost = asPost(post);
   const tags = normalizedPost.data.terms?.tag ?? [];

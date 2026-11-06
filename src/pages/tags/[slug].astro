@@ -2,6 +2,7 @@
 import { getTerm, getEmDashCollection, getTermsForEntries, decodeSlug } from 'emdash';
 import Base from '../../layouts/Base.astro';
 import PageShell from '../../components/PageShell.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ArchiveHead from '../../components/ArchiveHead.astro';
 import PostIndex from '../../components/PostIndex.astro';
 import PostRow from '../../components/PostRow.astro';
@@ -11,7 +12,7 @@ const slug = decodeSlug(Astro.params.slug);
 const term = slug ? await getTerm('tag', slug, { includeCounts: false }) : null;
 
 if (!term) {
-  return Astro.redirect('/404');
+  return Astro.rewrite('/404');
 }
 
 const { entries: posts, cacheHint } = await getEmDashCollection('posts', {
@@ -34,6 +35,13 @@ const filteredPosts = posts.map((post) => ({
 
 <Base title={`#${term.label} の記事`} description={`「${term.label}」タグが付いた記事の一覧`}>
   <PageShell>
+    <Breadcrumbs
+      items={[
+        { label: 'ホーム', href: '/' },
+        { label: 'タグ一覧', href: '/tags' },
+        { label: `#${term.label}`, href: Astro.url.pathname },
+      ]}
+    />
     <ArchiveHead title={`#${term.label}`} sub={`${filteredPosts.length} 件`} />
 
     {filteredPosts.length === 0 ? (

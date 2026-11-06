@@ -9,7 +9,7 @@ const PER_PAGE = 10;
 
 const pageParam = Astro.params.page ?? '';
 if (!/^[1-9]\d*$/.test(pageParam)) {
-  return Astro.redirect('/404');
+  return Astro.rewrite('/404');
 }
 
 const page = Number(pageParam);
@@ -32,7 +32,7 @@ if (error) {
 }
 
 if (posts.length === 0) {
-  return Astro.redirect('/404');
+  return Astro.rewrite('/404');
 }
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
