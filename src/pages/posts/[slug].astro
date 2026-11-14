@@ -25,6 +25,8 @@ import { findRelatedPostSlugs } from '../../lib/post-index';
 import { getReadingTime } from '../../utils/reading-time';
 import { resolveBlogSiteIdentity } from '../../utils/site-identity';
 import { formatIndexDate } from '../../utils/format-date';
+import { acceptsMarkdown, negotiatedMarkdownResponse } from '../../lib/agent-markdown';
+import { postMarkdown } from '../../lib/agent-markdown-pages';
 
 const slug = decodeSlug(Astro.params.slug);
 
@@ -39,6 +41,10 @@ if (!post) {
 }
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+if (acceptsMarkdown(Astro.request.headers.get('Accept'))) {
+  return negotiatedMarkdownResponse(postMarkdown(Astro, post));
+}
 
 const RELATED_POSTS_COUNT = 3;
 
@@ -122,6 +128,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
   type='article'
   publishedTime={publishDateTime}
   modifiedTime={post.data.updatedAt.toISOString()}
+  markdownHref={`/posts/${post.id}.md`}
   content={{ collection: 'posts', id: post.data.id, slug }}
 >
   <PageShell>

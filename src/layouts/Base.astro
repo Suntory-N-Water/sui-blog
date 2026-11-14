@@ -19,6 +19,7 @@ interface Props {
   publishedTime?: string | null;
   modifiedTime?: string | null;
   author?: string | null;
+  markdownHref?: string | null;
   /** Pass content reference for plugin page contributions on content pages */
   content?: { collection: string; id: string; slug?: string | null };
 }
@@ -34,6 +35,7 @@ const {
   publishedTime,
   modifiedTime,
   author,
+  markdownHref,
   content,
 } = Astro.props;
 const [settings, menu, socialMenu] = await Promise.all([
@@ -72,6 +74,9 @@ const isLoggedIn = !!Astro.locals.user;
     <Font cssVariable='--font-mono-latin' />
     <title>{fullTitle}</title>
     <EmDashHead page={pageCtx} />
+    <link rel='alternate' type='application/rss+xml' title={siteTitle} href='/rss.xml' />
+    {markdownHref && <link rel='alternate' type='text/markdown' href={markdownHref} />}
+    <slot name='head' />
     <script is:inline>
       (() => {
         const theme = document.cookie.match(/(?:^|;\s*)theme=([^;]*)/)?.[1];

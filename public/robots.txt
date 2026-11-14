@@ -1,6 +1,7 @@
 # robots.txt for suntory-n-water.com
 
 User-agent: *
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 Allow: /
 
 # Sitemap

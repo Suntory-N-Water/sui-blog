@@ -3,9 +3,6 @@ import handler, { createScheduledHandler, PluginBridge } from '@emdash-cms/cloud
 export { PluginBridge };
 
 const emdashFetch = handler.fetch;
-if (!emdashFetch) {
-  throw new Error('@emdash-cms/cloudflare/worker does not provide a fetch handler');
-}
 
 export default {
   ...handler,

@@ -4,6 +4,8 @@ import Base from '../../layouts/Base.astro';
 import PageShell from '../../components/PageShell.astro';
 import { countPublishedPosts } from '../../lib/post-index';
 import PostArchive from '../../components/PostArchive.astro';
+import { acceptsMarkdown, negotiatedMarkdownResponse } from '../../lib/agent-markdown';
+import { postsMarkdown } from '../../lib/agent-markdown-pages';
 
 const PER_PAGE = 10;
 const page = 1;
@@ -23,6 +25,10 @@ if (error) {
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
+if (acceptsMarkdown(Astro.request.headers.get('Accept'))) {
+  return negotiatedMarkdownResponse(await postsMarkdown(Astro));
+}
+
 const totalPages = Math.max(Math.ceil(total / PER_PAGE), hasMore ? page + 1 : page);
 
 const tagsByEntry = await getTermsForEntries(
@@ -32,7 +38,7 @@ const tagsByEntry = await getTermsForEntries(
 );
 ---
 
-<Base title='記事一覧' description='すべての記事の一覧'>
+<Base title='記事一覧' description='すべての記事の一覧' markdownHref='/posts.md'>
   <PageShell>
     <PostArchive posts={posts} tagsByEntry={tagsByEntry} page={page} totalPages={totalPages} />
   </PageShell>

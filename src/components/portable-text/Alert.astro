@@ -18,7 +18,7 @@ const ALERT_LABEL_JA: Record<AlertKind, string> = {
   caution: '注意',
 };
 
-const body = (blocks as Array<Record<string, unknown>>).map((block) => ({
+const body = (blocks as Array<Record<string, unknown> & { _type: string }>).map((block) => ({
   ...block,
   style: 'normal',
 }));

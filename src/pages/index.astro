@@ -15,8 +15,11 @@ import TagIndex from '../components/TagIndex.astro';
 import { getReadingTime } from '../utils/reading-time';
 import { formatIndexDate } from '../utils/format-date';
 import { resolveBlogSiteIdentity } from '../utils/site-identity';
+import { acceptsMarkdown, negotiatedMarkdownResponse } from '../lib/agent-markdown';
+import { buildHomeMarkdown, HOME_POST_LIMIT } from '../lib/agent-markdown-pages';
 
-const HOME_POST_LIMIT = 6;
+const AUTHOR_NAME = 'sui';
+const AUTHOR_SAME_AS = ['https://github.com/Suntory-N-Water'];
 const HOME_TAG_LIMIT = 12;
 
 const [
@@ -36,6 +39,10 @@ const { siteTitle, siteTagline } = resolveBlogSiteIdentity(settings);
 if (Astro.cache?.enabled) {
   Astro.cache.set(postsCacheHint);
   Astro.cache.set(tagsCacheHint);
+}
+
+if (acceptsMarkdown(Astro.request.headers.get('Accept'))) {
+  return negotiatedMarkdownResponse(buildHomeMarkdown(Astro, { siteTitle, siteTagline }, posts));
 }
 
 const leadPost = posts[0] ?? null;
@@ -58,9 +65,49 @@ const topTags = tags
   .slice()
   .sort((a, b) => (b.count ?? 0) - (a.count ?? 0))
   .slice(0, HOME_TAG_LIMIT);
+
+const origin = Astro.site?.toString().replace(/\/+$/u, '') || Astro.url.origin;
+const personId = `${origin}/#person`;
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': personId,
+      name: AUTHOR_NAME,
+      url: `${origin}/`,
+      sameAs: AUTHOR_SAME_AS,
+    },
+    {
+      '@type': 'Blog',
+      '@id': `${origin}/#blog`,
+      name: siteTitle,
+      description: siteTagline,
+      url: `${origin}/`,
+      inLanguage: 'ja',
+      author: { '@id': personId },
+      isPartOf: { '@id': `${origin}/#website` },
+      blogPost: posts.map((post) => ({
+        '@type': 'BlogPosting',
+        '@id': `${origin}/posts/${post.id}#article`,
+        headline: post.data.title,
+        url: `${origin}/posts/${post.id}`,
+        datePublished: post.data.createdAt.toISOString(),
+        dateModified: post.data.updatedAt.toISOString(),
+        author: { '@id': personId },
+      })),
+    },
+  ],
+};
 ---
 
-<Base title={siteTitle} description={siteTagline}>
+<Base title={siteTitle} description={siteTagline} markdownHref='/index.md'>
+  <script
+    slot='head'
+    type='application/ld+json'
+    is:inline
+    set:html={JSON.stringify(structuredData).replace(/</gu, '\\u003c')}
+  />
   <PageShell>
     <header class='home-intro'>
       <h1 class='visually-hidden'>{siteTitle}</h1>
