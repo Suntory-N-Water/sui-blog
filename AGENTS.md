@@ -5,9 +5,16 @@
 ```bash
 pnpm run dev              # Astro 開発サーバーを起動
 pnpm run build            # 静的サイトの生成と Pagefind の検索索引の作成
-pnpm run preview          # build の結果を wrangler dev で配信
+pnpm run preview          # build を実行し、その結果を wrangler dev で配信
 pnpm run icons            # 記事の icon から Fluent Emoji Flat の SVG を取得し、icon_url を更新
+pnpm run format           # Biome と Prettier で整形
+pnpm run lint             # Biome の lint
+pnpm run type-check       # astro check
+pnpm run knip             # 使われていないファイルと export の検出
 ```
+
+- 開発サーバーの検索は、`pnpm run build` が作った `dist/pagefind` の索引を使う。記事を変えた後に検索結果へ反映するには、build を実行し直す。
+- `public/_redirects` と `public/_headers` は Cloudflare が解釈するため、開発サーバーでは効かない。転送とヘッダーは `pnpm run preview` で確かめる。
 
 ## 記事
 

@@ -1,5 +1,6 @@
 import { unified } from '@astrojs/markdown-remark';
 import { defineConfig, fontProviders } from 'astro/config';
+import { pagefindDev } from './src/integrations/pagefind-dev.ts';
 import { rehypeArticle } from './src/markdown/rehype-article.ts';
 import { remarkArticle } from './src/markdown/remark-article.ts';
 
@@ -10,6 +11,7 @@ export default defineConfig({
   build: {
     format: 'file',
   },
+  integrations: [pagefindDev()],
   i18n: {
     defaultLocale: 'ja',
     locales: ['ja'],
