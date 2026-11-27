@@ -37,6 +37,18 @@ jobs:
           cache: true
           require-lockfile: true
       - run: pnpm run build
+      - name: Enable preview URLs
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          curl -fsS -X POST \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/sui-blog/subdomain" \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            -H "Cloudflare-Workers-Script-Api-Date: 2025-08-01" \
+            -d '{"enabled": false, "previews_enabled": true}' \
+            -o /dev/null
       - id: upload
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -44,19 +56,24 @@ jobs:
           PREVIEW_ALIAS: pr-${{ github.event.pull_request.number }}
         run: |
           pnpm exec wrangler versions upload --preview-alias "$PREVIEW_ALIAS" | tee upload.log
-          url="$(grep -oE 'https://'"$PREVIEW_ALIAS"'-[^[:space:]]+' upload.log | head -n 1 || true)"
-          if [ -z "$url" ]; then
-            echo "::notice::Worker のプレビュー URL が無効なため、プレビュー URL を発行できませんでした"
+          alias_url="$(sed -n 's/^Version Preview Alias URL: //p' upload.log | head -n 1)"
+          version_url="$(sed -n 's/^Version Preview URL: //p' upload.log | head -n 1)"
+          if [ -z "$alias_url" ] || [ -z "$version_url" ]; then
+            echo "::error::プレビュー URL を wrangler の出力から取得できませんでした"
+            exit 1
           fi
-          echo "url=$url" >> "$GITHUB_OUTPUT"
-      - if: steps.upload.outputs.url != ''
-        env:
+          {
+            echo "alias_url=$alias_url"
+            echo "version_url=$version_url"
+          } >> "$GITHUB_OUTPUT"
+      - env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          PREVIEW_URL: ${{ steps.upload.outputs.url }}
+          ALIAS_URL: ${{ steps.upload.outputs.alias_url }}
+          VERSION_URL: ${{ steps.upload.outputs.version_url }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          body="プレビュー: $PREVIEW_URL （コミット $HEAD_SHA）"
+          body="$(printf '### プレビュー\n\n| 種類 | URL |\n|---|---|\n| この PR の最新 | %s |\n| このコミット (%s) | %s |\n\nmain へのデプロイでプレビュー URL は無効になります。\n' "$ALIAS_URL" "${HEAD_SHA:0:7}" "$VERSION_URL")"
           gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --edit-last --create-if-none --body "$body"
 
   production:
