@@ -44,7 +44,10 @@ jobs:
           PREVIEW_ALIAS: pr-${{ github.event.pull_request.number }}
         run: |
           pnpm exec wrangler versions upload --preview-alias "$PREVIEW_ALIAS" | tee upload.log
-          url="$(grep -oE 'https://'"$PREVIEW_ALIAS"'-[^[:space:]]+' upload.log | head -n 1)"
+          url="$(grep -oE 'https://'"$PREVIEW_ALIAS"'-[^[:space:]]+' upload.log | head -n 1 || true)"
+          if [ -z "$url" ]; then
+            echo "::notice::Worker のプレビュー URL が無効なため、プレビュー URL を発行できませんでした"
+          fi
           echo "url=$url" >> "$GITHUB_OUTPUT"
       - if: steps.upload.outputs.url != ''
         env:
