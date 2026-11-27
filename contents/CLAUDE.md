@@ -1,6 +1,6 @@
 ## 概要
 
-`contents/` はブログ記事の Markdown と textlint 用の独立パッケージ。サイトのビルドは `contents/blog/*.md` を読み込んで記事ページを生成する。
+`contents/` には、ブログ記事の Markdown と、textlint を実行する独立したパッケージがある。サイトのビルドは `contents/blog/*.md` を読み込んで記事ページを生成する。
 
 ## よく使うコマンド
 

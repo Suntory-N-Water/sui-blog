@@ -1,4 +1,4 @@
-`contents/blog` の Markdown 記事から静的サイトを生成する、Astro 製のブログ。Cloudflare Workers の静的アセットとして配信する。
+このリポジトリは、Astro で `contents/blog` の Markdown 記事から静的サイトを生成するブログである。Cloudflare Workers の静的アセットとして配信する。
 
 ## コマンド
 
