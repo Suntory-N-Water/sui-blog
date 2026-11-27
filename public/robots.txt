@@ -8,6 +8,5 @@ Allow: /
 Sitemap: https://suntory-n-water.com/sitemap.xml
 
 # Block common non-content paths
-Disallow: /api/
 Disallow: /search
-Disallow: /_emdash/
+Disallow: /pagefind/

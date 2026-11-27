@@ -3,11 +3,5 @@
   "compilerOptions": {
     "types": ["node"]
   },
-  "include": [
-    "src",
-    ".astro/types.d.ts",
-    "emdash-env.d.ts",
-    "worker-configuration.d.ts",
-    "astro.config.mjs"
-  ]
+  "include": ["src", "scripts", ".astro/types.d.ts", "astro.config.mjs"]
 }

@@ -1,12 +1,6 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "entry": [
-    "src/pages/**/*.{astro,ts}",
-    "src/live.config.ts",
-    "src/middleware/outer.ts",
-    ".agents/skills/*/scripts/*.ts"
-  ],
-  "project": ["src/**/*.{ts,tsx,astro}", ".agents/skills/*/scripts/*.ts"],
-  "ignoreDependencies": ["cloudflare"],
+  "entry": ["src/pages/**/*.{astro,ts}", "scripts/*.ts"],
+  "project": ["src/**/*.{ts,astro}", "scripts/*.ts"],
   "ignoreExportsUsedInFile": true
 }

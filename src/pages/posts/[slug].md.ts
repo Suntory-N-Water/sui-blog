@@ -1,19 +1,13 @@
-import type { APIRoute } from 'astro';
-import { getEmDashEntry } from 'emdash';
-import { directMarkdownResponse } from '../../lib/agent-markdown';
-import { postMarkdown } from '../../lib/agent-markdown-pages';
+import type { APIRoute, GetStaticPaths } from 'astro';
+import { markdownResponse, postMarkdown } from '../../lib/agent-markdown';
+import { getPosts, type Post } from '../../lib/posts';
+import { siteOrigin } from '../../lib/site';
 
-export const GET: APIRoute = async (context) => {
-  const slug = context.params.slug ?? '';
-  const { entry: post, cacheHint } = await getEmDashEntry('posts', slug);
-  if (!post) {
-    return new Response('Not found', { status: 404 });
-  }
-  if (context.cache?.enabled) {
-    context.cache.set(cacheHint);
-  }
-  const page = postMarkdown(context, post);
-  return directMarkdownResponse(page, {
-    'Content-Disposition': `inline; filename="${page.id}.md"`,
-  });
-};
+export const getStaticPaths = (async () =>
+  (await getPosts()).map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }))) satisfies GetStaticPaths;
+
+export const GET: APIRoute<{ post: Post }> = ({ site, props }) =>
+  markdownResponse(postMarkdown(siteOrigin(site), props.post));

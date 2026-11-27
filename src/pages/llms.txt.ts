@@ -1,24 +1,20 @@
 import type { APIRoute } from 'astro';
-import { getEmDashCollection, getSiteSettings } from 'emdash';
-import { postListItem, siteOrigin, usageLines } from '../lib/agent-markdown';
-import { resolveBlogSiteIdentity } from '../utils/site-identity';
+import { postListItem, usageLines } from '../lib/agent-markdown';
+import { getPosts } from '../lib/posts';
+import { SITE_TAGLINE, SITE_TITLE, siteOrigin } from '../lib/site';
 
-export const GET: APIRoute = async ({ site, url }) => {
-  const origin = siteOrigin(site, url);
-  const { siteTitle, siteTagline } = resolveBlogSiteIdentity(await getSiteSettings());
-  const { entries: posts } = await getEmDashCollection('posts', {
-    orderBy: { created_at: 'desc' },
-    limit: 1000,
-  });
+export const GET: APIRoute = async ({ site }) => {
+  const origin = siteOrigin(site);
+  const posts = await getPosts();
 
   const lines = [
-    `# ${siteTitle}`,
+    `# ${SITE_TITLE}`,
     '',
-    `> ${siteTagline}`,
+    `> ${SITE_TAGLINE}`,
     '',
     '## いつ使うか',
     '',
-    '- Claude Code などの AI エージェント、Cloudflare Workers、EmDash、Astro、フロントエンド開発について、日本語の検証記事や実装例を探すときに使えます',
+    '- Claude Code などの AI エージェント、Cloudflare Workers、Astro、フロントエンド開発について、日本語の検証記事や実装例を探すときに使えます',
     '- 記事は下の「記事」の一覧から選べます',
     '',
     '## 使い方',
@@ -36,9 +32,6 @@ export const GET: APIRoute = async ({ site, url }) => {
   ];
 
   return new Response(`${lines.join('\n')}\n`, {
-    headers: {
-      'Content-Type': 'text/plain; charset=utf-8',
-      'Cache-Control': 'public, max-age=3600',
-    },
+    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
   });
 };

@@ -1,6 +1,6 @@
 ## 概要
 
-`contents/` は移行元の Markdown 記事と textlint 用の独立パッケージ。公開時の記事データは EmDash の D1 にあり、このディレクトリは実行時には読み込まれない。
+`contents/` はブログ記事の Markdown と textlint 用の独立パッケージ。サイトのビルドは `contents/blog/*.md` を読み込んで記事ページを生成する。
 
 ## よく使うコマンド
 
@@ -10,8 +10,6 @@
 pnpm run lint       # 文章の構成(textlint)をチェック
 pnpm run lint:fix   # textlint の自動修正
 ```
-
-記事本文は移行前の履歴として保存する。
 
 ## 文章ガイド
 

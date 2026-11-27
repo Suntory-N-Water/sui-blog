@@ -1,46 +1,37 @@
 import type { APIRoute } from 'astro';
-import { getEmDashCollection, getTaxonomyTerms, getTermsForEntries } from 'emdash';
+import { escapeXml } from '../lib/xml';
+import { getPosts, PER_PAGE, postPath, summarizeTags, updatedAt } from '../lib/posts';
+import { siteOrigin } from '../lib/site';
 
 type SitemapEntry = {
   path: string;
-  lastmod?: Date | null;
+  lastmod?: Date;
   changefreq: string;
   priority: string;
 };
 
-export const GET: APIRoute = async ({ site, url }) => {
-  const origin = site?.toString().replace(/\/+$/u, '') || url.origin;
-
-  const { entries: posts } = await getEmDashCollection('posts', {
-    orderBy: { created_at: 'desc' },
-    limit: 1000,
-  });
-  const [allTags, tagsByPost] = await Promise.all([
-    getTaxonomyTerms('tag', { includeCounts: false }),
-    getTermsForEntries(
-      'posts',
-      posts.map((post) => post.data.id),
-      'tag',
-    ),
-  ]);
-  const publishedTagSlugs = new Set(
-    [...tagsByPost.values()].flatMap((terms) => terms.map((term) => term.slug)),
-  );
-  const tags = allTags.filter((tag) => publishedTagSlugs.has(tag.slug));
-
-  const newest = posts[0]?.data.createdAt;
+export const GET: APIRoute = async ({ site }) => {
+  const origin = siteOrigin(site);
+  const posts = await getPosts();
+  const newest = posts[0]?.data.date;
+  const totalPages = Math.ceil(posts.length / PER_PAGE);
 
   const entries: SitemapEntry[] = [
     { path: '/', lastmod: newest, changefreq: 'daily', priority: '1.0' },
     { path: '/posts', lastmod: newest, changefreq: 'daily', priority: '0.9' },
+    ...Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
+      path: `/posts/page/${i + 2}`,
+      changefreq: 'weekly',
+      priority: '0.4',
+    })),
     { path: '/tags', lastmod: newest, changefreq: 'weekly', priority: '0.6' },
     ...posts.map((post) => ({
-      path: `/posts/${post.id}`,
-      lastmod: post.data.updatedAt,
+      path: postPath(post),
+      lastmod: updatedAt(post),
       changefreq: 'monthly',
       priority: '0.8',
     })),
-    ...tags.map((tag) => ({
+    ...summarizeTags(posts).map((tag) => ({
       path: `/tags/${tag.slug}`,
       changefreq: 'weekly',
       priority: '0.5',
@@ -65,25 +56,6 @@ ${urls}
 </urlset>`;
 
   return new Response(xml, {
-    headers: {
-      'Content-Type': 'application/xml; charset=utf-8',
-      'Cache-Control': 'public, max-age=3600',
-    },
+    headers: { 'Content-Type': 'application/xml; charset=utf-8' },
   });
 };
-
-const XML_ESCAPE_PATTERNS = [
-  [/&/gu, '&amp;'],
-  [/</gu, '&lt;'],
-  [/>/gu, '&gt;'],
-  [/"/gu, '&quot;'],
-  [/'/gu, '&apos;'],
-] as const;
-
-function escapeXml(value: string): string {
-  let result = value;
-  for (const [pattern, replacement] of XML_ESCAPE_PATTERNS) {
-    result = result.replace(pattern, replacement);
-  }
-  return result;
-}

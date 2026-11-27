@@ -1,28 +1,22 @@
 ---
-import { getEmDashCollection, getTermsForEntries } from 'emdash';
 import ArchiveHead from './ArchiveHead.astro';
 import PostIndex from './PostIndex.astro';
 import PostRow from './PostRow.astro';
 import Pagination from './Pagination.astro';
-import { getReadingTime } from '../utils/reading-time';
+import { type Post, postPath, postTags, readingMinutes } from '../lib/posts';
 import { formatYearMonthJp, getYear } from '../utils/format-date';
 
-type PostsResult = Awaited<ReturnType<typeof getEmDashCollection<'posts'>>>;
-type ArchivePost = PostsResult['entries'][number];
-type TagsByEntry = Awaited<ReturnType<typeof getTermsForEntries>>;
-
 interface Props {
-  posts: ArchivePost[];
-  tagsByEntry: TagsByEntry;
+  posts: Post[];
   page: number;
   totalPages: number;
 }
 
-const { posts, tagsByEntry, page, totalPages } = Astro.props;
+const { posts, page, totalPages } = Astro.props;
 
-const yearGroups = new Map<string, ArchivePost[]>();
+const yearGroups = new Map<string, Post[]>();
 for (const post of posts) {
-  const year = getYear(post.data.createdAt) ?? '不明';
+  const year = getYear(post.data.date) ?? '不明';
   const group = yearGroups.get(year);
   if (group) {
     group.push(post);
@@ -31,10 +25,8 @@ for (const post of posts) {
   }
 }
 
-const firstPost = posts[0];
-const lastPost = posts.at(-1);
-const newest = formatYearMonthJp(firstPost?.data.createdAt);
-const oldest = formatYearMonthJp(lastPost?.data.createdAt);
+const newest = formatYearMonthJp(posts[0]?.data.date);
+const oldest = formatYearMonthJp(posts.at(-1)?.data.date);
 const dateRange = newest && oldest ? (newest === oldest ? newest : `${newest} — ${oldest}`) : null;
 const sub = dateRange ? `${dateRange} / ${page} ページ目` : `${page} ページ目`;
 ---
@@ -54,14 +46,11 @@ const sub = dateRange ? `${dateRange} / ${page} ページ目` : `${page} ペー�
         {yearPosts.map((post) => (
           <PostRow
             title={post.data.title}
-            href={`/posts/${post.id}`}
-            date={post.data.createdAt}
-            readingTime={getReadingTime(post.data.content)}
-            icon={post.data.featured_image}
-            tags={(tagsByEntry.get(post.data.id) ?? []).map((t) => ({
-              slug: t.slug,
-              label: t.label,
-            }))}
+            href={postPath(post)}
+            date={post.data.date}
+            readingTime={readingMinutes(post.body)}
+            iconUrl={post.data.icon_url}
+            tags={postTags(post)}
           />
         ))}
       </PostIndex>

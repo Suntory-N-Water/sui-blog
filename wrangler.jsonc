@@ -1,46 +1,15 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "sui-blog",
-  "main": "./src/worker.ts",
   "compatibility_date": "2026-09-01",
-  "compatibility_flags": ["nodejs_compat"],
   "assets": {
-    "binding": "ASSETS",
-    "directory": "./dist/client"
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
   },
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "sui-blog"
-    }
-  ],
+  "preview_urls": true,
   "observability": {
-    "enabled": true,
-    "issues": {
-      "enabled": true
-    }
-  },
-  "r2_buckets": [
-    {
-      "binding": "MEDIA",
-      "bucket_name": "sui-blog-media"
-    }
-  ],
-  "kv_namespaces": [
-    {
-      "binding": "SESSION",
-      "id": "816fa61942dd43c08524f2ac74bcfca9"
-    },
-    {
-      "binding": "CACHE",
-      "id": "175dccb4d8c14be9a0cfd85a901ef7e2"
-    }
-  ],
-  // Sandboxed plugins require Worker Loader, available on Workers paid plans. Uncomment to enable:
-  "worker_loaders": [{ "binding": "LOADER" }],
-  // General maintenance cron trigger
-  "triggers": {
-    "crons": ["* * * * *"]
+    "enabled": true
   },
   "routes": [
     {

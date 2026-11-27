@@ -1,0 +1,27 @@
+---
+import { inlineIcon } from '../lib/icons';
+
+interface Props {
+  iconUrl?: string;
+  class?: string;
+}
+
+const { iconUrl, class: className } = Astro.props;
+const svg = inlineIcon(iconUrl);
+---
+
+{svg && <span class:list={['post-icon', className]} set:html={svg} />}
+
+<style>
+  .post-icon {
+    display: inline-block;
+    flex: none;
+    line-height: 0;
+  }
+
+  .post-icon :global(svg) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+</style>

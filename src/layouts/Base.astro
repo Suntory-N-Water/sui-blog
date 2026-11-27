@@ -1,16 +1,17 @@
 ---
-import { getMenu, getSiteSettings } from 'emdash';
-import { WidgetArea, EmDashHead, EmDashBodyStart, EmDashBodyEnd } from 'emdash/ui';
-import { createPublicPageContext } from 'emdash/page';
-import LiveSearch from 'emdash/ui/search';
 import { Font } from 'astro:assets';
-import { resolveBlogSiteIdentity } from '../utils/site-identity';
+import {
+  GA_MEASUREMENT_ID,
+  GOOGLE_SITE_VERIFICATION,
+  SITE_TAGLINE,
+  SITE_TITLE,
+  siteOrigin,
+} from '../lib/site';
 import '../styles/tokens.css';
 import '../styles/theme.css';
 
 interface Props {
   title: string;
-  pageTitle?: string | null;
   description?: string | null;
   image?: string | null;
   canonical?: string | null;
@@ -18,15 +19,11 @@ interface Props {
   type?: 'website' | 'article';
   publishedTime?: string | null;
   modifiedTime?: string | null;
-  author?: string | null;
   markdownHref?: string | null;
-  /** Pass content reference for plugin page contributions on content pages */
-  content?: { collection: string; id: string; slug?: string | null };
 }
 
 const {
   title,
-  pageTitle,
   description,
   image,
   canonical,
@@ -34,34 +31,15 @@ const {
   type = 'website',
   publishedTime,
   modifiedTime,
-  author,
   markdownHref,
-  content,
 } = Astro.props;
-const [settings, menu, socialMenu] = await Promise.all([
-  getSiteSettings(),
-  getMenu('primary'),
-  getMenu('social'),
-]);
-const { siteTitle, siteTagline, siteLogo } = resolveBlogSiteIdentity(settings);
-const ogImage = image ?? new URL('/opengraph-image.png', Astro.url.origin).toString();
-const fullTitle = title.includes(siteTitle) ? title : `${title} — ${siteTitle}`;
-const pageCtx = createPublicPageContext({
-  Astro,
-  kind: content ? 'content' : 'custom',
-  pageType: type,
-  title: fullTitle,
-  pageTitle: pageTitle ?? title,
-  description,
-  canonical,
-  image: ogImage,
-  content,
-  seo: { ogImage, robots },
-  articleMeta: { publishedTime, modifiedTime, author },
-  siteName: siteTitle,
-});
-
-const isLoggedIn = !!Astro.locals.user;
+const origin = siteOrigin(Astro.site);
+const siteTitle = SITE_TITLE;
+const siteTagline = SITE_TAGLINE;
+const ogImage = image ?? `${origin}/opengraph-image.png`;
+const fullTitle = title === siteTitle ? title : `${title} | ${siteTitle}`;
+const canonicalUrl = canonical ?? `${origin}${Astro.url.pathname.replace(/\.html$/u, '')}`;
+const metaDescription = description ?? siteTagline;
 ---
 
 <!doctype html>
@@ -73,7 +51,25 @@ const isLoggedIn = !!Astro.locals.user;
     <Font cssVariable='--font-jp' />
     <Font cssVariable='--font-mono-latin' />
     <title>{fullTitle}</title>
-    <EmDashHead page={pageCtx} />
+    <meta name='google-site-verification' content={GOOGLE_SITE_VERIFICATION} />
+    <meta name='description' content={metaDescription} />
+    {robots && <meta name='robots' content={robots} />}
+    <meta name='twitter:card' content='summary_large_image' />
+    <meta name='twitter:title' content={title} />
+    <meta name='twitter:description' content={metaDescription} />
+    <meta name='twitter:image' content={ogImage} />
+    <meta property='og:type' content={type} />
+    <meta property='og:title' content={title} />
+    <meta property='og:description' content={metaDescription} />
+    <meta property='og:image' content={ogImage} />
+    <meta property='og:url' content={canonicalUrl} />
+    <meta property='og:site_name' content={siteTitle} />
+    <meta property='og:locale' content='ja_JP' />
+    {publishedTime && <meta property='article:published_time' content={publishedTime} />}
+    {modifiedTime && <meta property='article:modified_time' content={modifiedTime} />}
+    <link rel='canonical' href={canonicalUrl} />
+    <link rel='icon' href='/favicon.ico' />
+    <link rel='apple-touch-icon' href='/apple-touch-icon.jpg' />
     <link rel='alternate' type='application/rss+xml' title={siteTitle} href='/rss.xml' />
     {markdownHref && <link rel='alternate' type='text/markdown' href={markdownHref} />}
     <slot name='head' />
@@ -90,59 +86,41 @@ const isLoggedIn = !!Astro.locals.user;
         <script
           is:inline
           async
-          src='https://www.googletagmanager.com/gtag/js?id=G-VJECTY2TM6'
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
         ></script>
-        <script is:inline>
+        <script is:inline define:vars={{ measurementId: GA_MEASUREMENT_ID }}>
           window.dataLayer = window.dataLayer || [];
           function gtag() {
             dataLayer.push(arguments);
           }
           gtag('js', new Date());
-          gtag('config', 'G-VJECTY2TM6');
+          gtag('config', measurementId);
         </script>
       </>
     )}
   </head>
   <body>
-    <EmDashBodyStart page={pageCtx} />
     <header class='site-header'>
       <nav class='nav' aria-label='サイト'>
         <a href='/' class='site-title'>
-          {siteLogo ? (
-            <img src={siteLogo.url} alt={siteLogo.alt || siteTitle} class='site-logo-img' />
-          ) : (
-            siteTitle
-          )}
+          {siteTitle}
         </a>
         <div class='nav-right'>
           <search class='site-search-area'>
-            <LiveSearch
-              placeholder='記事を検索'
-              class='site-search'
-              inputClass='site-search-input'
-              resultsClass='site-search-results'
-              resultClass='site-search-result'
-              collections={['posts']}
-              routeMap={{ posts: '/posts/:slug' }}
-            />
+            <form class='site-search' action='/search' method='get' role='search' data-site-search>
+              <input
+                type='search'
+                name='q'
+                placeholder='記事を検索'
+                aria-label='記事を検索'
+                autocomplete='off'
+                class='site-search-input'
+                data-site-search-input
+              />
+              <div class='site-search-results' hidden data-site-search-results></div>
+            </form>
           </search>
-          {menu && menu.items.length > 0 && (
-            <ul class='nav-links'>
-              {menu.items.map((item) => (
-                <li>
-                  <a href={item.url} target={item.target}>
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          )}
         </div>
-        {isLoggedIn && (
-          <a href='/_emdash/admin' class='nav-admin'>
-            管理
-          </a>
-        )}
       </nav>
     </header>
 
@@ -155,11 +133,7 @@ const isLoggedIn = !!Astro.locals.user;
         <div class='footer-grid'>
           <div class='footer-brand'>
             <a href='/' class='footer-logo'>
-              {siteLogo ? (
-                <img src={siteLogo.url} alt={siteLogo.alt || siteTitle} class='footer-logo-img' />
-              ) : (
-                siteTitle
-              )}
+              {siteTitle}
             </a>
             <p class='footer-tagline'>{siteTagline}</p>
           </div>
@@ -174,6 +148,12 @@ const isLoggedIn = !!Astro.locals.user;
               <li>
                 <a href='/posts'>記事一覧</a>
               </li>
+              <li>
+                <a href='/tags'>タグ一覧</a>
+              </li>
+              <li>
+                <a href='/search'>記事を検索</a>
+              </li>
             </ul>
           </nav>
           <nav class='footer-nav' aria-labelledby='footer-links-heading'>
@@ -181,25 +161,11 @@ const isLoggedIn = !!Astro.locals.user;
               リンク
             </h2>
             <ul class='footer-links'>
-              {socialMenu?.items.map((item) => (
-                <li>
-                  <a
-                    href={item.url}
-                    target={item.target}
-                    rel={item.target === '_blank' ? 'noopener noreferrer' : undefined}
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              ))}
               <li>
                 <a href='/rss.xml'>RSS</a>
               </li>
             </ul>
           </nav>
-          <div class='footer-widgets-section'>
-            <WidgetArea name='footer' />
-          </div>
         </div>
         <div class='footer-bottom'>
           <div class='theme-switcher' role='group' aria-label='表示テーマ'>
@@ -320,9 +286,9 @@ const isLoggedIn = !!Astro.locals.user;
       @layer base;
 
       @layer base {
-        :where(.site-root) *:where(:not([class*='emdash']):not([class*='ec-'])),
-        :where(.site-root) *:where(:not([class*='emdash']):not([class*='ec-']))::before,
-        :where(.site-root) *:where(:not([class*='emdash']):not([class*='ec-']))::after {
+        :where(.site-root) *,
+        :where(.site-root) *::before,
+        :where(.site-root) *::after {
           box-sizing: border-box;
         }
 
@@ -359,13 +325,13 @@ const isLoggedIn = !!Astro.locals.user;
           min-height: 100vh;
         }
 
-        :where(.site-root) a:where(:not([class*='emdash']):not([class*='ec-'])) {
+        :where(.site-root) a {
           color: var(--color-brand);
           text-decoration: none;
           transition: color var(--transition-fast);
         }
 
-        :where(.site-root) a:where(:not([class*='emdash']):not([class*='ec-'])):hover {
+        :where(.site-root) a:hover {
           color: var(--color-brand-hover);
         }
 
@@ -427,13 +393,6 @@ const isLoggedIn = !!Astro.locals.user;
         color: var(--color-brand);
       }
 
-      .site-logo-img {
-        height: 48px;
-        width: auto;
-        display: block;
-        margin: -8px 0;
-      }
-
       .nav-right {
         display: flex;
         align-items: center;
@@ -441,39 +400,9 @@ const isLoggedIn = !!Astro.locals.user;
         margin-inline-start: auto;
       }
 
-      .nav-links {
-        display: flex;
-        gap: var(--spacing-5);
-        font-size: var(--font-size-sm);
-        list-style: none;
-      }
-
-      .nav-links a {
-        text-decoration: none;
-        color: var(--color-text);
-        transition: color var(--transition-fast);
-      }
-
-      .nav-links a:hover {
-        color: var(--color-brand);
-      }
-
-      .nav-admin {
-        font-size: var(--font-size-sm);
-        color: var(--color-text-secondary);
-        text-decoration: none;
-        transition: color var(--transition-fast);
-      }
-
-      .nav-admin:hover {
-        color: var(--color-text);
-      }
-
-      /* Search styling */
       .site-search {
         position: relative;
         width: var(--search-input-width);
-        --emdash-search-border-focus: var(--color-brand);
       }
 
       :global(.site-search-input) {
@@ -504,8 +433,8 @@ const isLoggedIn = !!Astro.locals.user;
       :global(.site-search-results) {
         position: absolute;
         top: 100%;
-        left: 0;
         right: 0;
+        width: min(360px, calc(100vw - 32px));
         margin-top: var(--spacing-2);
         background: var(--color-bg);
         border: 1px solid var(--color-border);
@@ -516,8 +445,11 @@ const isLoggedIn = !!Astro.locals.user;
         z-index: 1000;
       }
 
-      :global(.site-search-results .emdash-live-search-loading),
-      :global(.site-search-results .emdash-live-search-no-results) {
+      :global(.site-search-results[hidden]) {
+        display: none;
+      }
+
+      :global(.site-search-status) {
         padding: var(--spacing-4);
         text-align: center;
         color: var(--color-muted);
@@ -538,28 +470,18 @@ const isLoggedIn = !!Astro.locals.user;
       }
 
       :global(.site-search-result):hover,
-      :global(.site-search-result):focus,
-      :global(.site-search-result.focused) {
+      :global(.site-search-result):focus-visible {
         background: var(--color-surface);
         outline: none;
       }
 
-      :global(.site-search-result .emdash-live-search-result-title) {
+      :global(.site-search-result-title) {
         display: block;
         font-weight: 500;
         font-size: var(--font-size-sm);
       }
 
-      :global(.site-search-result .emdash-live-search-result-collection) {
-        display: block;
-        font-size: var(--font-size-xs);
-        color: var(--color-muted);
-        text-transform: uppercase;
-        letter-spacing: var(--tracking-wide);
-        margin-top: 2px;
-      }
-
-      :global(.site-search-result .emdash-live-search-result-snippet) {
+      :global(.site-search-result-snippet) {
         display: block;
         font-size: var(--font-size-sm);
         color: var(--color-muted);
@@ -567,7 +489,8 @@ const isLoggedIn = !!Astro.locals.user;
         line-height: var(--leading-snug);
       }
 
-      :global(.site-search-result .emdash-live-search-result-snippet mark) {
+      :global(.site-search-result-snippet mark) {
+        background: none;
         font-weight: 600;
         color: var(--color-text);
       }
@@ -590,7 +513,7 @@ const isLoggedIn = !!Astro.locals.user;
 
       .footer-grid {
         display: grid;
-        grid-template-columns: 2fr 1fr 1fr 1fr;
+        grid-template-columns: 2fr 1fr 1fr;
         gap: var(--spacing-12);
         margin-bottom: var(--spacing-12);
       }
@@ -605,11 +528,6 @@ const isLoggedIn = !!Astro.locals.user;
         color: var(--color-text);
         text-decoration: none;
         letter-spacing: var(--tracking-snug);
-      }
-
-      .footer-logo-img {
-        height: 24px;
-        width: auto;
       }
 
       .footer-tagline {
@@ -649,29 +567,6 @@ const isLoggedIn = !!Astro.locals.user;
 
       .footer-links a:hover {
         color: var(--color-text);
-      }
-
-      .footer-widgets-section :global(.widget-area) {
-        display: block;
-      }
-
-      .footer-widgets-section :global(.widget) {
-        color: var(--color-text-secondary);
-      }
-
-      .footer-widgets-section :global(.widget__title) {
-        font-size: var(--font-size-xs);
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: var(--tracking-wider);
-        color: var(--color-muted);
-        margin-bottom: var(--spacing-4);
-      }
-
-      .footer-widgets-section :global(.widget__content) {
-        color: var(--color-text-secondary);
-        font-size: var(--font-size-sm);
-        line-height: var(--leading-relaxed);
       }
 
       .footer-bottom {
@@ -777,25 +672,6 @@ const isLoggedIn = !!Astro.locals.user;
           font-size: var(--font-size-sm) !important;
         }
 
-        .nav-links {
-          grid-column: 1 / -1;
-          grid-row: 2;
-          display: flex;
-          column-gap: var(--spacing-3);
-          row-gap: var(--spacing-1);
-          flex-wrap: wrap;
-          justify-content: flex-start;
-        }
-
-        .nav-admin {
-          grid-column: 3;
-          grid-row: 1;
-          justify-self: end;
-          font-size: var(--font-size-xs);
-          margin-inline-start: 0;
-          white-space: nowrap;
-        }
-
         .footer-grid {
           grid-template-columns: 1fr;
         }
@@ -809,26 +685,97 @@ const isLoggedIn = !!Astro.locals.user;
           gap: var(--spacing-4);
           text-align: center;
         }
-
-        .footer-controls {
-          flex-wrap: wrap;
-          justify-content: center;
-        }
       }
     </style>
 
     <script>
-      // ⌘K / Ctrl+K to focus search
-      document.addEventListener('keydown', (e) => {
-        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-          e.preventDefault();
-          const searchInput = document.querySelector('.site-search-input') as HTMLInputElement;
-          if (searchInput) {
-            searchInput.focus();
+      import { searchPosts } from '../scripts/pagefind';
+
+      const SEARCH_DELAY_MS = 200;
+      const RESULT_LIMIT = 6;
+
+      const form = document.querySelector<HTMLFormElement>('[data-site-search]');
+      const input = document.querySelector<HTMLInputElement>('[data-site-search-input]');
+      const results = document.querySelector<HTMLElement>('[data-site-search-results]');
+
+      function status(message: string) {
+        const p = document.createElement('p');
+        p.className = 'site-search-status';
+        p.textContent = message;
+        return p;
+      }
+
+      if (form && input && results) {
+        let timer: number | undefined;
+        let latest = 0;
+
+        const close = () => {
+          results.hidden = true;
+          results.replaceChildren();
+        };
+
+        input.addEventListener('input', () => {
+          window.clearTimeout(timer);
+          const query = input.value.trim();
+          if (!query) {
+            close();
+            return;
           }
-        }
-      });
+          timer = window.setTimeout(async () => {
+            const request = ++latest;
+            results.hidden = false;
+            results.replaceChildren(status('検索しています'));
+            try {
+              const found = await searchPosts(query, RESULT_LIMIT);
+              if (request !== latest) {
+                return;
+              }
+              if (found.length === 0) {
+                results.replaceChildren(status('一致する記事がありません'));
+                return;
+              }
+              results.replaceChildren(
+                ...found.map((item) => {
+                  const link = document.createElement('a');
+                  link.className = 'site-search-result';
+                  link.href = item.url;
+                  const title = document.createElement('span');
+                  title.className = 'site-search-result-title';
+                  title.textContent = item.title;
+                  const snippet = document.createElement('span');
+                  snippet.className = 'site-search-result-snippet';
+                  snippet.innerHTML = item.excerpt;
+                  link.append(title, snippet);
+                  return link;
+                }),
+              );
+            } catch {
+              if (request === latest) {
+                results.replaceChildren(status('検索できませんでした'));
+              }
+            }
+          }, SEARCH_DELAY_MS);
+        });
+
+        input.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') {
+            close();
+          }
+        });
+
+        document.addEventListener('click', (event) => {
+          if (!form.contains(event.target as Node)) {
+            close();
+          }
+        });
+
+        document.addEventListener('keydown', (event) => {
+          if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+            event.preventDefault();
+            input.focus();
+          }
+        });
+      }
     </script>
-    <EmDashBodyEnd page={pageCtx} />
   </body>
 </html>

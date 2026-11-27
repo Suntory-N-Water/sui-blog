@@ -40,10 +40,6 @@ yarn-error.log*
 .env*
 !.env.example
 .wrangler/
-.emdash/migrations.json
-/data.db
-/*.db
-/uploads/
 /backups/
 
 

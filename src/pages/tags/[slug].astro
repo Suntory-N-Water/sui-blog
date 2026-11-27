@@ -1,75 +1,51 @@
 ---
-import { getTerm, getEmDashCollection, getTermsForEntries, decodeSlug } from 'emdash';
+import type { GetStaticPaths } from 'astro';
 import Base from '../../layouts/Base.astro';
 import PageShell from '../../components/PageShell.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ArchiveHead from '../../components/ArchiveHead.astro';
 import PostIndex from '../../components/PostIndex.astro';
 import PostRow from '../../components/PostRow.astro';
-import { getReadingTime } from '../../utils/reading-time';
+import { getPosts, postPath, postTags, readingMinutes, summarizeTags } from '../../lib/posts';
 
-const slug = decodeSlug(Astro.params.slug);
-const term = slug ? await getTerm('tag', slug, { includeCounts: false }) : null;
+export const getStaticPaths = (async () => {
+  const posts = await getPosts();
+  return summarizeTags(posts).map((tag) => ({
+    params: { slug: tag.slug },
+    props: {
+      label: tag.label,
+      posts: posts.filter((post) => postTags(post).some(({ slug }) => slug === tag.slug)),
+    },
+  }));
+}) satisfies GetStaticPaths;
 
-if (!term) {
-  return Astro.rewrite('/404');
-}
-
-const { entries: posts, cacheHint } = await getEmDashCollection('posts', {
-  where: { tag: term.slug },
-  orderBy: { created_at: 'desc' },
-});
-
-if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
-
-const tagsByEntry = await getTermsForEntries(
-  'posts',
-  posts.map((p) => p.data.id),
-  'tag',
-);
-const filteredPosts = posts.map((post) => ({
-  post,
-  tags: tagsByEntry.get(post.data.id) ?? [],
-}));
+const { label, posts } = Astro.props;
 ---
 
-<Base title={`#${term.label} の記事`} description={`「${term.label}」タグが付いた記事の一覧`}>
+<Base title={`#${label} の記事`} description={`「${label}」タグが付いた記事の一覧`}>
   <PageShell>
     <Breadcrumbs
       items={[
         { label: 'ホーム', href: '/' },
         { label: 'タグ一覧', href: '/tags' },
-        { label: `#${term.label}`, href: Astro.url.pathname },
+        { label: `#${label}`, href: Astro.url.pathname },
       ]}
     />
-    <ArchiveHead title={`#${term.label}`} sub={`${filteredPosts.length} 件`} />
+    <ArchiveHead title={`#${label}`} sub={`${posts.length} 件`} />
 
-    {filteredPosts.length === 0 ? (
-      <p class='no-posts'>このタグの記事はまだありません。</p>
-    ) : (
-      <PostIndex>
-        {filteredPosts.map(({ post, tags }) => (
-          <PostRow
-            title={post.data.title}
-            href={`/posts/${post.id}`}
-            date={post.data.createdAt}
-            readingTime={getReadingTime(post.data.content)}
-            excerpt={post.data.excerpt}
-            icon={post.data.featured_image}
-            tags={tags.map((t) => ({ slug: t.slug, label: t.label }))}
-            headingLevel={2}
-          />
-        ))}
-      </PostIndex>
-    )}
+    <PostIndex>
+      {posts.map((post) => (
+        <PostRow
+          title={post.data.title}
+          href={postPath(post)}
+          date={post.data.date}
+          readingTime={readingMinutes(post.body)}
+          excerpt={post.data.description}
+          iconUrl={post.data.icon_url}
+          tags={postTags(post)}
+          headingLevel={2}
+        />
+      ))}
+    </PostIndex>
   </PageShell>
 </Base>
-
-<style>
-  .no-posts {
-    max-width: var(--index-width);
-    padding: var(--spacing-8) 0;
-    color: var(--color-muted);
-    border-top: var(--rule-width) solid var(--color-border);
-  }
-</style>
