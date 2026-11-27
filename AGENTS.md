@@ -14,7 +14,7 @@ pnpm run knip             # 使われていないファイルと export の検�
 ```
 
 - 開発サーバーの検索は、`pnpm run build` が作った `dist/pagefind` の索引を使う。記事を変えた後に検索結果へ反映するには、build を実行し直す。
-- `public/_redirects` と `public/_headers` は Cloudflare が解釈するため、開発サーバーでは効かない。転送とヘッダーは `pnpm run preview` で確かめる。
+- `public/_redirects` と `public/_headers` は Cloudflare が解釈するため、開発サーバーでは転送もヘッダーの付与も行われない。転送とヘッダーは `pnpm run preview` で確かめる。
 
 ## 記事
 
