@@ -34,14 +34,6 @@
 		--color-on-brand: white;
 		--color-brand-ring: color-mix(in srgb, var(--color-brand) 25%, transparent);
 
-		/* EmDash search theming */
-		--emdash-search-bg: var(--color-bg);
-		--emdash-search-text: var(--color-text);
-		--emdash-search-muted: var(--color-muted);
-		--emdash-search-border: var(--color-border);
-		--emdash-search-hover: var(--color-surface);
-		--emdash-search-highlight: var(--color-text);
-
 		/* Typography */
 		--font-heading: var(--font-body);
 		--font-weight-heading: 600; /* h2-h6, card and list titles */

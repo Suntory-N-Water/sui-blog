@@ -1,72 +1,36 @@
 ---
-import {
-  getEmDashCollection,
-  getTermsForEntries,
-  getTaxonomyTermsWithCacheHint,
-  getSiteSettings,
-} from 'emdash';
-import { Image } from 'emdash/ui';
 import Base from '../layouts/Base.astro';
 import PageShell from '../components/PageShell.astro';
 import SectionBand from '../components/SectionBand.astro';
 import PostIndex from '../components/PostIndex.astro';
 import PostRow from '../components/PostRow.astro';
+import PostIcon from '../components/PostIcon.astro';
 import TagIndex from '../components/TagIndex.astro';
-import { getReadingTime } from '../utils/reading-time';
 import { formatIndexDate } from '../utils/format-date';
-import { resolveBlogSiteIdentity } from '../utils/site-identity';
-import { acceptsMarkdown, negotiatedMarkdownResponse } from '../lib/agent-markdown';
-import { buildHomeMarkdown, HOME_POST_LIMIT } from '../lib/agent-markdown-pages';
+import { AUTHOR_NAME, AUTHOR_SAME_AS, SITE_TAGLINE, SITE_TITLE, siteOrigin } from '../lib/site';
+import {
+  getPosts,
+  HOME_POST_LIMIT,
+  postPath,
+  postTags,
+  readingMinutes,
+  summarizeTags,
+  updatedAt,
+} from '../lib/posts';
 
-const AUTHOR_NAME = 'sui';
-const AUTHOR_SAME_AS = ['https://github.com/Suntory-N-Water'];
 const HOME_TAG_LIMIT = 12;
 
-const [
-  { entries: posts, cacheHint: postsCacheHint },
-  { data: tags, cacheHint: tagsCacheHint },
-  settings,
-] = await Promise.all([
-  getEmDashCollection('posts', {
-    orderBy: { created_at: 'desc' },
-    limit: HOME_POST_LIMIT,
-  }),
-  getTaxonomyTermsWithCacheHint('tag', { includeCounts: true }),
-  getSiteSettings(),
-]);
-const { siteTitle, siteTagline } = resolveBlogSiteIdentity(settings);
-
-if (Astro.cache?.enabled) {
-  Astro.cache.set(postsCacheHint);
-  Astro.cache.set(tagsCacheHint);
-}
-
-if (acceptsMarkdown(Astro.request.headers.get('Accept'))) {
-  return negotiatedMarkdownResponse(buildHomeMarkdown(Astro, { siteTitle, siteTagline }, posts));
-}
+const allPosts = await getPosts();
+const posts = allPosts.slice(0, HOME_POST_LIMIT);
+const siteTitle = SITE_TITLE;
+const siteTagline = SITE_TAGLINE;
 
 const leadPost = posts[0] ?? null;
 const listPosts = posts.slice(1);
+const leadTags = leadPost ? postTags(leadPost) : [];
+const topTags = summarizeTags(allPosts).slice(0, HOME_TAG_LIMIT);
 
-const tagsByEntry = await getTermsForEntries(
-  'posts',
-  posts.map((p) => p.data.id),
-  'tag',
-);
-
-const leadTags = leadPost
-  ? (tagsByEntry.get(leadPost.data.id) ?? []).map((t) => ({
-      slug: t.slug,
-      label: t.label,
-    }))
-  : [];
-
-const topTags = tags
-  .slice()
-  .sort((a, b) => (b.count ?? 0) - (a.count ?? 0))
-  .slice(0, HOME_TAG_LIMIT);
-
-const origin = Astro.site?.toString().replace(/\/+$/u, '') || Astro.url.origin;
+const origin = siteOrigin(Astro.site);
 const personId = `${origin}/#person`;
 const structuredData = {
   '@context': 'https://schema.org',
@@ -89,11 +53,11 @@ const structuredData = {
       isPartOf: { '@id': `${origin}/#website` },
       blogPost: posts.map((post) => ({
         '@type': 'BlogPosting',
-        '@id': `${origin}/posts/${post.id}#article`,
+        '@id': `${origin}${postPath(post)}#article`,
         headline: post.data.title,
-        url: `${origin}/posts/${post.id}`,
-        datePublished: post.data.createdAt.toISOString(),
-        dateModified: post.data.updatedAt.toISOString(),
+        url: `${origin}${postPath(post)}`,
+        datePublished: post.data.date.toISOString(),
+        dateModified: updatedAt(post).toISOString(),
         author: { '@id': personId },
       })),
     },
@@ -117,34 +81,23 @@ const structuredData = {
     {posts.length === 0 ? (
       <div class='empty-state'>
         <p>まだ記事がありません。</p>
-        <a href='/_emdash/admin/content/posts/new' class='btn'>
-          記事を作成
-        </a>
       </div>
     ) : (
       <Fragment>
         {leadPost && (
           <article class='lead'>
-            {leadPost.data.featured_image && (
-              <Image
-                image={leadPost.data.featured_image}
-                alt=''
-                width={34}
-                height={34}
-                class='lead-icon'
-              />
-            )}
+            <PostIcon iconUrl={leadPost.data.icon_url} class='lead-icon' />
             <div class='lead-date'>
-              <time datetime={leadPost.data.createdAt.toISOString()}>
-                {formatIndexDate(leadPost.data.createdAt)}
+              <time datetime={leadPost.data.date.toISOString()}>
+                {formatIndexDate(leadPost.data.date)}
               </time>
             </div>
             <h2>
-              <a href={`/posts/${leadPost.id}`}>{leadPost.data.title}</a>
+              <a href={postPath(leadPost)}>{leadPost.data.title}</a>
             </h2>
-            {leadPost.data.excerpt && <p class='lead-excerpt'>{leadPost.data.excerpt}</p>}
+            {leadPost.data.description && <p class='lead-excerpt'>{leadPost.data.description}</p>}
             <footer class='lead-foot'>
-              <span class='lead-readtime'>{getReadingTime(leadPost.data.content)} 分</span>
+              <span class='lead-readtime'>{readingMinutes(leadPost.body)} 分</span>
               {leadTags.length > 0 && (
                 <ul class='lead-tags' aria-label='タグ'>
                   {leadTags.map((tag) => (
@@ -168,15 +121,12 @@ const structuredData = {
                 {listPosts.map((post) => (
                   <PostRow
                     title={post.data.title}
-                    href={`/posts/${post.id}`}
-                    date={post.data.createdAt}
-                    readingTime={getReadingTime(post.data.content)}
-                    excerpt={post.data.excerpt}
-                    icon={post.data.featured_image}
-                    tags={(tagsByEntry.get(post.data.id) ?? []).map((t) => ({
-                      slug: t.slug,
-                      label: t.label,
-                    }))}
+                    href={postPath(post)}
+                    date={post.data.date}
+                    readingTime={readingMinutes(post.body)}
+                    excerpt={post.data.description}
+                    iconUrl={post.data.icon_url}
+                    tags={postTags(post)}
                   />
                 ))}
               </PostIndex>
@@ -190,13 +140,7 @@ const structuredData = {
       <section aria-label='タグから探す'>
         <SectionBand title='タグから探す' href='/tags' linkLabel='すべてのタグ' />
         <div class='index-wrap'>
-          <TagIndex
-            tags={topTags.map((tag) => ({
-              slug: tag.slug,
-              label: tag.label,
-              count: tag.count,
-            }))}
-          />
+          <TagIndex tags={topTags} />
         </div>
       </section>
     )}
@@ -229,7 +173,6 @@ const structuredData = {
   .lead :global(.lead-icon) {
     width: 34px;
     height: 34px;
-    object-fit: contain;
     margin-bottom: 14px;
   }
 
@@ -315,19 +258,5 @@ const structuredData = {
 
   .empty-state p {
     color: var(--color-text-secondary);
-    margin-bottom: 16px;
-  }
-
-  .btn {
-    display: inline-block;
-    padding: 8px 16px;
-    border: 1px solid var(--color-rule-strong);
-    color: var(--color-heading);
-    font-size: 13.5px;
-  }
-
-  .btn:hover {
-    color: var(--color-brand);
-    border-color: var(--color-brand);
   }
 </style>

@@ -1,14 +1,6 @@
 ---
-import {
-  getEmDashEntry,
-  getEmDashCollection,
-  getTermsForEntries,
-  getSeoMeta,
-  decodeSlug,
-  getSiteSettings,
-} from 'emdash';
-import { Image, PortableText } from 'emdash/ui';
-import { Comments, CommentForm } from 'emdash/ui/comments';
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import PageShell from '../../components/PageShell.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
@@ -16,149 +8,66 @@ import SectionBand from '../../components/SectionBand.astro';
 import ShareLinks from '../../components/ShareLinks.astro';
 import PostIndex from '../../components/PostIndex.astro';
 import PostRow from '../../components/PostRow.astro';
-import { articlePortableTextComponents } from '../../components/portable-text/components';
-import { codeRenderCacheKeys } from '../../lib/code-render';
-import { prefetchLinkPreviews } from '../../lib/link-card';
-import { prefetchRenderCache } from '../../lib/render-cache';
-import { withFootnoteBacklinks, withMarkdownFootnotes } from '../../lib/footnotes';
-import { findRelatedPostSlugs } from '../../lib/post-index';
-import { getReadingTime } from '../../utils/reading-time';
-import { resolveBlogSiteIdentity } from '../../utils/site-identity';
+import PostIcon from '../../components/PostIcon.astro';
+import {
+  getPosts,
+  type Post,
+  postPath,
+  postTags,
+  readingMinutes,
+  relatedPosts,
+  updatedAt,
+} from '../../lib/posts';
+import { AUTHOR_NAME, siteOrigin } from '../../lib/site';
 import { formatIndexDate } from '../../utils/format-date';
-import { acceptsMarkdown, negotiatedMarkdownResponse } from '../../lib/agent-markdown';
-import { postMarkdown } from '../../lib/agent-markdown-pages';
+import '../../styles/article.css';
 
-const slug = decodeSlug(Astro.params.slug);
-
-if (!slug) {
-  return Astro.rewrite('/404');
-}
-
-const { entry: post, cacheHint } = await getEmDashEntry('posts', slug);
-
-if (!post) {
-  return Astro.rewrite('/404');
-}
-
-if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
-
-if (acceptsMarkdown(Astro.request.headers.get('Accept'))) {
-  return negotiatedMarkdownResponse(postMarkdown(Astro, post));
-}
-
-const RELATED_POSTS_COUNT = 3;
-
-const loadRecentPosts = async () => {
-  const { entries: recentPosts } = await getEmDashCollection('posts', {
-    orderBy: { created_at: 'desc' },
-    limit: RELATED_POSTS_COUNT + 1,
-    offset: 0,
-  });
-  return recentPosts.filter((p) => p.id !== post.id).slice(0, RELATED_POSTS_COUNT);
-};
-
-const loadRelatedPosts = async () => {
-  const slugs: string[] = await findRelatedPostSlugs(post.data.id, RELATED_POSTS_COUNT).catch(
-    (error: unknown) => {
-      console.error('関連記事の算出に失敗しました', error);
-      return [];
-    },
-  );
-  if (slugs.length === 0) {
-    return loadRecentPosts();
-  }
-  const results = await Promise.all(
-    slugs.map((relatedSlug) => getEmDashEntry('posts', relatedSlug)),
-  );
-  return results.flatMap(({ entry }) => (entry ? [entry] : []));
-};
-
-const loadOtherPosts = async () => {
-  const otherPosts = await loadRelatedPosts();
-  const otherTagsByEntry = await getTermsForEntries(
-    'posts',
-    otherPosts.map((p) => p.data.id),
-    'tag',
-  );
-  return otherPosts.map((p) => ({
-    post: p,
-    tags: otherTagsByEntry.get(p.data.id) ?? [],
+export const getStaticPaths = (async () => {
+  const relatedCount = 3;
+  const posts = await getPosts();
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post, related: relatedPosts(post, posts, relatedCount) },
   }));
-};
+}) satisfies GetStaticPaths;
 
-const [settings, otherPostsWithTags] = await Promise.all([
-  getSiteSettings(),
-  loadOtherPosts(),
-  prefetchLinkPreviews(post.data.content),
-  codeRenderCacheKeys(post.data.content).then(prefetchRenderCache),
-]);
+const { post, related } = Astro.props as { post: Post; related: Post[] };
+const { Content } = await render(post);
 
-const ogImageUrl = `${Astro.url.origin}/posts/ogp/${encodeURIComponent(slug)}.png`;
-const { siteTitle } = resolveBlogSiteIdentity(settings);
-
-const seo = getSeoMeta(post, {
-  siteTitle,
-  siteUrl: Astro.url.origin,
-  path: Astro.url.pathname.replace(/\/$/, ''),
-  defaultOgImage: ogImageUrl,
-});
-
-const bylines = post.data.bylines ?? [];
-const authorNames = bylines.map((credit) => credit.byline.displayName).join('、');
-
-const readingTime = getReadingTime(post.data.content);
-
-const content = withFootnoteBacklinks(withMarkdownFootnotes(post.data.content));
-
-const tags = post.data.terms?.tag ?? [];
-
-const publishDate = formatIndexDate(post.data.createdAt);
-const publishDateTime = post.data.createdAt.toISOString();
-
-const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
+const origin = siteOrigin(Astro.site);
+const canonical = `${origin}${postPath(post)}`;
+const authorNames = AUTHOR_NAME;
+const readingTime = readingMinutes(post.body);
+const tags = postTags(post);
+const publishDate = formatIndexDate(post.data.date);
+const publishDateTime = post.data.date.toISOString();
 ---
 
 <Base
-  title={seo.title}
-  pageTitle={seo.ogTitle}
-  description={seo.description}
-  image={seo.ogImage}
-  canonical={seo.canonical}
-  robots={seo.robots}
+  title={post.data.title}
+  description={post.data.description}
+  image={`${origin}/posts/ogp/${post.id}.png`}
+  canonical={canonical}
   type='article'
   publishedTime={publishDateTime}
-  modifiedTime={post.data.updatedAt.toISOString()}
-  markdownHref={`/posts/${post.id}.md`}
-  content={{ collection: 'posts', id: post.data.id, slug }}
+  modifiedTime={updatedAt(post).toISOString()}
+  markdownHref={`${postPath(post)}.md`}
 >
   <PageShell>
     <Breadcrumbs
       items={[
         { label: 'ホーム', href: '/' },
         { label: '記事一覧', href: '/posts' },
-        { label: post.data.title, href: Astro.url.pathname },
+        { label: post.data.title, href: postPath(post) },
       ]}
     />
-    <article>
+    <article data-pagefind-body>
       <header class='article-head'>
-        {post.data.featured_image && (
-          <Image
-            image={post.data.featured_image}
-            alt=''
-            width={40}
-            height={40}
-            class='head-icon'
-            {...post.edit.featured_image}
-          />
-        )}
-        <h1 class='title' {...post.edit.title}>
+        <PostIcon iconUrl={post.data.icon_url} class='head-icon' />
+        <h1 class='title' data-pagefind-meta='title'>
           {post.data.title}
         </h1>
-        {post.data.excerpt && (
-          <p class='summary' {...post.edit.excerpt}>
-            {post.data.excerpt}
-          </p>
-        )}
+        {post.data.description && <p class='summary'>{post.data.description}</p>}
       </header>
 
       <div class='article-grid'>
@@ -185,7 +94,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
               </div>
             </dl>
             {tags.length > 0 && (
-              <ul class='meta-tags' aria-label='タグ'>
+              <ul class='meta-tags' aria-label='タグ' data-pagefind-ignore>
                 {tags.map((t) => (
                   <li>
                     <a href={`/tags/${t.slug}`} class='tag'>
@@ -199,7 +108,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
         </div>
 
         <div class='article-main'>
-          <div class='article-mobile'>
+          <div class='article-mobile' data-pagefind-ignore>
             <p class='mobile-meta'>
               {authorNames && <Fragment>{authorNames} / </Fragment>}
               {publishDate && (
@@ -218,10 +127,10 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
           </div>
 
           <div class='prose'>
-            <PortableText value={content} components={articlePortableTextComponents} />
+            <Content />
           </div>
 
-          <footer class='article-foot'>
+          <footer class='article-foot' data-pagefind-ignore>
             {tags.length > 0 && (
               <ul class='foot-tags' aria-label='タグ'>
                 {tags.map((t) => (
@@ -234,41 +143,33 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
               </ul>
             )}
             <div class='foot-actions'>
-              <ShareLinks url={shareUrl} title={post.data.title} />
-              <a href={`/posts/${post.id}.md`} class='btn'>
+              <ShareLinks url={canonical} title={post.data.title} />
+              <a href={`${postPath(post)}.md`} class='btn'>
                 この記事を Markdown で取得
               </a>
             </div>
           </footer>
 
-          {otherPostsWithTags.length > 0 && (
-            <aside class='more' aria-label='関連する記事'>
+          {related.length > 0 && (
+            <aside class='more' aria-label='関連する記事' data-pagefind-ignore>
               <SectionBand title='関連する記事' flush />
               <PostIndex>
-                {otherPostsWithTags.map(({ post: p, tags: postTags }) => (
+                {related.map((p) => (
                   <PostRow
                     title={p.data.title}
-                    href={`/posts/${p.id}`}
-                    date={p.data.createdAt}
-                    readingTime={getReadingTime(p.data.content)}
-                    icon={p.data.featured_image}
-                    tags={postTags.map((t) => ({
-                      slug: t.slug,
-                      label: t.label,
-                    }))}
+                    href={postPath(p)}
+                    date={p.data.date}
+                    readingTime={readingMinutes(p.body)}
+                    iconUrl={p.data.icon_url}
+                    tags={postTags(p)}
                   />
                 ))}
               </PostIndex>
             </aside>
           )}
-
-          <section class='article-comments' aria-label='コメント'>
-            <Comments collection='posts' contentId={post.data.id} threaded />
-            <CommentForm collection='posts' contentId={post.data.id} />
-          </section>
         </div>
 
-        <aside class='toc-col' id='toc-col'>
+        <aside class='toc-col' id='toc-col' data-pagefind-ignore>
           <div class='sticky'>
             <nav class='toc' aria-label='目次'>
               <div class='lbl' aria-hidden='true'>
@@ -291,7 +192,7 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
       const mobileToc = document.getElementById('mobile-toc');
       if (!content || !desktopList || !mobileList) return;
 
-      const headings = content.querySelectorAll('h2, h3');
+      const headings = content.querySelectorAll(':scope > h2, :scope > h3');
       if (headings.length === 0) {
         if (tocCol) tocCol.style.display = 'none';
         if (mobileToc) mobileToc.style.display = 'none';
@@ -355,6 +256,27 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
     }
 
     buildToc();
+
+    const COPIED_DURATION_MS = 2000;
+
+    document.addEventListener('click', async (event) => {
+      const button = (event.target as HTMLElement | null)?.closest<HTMLButtonElement>('.code-copy');
+      const pre = button?.parentElement?.querySelector('pre');
+      if (!button || !pre) {
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(pre.textContent ?? '');
+      } catch {
+        return;
+      }
+      button.classList.add('copied');
+      button.setAttribute('aria-label', 'コピーしました');
+      window.setTimeout(() => {
+        button.classList.remove('copied');
+        button.setAttribute('aria-label', 'コードをコピー');
+      }, COPIED_DURATION_MS);
+    });
   </script>
 </Base>
 
@@ -374,7 +296,6 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
     justify-self: start;
     width: 40px;
     height: 40px;
-    object-fit: contain;
     margin-bottom: 18px;
   }
 
@@ -573,17 +494,8 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
     margin-bottom: 0;
   }
 
-  .prose :global(img) {
+  .prose :global(img:not(.link-favicon)) {
     margin: 26px 0;
-  }
-
-  .prose :global(.emdash-table th) {
-    white-space: nowrap;
-  }
-
-  .prose :global(.emdash-table td > p) {
-    min-inline-size: 6em;
-    max-inline-size: 22em;
   }
 
   .prose :global(hr) {
@@ -609,6 +521,8 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
     margin-top: 0;
     padding-top: 0;
     border-top: none;
+    font-size: 14px;
+    color: var(--color-muted);
   }
 
   .prose :global(.footnotes li) {
@@ -616,32 +530,18 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
   }
 
   .prose :global(.footnotes li:target),
-  .prose :global(.footnote-ref:target) {
+  .prose :global([data-footnote-ref]:target) {
     background: var(--color-mark);
   }
 
-  .prose :global(.footnote-ref) {
+  .prose :global([data-footnote-ref]) {
     scroll-margin-top: 96px;
-  }
-
-  .prose :global(.footnote-back) {
-    margin-left: 6px;
     border-bottom: none;
   }
 
-  .prose :global(.footnote-back-index) {
-    font-size: 0.8em;
-    vertical-align: super;
-    line-height: 0;
-  }
-
-  .prose :global(.footnote-back-label) {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
+  .prose :global([data-footnote-backref]) {
+    margin-left: 6px;
+    border-bottom: none;
   }
 
   .article-foot {
@@ -725,60 +625,6 @@ const shareUrl = seo.canonical ?? `${Astro.url.origin}${Astro.url.pathname}`;
     background: var(--color-surface);
     color: var(--color-brand);
     border-left-color: var(--color-brand);
-  }
-
-  .article-comments {
-    max-width: var(--content-width);
-    margin-top: 60px;
-    padding-top: 24px;
-    border-top: var(--rule-width) solid var(--color-rule-strong);
-  }
-
-  .article-comments:not(:has(> :not(script))) {
-    display: none;
-  }
-
-  .article-comments :global(.ec-comments) {
-    --ec-comment-border: 1px solid var(--color-border);
-  }
-
-  .article-comments :global(.ec-comments-heading) {
-    font-size: 19px;
-    font-weight: var(--font-weight-heading);
-    margin-bottom: 24px;
-  }
-
-  .article-comments :global(.ec-comment-author) {
-    color: var(--color-heading);
-  }
-
-  .article-comments :global(.ec-comment-date) {
-    font-family: var(--font-mono);
-    color: var(--color-muted);
-  }
-
-  .article-comments :global(.ec-comment-body) {
-    color: var(--color-text);
-  }
-
-  .article-comments :global(.ec-comment-form-field input),
-  .article-comments :global(.ec-comment-form-field textarea) {
-    background: var(--color-bg) !important;
-    border-color: var(--color-border) !important;
-    color: var(--color-text) !important;
-    border-radius: 0 !important;
-  }
-
-  .article-comments :global(.ec-comment-user-info) {
-    background: var(--color-bg) !important;
-    border-color: var(--color-border) !important;
-  }
-
-  .article-comments :global(.ec-comment-form-submit) {
-    background: transparent !important;
-    border: 1px solid var(--color-rule-strong) !important;
-    color: var(--color-heading) !important;
-    border-radius: 0 !important;
   }
 
   @media (max-width: 1060px) {

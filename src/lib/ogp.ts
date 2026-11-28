@@ -1,5 +1,7 @@
-import { env } from 'cloudflare:workers';
-import { render } from '@cf-wasm/og';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { Resvg } from '@resvg/resvg-js';
+import satori from 'satori';
 
 type VNode = {
   type: string;
@@ -13,142 +15,54 @@ type VNode = {
   };
 };
 
-const FONT_ASSET_PATH = '/fonts/NotoSansJP-SemiBold.ttf';
-const FALLBACK_ASSET_PATH = '/opengraph-image.png';
 const AVATAR_URL = 'https://avatars.githubusercontent.com/u/116779921?v=4';
 const FONT_FAMILY = 'Noto Sans JP';
 const TEXT_COLOR = 'rgba(0,0,0,0.82)';
+const WIDTH = 1200;
+const HEIGHT = 630;
 
-export const OGP_CACHE_NAME = 'ogp';
-
-let fontPromise: Promise<ArrayBuffer> | undefined;
+let fontData: Buffer | undefined;
 let avatarPromise: Promise<string | null> | undefined;
 
-async function fetchSiteAsset(path: string, origin: string): Promise<Response> {
-  const url = new URL(path, origin).toString();
-  const response = await env.ASSETS.fetch(url);
-  if (!response.ok) {
-    throw new Error(`asset ${path} responded ${response.status}`);
-  }
-  return response;
-}
-
-function toBase64(buffer: ArrayBuffer): string {
-  const bytes = new Uint8Array(buffer);
-  let binary = '';
-  for (let i = 0; i < bytes.length; i += 0x8000) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
-  }
-  return btoa(binary);
-}
-
-async function cached<T>(
-  key: string,
-  load: () => Promise<Response>,
-  decode: (response: Response) => Promise<T>,
-): Promise<T> {
-  const cache = await caches.open(OGP_CACHE_NAME);
-  const hit = await cache.match(key);
-  if (hit) {
-    return decode(hit);
-  }
-  const response = await load();
-  const buffer = await response.arrayBuffer();
-  await cache
-    .put(
-      key,
-      new Response(buffer, {
-        headers: {
-          'Content-Type': response.headers.get('Content-Type') ?? 'application/octet-stream',
-          'Cache-Control': 'public, max-age=31536000, immutable',
-        },
-      }),
-    )
-    .catch(() => undefined);
-  return decode(new Response(buffer, { headers: response.headers }));
-}
-
-function loadFont(origin: string): Promise<ArrayBuffer> {
-  if (!fontPromise) {
-    fontPromise = cached(
-      new URL(FONT_ASSET_PATH, origin).toString(),
-      () => fetchSiteAsset(FONT_ASSET_PATH, origin),
-      (response) => response.arrayBuffer(),
-    ).catch((error: unknown) => {
-      fontPromise = undefined;
-      throw error;
-    });
-  }
-  return fontPromise;
+function loadFont(): Buffer {
+  fontData ??= readFileSync(join(process.cwd(), 'public', 'fonts', 'NotoSansJP-SemiBold.ttf'));
+  return fontData;
 }
 
 function loadAvatar(): Promise<string | null> {
-  if (!avatarPromise) {
-    avatarPromise = cached(
-      AVATAR_URL,
-      async () => {
-        const response = await fetch(AVATAR_URL);
-        if (!response.ok) {
-          throw new Error(`avatar responded ${response.status}`);
-        }
-        return response;
-      },
-      async (response) => {
-        const type = response.headers.get('Content-Type') ?? 'image/jpeg';
-        return `data:${type};base64,${toBase64(await response.arrayBuffer())}`;
-      },
-    ).catch(() => {
-      avatarPromise = undefined;
+  avatarPromise ??= (async () => {
+    try {
+      const response = await fetch(AVATAR_URL, { signal: AbortSignal.timeout(10_000) });
+      if (!response.ok) {
+        return null;
+      }
+      const type = response.headers.get('Content-Type') ?? 'image/jpeg';
+      const body = Buffer.from(await response.arrayBuffer()).toString('base64');
+      return `data:${type};base64,${body}`;
+    } catch {
       return null;
-    });
-  }
+    }
+  })();
   return avatarPromise;
 }
 
-async function loadIcon(filename: string | undefined, origin: string): Promise<string | null> {
-  if (!filename) {
-    return null;
-  }
-  try {
-    const path = `/icons/${filename}`;
-    return await cached(
-      new URL(path, origin).toString(),
-      () => fetchSiteAsset(path, origin),
-      async (response) => `data:image/svg+xml;base64,${toBase64(await response.arrayBuffer())}`,
-    );
-  } catch {
-    return null;
-  }
-}
-
-function card({
-  title,
-  tags,
-  iconDataUrl,
-  avatarDataUrl,
-}: {
+function card(options: {
   title: string;
   tags: string[];
-  iconDataUrl: string | null;
+  iconDataUrl: string | undefined;
   avatarDataUrl: string | null;
 }): VNode {
   const cardChildren: VNode[] = [];
 
-  if (iconDataUrl) {
+  if (options.iconDataUrl) {
     cardChildren.push({
       type: 'img',
       props: {
-        src: iconDataUrl,
+        src: options.iconDataUrl,
         alt: '',
-        style: {
-          position: 'absolute',
-          right: 0,
-          bottom: 0,
-          width: 400,
-          height: 400,
-          opacity: 0.15,
-          objectFit: 'contain',
-        },
+        width: 400,
+        height: 400,
+        style: { position: 'absolute', right: 0, bottom: 0, opacity: 0.15 },
       },
     });
   }
@@ -168,17 +82,17 @@ function card({
           color: TEXT_COLOR,
           lineHeight: 1.2,
         },
-        children: title,
+        children: options.title,
       },
     },
   ];
 
-  if (tags.length > 0) {
+  if (options.tags.length > 0) {
     headChildren.push({
       type: 'div',
       props: {
         style: { display: 'flex', alignItems: 'center', marginTop: 24 },
-        children: tags.map((tag) => ({
+        children: options.tags.map((tag) => ({
           type: 'div',
           props: {
             style: {
@@ -199,11 +113,11 @@ function card({
   }
 
   const footerChildren: VNode[] = [];
-  if (avatarDataUrl) {
+  if (options.avatarDataUrl) {
     footerChildren.push({
       type: 'img',
       props: {
-        src: avatarDataUrl,
+        src: options.avatarDataUrl,
         alt: '',
         width: 60,
         height: 60,
@@ -282,34 +196,22 @@ function card({
   };
 }
 
-export async function renderOgpImage({
-  title,
-  tags,
-  iconFilename,
-  origin,
-}: {
+export async function renderOgpImage(options: {
   title: string;
   tags: string[];
-  iconFilename?: string;
-  origin: string;
+  iconDataUrl: string | undefined;
 }): Promise<Uint8Array> {
-  const [data, iconDataUrl, avatarDataUrl] = await Promise.all([
-    loadFont(origin),
-    loadIcon(iconFilename, origin),
-    loadAvatar(),
-  ]);
-
-  const { image } = await render(card({ title, tags, iconDataUrl, avatarDataUrl }), {
-    width: 1200,
-    height: 630,
+  const data = loadFont();
+  const avatarDataUrl = await loadAvatar();
+  const svg = await satori(card({ ...options, avatarDataUrl }) as Parameters<typeof satori>[0], {
+    width: WIDTH,
+    height: HEIGHT,
     fonts: [
       { name: FONT_FAMILY, data, weight: 400, style: 'normal' },
       { name: FONT_FAMILY, data, weight: 600, style: 'normal' },
     ],
-  }).asPng();
-  return image;
-}
-
-export function fetchFallbackOgpImage(origin: string): Promise<Response> {
-  return fetchSiteAsset(FALLBACK_ASSET_PATH, origin);
+  });
+  return new Uint8Array(
+    new Resvg(svg, { fitTo: { mode: 'width', value: WIDTH } }).render().asPng(),
+  );
 }

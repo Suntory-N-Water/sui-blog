@@ -1,29 +1,18 @@
 ---
-import { getTaxonomyTermsWithCacheHint } from 'emdash';
 import Base from '../../layouts/Base.astro';
 import PageShell from '../../components/PageShell.astro';
 import ArchiveHead from '../../components/ArchiveHead.astro';
 import TagIndex from '../../components/TagIndex.astro';
+import { getPosts, summarizeTags } from '../../lib/posts';
 
-const { data: tags, cacheHint } = await getTaxonomyTermsWithCacheHint('tag', {
-  includeCounts: true,
-});
-if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
-
-const sortedTags = tags.slice().sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
+const tags = summarizeTags(await getPosts());
 ---
 
 <Base title='タグ一覧' description='記事のタグ一覧'>
   <PageShell>
-    <ArchiveHead title='タグ一覧' sub={`${sortedTags.length} タグ / 記事数の多い順`} />
+    <ArchiveHead title='タグ一覧' sub={`${tags.length} タグ / 記事数の多い順`} />
     <div class='tag-index-wrap'>
-      <TagIndex
-        tags={sortedTags.map((tag) => ({
-          slug: tag.slug,
-          label: tag.label,
-          count: tag.count,
-        }))}
-      />
+      <TagIndex tags={tags} />
     </div>
   </PageShell>
 </Base>

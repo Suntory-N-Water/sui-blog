@@ -13,6 +13,9 @@ on:
       - '**/*.json'
       - '**/*.jsonc'
       - '**/*.svg'
+      - '**/*.md'
+      - 'public/_headers'
+      - 'public/_redirects'
       - 'pnpm-lock.yaml'
       - '.github/**'
 
@@ -29,14 +32,14 @@ concurrency:
 jobs:
   check:
     name: ${{ matrix.task }}
-    timeout-minutes: 5
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     permissions:
       contents: read
     strategy:
       fail-fast: false
       matrix:
-        task: [lint, type-check, knip]
+        task: [format:check, lint, type-check, knip, build]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

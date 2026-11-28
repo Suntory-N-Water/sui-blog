@@ -1,53 +1,35 @@
-import cloudflare from '@astrojs/cloudflare';
-import { cacheCloudflare } from '@astrojs/cloudflare/cache';
-import react from '@astrojs/react';
-import { d1, r2, sandbox } from '@emdash-cms/cloudflare';
+import { unified } from '@astrojs/markdown-remark';
 import { defineConfig, fontProviders } from 'astro/config';
-import emdash from 'emdash/astro';
+import { pagefindDev } from './src/integrations/pagefind-dev.ts';
+import { rehypeArticle } from './src/markdown/rehype-article.ts';
+import { remarkArticle } from './src/markdown/remark-article.ts';
 
 export default defineConfig({
-  output: 'server',
+  output: 'static',
   site: 'https://suntory-n-water.com',
-  adapter: cloudflare(),
-  cache: {
-    provider: cacheCloudflare(),
+  trailingSlash: 'never',
+  build: {
+    format: 'file',
   },
-  routeRules: {
-    '/': { maxAge: 300, swr: 86400 },
-    '/index.md': { maxAge: 300, swr: 86400 },
-    '/posts': { maxAge: 300, swr: 86400 },
-    '/posts.md': { maxAge: 300, swr: 86400 },
-    '/posts/page/[page]': { maxAge: 300, swr: 86400 },
-    '/posts/[slug]': { maxAge: 300, swr: 86400 },
-    '/posts/[slug].md': { maxAge: 300, swr: 86400 },
-    '/posts/ogp/[slug].png': { maxAge: 86400, swr: 604800 },
-    '/tags': { maxAge: 300, swr: 86400 },
-    '/tags/[slug]': { maxAge: 300, swr: 86400 },
-    '/rss.xml': { maxAge: 300, swr: 86400 },
-    '/sitemap.xml': { maxAge: 300, swr: 86400 },
-    '/llms.txt': { maxAge: 300, swr: 86400 },
-  },
-  redirects: {
-    '/sitemap-index.xml': { status: 301, destination: '/sitemap.xml' },
-  },
+  integrations: [pagefindDev()],
   i18n: {
     defaultLocale: 'ja',
     locales: ['ja'],
   },
-  image: {
-    layout: 'constrained',
-    responsiveStyles: true,
-  },
-  integrations: [
-    react(),
-    emdash({
-      mcp: true,
-      database: d1({ binding: 'DB', session: 'auto' }),
-      storage: r2({ binding: 'MEDIA' }),
-      middleware: { outer: './src/middleware/outer.ts' },
-      sandboxRunner: sandbox(),
+  markdown: {
+    syntaxHighlight: false,
+    processor: unified({
+      smartypants: false,
+      remarkPlugins: [remarkArticle],
+      rehypePlugins: [rehypeArticle],
+      remarkRehype: {
+        footnoteLabel: '脚注',
+        footnoteLabelProperties: { className: ['footnotes-heading'] },
+        footnoteBackLabel: (referenceIndex, rereferenceIndex) =>
+          `本文の ${referenceIndex + 1} 番目の参照${rereferenceIndex > 1 ? `（${rereferenceIndex} 回目）` : ''}に戻る`,
+      },
     }),
-  ],
+  },
   fonts: [
     {
       provider: fontProviders.google(),

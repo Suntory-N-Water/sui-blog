@@ -1,0 +1,4 @@
+/blog/* /posts/:splat 301
+/sitemap-index.xml /sitemap.xml 301
+/posts/page/1 /posts 301
+/tags/ClaudeMods /tags/claude-mods 301

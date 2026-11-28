@@ -15,14 +15,11 @@
       "!node_modules",
       "!!**/dist",
       "!**/.claude",
-      "!**/.emdash",
       "!**/.wrangler",
       "!temp",
       "!backups",
-      "!emdash-env.d.ts",
       // 記事用のサンプルコードと取得済み HTML 置き場。リポジトリには入れない
       "!examples",
-      "!worker-configuration.d.ts",
       "!**/.obsidian",
       "!**/.astro",
       "!examples/*"
@@ -43,11 +40,9 @@
       "!node_modules",
       "!!**/dist",
       "!**/.claude",
-      "!**/.emdash",
       "!**/.wrangler",
       "!temp",
       "!backups",
-      "!emdash-env.d.ts",
       "!examples/*"
     ]
   },
@@ -80,7 +75,7 @@
         "useBlockStatements": "error"
       }
     },
-    "includes": ["src/**/*.{js,jsx,ts,tsx}", "astro.config.mjs"]
+    "includes": ["src/**/*.{js,jsx,ts,tsx}", "scripts/**/*.ts", "astro.config.mjs"]
   },
   "javascript": {
     "formatter": {

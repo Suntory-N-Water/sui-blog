@@ -1,53 +1,31 @@
 ---
-import { getEmDashCollection, getTermsForEntries } from 'emdash';
+import type { GetStaticPaths } from 'astro';
 import Base from '../../../layouts/Base.astro';
 import PageShell from '../../../components/PageShell.astro';
-import { countPublishedPosts } from '../../../lib/post-index';
 import PostArchive from '../../../components/PostArchive.astro';
+import { getPosts, PER_PAGE } from '../../../lib/posts';
 
-const PER_PAGE = 10;
+export const getStaticPaths = (async () => {
+  const posts = await getPosts();
+  const totalPages = Math.ceil(posts.length / PER_PAGE);
+  return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => {
+    const page = i + 2;
+    return {
+      params: { page: String(page) },
+      props: {
+        page,
+        totalPages,
+        posts: posts.slice((page - 1) * PER_PAGE, page * PER_PAGE),
+      },
+    };
+  });
+}) satisfies GetStaticPaths;
 
-const pageParam = Astro.params.page ?? '';
-if (!/^[1-9]\d*$/.test(pageParam)) {
-  return Astro.rewrite('/404');
-}
-
-const page = Number(pageParam);
-
-if (page === 1) {
-  return Astro.redirect('/posts', 301);
-}
-
-const [{ entries: posts, hasMore, cacheHint, error }, total] = await Promise.all([
-  getEmDashCollection('posts', {
-    limit: PER_PAGE,
-    offset: (page - 1) * PER_PAGE,
-    orderBy: { created_at: 'desc' },
-  }),
-  countPublishedPosts(),
-]);
-
-if (error) {
-  return new Response(null, { status: 500 });
-}
-
-if (posts.length === 0) {
-  return Astro.rewrite('/404');
-}
-
-if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
-
-const totalPages = Math.max(Math.ceil(total / PER_PAGE), hasMore ? page + 1 : page);
-
-const tagsByEntry = await getTermsForEntries(
-  'posts',
-  posts.map((p) => p.data.id),
-  'tag',
-);
+const { page, totalPages, posts } = Astro.props;
 ---
 
 <Base title={`記事一覧 - ${page} ページ目`} description={`すべての記事の一覧(${page} ページ目)`}>
   <PageShell>
-    <PostArchive posts={posts} tagsByEntry={tagsByEntry} page={page} totalPages={totalPages} />
+    <PostArchive posts={posts} page={page} totalPages={totalPages} />
   </PageShell>
 </Base>

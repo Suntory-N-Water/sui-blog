@@ -1,7 +1,7 @@
 ---
-import type { ImageValue } from 'emdash';
-import { Image } from 'emdash/ui';
+import PostIcon from './PostIcon.astro';
 import { formatIndexDate } from '../utils/format-date';
+import type { Tag } from '../lib/tags';
 
 interface Props {
   title: string;
@@ -9,12 +9,12 @@ interface Props {
   date?: Date | null;
   readingTime?: number;
   excerpt?: string | null;
-  icon?: ImageValue | string | null;
-  tags?: Array<{ slug: string; label: string }>;
+  iconUrl?: string;
+  tags?: Tag[];
   headingLevel?: 2 | 3;
 }
 
-const { title, href, date, readingTime, excerpt, icon, tags, headingLevel = 3 } = Astro.props;
+const { title, href, date, readingTime, excerpt, iconUrl, tags, headingLevel = 3 } = Astro.props;
 const displayDate = formatIndexDate(date);
 const Heading = `h${headingLevel}` as const;
 ---
@@ -25,7 +25,7 @@ const Heading = `h${headingLevel}` as const;
       {displayDate && <time datetime={date?.toISOString()}>{displayDate}</time>}
     </div>
     <div class='row-icon-cell'>
-      {icon && <Image image={icon} alt='' width={20} height={20} class='row-icon' />}
+      <PostIcon iconUrl={iconUrl} class='row-icon' />
     </div>
     <div class='row-main'>
       <Heading class='row-title'>
@@ -92,7 +92,6 @@ const Heading = `h${headingLevel}` as const;
   .row-icon-cell :global(.row-icon) {
     width: 20px;
     height: 20px;
-    object-fit: contain;
   }
 
   .row-excerpt {

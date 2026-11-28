@@ -1,45 +1,15 @@
 ---
-import { getEmDashCollection, getTermsForEntries } from 'emdash';
 import Base from '../../layouts/Base.astro';
 import PageShell from '../../components/PageShell.astro';
-import { countPublishedPosts } from '../../lib/post-index';
 import PostArchive from '../../components/PostArchive.astro';
-import { acceptsMarkdown, negotiatedMarkdownResponse } from '../../lib/agent-markdown';
-import { postsMarkdown } from '../../lib/agent-markdown-pages';
+import { getPosts, PER_PAGE } from '../../lib/posts';
 
-const PER_PAGE = 10;
-const page = 1;
-
-const [{ entries: posts, hasMore, cacheHint, error }, total] = await Promise.all([
-  getEmDashCollection('posts', {
-    limit: PER_PAGE,
-    offset: (page - 1) * PER_PAGE,
-    orderBy: { created_at: 'desc' },
-  }),
-  countPublishedPosts(),
-]);
-
-if (error) {
-  return new Response(null, { status: 500 });
-}
-
-if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
-
-if (acceptsMarkdown(Astro.request.headers.get('Accept'))) {
-  return negotiatedMarkdownResponse(await postsMarkdown(Astro));
-}
-
-const totalPages = Math.max(Math.ceil(total / PER_PAGE), hasMore ? page + 1 : page);
-
-const tagsByEntry = await getTermsForEntries(
-  'posts',
-  posts.map((p) => p.data.id),
-  'tag',
-);
+const posts = await getPosts();
+const totalPages = Math.max(1, Math.ceil(posts.length / PER_PAGE));
 ---
 
 <Base title='記事一覧' description='すべての記事の一覧' markdownHref='/posts.md'>
   <PageShell>
-    <PostArchive posts={posts} tagsByEntry={tagsByEntry} page={page} totalPages={totalPages} />
+    <PostArchive posts={posts.slice(0, PER_PAGE)} page={1} totalPages={totalPages} />
   </PageShell>
 </Base>

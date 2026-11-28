@@ -5,11 +5,8 @@ allowBuilds:
   workerd: true
   sharp: false
 
-# Supply-chain hardening: cooldown on brand-new releases (EmDash exempt)
+# Supply-chain hardening: cooldown on brand-new releases
 # and no non-registry transitive sources. (No trustPolicy: no-downgrade --
 # it trips on upstream provenance regressions we don't control.)
 minimumReleaseAge: 1440
-minimumReleaseAgeExclude:
-  - emdash
-  - "@emdash-cms/*"
 blockExoticSubdeps: true
